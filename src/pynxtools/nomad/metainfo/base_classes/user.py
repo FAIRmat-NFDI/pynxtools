@@ -69,7 +69,7 @@ class User(Object):
         ),
     )
 
-    name_quantity = Quantity(
+    name = Quantity(
         type=str,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXuser.html#nxuser-name-field"

@@ -110,7 +110,7 @@ class BeamStop(Component):
         ),
     )
 
-    description_quantity = Quantity(
+    description = Quantity(
         type=MEnum(["circular", "rectangular"]),
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXbeam_stop.html#nxbeam_stop-description-field"

@@ -71,7 +71,7 @@ class Cite(Object):
         ),
     )
 
-    description_quantity = Quantity(
+    description = Quantity(
         type=str,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXcite.html#nxcite-description-field"

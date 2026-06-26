@@ -98,7 +98,7 @@ class OpticalFiber(Component):
         description=("Coating of the fiber."),
     )
 
-    description_quantity = Quantity(
+    description = Quantity(
         type=str,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXoptical_fiber.html#nxoptical_fiber-description-field"

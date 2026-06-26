@@ -403,7 +403,7 @@ class ArchiveUser(User):
         ),
     )
 
-    name_quantity = Quantity(
+    name = Quantity(
         type=str,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXarchive.html#nxarchive-entry-user-name-field"
@@ -480,7 +480,7 @@ class ArchiveInstrument(Instrument):
         ),
     )
 
-    name_quantity = Quantity(
+    name = Quantity(
         type=str,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXarchive.html#nxarchive-entry-instrument-name-field"
@@ -495,7 +495,7 @@ class ArchiveInstrument(Instrument):
             component=ELNComponentEnum.StringEditQuantity,
         ),
     )
-    description_quantity = Quantity(
+    description = Quantity(
         type=str,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXarchive.html#nxarchive-entry-instrument-description-field"
@@ -564,7 +564,7 @@ class ArchiveInstrumentSource(Source):
             component=ELNComponentEnum.EnumEditQuantity,
         ),
     )
-    name_quantity = Quantity(
+    name = Quantity(
         type=str,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXarchive.html#nxarchive-entry-instrument-source-name-field"
@@ -613,7 +613,7 @@ class ArchiveSample(Sample):
         ),
     )
 
-    name_quantity = Quantity(
+    name = Quantity(
         type=str,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXarchive.html#nxarchive-entry-sample-name-field"
@@ -645,7 +645,7 @@ class ArchiveSample(Sample):
             component=ELNComponentEnum.StringEditQuantity,
         ),
     )
-    description_quantity = Quantity(
+    description = Quantity(
         type=str,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXarchive.html#nxarchive-entry-sample-description-field"

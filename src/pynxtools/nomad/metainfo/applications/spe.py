@@ -416,7 +416,7 @@ class SpeInstrument(Instrument):
         ),
     )
 
-    name_quantity = Quantity(
+    name = Quantity(
         type=str,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXspe.html#nxspe-entry-instrument-name-field"

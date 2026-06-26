@@ -148,7 +148,7 @@ class Manipulator(Component):
         ),
     )
 
-    name_quantity = Quantity(
+    name = Quantity(
         type=str,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXmanipulator.html#nxmanipulator-name-field"
@@ -164,7 +164,7 @@ class Manipulator(Component):
             component=ELNComponentEnum.StringEditQuantity,
         ),
     )
-    description_quantity = Quantity(
+    description = Quantity(
         type=str,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXmanipulator.html#nxmanipulator-description-field"

@@ -190,7 +190,7 @@ class Log(Object):
             component=ELNComponentEnum.NumberEditQuantity,
         ),
     )
-    description_quantity = Quantity(
+    description = Quantity(
         type=str,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXlog.html#nxlog-description-field"

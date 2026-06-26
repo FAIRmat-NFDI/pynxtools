@@ -78,7 +78,7 @@ class ElectromagneticLens(Component):
         ),
     )
 
-    name_quantity = Quantity(
+    name = Quantity(
         type=str,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXelectromagnetic_lens.html#nxelectromagnetic_lens-name-field"
@@ -94,7 +94,7 @@ class ElectromagneticLens(Component):
             component=ELNComponentEnum.StringEditQuantity,
         ),
     )
-    description_quantity = Quantity(
+    description = Quantity(
         type=str,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXelectromagnetic_lens.html#nxelectromagnetic_lens-description-field"

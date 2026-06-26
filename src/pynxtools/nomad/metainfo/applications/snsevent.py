@@ -485,7 +485,7 @@ class SnseventDaslogsLog(Log):
             component=ELNComponentEnum.NumberEditQuantity,
         ),
     )
-    description_quantity = Quantity(
+    description = Quantity(
         type=str,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXsnsevent.html#nxsnsevent-entry-daslogs-log-description-field"
@@ -648,7 +648,7 @@ class SnseventDaslogsPositioner(Positioner):
             component=ELNComponentEnum.NumberEditQuantity,
         ),
     )
-    description_quantity = Quantity(
+    description = Quantity(
         type=str,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXsnsevent.html#nxsnsevent-entry-daslogs-positioner-description-field"
@@ -829,7 +829,7 @@ class SnseventSnshistotool(Note):
             component=ELNComponentEnum.StringEditQuantity,
         ),
     )
-    description_quantity = Quantity(
+    description = Quantity(
         type=str,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXsnsevent.html#nxsnsevent-entry-snshistotool-description-field"
@@ -1151,7 +1151,7 @@ class SnseventInstrument(Instrument):
             component=ELNComponentEnum.StringEditQuantity,
         ),
     )
-    name_quantity = Quantity(
+    name = Quantity(
         type=str,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXsnsevent.html#nxsnsevent-entry-instrument-name-field"
@@ -1203,7 +1203,7 @@ class SnseventInstrumentSns(Source):
         ),
         a_display={"unit": "hertz"},
     )
-    name_quantity = Quantity(
+    name = Quantity(
         type=str,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXsnsevent.html#nxsnsevent-entry-instrument-sns-name-field"
@@ -1608,7 +1608,7 @@ class SnseventInstrumentDetectorOriginShape(Shape):
         ),
     )
 
-    description_quantity = Quantity(
+    description = Quantity(
         type=str,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXsnsevent.html#nxsnsevent-entry-instrument-detector-origin-shape-description-field"
@@ -2010,7 +2010,7 @@ class SnseventInstrumentApertureOriginShape(Shape):
         ),
     )
 
-    description_quantity = Quantity(
+    description = Quantity(
         type=str,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXsnsevent.html#nxsnsevent-entry-instrument-aperture-origin-shape-description-field"
@@ -2263,7 +2263,7 @@ class SnseventInstrumentCrystalOrigin(Geometry):
         ),
     )
 
-    description_quantity = Quantity(
+    description = Quantity(
         type=str,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXsnsevent.html#nxsnsevent-entry-instrument-crystal-origin-description-field"
@@ -2331,7 +2331,7 @@ class SnseventInstrumentCrystalOriginShape(Shape):
         ),
     )
 
-    description_quantity = Quantity(
+    description = Quantity(
         type=str,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXsnsevent.html#nxsnsevent-entry-instrument-crystal-origin-shape-description-field"
@@ -2582,7 +2582,7 @@ class SnseventSample(Sample):
             component=ELNComponentEnum.StringEditQuantity,
         ),
     )
-    name_quantity = Quantity(
+    name = Quantity(
         type=str,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXsnsevent.html#nxsnsevent-entry-sample-name-field"
@@ -2648,7 +2648,7 @@ class SnseventUser(User):
             component=ELNComponentEnum.StringEditQuantity,
         ),
     )
-    name_quantity = Quantity(
+    name = Quantity(
         type=str,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXsnsevent.html#nxsnsevent-entry-user-name-field"

@@ -220,7 +220,7 @@ class TofsingleUser(User):
         ),
     )
 
-    name_quantity = Quantity(
+    name = Quantity(
         type=str,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXtofsingle.html#nxtofsingle-entry-user-name-field"
@@ -382,7 +382,7 @@ class TofsingleSample(Sample):
         ),
     )
 
-    name_quantity = Quantity(
+    name = Quantity(
         type=str,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXtofsingle.html#nxtofsingle-entry-sample-name-field"

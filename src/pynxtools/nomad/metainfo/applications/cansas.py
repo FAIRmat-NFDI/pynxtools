@@ -291,7 +291,7 @@ class Cansas(Entry):
             default="NXcanSAS",
         ),
     )
-    definition__name_quantity = Quantity(
+    definition__name = Quantity(
         type=str,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXcanSAS.html#nxcansas-entry-definition-name-attribute"
@@ -332,7 +332,7 @@ class Cansas(Entry):
             component=ELNComponentEnum.StringEditQuantity,
         ),
     )
-    title__name_quantity = Quantity(
+    title__name = Quantity(
         type=str,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXcanSAS.html#nxcansas-entry-title-name-attribute"
@@ -372,7 +372,7 @@ class Cansas(Entry):
             optionality="required",
         ),
     )
-    run__name_quantity = Quantity(
+    run__name = Quantity(
         type=str,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXcanSAS.html#nxcansas-entry-run-name-attribute"
@@ -1509,7 +1509,7 @@ class CansasInstrumentDetector(Detector):
             default="SASdetector",
         ),
     )
-    name_quantity = Quantity(
+    name = Quantity(
         type=str,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXcanSAS.html#nxcansas-entry-instrument-detector-name-field"
@@ -1980,7 +1980,7 @@ class CansasSample(Sample):
             default="SASsample",
         ),
     )
-    name_quantity = Quantity(
+    name = Quantity(
         type=str,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXcanSAS.html#nxcansas-entry-sample-name-field"
@@ -2217,7 +2217,7 @@ class CansasProcess(Process):
             default="SASprocess",
         ),
     )
-    name_quantity = Quantity(
+    name = Quantity(
         type=str,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXcanSAS.html#nxcansas-entry-process-name-field"
@@ -2233,7 +2233,7 @@ class CansasProcess(Process):
             component=ELNComponentEnum.StringEditQuantity,
         ),
     )
-    description_quantity = Quantity(
+    description = Quantity(
         type=str,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXcanSAS.html#nxcansas-entry-process-description-field"
@@ -2444,7 +2444,7 @@ class CansasTransmissionSpectrum(Data):
             default="T",
         ),
     )
-    name_quantity = Quantity(
+    name = Quantity(
         type=str,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXcanSAS.html#nxcansas-entry-transmission-spectrum-name-attribute"

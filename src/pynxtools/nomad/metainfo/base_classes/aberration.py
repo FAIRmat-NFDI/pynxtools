@@ -177,7 +177,7 @@ class Aberration(Object):
         ),
         a_display={"unit": "radian"},
     )
-    name_quantity = Quantity(
+    name = Quantity(
         type=str,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXaberration.html#nxaberration-name-field"

@@ -267,7 +267,7 @@ class XbaseInstrumentSource(Source):
             component=ELNComponentEnum.StringEditQuantity,
         ),
     )
-    name_quantity = Quantity(
+    name = Quantity(
         type=str,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXxbase.html#nxxbase-entry-instrument-source-name-field"
@@ -485,7 +485,7 @@ class XbaseSample(Sample):
         ),
     )
 
-    name_quantity = Quantity(
+    name = Quantity(
         type=str,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXxbase.html#nxxbase-entry-sample-name-field"

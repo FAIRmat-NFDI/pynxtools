@@ -123,7 +123,7 @@ class Calibration(Process):
         ),
     )
 
-    description_quantity = Quantity(
+    description = Quantity(
         type=str,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXcalibration.html#nxcalibration-description-field"

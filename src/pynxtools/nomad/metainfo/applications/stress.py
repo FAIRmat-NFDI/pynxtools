@@ -489,7 +489,7 @@ class StressInstrument(Instrument):
         ),
     )
 
-    name_quantity = Quantity(
+    name = Quantity(
         type=str,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXstress.html#nxstress-entry-instrument-name-field"
@@ -509,7 +509,7 @@ class StressInstrument(Instrument):
             component=ELNComponentEnum.StringEditQuantity,
         ),
     )
-    name_quantity__short_name = Quantity(
+    name__short_name = Quantity(
         type=str,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXstress.html#nxstress-entry-instrument-name-short-name-attribute"
@@ -1166,7 +1166,7 @@ class StressSampleDescription(Sample):
         ),
     )
 
-    name_quantity = Quantity(
+    name = Quantity(
         type=str,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXstress.html#nxstress-entry-sample-description-name-field"
@@ -1381,7 +1381,7 @@ class StressFit(Process):
             max_occurs=1,
         ),
     )
-    description_group = SubSection(
+    description = SubSection(
         section_def="pynxtools.nomad.metainfo.base_classes.note.Note",
         repeats=True,
         variable=True,

@@ -228,7 +228,7 @@ class Electronanalyzer(Component):
         ),
     )
 
-    description_quantity = Quantity(
+    description = Quantity(
         type=str,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXelectronanalyzer.html#nxelectronanalyzer-description-field"
@@ -244,7 +244,7 @@ class Electronanalyzer(Component):
             component=ELNComponentEnum.StringEditQuantity,
         ),
     )
-    name_quantity = Quantity(
+    name = Quantity(
         type=str,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXelectronanalyzer.html#nxelectronanalyzer-name-field"
@@ -260,7 +260,7 @@ class Electronanalyzer(Component):
             component=ELNComponentEnum.StringEditQuantity,
         ),
     )
-    name_quantity__short_name = Quantity(
+    name__short_name = Quantity(
         type=str,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXelectronanalyzer.html#nxelectronanalyzer-name-short-name-attribute"

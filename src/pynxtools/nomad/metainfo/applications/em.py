@@ -802,7 +802,7 @@ class EmProject(Project):
         ),
     )
 
-    name_quantity = Quantity(
+    name = Quantity(
         type=str,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXem.html#nxem-entry-project-name-field"
@@ -1127,7 +1127,7 @@ class EmSampleID(Sample):
             component=ELNComponentEnum.DateTimeEditQuantity,
         ),
     )
-    name_quantity = Quantity(
+    name = Quantity(
         type=str,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXem.html#nxem-entry-sampleid-name-field"
@@ -2325,7 +2325,7 @@ class EmMeasurementInstrument(EmInstrument):
         ),
     )
 
-    name_quantity = Quantity(
+    name = Quantity(
         type=str,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXem.html#nxem-entry-measurement-instrument-name-field"
@@ -2882,7 +2882,7 @@ class EmMeasurementInstrumentEbeamColumnLensID(ElectromagneticLens):
         ),
     )
 
-    name_quantity = Quantity(
+    name = Quantity(
         type=str,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXem.html#nxem-entry-measurement-instrument-ebeam-column-lensid-name-field"
@@ -2991,7 +2991,7 @@ class EmMeasurementInstrumentEbeamColumnApertureID(Aperture):
         ),
     )
 
-    name_quantity = Quantity(
+    name = Quantity(
         type=str,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXem.html#nxem-entry-measurement-instrument-ebeam-column-apertureid-name-field"
@@ -3100,7 +3100,7 @@ class EmMeasurementInstrumentEbeamColumnDeflectorID(Deflector):
         ),
     )
 
-    name_quantity = Quantity(
+    name = Quantity(
         type=str,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXem.html#nxem-entry-measurement-instrument-ebeam-column-deflectorid-name-field"
@@ -3209,7 +3209,7 @@ class EmMeasurementInstrumentEbeamColumnBlankerID(Deflector):
         ),
     )
 
-    name_quantity = Quantity(
+    name = Quantity(
         type=str,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXem.html#nxem-entry-measurement-instrument-ebeam-column-blankerid-name-field"
@@ -3451,7 +3451,7 @@ class EmMeasurementInstrumentEbeamColumnCorrector_csID(CorrectorCs):
         ),
     )
 
-    name_quantity = Quantity(
+    name = Quantity(
         type=str,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXem.html#nxem-entry-measurement-instrument-ebeam-column-corrector-csid-name-field"
@@ -4266,7 +4266,7 @@ class EmMeasurementInstrumentIbeamColumnLensID(ElectromagneticLens):
         ),
     )
 
-    name_quantity = Quantity(
+    name = Quantity(
         type=str,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXem.html#nxem-entry-measurement-instrument-ibeam-column-lensid-name-field"
@@ -4375,7 +4375,7 @@ class EmMeasurementInstrumentIbeamColumnApertureID(Aperture):
         ),
     )
 
-    name_quantity = Quantity(
+    name = Quantity(
         type=str,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXem.html#nxem-entry-measurement-instrument-ibeam-column-apertureid-name-field"
@@ -4484,7 +4484,7 @@ class EmMeasurementInstrumentIbeamColumnDeflectorID(Deflector):
         ),
     )
 
-    name_quantity = Quantity(
+    name = Quantity(
         type=str,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXem.html#nxem-entry-measurement-instrument-ibeam-column-deflectorid-name-field"
@@ -4593,7 +4593,7 @@ class EmMeasurementInstrumentIbeamColumnBlankerID(Deflector):
         ),
     )
 
-    name_quantity = Quantity(
+    name = Quantity(
         type=str,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXem.html#nxem-entry-measurement-instrument-ibeam-column-blankerid-name-field"
@@ -4717,7 +4717,7 @@ class EmMeasurementInstrumentIbeamColumnMonochromatorID(Monochromator):
             component=ELNComponentEnum.StringEditQuantity,
         ),
     )
-    name_quantity = Quantity(
+    name = Quantity(
         type=str,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXem.html#nxem-entry-measurement-instrument-ibeam-column-monochromatorid-name-field"
@@ -4917,7 +4917,7 @@ class EmMeasurementInstrumentDetectorID(Detector):
         ),
     )
 
-    name_quantity = Quantity(
+    name = Quantity(
         type=str,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXem.html#nxem-entry-measurement-instrument-detectorid-name-field"
@@ -14443,7 +14443,7 @@ class EmRoiIDEbsdIndexingPhaseID(Phase):
         ),
     )
 
-    name_quantity = Quantity(
+    name = Quantity(
         type=str,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXem.html#nxem-entry-roiid-ebsd-indexing-phaseid-name-field"

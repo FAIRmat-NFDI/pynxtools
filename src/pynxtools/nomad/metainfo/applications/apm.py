@@ -1049,7 +1049,7 @@ class ApmProject(Project):
         ),
     )
 
-    name_quantity = Quantity(
+    name = Quantity(
         type=str,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-project-name-field"
@@ -2784,7 +2784,7 @@ class ApmMeasurementInstrumentLocalElectrode(ElectromagneticLens):
         ),
     )
 
-    name_quantity = Quantity(
+    name = Quantity(
         type=str,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-measurement-instrument-local-electrode-name-field"
@@ -10950,7 +10950,7 @@ class ApmAtom_probeIDMassToChargeConversionConfigMass_resolutionION(Atom):
             units="NX_UNITLESS",
         ),
     )
-    name_quantity = Quantity(
+    name = Quantity(
         type=str,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-atom-probeid-mass-to-charge-conversion-config-mass-resolutionion-name-field"
@@ -12786,7 +12786,7 @@ class ApmAtom_probeIDRangingPeakSearchPeakID(Peak):
             component=ELNComponentEnum.StringEditQuantity,
         ),
     )
-    description_quantity = Quantity(
+    description = Quantity(
         type=str,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-atom-probeid-ranging-peak-search-peakid-description-field"
@@ -13124,7 +13124,7 @@ class ApmAtom_probeIDRangingPeakIdentificationIonID(Atom):
             units="NX_UNITLESS",
         ),
     )
-    name_quantity = Quantity(
+    name = Quantity(
         type=str,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-atom-probeid-ranging-peak-identification-ionid-name-field"

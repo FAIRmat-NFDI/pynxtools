@@ -85,7 +85,7 @@ class Deflector(Component):
             component=ELNComponentEnum.EnumEditQuantity,
         ),
     )
-    name_quantity = Quantity(
+    name = Quantity(
         type=str,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXdeflector.html#nxdeflector-name-field"

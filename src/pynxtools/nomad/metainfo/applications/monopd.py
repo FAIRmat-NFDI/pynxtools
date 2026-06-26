@@ -272,7 +272,7 @@ class MonopdInstrumentSource(Source):
             component=ELNComponentEnum.StringEditQuantity,
         ),
     )
-    name_quantity = Quantity(
+    name = Quantity(
         type=str,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXmonopd.html#nxmonopd-entry-instrument-source-name-field"
@@ -411,7 +411,7 @@ class MonopdSample(Sample):
         ),
     )
 
-    name_quantity = Quantity(
+    name = Quantity(
         type=str,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXmonopd.html#nxmonopd-entry-sample-name-field"

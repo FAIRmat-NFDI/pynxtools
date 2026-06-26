@@ -294,7 +294,7 @@ class IbeamColumnIonSource(Source):
             component=ELNComponentEnum.EnumEditQuantity,
         ),
     )
-    description_quantity = Quantity(
+    description = Quantity(
         type=str,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXibeam_column.html#nxibeam_column-ion-source-description-field"

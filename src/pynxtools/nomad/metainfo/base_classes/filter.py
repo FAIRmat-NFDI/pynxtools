@@ -128,7 +128,7 @@ class Filter(Component):
         ),
     )
 
-    description_quantity = Quantity(
+    description = Quantity(
         type=str,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXfilter.html#nxfilter-description-field"

@@ -1,4 +1,4 @@
-# NeXus Metainfo Generation (Phases 1–2)
+# NeXus Metainfo Generation
 
 !!! warning "In development"
     This page describes a new code generation system currently under active development.
@@ -19,8 +19,8 @@ and writes one Python file per NXDL class. Each generated file is a normal impor
   in a `.py` file, with structured annotations connecting every quantity and group back to NXDL.
 - **Clean naming**: Quantities are named after their NXDL concept (`start_time`, not `start_time__field`).
 - **Two entry points**: `nexus_base_classes` (142 base classes) and `nexus_applications` (85 application definitions).
-- **Application definitions are Entry subclasses**: `Xps(Entry)` instead of wrappers — see [ADR-006](#adr-006-application-definitions).
-- **Backward compatibility**: The old `nexus_schema` entry point is untouched; both systems coexist until Phase 3.
+- **Application definitions are Entry subclasses**: `Xps(Entry)` instead of a wrapper where `Xps` contains `XpsEntry` (see below).
+- **Backward compatibility**: The old `nexus_schema` entry point is untouched; both systems coexist until we are sure the new schema works.
 
 ### Current status
 
@@ -41,7 +41,7 @@ nxdl_to_metainfo.py             ← generator
     │  render(context)          ← Jinja2 + ruff
     │  write_base_class(nx_name)
     ▼
-metainfo/base_classes/<stem>.py ← generated Python files (one per base class)
+metainfo/<folder>/<stem>.py ← generated Python files (one per NeXus definition) 
     ▼
 metainfo/_package.py            ← assembles NOMAD Package
     │  build_package()
@@ -57,7 +57,7 @@ NOMAD Package (section_definitions[])
 
 All NXDL attribute reading goes through the `NexusNode` API
 (`pynxtools.nexus.nexus_tree`). No raw XML attribute access happens inside the
-generator.  This gives:
+generator. This gives:
 
 - **Inheritance resolution**: NexusNode follows the `extends` chain and merges attributes
   from parent classes. The generator never needs to know about inheritance.
@@ -68,8 +68,7 @@ generator.  This gives:
 ### `generate_tree_from()`
 
 ```python
-from pynxtools.nexus.nexus_tree import generate_tree_from, NexusField, NexusAttribute
-
+from pynxtools.nexus.nexus_tree import generate_tree_from
 root = generate_tree_from("NXdetector")
 print(root.nx_type)     # "definition"
 print(root.category)    # "base"
@@ -78,7 +77,7 @@ for child in root.children:
     print(child.nx_type, child.name)  # "field" "data", "group" "NXtransformations", ...
 ```
 
-`generate_tree_from(nx_name)` is the single entry point into the NexusNode tree.  It:
+`generate_tree_from(nx_name)` is the single entry point into the NexusNode tree. It:
 
 1. Calls `get_nxdl_root_and_path(nx_name)` to load the primary XML element.
 2. Builds the full inheritance chain via `get_all_parents_for()`.
@@ -111,7 +110,7 @@ NexusNode (base)
 | `name_type` | `str` | `@nameType` (default `"specified"`) |
 | `optionality` | `str` | `@recommended`/`@required`/`@optional` |
 | `variadic` | `bool` | derived from `name_type` |
-| `deprecated` | `str \| None` | `@deprecated` |
+| `deprecated` | `str \ None` | `@deprecated` |
 
 #### `NexusDefinition`
 
@@ -128,20 +127,20 @@ NexusNode (base)
 | Attribute | Type | Source (NXDL) |
 |-----------|------|--------------|
 | `nx_class` | `str` | `@type` |
-| `occurrence_limits` | `tuple[int\|None, int\|None]` | `@minOccurs`/`@maxOccurs` |
+| `occurrence_limits` | `tuple[int\None, int\None]` | `@minOccurs`/`@maxOccurs` |
 
 #### `NexusField`
 
 | Attribute | Type | Source (NXDL) |
 |-----------|------|--------------|
 | `dtype` | `str` | `@type` (default `"NX_CHAR"`) |
-| `unit` | `str \| None` | `@units` |
-| `shape` | `tuple \| None` | `<dimensions>` element |
-| `dim_symbols` | `tuple \| None` | symbol names parallel to `shape` |
-| `items` | `list[str] \| None` | `<enumeration>/<item>` |
+| `unit` | `str \ None` | `@units` |
+| `shape` | `tuple \ None` | `<dimensions>` element |
+| `dim_symbols` | `tuple \ None` | symbol names parallel to `shape` |
+| `items` | `list[str] \ None` | `<enumeration>/<item>` |
 | `open_enum` | `bool` | `<enumeration open="true">` |
-| `long_name` | `str \| None` | `@long_name` |
-| `interpretation` | `str \| None` | `@interpretation` |
+| `long_name` | `str \ None` | `@long_name` |
+| `interpretation` | `str \ None` | `@interpretation` |
 
 #### `NexusAttribute`
 
@@ -152,8 +151,7 @@ Has no `unit`, `long_name`, `interpretation`, or plotting-hint attributes.
 
 ## Annotation models
 
-Six `AnnotationModel` subclasses carry all NeXus-specific metadata on generated
-sections and quantities — one per NXDL node kind.  Each annotation is queryable
+Six `AnnotationModel` subclasses (one per NXDL node kind) carry all NeXus-specific metadata on generated sections and quantities . Each annotation is queryable
 at runtime via `m_def.m_get_annotations("nexus_field")` etc.
 
 ### `NeXusDefinition`
@@ -190,7 +188,7 @@ class NeXusGroup(AnnotationModel):
 
 ### `NeXusField`
 
-Attached to every `Quantity` derived from a NXDL `<field>` element.  Fields
+Attached to every `Quantity` derived from a NXDL `<field>` element. Fields
 carry typed data arrays and may have unit categories, interpretation hints,
 and long names.
 
@@ -211,7 +209,7 @@ class NeXusField(AnnotationModel):
 ### `NeXusAttribute`
 
 Attached to every `Quantity` derived from a NXDL `<attribute>` element (either
-group-level or field-level).  Field-level attributes set `parent_field` to the
+group-level or field-level). Field-level attributes set `parent_field` to the
 owning field name (e.g. `parent_field="energy"` for `energy__units`).
 
 ```python
@@ -243,7 +241,7 @@ class NeXusLink(AnnotationModel):
 ### `NeXusChoice`
 
 Attached to each `SubSection` representing one alternative in a NXDL `<choice>`
-block.  A choice allows exactly one NX class to occupy a named slot.  One
+block. A choice allows exactly one NX class to occupy a named slot. One
 SubSection is generated per alternative; all share the same `group_name`.
 
 Naming: `{choice_name}_{class_suffix}` — e.g. `pixel_shape_off_geometry` and
@@ -286,13 +284,13 @@ src/pynxtools/nomad/
     metainfo/
         __init__.py             # public API: build_base_classes_package(), build_applications_package()
         _package.py             # assembles NOMAD Packages
-        base_classes/           # Phase 1: 142 generated base class files
+        base_classes/           # 142 generated base class files
             __init__.py
             entry.py            # Entry(Object, basesections.Measurement)
             sample.py           # Sample(Object, basesections.CompositeSystem)
             detector.py
             ...
-        applications/           # Phase 2: 85 generated application definition files
+        applications/           # 85 generated application definition files
             __init__.py
             arpes.py            # Arpes(Entry) — application specialization of Entry
             xps.py              # Xps(Entry) — application specialization of Entry
@@ -301,18 +299,17 @@ src/pynxtools/nomad/
 
 ---
 
-## Application Definitions: The XpsEntry Decision {#adr-006-application-definitions}
+## Application Definitions
 
 ### The design principle: `Xps(Entry)` not `Xps(Object, Measurement)`
 
 In NeXus, every application definition (e.g. `NXxps.nxdl.xml`) wraps exactly one `NXentry` at
-the root level. This is not a container pattern — application definitions are **constraint templates**
+the root level. This is supposed to be a container pattern. However, in practice, no application definition has anything outside of its `NXentry` group. Therefore, application definitions can be understood as **constraint templates**
 that describe what an `NXentry` looks like in a specific measurement context.
 
 Therefore, in Python/NOMAD, application definitions inherit from `Entry` directly:
 
 ```python
-# Phase 2: generated application definition
 class Xps(Entry):
     m_def = Section(
         a_nexus_definition=NeXusDefinition(nx_class="NXxps", category="application"),
@@ -321,11 +318,9 @@ class Xps(Entry):
     # with XPS-specific optionality
 ```
 
-**Why this design** (see [ADR-006](../../data-modeling/nexus-metainfo/adr/ADR-006-application-definitions-are-entry-subclasses.md)):
-
 - `Xps` **is** a specialized kind of Entry, not a wrapper around an entry.
 - Parser logic is simpler: directly instantiate `Xps` when an HDF5 file's `NX_class` attribute says `"NXxps"`.
-- Inheritance chain is clear: `BaseSection → Object → Entry → Xps`.
+- Inheritance chain is clear: `Object → Entry → Xps`.
 - 1:1 mapping of NXentry to NOMAD entry is preserved.
 
 **Named concepts** in applications follow the same rule as base classes: a named concept class
@@ -354,7 +349,11 @@ class Entry(Object, basesections.Measurement):
     """Description of a complete, self-consistent measurement."""
 
     m_def = Section(
-        links=["https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXentry.html#nxentry"],
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXentry.html#nxentry"
+        ],
+        categories=[ExperimentCategory],
+        a_schema=SchemaAnnotation(label="Entry", enabled=False),
         a_nexus_definition=NeXusDefinition(
             nx_class="NXentry",
             category="base",
@@ -363,50 +362,88 @@ class Entry(Object, basesections.Measurement):
 
     # Cross-file SubSection: a_nexus_group lives on the SubSection itself
     # because Detector is defined in a separate file.
-    detector = SubSection(
-        section_def="pynxtools.nomad.metainfo.base_classes.detector.Detector",
+    data = SubSection(
+        section_def="pynxtools.nomad.metainfo.base_classes.data.Data",
         repeats=True,
+        variable=True,
+        description=(
+            ...
+        ),
         a_nexus_group=NeXusGroup(
-            nx_class="NXdetector",
+            nx_class="NXdata",
             name=None,
             name_type="any",
             optionality="optional",
         ),
     )
 
-    # Named concept SubSection: clean — a_nexus_group lives on EntryUser.m_def.
-    user = SubSection(
-        section_def="pynxtools.nomad.metainfo.base_classes.entry.EntryUser",
-        repeats=True,
-        variable=True,
+    # Named concept SubSection: a_nexus_group lives on EntryThumbnail.m_def.
+    thumbnail = SubSection(
+        section_def="pynxtools.nomad.metainfo.base_classes.entry.EntryThumbnail",
+        repeats=False,
+        description=(
+            ...
+        ),
     )
 
     start_time = Quantity(
         type=Datetime,
-        links=["https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXentry.html#nxentry-start-time-field"],
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXentry.html#nxentry-start-time-field"
+        ],
+        description=("Starting time of measurement"),
         a_nexus_field=NeXusField(
             name="start_time",
             type="NX_DATE_TIME",
             name_type="specified",
-            optionality="recommended",
+            optionality="optional",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.DateTimeEditQuantity,
         ),
     )
 
     def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
         super().normalize(archive, logger)
+        ...
 
 
-class EntryUser(User):
-    """A user contributing to this entry."""
+class EntryThumbnail(Note):
+    """
+    A small image that is representative of the entry. An example of this is a
+    640x480 jpeg image automatically produced by a low resolution plot of the
+    NXdata.
+    """
 
     m_def = Section(
-        links=["https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXentry.html#nxentry-user-group"],
-        variable=True,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXentry.html#nxentry-thumbnail-group"
+        ],
         a_nexus_group=NeXusGroup(
-            nx_class="NXuser",
-            name=None,
-            name_type="any",
+            nx_class="NXnote",
+            name="thumbnail",
+            name_type="specified",
             optionality="optional",
+        ),
+    )
+
+    type = Quantity(
+        type=MEnum(["image/*"]),
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXentry.html#nxentry-thumbnail-type-attribute"
+        ],
+        description=("The mime type should be an ``image/*``"),
+        a_nexus_attribute=NeXusAttribute(
+            name="type",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="optional",
+            enumeration=["image/*"],
+            deprecated="Use the `type` field instead",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.EnumEditQuantity,
+            default="image/*",
         ),
     )
 
@@ -417,10 +454,10 @@ class EntryUser(User):
 ### Named concepts vs. cross-file SubSections
 
 A named concept class is generated only when the group defines **its own quantities** that
-differ from the generic class — changed optionality, extra fields, or different
-type/units/enumeration.  Groups that exist purely for occurrence context (e.g. a
+differ from the generic class: changed optionality, extra fields, or different
+type/units/enumeration. Groups that exist purely for occurrence context (e.g. a
 `backgroundBACKGROUND` group with no additional fields) point their `SubSection` directly
-at the generic class; no named concept class is generated.  This rule also prevents
+at the generic class; no named concept class is generated. This rule also prevents
 circular imports since every class transitively extends `Object` (the generated `NXobject`
 class).
 
@@ -438,8 +475,8 @@ and may appear in multiple parent contexts.
 ## Shape representation
 
 NXDL `<dimensions>` elements map to `shape` on the generated `Quantity`. Concrete
-integer sizes are preserved as-is.  Unbounded or symbolically-named dimensions (e.g.
-`nP`, `nz`) become the wildcard `"*"` — NOMAD does not interpret NeXus symbol names.
+integer sizes are preserved as-is. Unbounded or symbolically-named dimensions (e.g.
+`nP`, `nz`) become the wildcard `"*"`. NOMAD does not interpret NeXus symbol names.
 Symbol definitions from the NXDL `<symbols>` block are preserved in
 `NeXusDefinition.symbols` on the class `m_def`.
 
@@ -479,10 +516,10 @@ the new output is considered user-added.
 pynx nomad generate-metainfo --nxdl NXentry
 pynx nomad generate-metainfo --nxdl NXarpes
 
-# Generate all base classes (Phase 1)
+# Generate all base classes
 pynx nomad generate-metainfo --all-base
 
-# Generate all application definitions (Phase 2)
+# Generate all application definitions
 pynx nomad generate-metainfo --all-applications
 
 # Generate all categories (apps first, then base --force for cross-refs)
@@ -504,7 +541,7 @@ pynx nomad generate-metainfo --all --output-dir ../nomad-measurements/nexus/meta
 
 `metainfo/_package.py` imports all generated modules and assembles NOMAD `Package` objects:
 
-### Base classes package (Phase 1)
+### Base classes package
 
 ```python
 from pynxtools.nomad.metainfo import build_base_classes_package
@@ -513,7 +550,7 @@ pkg_base = build_base_classes_package()
 print(len(pkg_base.section_definitions), "base sections")  # 327 including named concepts
 ```
 
-### Applications package (Phase 2)
+### Applications package
 
 ```python
 from pynxtools.nomad.metainfo import build_applications_package
@@ -524,14 +561,6 @@ print(len(pkg_apps.section_definitions), "application sections")  # 345 includin
 
 During package assembly, `__init_metainfo__()` resolves all `SubSection.section_def`
 string FQNs into live class references.
-
-!!! note "Phase 1 limitation"
-    Some base classes reference groups from the contributed definitions
-    (e.g. `NXphase` → `NXmicrostructure_ipf`).  Those contributed classes are not
-    generated in Phase 1, so the corresponding `SubSection` references remain
-    unresolved.  `build_base_classes_package()` emits a warning and continues rather than raising.
-    These cross-category references are resolved in Phase 2.
-
 ---
 
 ## Inheritance chain
@@ -541,12 +570,11 @@ the NXDL `extends` attribute) and — where a semantic match exists — addition
 from the corresponding NOMAD base section:
 
 ```python
-class Object(BaseSection): ...             # NXobject → root
+class Object(BaseSection): ...            # NXobject → root
 class Entry(Object, basesections.Measurement): ...
-class Process(Object, basesections.ActivityStep): ...
 class Sample(Component, basesections.CompositeSystem): ...
 class SampleComponent(Component, basesections.Component): ...
-class Data(Object, basesections.ActivityResult): ...
+...
 ```
 
 The NOMAD base section is imported **as the module** (`from nomad.datamodel.metainfo import
@@ -555,7 +583,7 @@ name collisions when the generated NeXus class and the NOMAD base share the same
 name (e.g. both `Component`).
 
 The secondary NOMAD base is only added when the NeXus `extends` chain does not already
-provide it — preventing duplicate entries in the MRO.
+provide it;s preventing duplicate entries in the MRO.
 
 | NXDL class | Generated class signature |
 |-----------|--------------------------|
@@ -568,15 +596,38 @@ provide it — preventing duplicate entries in the MRO.
 | `NXdata` | `Data(Object, basesections.ActivityResult)` |
 | all others | `<Class>(Object)` |
 
+!!! warning "In development"
+    This mapping is still being refactored, alongside the refactoring of the Base Sections v2. `NXprocess`, `NXfabrication`, and `NXdata` are especially not mapped in a proper way; this still needs to be addressed later.
+
 ---
 
 ## Naming conventions
 
 ### Class names
 
-`nxdl_to_class_name("NXmicrostructure_ipf")` → `"MicrostructureIPF"`
+Top-level classes — one per generated NXDL class — are camel-cased directly from
+the NXDL name: `nxdl_to_class_name("NXmicrostructure_ipf")` → `"MicrostructureIpf"`.
 
-Domain-specific abbreviations (`xrd`, `xps`, `arpes`, `mpes`, `em`, `apm`, `xas`, `afm`, `stm`, `sem`, `tem`, `spm`, `ipf`) are upper-cased; other words are title-cased.
+**Named concept classes** are generated for a group occurrence that adds its own
+quantities/children beyond its generic class (e.g. `MpesInstrument` for the
+`INSTRUMENT` group inside `NXmpes`). They are are named `{ParentClassName}{Suffix}`,
+where `Suffix` depends on the group's `name_type`, exactly like [Subsection
+names](#subsection-names) below but CamelCased instead of lowercased:
+
+- `name_type="specified"`: suffix from the NXDL name, e.g. `temperature_log` →
+  `TemperatureLog` → `SampleTemperatureLog`.
+- `name_type="any"`: suffix from `node.name` — the NXDL's explicit `name=`
+  attribute if it has one (e.g. `name="BIAS_SWEEP"` → `BiasSweep` →
+  `StsInstrumentBiasSweep`), otherwise the NX class itself (e.g. any `NXlog` →
+  `Log` → `ObjectLog`).
+- `name_type="partial"`: suffix from the lower-case prefix of the partial name,
+  e.g. `peakPEAK` → `Peak` → `FitPeak`.
+
+If the resulting name would equal the base class name itself (circular
+inheritance, e.g. `NXapm_measurement`'s own `measurement` child resolving to
+`ApmMeasurement` == its own base `ApmMeasurement`), it is re-prefixed with the
+full type-based name instead — e.g. `ApmApmMeasurement`. This is intentional,
+not a naming bug.
 
 ### Quantity names
 
@@ -585,9 +636,30 @@ Attributes are emitted without the `@` prefix. A small set of NOMAD `BaseSection
 
 ### Subsection names
 
-Group children with a fixed name use the NXDL name directly
-(e.g. `instrument` → `instrument`).  Variadic groups (name type `any`/`partial`) use
-the class stem in lower-case (e.g. any `NXdetector` group → `detector`).
+A group's Python attribute name is always derived from `node.name` — which
+`NexusNode` populates with either the NXDL's explicit `name=` attribute, or
+(when absent) the NeXus class stem in uppercase (e.g. `"USER"` for any `NXuser`).
+The three `name_type` values differ only in *casing*, not in which name is
+used:
+
+- `name_type="specified"` (a fixed-name group, e.g. `instrument`): used as-is
+  — NXDL convention already writes these in snake_case.
+- `name_type="any"` (a variadic group; instances may use any actual HDF5
+  name): `node.name` is lowercased. This covers both an anonymous
+  group with no `name=` attribute at all (e.g. any `NXdetector` → `detector`)
+  *and* an explicitly-named variadic group (e.g. `name="BIAS_SWEEP"` →
+  `bias_sweep`).
+- `name_type="partial"` (e.g. `peakPEAK`): used as-is, preserving the mixed
+  case, so the lower-case fixed prefix and the upper-case user-chosen portion
+  both stay visible in the generated code (consistent with the matching
+  concept class name, e.g. `FitPeakPEAK`).
+
+The `a_nexus_group(name=...)` annotation, separately, faithfully records what
+NXDL actually declares: `None` only for a genuinely anonymous group (no
+`name=` attribute at all), the literal NXDL name otherwise — so `name=None`
+for any `NXuser`, but `name="BIAS_SWEEP"` for the explicitly-named variadic
+group above, even though both get lowercased the same way for the Python
+attribute name.
 
 ### Field-attribute quantities
 
@@ -610,9 +682,7 @@ data__units = Quantity(
 ## Relation to existing schema
 
 The generated `metainfo/` package co-exists with `nomad/schema_packages/schema.py`.
-Phase 1 does not touch the existing code path.  Once Phase 1 is complete and validated,
-Phase 3 will bridge the two by making `schema.py` import from the generated classes
-rather than building its own section tree.
+While we are still working on the new schema/parser, we do not touch the existing code path. Once the new NOMAD integration is complete and validated, we will deprecate and eventually remove `schema.py` and `parser.py`.
 
 ---
 

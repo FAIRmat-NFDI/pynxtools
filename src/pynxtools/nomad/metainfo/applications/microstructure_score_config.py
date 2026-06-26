@@ -268,7 +268,7 @@ class MicrostructureScoreConfig(Entry):
             component=ELNComponentEnum.NumberEditQuantity,
         ),
     )
-    description_quantity = Quantity(
+    description = Quantity(
         type=str,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXmicrostructure_score_config.html#nxmicrostructure_score_config-entry-description-field"
@@ -1914,15 +1914,15 @@ class MicrostructureScoreConfigComponentAnalysis(Parameters):
         ),
     )
 
-    name_quantity = Quantity(
+    component_name = Quantity(
         type=str,
         links=[
-            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXmicrostructure_score_config.html#nxmicrostructure_score_config-entry-component-analysis-name-field"
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXmicrostructure_score_config.html#nxmicrostructure_score_config-entry-component-analysis-component-name-field"
         ],
         shape=["*"],
         description=("Given name of a texture component."),
         a_nexus_field=NeXusField(
-            name="name",
+            name="component_name",
             type="NX_CHAR",
             name_type="specified",
             optionality="required",
@@ -1939,7 +1939,7 @@ class MicrostructureScoreConfigComponentAnalysis(Parameters):
         description=(
             "Bunge-Euler angle representation :math:`\\varphi_1`, :math:`\\Phi`, "
             ":math:`\\varphi_2` of the of texture components in sequence of the "
-            "name field."
+            "component_name field."
         ),
         a_nexus_field=NeXusField(
             name="bunge_euler",
@@ -1961,7 +1961,7 @@ class MicrostructureScoreConfigComponentAnalysis(Parameters):
             "Integration radius that constraints the theta angular region of the "
             "orientation space (SO3) about each central location (obeying "
             "symmetries) as specified by bunge_euler indexed in the same "
-            "sequence as the bunge_euler and name fields."
+            "sequence as the bunge_euler and component_name fields."
         ),
         a_nexus_field=NeXusField(
             name="theta",

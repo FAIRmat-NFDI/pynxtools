@@ -80,7 +80,7 @@ class QuadrupoleMagnet(Component):
         description=("Voltage read from supply."),
     )
 
-    description_quantity = Quantity(
+    description = Quantity(
         type=str,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXquadrupole_magnet.html#nxquadrupole_magnet-description-field"

@@ -90,7 +90,7 @@ class SpinRotator(Component):
         description=("voltage read from HT supply."),
     )
 
-    description_quantity = Quantity(
+    description = Quantity(
         type=str,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXspin_rotator.html#nxspin_rotator-description-field"

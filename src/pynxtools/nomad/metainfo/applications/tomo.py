@@ -349,7 +349,7 @@ class TomoSample(Sample):
         ),
     )
 
-    name_quantity = Quantity(
+    name = Quantity(
         type=str,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXtomo.html#nxtomo-entry-sample-name-field"

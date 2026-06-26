@@ -240,7 +240,7 @@ class TasInstrumentSource(Source):
         ),
     )
 
-    name_quantity = Quantity(
+    name = Quantity(
         type=str,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXtas.html#nxtas-entry-instrument-source-name-field"
@@ -455,7 +455,7 @@ class TasSample(Sample):
         ),
     )
 
-    name_quantity = Quantity(
+    name = Quantity(
         type=str,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXtas.html#nxtas-entry-sample-name-field"

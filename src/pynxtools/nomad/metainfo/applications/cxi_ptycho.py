@@ -263,7 +263,7 @@ class CxiPtychoInstrument1Source1(Source):
         ),
     )
 
-    name_quantity = Quantity(
+    name = Quantity(
         type=str,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXcxi_ptycho.html#nxcxi_ptycho-entry-1-instrument-1-source-1-name-field"

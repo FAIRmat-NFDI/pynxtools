@@ -153,7 +153,7 @@ class MicrostructureKanapyResults(Entry):
             default="NXmicrostructure_kanapy_results",
         ),
     )
-    description_quantity = Quantity(
+    description = Quantity(
         type=str,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXmicrostructure_kanapy_results.html#nxmicrostructure_kanapy_results-entry-description-field"

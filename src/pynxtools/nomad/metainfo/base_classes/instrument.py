@@ -413,7 +413,7 @@ class Instrument(Object):
         ),
     )
 
-    name_quantity = Quantity(
+    name = Quantity(
         type=str,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXinstrument.html#nxinstrument-name-field"
@@ -429,7 +429,7 @@ class Instrument(Object):
             component=ELNComponentEnum.StringEditQuantity,
         ),
     )
-    name_quantity__short_name = Quantity(
+    name__short_name = Quantity(
         type=str,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXinstrument.html#nxinstrument-name-short-name-attribute"

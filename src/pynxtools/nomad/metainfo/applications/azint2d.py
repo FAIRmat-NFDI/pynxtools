@@ -276,7 +276,7 @@ class Azint2dInstrument(Instrument):
         ),
     )
 
-    name_quantity = Quantity(
+    name = Quantity(
         type=str,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXazint2d.html#nxazint2d-entry-instrument-name-field"
@@ -370,7 +370,7 @@ class Azint2dInstrumentSource(Source):
         ),
     )
 
-    name_quantity = Quantity(
+    name = Quantity(
         type=str,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXazint2d.html#nxazint2d-entry-instrument-source-name-field"

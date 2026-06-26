@@ -229,7 +229,7 @@ class TomoprocInstrumentSource(Source):
             component=ELNComponentEnum.StringEditQuantity,
         ),
     )
-    name_quantity = Quantity(
+    name = Quantity(
         type=str,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXtomoproc.html#nxtomoproc-entry-instrument-source-name-field"
@@ -279,7 +279,7 @@ class TomoprocSample(Sample):
         ),
     )
 
-    name_quantity = Quantity(
+    name = Quantity(
         type=str,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXtomoproc.html#nxtomoproc-entry-sample-name-field"

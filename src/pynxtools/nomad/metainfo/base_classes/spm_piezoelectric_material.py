@@ -71,7 +71,7 @@ class SpmPiezoelectricMaterial(Crystal):
         ),
     )
 
-    name_quantity = Quantity(
+    name = Quantity(
         type=str,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXspm_piezoelectric_material.html#nxspm_piezoelectric_material-name-field"

@@ -170,7 +170,7 @@ class SqomInstrument(Instrument):
         ),
     )
 
-    name_quantity = Quantity(
+    name = Quantity(
         type=str,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXsqom.html#nxsqom-entry-instrument-name-field"
@@ -245,7 +245,7 @@ class SqomInstrumentSource(Source):
             component=ELNComponentEnum.StringEditQuantity,
         ),
     )
-    name_quantity = Quantity(
+    name = Quantity(
         type=str,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXsqom.html#nxsqom-entry-instrument-source-name-field"
@@ -295,7 +295,7 @@ class SqomSample(Sample):
         ),
     )
 
-    name_quantity = Quantity(
+    name = Quantity(
         type=str,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXsqom.html#nxsqom-entry-sample-name-field"

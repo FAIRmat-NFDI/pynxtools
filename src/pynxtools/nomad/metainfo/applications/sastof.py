@@ -207,7 +207,7 @@ class SastofInstrument(Instrument):
         ),
     )
 
-    name_quantity = Quantity(
+    name = Quantity(
         type=str,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXsastof.html#nxsastof-entry-instrument-name-field"
@@ -282,7 +282,7 @@ class SastofInstrumentSource(Source):
             component=ELNComponentEnum.StringEditQuantity,
         ),
     )
-    name_quantity = Quantity(
+    name = Quantity(
         type=str,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXsastof.html#nxsastof-entry-instrument-source-name-field"
@@ -662,7 +662,7 @@ class SastofSample(Sample):
         ),
     )
 
-    name_quantity = Quantity(
+    name = Quantity(
         type=str,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXsastof.html#nxsastof-entry-sample-name-field"

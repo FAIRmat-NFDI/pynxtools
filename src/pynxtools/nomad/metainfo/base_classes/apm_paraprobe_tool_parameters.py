@@ -186,7 +186,7 @@ class ApmParaprobeToolParameters(Parameters):
         ),
         a_display={"unit": "dimensionless"},
     )
-    description_quantity = Quantity(
+    description = Quantity(
         type=str,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_tool_parameters.html#nxapm_paraprobe_tool_parameters-description-field"

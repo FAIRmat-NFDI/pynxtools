@@ -204,7 +204,7 @@ class TofnpdUser(User):
         ),
     )
 
-    name_quantity = Quantity(
+    name = Quantity(
         type=str,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXtofnpd.html#nxtofnpd-entry-user-name-field"
@@ -379,7 +379,7 @@ class TofnpdSample(Sample):
         ),
     )
 
-    name_quantity = Quantity(
+    name = Quantity(
         type=str,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXtofnpd.html#nxtofnpd-entry-sample-name-field"

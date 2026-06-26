@@ -146,7 +146,7 @@ class Parameters(Object):
             component=ELNComponentEnum.NumberEditQuantity,
         ),
     )
-    PARAMETER__description_quantity = Quantity(
+    PARAMETER__description = Quantity(
         type=str,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXparameters.html#nxparameters-parameter-description-attribute"

@@ -480,7 +480,7 @@ class SnshistoDaslogsLog(Log):
             component=ELNComponentEnum.NumberEditQuantity,
         ),
     )
-    description_quantity = Quantity(
+    description = Quantity(
         type=str,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXsnshisto.html#nxsnshisto-entry-daslogs-log-description-field"
@@ -643,7 +643,7 @@ class SnshistoDaslogsPositioner(Positioner):
             component=ELNComponentEnum.NumberEditQuantity,
         ),
     )
-    description_quantity = Quantity(
+    description = Quantity(
         type=str,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXsnshisto.html#nxsnshisto-entry-daslogs-positioner-description-field"
@@ -824,7 +824,7 @@ class SnshistoSnshistotool(Note):
             component=ELNComponentEnum.StringEditQuantity,
         ),
     )
-    description_quantity = Quantity(
+    description = Quantity(
         type=str,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXsnshisto.html#nxsnshisto-entry-snshistotool-description-field"
@@ -1159,7 +1159,7 @@ class SnshistoInstrument(Instrument):
             component=ELNComponentEnum.StringEditQuantity,
         ),
     )
-    name_quantity = Quantity(
+    name = Quantity(
         type=str,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXsnshisto.html#nxsnshisto-entry-instrument-name-field"
@@ -1211,7 +1211,7 @@ class SnshistoInstrumentSns(Source):
         ),
         a_display={"unit": "hertz"},
     )
-    name_quantity = Quantity(
+    name = Quantity(
         type=str,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXsnshisto.html#nxsnshisto-entry-instrument-sns-name-field"
@@ -1612,7 +1612,7 @@ class SnshistoInstrumentDetectorOriginShape(Shape):
         ),
     )
 
-    description_quantity = Quantity(
+    description = Quantity(
         type=str,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXsnshisto.html#nxsnshisto-entry-instrument-detector-origin-shape-description-field"
@@ -2065,7 +2065,7 @@ class SnshistoInstrumentApertureOriginShape(Shape):
         ),
     )
 
-    description_quantity = Quantity(
+    description = Quantity(
         type=str,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXsnshisto.html#nxsnshisto-entry-instrument-aperture-origin-shape-description-field"
@@ -2318,7 +2318,7 @@ class SnshistoInstrumentCrystalOrigin(Geometry):
         ),
     )
 
-    description_quantity = Quantity(
+    description = Quantity(
         type=str,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXsnshisto.html#nxsnshisto-entry-instrument-crystal-origin-description-field"
@@ -2386,7 +2386,7 @@ class SnshistoInstrumentCrystalOriginShape(Shape):
         ),
     )
 
-    description_quantity = Quantity(
+    description = Quantity(
         type=str,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXsnshisto.html#nxsnshisto-entry-instrument-crystal-origin-shape-description-field"
@@ -2636,7 +2636,7 @@ class SnshistoSample(Sample):
             component=ELNComponentEnum.StringEditQuantity,
         ),
     )
-    name_quantity = Quantity(
+    name = Quantity(
         type=str,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXsnshisto.html#nxsnshisto-entry-sample-name-field"
@@ -2702,7 +2702,7 @@ class SnshistoUser(User):
             component=ELNComponentEnum.StringEditQuantity,
         ),
     )
-    name_quantity = Quantity(
+    name = Quantity(
         type=str,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXsnshisto.html#nxsnshisto-entry-user-name-field"

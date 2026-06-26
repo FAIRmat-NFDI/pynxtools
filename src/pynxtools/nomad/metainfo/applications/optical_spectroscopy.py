@@ -1375,7 +1375,7 @@ class OpticalSpectroscopyInstrumentSource_TYPE(Source):
             component=ELNComponentEnum.StringEditQuantity,
         ),
     )
-    name_quantity = Quantity(
+    name = Quantity(
         type=str,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXoptical_spectroscopy.html#nxoptical_spectroscopy-entry-instrument-source-type-name-field"
@@ -2061,7 +2061,7 @@ class OpticalSpectroscopyInstrumentTemperatureSensor(Sensor):
         ),
     )
 
-    name_quantity = Quantity(
+    name = Quantity(
         type=str,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXoptical_spectroscopy.html#nxoptical_spectroscopy-entry-instrument-temperature-sensor-name-field"
@@ -2153,7 +2153,7 @@ class OpticalSpectroscopyInstrumentTemp_control_TYPE(Actuator):
         ),
     )
 
-    name_quantity = Quantity(
+    name = Quantity(
         type=str,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXoptical_spectroscopy.html#nxoptical_spectroscopy-entry-instrument-temp-control-type-name-field"
@@ -2639,7 +2639,7 @@ class OpticalSpectroscopySample(Sample):
         ),
     )
 
-    name_quantity = Quantity(
+    name = Quantity(
         type=str,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXoptical_spectroscopy.html#nxoptical_spectroscopy-entry-sample-name-field"

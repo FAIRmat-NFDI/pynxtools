@@ -141,7 +141,7 @@ class Mirror(Component):
             component=ELNComponentEnum.EnumEditQuantity,
         ),
     )
-    description_quantity = Quantity(
+    description = Quantity(
         type=str,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXmirror.html#nxmirror-description-field"

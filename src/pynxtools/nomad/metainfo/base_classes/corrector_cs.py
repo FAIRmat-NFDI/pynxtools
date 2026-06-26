@@ -607,7 +607,7 @@ class CorrectorCsTableauID(Process):
         ),
     )
 
-    description_quantity = Quantity(
+    description = Quantity(
         type=str,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXcorrector_cs.html#nxcorrector_cs-tableauid-description-field"

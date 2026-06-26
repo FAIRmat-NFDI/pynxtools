@@ -83,7 +83,7 @@ class Xeuler(Xbase):
         section_def="pynxtools.nomad.metainfo.applications.xeuler.XeulerSample",
         repeats=False,
     )
-    name_group = SubSection(
+    name = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.xeuler.XeulerName",
         repeats=False,
     )

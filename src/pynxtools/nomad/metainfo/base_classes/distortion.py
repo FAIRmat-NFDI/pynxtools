@@ -194,7 +194,7 @@ class Distortion(Process):
             units="NX_UNITLESS",
         ),
     )
-    description_quantity = Quantity(
+    description = Quantity(
         type=str,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXdistortion.html#nxdistortion-description-field"

@@ -75,7 +75,7 @@ class Positioner(Component):
         ),
     )
 
-    name_quantity = Quantity(
+    name = Quantity(
         type=str,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXpositioner.html#nxpositioner-name-field"
@@ -91,7 +91,7 @@ class Positioner(Component):
             component=ELNComponentEnum.StringEditQuantity,
         ),
     )
-    description_quantity = Quantity(
+    description = Quantity(
         type=str,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXpositioner.html#nxpositioner-description-field"

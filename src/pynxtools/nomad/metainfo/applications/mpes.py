@@ -463,7 +463,7 @@ class MpesUser(User):
         ),
     )
 
-    name_quantity = Quantity(
+    name = Quantity(
         type=str,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXmpes.html#nxmpes-entry-user-name-field"
@@ -882,7 +882,7 @@ class MpesInstrumentSourceProbe(Source):
             component=ELNComponentEnum.StringEditQuantity,
         ),
     )
-    name_quantity = Quantity(
+    name = Quantity(
         type=str,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXmpes.html#nxmpes-entry-instrument-source-probe-name-field"
@@ -1059,7 +1059,7 @@ class MpesInstrumentSourcePump(Source):
             component=ELNComponentEnum.StringEditQuantity,
         ),
     )
-    name_quantity = Quantity(
+    name = Quantity(
         type=str,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXmpes.html#nxmpes-entry-instrument-source-pump-name-field"
@@ -1251,7 +1251,7 @@ class MpesInstrumentSource_TYPE(Source):
             component=ELNComponentEnum.StringEditQuantity,
         ),
     )
-    name_quantity = Quantity(
+    name = Quantity(
         type=str,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXmpes.html#nxmpes-entry-instrument-source-type-name-field"
@@ -1841,7 +1841,7 @@ class MpesInstrumentElectronanalyzer(Electronanalyzer):
         ),
     )
 
-    description_quantity = Quantity(
+    description = Quantity(
         type=str,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXmpes.html#nxmpes-entry-instrument-electronanalyzer-description-field"
@@ -3148,7 +3148,7 @@ class MpesInstrumentManipulatorTemperatureSensor(Sensor):
         ),
     )
 
-    name_quantity = Quantity(
+    name = Quantity(
         type=str,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXmpes.html#nxmpes-entry-instrument-manipulator-temperature-sensor-name-field"
@@ -3226,7 +3226,7 @@ class MpesInstrumentManipulatorSampleHeater(Actuator):
         ),
     )
 
-    name_quantity = Quantity(
+    name = Quantity(
         type=str,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXmpes.html#nxmpes-entry-instrument-manipulator-sample-heater-name-field"
@@ -3345,7 +3345,7 @@ class MpesInstrumentManipulatorCryostat(Actuator):
         ),
     )
 
-    name_quantity = Quantity(
+    name = Quantity(
         type=str,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXmpes.html#nxmpes-entry-instrument-manipulator-cryostat-name-field"
@@ -3433,7 +3433,7 @@ class MpesInstrumentManipulatorDrainCurrentAmmeter(Sensor):
         ),
     )
 
-    name_quantity = Quantity(
+    name = Quantity(
         type=str,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXmpes.html#nxmpes-entry-instrument-manipulator-drain-current-ammeter-name-field"
@@ -3499,7 +3499,7 @@ class MpesInstrumentManipulatorSampleBiasVoltmeter(Sensor):
         ),
     )
 
-    name_quantity = Quantity(
+    name = Quantity(
         type=str,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXmpes.html#nxmpes-entry-instrument-manipulator-sample-bias-voltmeter-name-field"
@@ -3577,7 +3577,7 @@ class MpesInstrumentManipulatorSampleBiasPotentiostat(Actuator):
         ),
     )
 
-    name_quantity = Quantity(
+    name = Quantity(
         type=str,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXmpes.html#nxmpes-entry-instrument-manipulator-sample-bias-potentiostat-name-field"
@@ -3743,7 +3743,7 @@ class MpesInstrumentPressureGauge(Sensor):
         ),
     )
 
-    name_quantity = Quantity(
+    name = Quantity(
         type=str,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXmpes.html#nxmpes-entry-instrument-pressure-gauge-name-field"
@@ -3871,7 +3871,7 @@ class MpesInstrumentFloodGun(Actuator):
         ),
     )
 
-    name_quantity = Quantity(
+    name = Quantity(
         type=str,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXmpes.html#nxmpes-entry-instrument-flood-gun-name-field"
@@ -4509,7 +4509,7 @@ class MpesSample(Sample):
         ),
     )
 
-    name_quantity = Quantity(
+    name = Quantity(
         type=str,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXmpes.html#nxmpes-entry-sample-name-field"
