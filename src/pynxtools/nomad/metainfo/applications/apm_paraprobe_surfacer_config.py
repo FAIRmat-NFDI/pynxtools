@@ -47,7 +47,7 @@ from pynxtools.nomad.annotations import (
 from pynxtools.nomad.metainfo._category import ExperimentCategory
 from pynxtools.nomad.metainfo.applications.apm_paraprobe_tool_config import (
     ApmParaprobeToolConfig,
-    ApmParaprobeToolConfigApmParaprobeToolParameters,
+    ApmParaprobeToolConfigTaskconfig,
 )
 from pynxtools.nomad.metainfo.base_classes.parameters import Parameters
 
@@ -132,9 +132,7 @@ class ApmParaprobeSurfacerConfig(ApmParaprobeToolConfig):
 # =============================================================================
 
 
-class ApmParaprobeSurfacerConfigSurface_meshingID(
-    ApmParaprobeToolConfigApmParaprobeToolParameters
-):
+class ApmParaprobeSurfacerConfigSurface_meshingID(ApmParaprobeToolConfigTaskconfig):
     m_def = Section(
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_surfacer_config.html#nxapm_paraprobe_surfacer_config-entry-surface-meshingid-group"

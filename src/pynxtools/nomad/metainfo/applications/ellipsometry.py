@@ -48,7 +48,9 @@ from pynxtools.nomad.metainfo.applications.optical_spectroscopy import (
     OpticalSpectroscopyInstrument,
     OpticalSpectroscopySample,
 )
+from pynxtools.nomad.metainfo.base_classes.optical_lens import OpticalLens
 from pynxtools.nomad.metainfo.base_classes.program import Program
+from pynxtools.nomad.metainfo.base_classes.waveplate import Waveplate
 
 if TYPE_CHECKING:
     from nomad.datamodel import EntryArchive
@@ -394,6 +396,27 @@ class EllipsometryInstrument(OpticalSpectroscopyInstrument):
         ),
     )
 
+    focusing_probes = SubSection(
+        section_def="pynxtools.nomad.metainfo.applications.ellipsometry.EllipsometryInstrumentFocusingProbes",
+        repeats=False,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXoptical_lens",
+            name="focusing_probes",
+            name_type="specified",
+            optionality="optional",
+        ),
+    )
+    rotating_element = SubSection(
+        section_def="pynxtools.nomad.metainfo.applications.ellipsometry.EllipsometryInstrumentRotatingElement",
+        repeats=False,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXwaveplate",
+            name="rotating_element",
+            name_type="specified",
+            optionality="required",
+        ),
+    )
+
     ellipsometer_type = Quantity(
         type=str,
         links=[
@@ -424,6 +447,219 @@ class EllipsometryInstrument(OpticalSpectroscopyInstrument):
         a_eln=ELNAnnotation(
             component=ELNComponentEnum.StringEditQuantity,
         ),
+    )
+
+    def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
+        super().normalize(archive, logger)
+
+
+class EllipsometryInstrumentFocusingProbes(OpticalLens):
+    """
+    If focusing probes (lenses) were used, please state if the data were
+    corrected for the window effects.
+    """
+
+    m_def = Section(
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXellipsometry.html#nxellipsometry-entry-instrument-focusing-probes-group"
+        ],
+        a_nexus_group=NeXusGroup(
+            nx_class="NXoptical_lens",
+            name="focusing_probes",
+            name_type="specified",
+            optionality="optional",
+        ),
+    )
+
+    device_information = SubSection(
+        section_def="pynxtools.nomad.metainfo.base_classes.fabrication.Fabrication",
+        repeats=False,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXfabrication",
+            name="device_information",
+            name_type="specified",
+            optionality="optional",
+        ),
+    )
+
+    type = Quantity(
+        type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXellipsometry.html#nxellipsometry-entry-instrument-focusing-probes-type-field"
+        ],
+        a_nexus_field=NeXusField(
+            name="type",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="required",
+            enumeration=["objective", "lens", "glass fiber", "none"],
+            open_enum=True,
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
+    )
+    data_correction = Quantity(
+        type=bool,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXellipsometry.html#nxellipsometry-entry-instrument-focusing-probes-data-correction-field"
+        ],
+        description=(
+            "Were the recorded data corrected by the window effects of the "
+            "focusing probes (lenses)?"
+        ),
+        a_nexus_field=NeXusField(
+            name="data_correction",
+            type="NX_BOOLEAN",
+            name_type="specified",
+            optionality="recommended",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.BoolEditQuantity,
+        ),
+    )
+    angular_spread = Quantity(
+        type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXellipsometry.html#nxellipsometry-entry-instrument-focusing-probes-angular-spread-field"
+        ],
+        dimensionality="[angle]",
+        unit="radian",
+        description=("Specify the angular spread caused by the focusing probes."),
+        a_nexus_field=NeXusField(
+            name="angular_spread",
+            type="NX_NUMBER",
+            name_type="specified",
+            optionality="recommended",
+            units="NX_ANGLE",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "radian"},
+    )
+
+    def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
+        super().normalize(archive, logger)
+
+
+class EllipsometryInstrumentRotatingElement(Waveplate):
+    """
+    Properties of the rotating element defined in
+    'instrument/rotating_element_type'.
+    """
+
+    m_def = Section(
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXellipsometry.html#nxellipsometry-entry-instrument-rotating-element-group"
+        ],
+        a_nexus_group=NeXusGroup(
+            nx_class="NXwaveplate",
+            name="rotating_element",
+            name_type="specified",
+            optionality="required",
+        ),
+    )
+
+    rotating_element_type = Quantity(
+        type=MEnum(
+            [
+                "polarizer (source side)",
+                "analyzer (detector side)",
+                "compensator (source side)",
+                "compensator (detector side)",
+            ]
+        ),
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXellipsometry.html#nxellipsometry-entry-instrument-rotating-element-rotating-element-type-field"
+        ],
+        description=("Define which element rotates, e.g. polarizer or analyzer."),
+        a_nexus_field=NeXusField(
+            name="rotating_element_type",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="required",
+            enumeration=[
+                "polarizer (source side)",
+                "analyzer (detector side)",
+                "compensator (source side)",
+                "compensator (detector side)",
+            ],
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.EnumEditQuantity,
+        ),
+    )
+    revolutions = Quantity(
+        type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXellipsometry.html#nxellipsometry-entry-instrument-rotating-element-revolutions-field"
+        ],
+        dimensionality="dimensionless",
+        unit="dimensionless",
+        description=(
+            "Define how many revolutions of the rotating element were averaged "
+            "for each measurement. If the number of revolutions was fixed to a "
+            "certain value use the field 'fixed_revolutions' instead."
+        ),
+        a_nexus_field=NeXusField(
+            name="revolutions",
+            type="NX_NUMBER",
+            name_type="specified",
+            optionality="optional",
+            units="NX_COUNT",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "dimensionless"},
+    )
+    fixed_revolutions = Quantity(
+        type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXellipsometry.html#nxellipsometry-entry-instrument-rotating-element-fixed-revolutions-field"
+        ],
+        dimensionality="dimensionless",
+        unit="dimensionless",
+        description=(
+            "Define how many revolutions of the rotating element were taken into "
+            "account for each measurement (if number of revolutions was fixed to "
+            "a certain value, i.e. not averaged)."
+        ),
+        a_nexus_field=NeXusField(
+            name="fixed_revolutions",
+            type="NX_NUMBER",
+            name_type="specified",
+            optionality="optional",
+            units="NX_COUNT",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "dimensionless"},
+    )
+    max_revolutions = Quantity(
+        type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXellipsometry.html#nxellipsometry-entry-instrument-rotating-element-max-revolutions-field"
+        ],
+        dimensionality="dimensionless",
+        unit="dimensionless",
+        description=(
+            "Specify the maximum value of revolutions of the rotating element "
+            "for each measurement."
+        ),
+        a_nexus_field=NeXusField(
+            name="max_revolutions",
+            type="NX_NUMBER",
+            name_type="specified",
+            optionality="optional",
+            units="NX_COUNT",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "dimensionless"},
     )
 
     def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:

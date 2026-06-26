@@ -146,13 +146,13 @@ class EmEdsIndexing(Process):
             optionality="optional",
         ),
     )
-    image = SubSection(
-        section_def="pynxtools.nomad.metainfo.base_classes.em_eds.EmEdsIndexingImage",
+    element_specific_map = SubSection(
+        section_def="pynxtools.nomad.metainfo.base_classes.em_eds.EmEdsIndexingElementSpecificMap",
         repeats=True,
         variable=True,
         a_nexus_group=NeXusGroup(
             nx_class="NXimage",
-            name=None,
+            name="ELEMENT_SPECIFIC_MAP",
             name_type="any",
             optionality="optional",
         ),
@@ -387,7 +387,7 @@ class EmEdsIndexingPeakAtom(Atom):
         super().normalize(archive, logger)
 
 
-class EmEdsIndexingImage(Image):
+class EmEdsIndexingElementSpecificMap(Image):
     """
     Individual element-specific EDS/EDX/EDXS/SXES mapping
 
@@ -412,14 +412,14 @@ class EmEdsIndexingImage(Image):
         variable=True,
         a_nexus_group=NeXusGroup(
             nx_class="NXimage",
-            name=None,
+            name="ELEMENT_SPECIFIC_MAP",
             name_type="any",
             optionality="optional",
         ),
     )
 
     process = SubSection(
-        section_def="pynxtools.nomad.metainfo.base_classes.em_eds.EmEdsIndexingImageProcess",
+        section_def="pynxtools.nomad.metainfo.base_classes.em_eds.EmEdsIndexingElementSpecificMapProcess",
         repeats=True,
         variable=True,
         a_nexus_group=NeXusGroup(
@@ -492,7 +492,7 @@ class EmEdsIndexingImage(Image):
         super().normalize(archive, logger)
 
 
-class EmEdsIndexingImageProcess(Process):
+class EmEdsIndexingElementSpecificMapProcess(Process):
     m_def = Section(
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXem_eds.html#nxem_eds-indexing-element-specific-map-process-group"

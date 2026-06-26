@@ -15717,13 +15717,13 @@ class EmRoiIDEdsIndexing(Process):
             optionality="optional",
         ),
     )
-    image = SubSection(
-        section_def="pynxtools.nomad.metainfo.applications.em.EmRoiIDEdsIndexingImage",
+    element_specific_map = SubSection(
+        section_def="pynxtools.nomad.metainfo.applications.em.EmRoiIDEdsIndexingElementSpecificMap",
         repeats=True,
         variable=True,
         a_nexus_group=NeXusGroup(
             nx_class="NXimage",
-            name=None,
+            name="ELEMENT_SPECIFIC_MAP",
             name_type="any",
             optionality="optional",
             min_occurs=0,
@@ -15872,7 +15872,7 @@ class EmRoiIDEdsIndexingSummary(Data):
         super().normalize(archive, logger)
 
 
-class EmRoiIDEdsIndexingImage(Image):
+class EmRoiIDEdsIndexingElementSpecificMap(Image):
     m_def = Section(
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXem.html#nxem-entry-roiid-eds-indexing-element-specific-map-group"
@@ -15880,7 +15880,7 @@ class EmRoiIDEdsIndexingImage(Image):
         variable=True,
         a_nexus_group=NeXusGroup(
             nx_class="NXimage",
-            name=None,
+            name="ELEMENT_SPECIFIC_MAP",
             name_type="any",
             optionality="optional",
             min_occurs=0,
@@ -15889,7 +15889,7 @@ class EmRoiIDEdsIndexingImage(Image):
     )
 
     image_2d = SubSection(
-        section_def="pynxtools.nomad.metainfo.applications.em.EmRoiIDEdsIndexingImageImage2d",
+        section_def="pynxtools.nomad.metainfo.applications.em.EmRoiIDEdsIndexingElementSpecificMapImage2d",
         repeats=False,
         a_nexus_group=NeXusGroup(
             nx_class="NXdata",
@@ -15935,7 +15935,7 @@ class EmRoiIDEdsIndexingImage(Image):
         super().normalize(archive, logger)
 
 
-class EmRoiIDEdsIndexingImageImage2d(Data):
+class EmRoiIDEdsIndexingElementSpecificMapImage2d(Data):
     m_def = Section(
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXem.html#nxem-entry-roiid-eds-indexing-element-specific-map-image-2d-group"

@@ -45,7 +45,7 @@ import click
     "generate_all",
     is_flag=True,
     default=False,
-    help="Generate all categories (applications first, then base classes with --force).",
+    help="Generate all categories (applications first, then base classes; additive-only unless --force).",
 )
 @click.option(
     "--all-base",
@@ -104,7 +104,7 @@ def generate_metainfo(
       pynx nomad generate-metainfo --nxdl NXdetector
       pynx nomad generate-metainfo --all-base
       pynx nomad generate-metainfo --all-applications
-      pynx nomad generate-metainfo --all           # apps first, then base --force
+      pynx nomad generate-metainfo --all           # apps first, then base (additive-only unless --force)
       pynx nomad generate-metainfo --all --dry-run  # CI check
       pynx nomad generate-metainfo --all \\
           --output-dir ../nomad-measurements/src/nomad_measurements/nexus/metainfo
@@ -163,9 +163,9 @@ def generate_metainfo(
     elif generate_all_applications:
         _report(_gen_apps(dry_run=dry_run, force=force, output_dir=output_dir))
 
-    else:  # --all: applications first, then base with --force to pick up cross-category refs
+    else:  # --all: applications first, then base classes.
         n = _gen_apps(dry_run=dry_run, force=force, output_dir=output_dir)
         n += generate_all_base_classes(
-            dry_run=dry_run, force=True, output_dir=output_dir
+            dry_run=dry_run, force=force, output_dir=output_dir
         )
         _report(n)

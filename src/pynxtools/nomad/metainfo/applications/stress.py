@@ -157,8 +157,8 @@ class Stress(Entry):
         section_def="pynxtools.nomad.metainfo.applications.stress.StressInstrument",
         repeats=False,
     )
-    sample = SubSection(
-        section_def="pynxtools.nomad.metainfo.applications.stress.StressSample",
+    sample_description = SubSection(
+        section_def="pynxtools.nomad.metainfo.applications.stress.StressSampleDescription",
         repeats=True,
         variable=True,
         description=(
@@ -166,8 +166,8 @@ class Stress(Entry):
             "associated with the sample."
         ),
     )
-    process = SubSection(
-        section_def="pynxtools.nomad.metainfo.applications.stress.StressProcess",
+    fit = SubSection(
+        section_def="pynxtools.nomad.metainfo.applications.stress.StressFit",
         repeats=True,
         variable=True,
         description=(
@@ -175,7 +175,7 @@ class Stress(Entry):
             "the content of this application definition."
         ),
     )
-    note = SubSection(
+    notes = SubSection(
         section_def="pynxtools.nomad.metainfo.base_classes.note.Note",
         repeats=True,
         variable=True,
@@ -186,7 +186,7 @@ class Stress(Entry):
         ),
         a_nexus_group=NeXusGroup(
             nx_class="NXnote",
-            name=None,
+            name="NOTES",
             name_type="any",
             optionality="optional",
             min_occurs=0,
@@ -438,13 +438,13 @@ class StressInstrument(Instrument):
         ),
     )
 
-    note = SubSection(
-        section_def="pynxtools.nomad.metainfo.applications.stress.StressInstrumentNote",
+    calibration = SubSection(
+        section_def="pynxtools.nomad.metainfo.applications.stress.StressInstrumentCalibration",
         repeats=True,
         variable=True,
         a_nexus_group=NeXusGroup(
             nx_class="NXnote",
-            name=None,
+            name="CALIBRATION",
             name_type="any",
             optionality="optional",
             min_occurs=0,
@@ -534,7 +534,7 @@ class StressInstrument(Instrument):
         super().normalize(archive, logger)
 
 
-class StressInstrumentNote(Note):
+class StressInstrumentCalibration(Note):
     """
     This group contains information about the geometry and/or efficiency
     measurement(s).
@@ -547,7 +547,7 @@ class StressInstrumentNote(Note):
         variable=True,
         a_nexus_group=NeXusGroup(
             nx_class="NXnote",
-            name=None,
+            name="CALIBRATION",
             name_type="any",
             optionality="optional",
             min_occurs=0,
@@ -1119,7 +1119,7 @@ class StressInstrumentBeamIntensityProfile(Beam):
         super().normalize(archive, logger)
 
 
-class StressSample(Sample):
+class StressSampleDescription(Sample):
     """
     This is the recommended location for describing parameters associated with
     the sample.
@@ -1132,7 +1132,7 @@ class StressSample(Sample):
         variable=True,
         a_nexus_group=NeXusGroup(
             nx_class="NXsample",
-            name=None,
+            name="SAMPLE_DESCRIPTION",
             name_type="any",
             optionality="required",
             min_occurs=1,
@@ -1141,7 +1141,7 @@ class StressSample(Sample):
     )
 
     gauge_volume = SubSection(
-        section_def="pynxtools.nomad.metainfo.applications.stress.StressSampleGaugeVolume",
+        section_def="pynxtools.nomad.metainfo.applications.stress.StressSampleDescriptionGaugeVolume",
         repeats=False,
         a_nexus_group=NeXusGroup(
             nx_class="NXparameters",
@@ -1224,7 +1224,7 @@ class StressSample(Sample):
         super().normalize(archive, logger)
 
 
-class StressSampleGaugeVolume(Parameters):
+class StressSampleDescriptionGaugeVolume(Parameters):
     """
     The gauge volume can be described with the following parameters: ..
     figure:: stress/gauge_volume.png :width: 70% :alt: Gauge volume parameters
@@ -1349,7 +1349,7 @@ class StressSampleGaugeVolume(Parameters):
         super().normalize(archive, logger)
 
 
-class StressProcess(Process):
+class StressFit(Process):
     """
     Zero or more groups to describe the data processing steps to obtain the
     content of this application definition.
@@ -1362,7 +1362,7 @@ class StressProcess(Process):
         variable=True,
         a_nexus_group=NeXusGroup(
             nx_class="NXprocess",
-            name=None,
+            name="FIT",
             name_type="any",
             optionality="required",
             min_occurs=1,
@@ -1381,8 +1381,19 @@ class StressProcess(Process):
             max_occurs=1,
         ),
     )
+    description_group = SubSection(
+        section_def="pynxtools.nomad.metainfo.base_classes.note.Note",
+        repeats=True,
+        variable=True,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXnote",
+            name="DESCRIPTION",
+            name_type="any",
+            optionality="required",
+        ),
+    )
     peak_parameters = SubSection(
-        section_def="pynxtools.nomad.metainfo.applications.stress.StressProcessPeakParameters",
+        section_def="pynxtools.nomad.metainfo.applications.stress.StressFitPeakParameters",
         repeats=False,
         a_nexus_group=NeXusGroup(
             nx_class="NXparameters",
@@ -1394,7 +1405,7 @@ class StressProcess(Process):
         ),
     )
     background_parameters = SubSection(
-        section_def="pynxtools.nomad.metainfo.applications.stress.StressProcessBackgroundParameters",
+        section_def="pynxtools.nomad.metainfo.applications.stress.StressFitBackgroundParameters",
         repeats=False,
         a_nexus_group=NeXusGroup(
             nx_class="NXparameters",
@@ -1405,13 +1416,13 @@ class StressProcess(Process):
             max_occurs=1,
         ),
     )
-    data = SubSection(
-        section_def="pynxtools.nomad.metainfo.applications.stress.StressProcessData",
+    diffractogram = SubSection(
+        section_def="pynxtools.nomad.metainfo.applications.stress.StressFitDiffractogram",
         repeats=True,
         variable=True,
         a_nexus_group=NeXusGroup(
             nx_class="NXdata",
-            name=None,
+            name="DIFFRACTOGRAM",
             name_type="any",
             optionality="required",
             min_occurs=1,
@@ -1586,7 +1597,7 @@ class StressProcess(Process):
         super().normalize(archive, logger)
 
 
-class StressProcessPeakParameters(Parameters):
+class StressFitPeakParameters(Parameters):
     """
     This group contains all diffraction peak fit parameters. This information
     is not required for stress and strain calculations.
@@ -2021,7 +2032,7 @@ class StressProcessPeakParameters(Parameters):
         super().normalize(archive, logger)
 
 
-class StressProcessBackgroundParameters(Parameters):
+class StressFitBackgroundParameters(Parameters):
     """
     This group contains all background fit parameters. This information is not
     required for stress and strain calculations.
@@ -2267,7 +2278,7 @@ class StressProcessBackgroundParameters(Parameters):
         super().normalize(archive, logger)
 
 
-class StressProcessData(Data):
+class StressFitDiffractogram(Data):
     """
     Diffractogram with fit results in :ref:`peak_parameters
     </NXstress/ENTRY/fit/peak_parameters-group>` and
@@ -2283,7 +2294,7 @@ class StressProcessData(Data):
         variable=True,
         a_nexus_group=NeXusGroup(
             nx_class="NXdata",
-            name=None,
+            name="DIFFRACTOGRAM",
             name_type="any",
             optionality="required",
             min_occurs=1,

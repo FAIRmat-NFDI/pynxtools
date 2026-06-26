@@ -80,8 +80,8 @@ class OpticalLens(Component):
             "'coating'."
         ),
     )
-    sample = SubSection(
-        section_def="pynxtools.nomad.metainfo.base_classes.optical_lens.OpticalLensSample",
+    coating = SubSection(
+        section_def="pynxtools.nomad.metainfo.base_classes.optical_lens.OpticalLensCoating",
         repeats=True,
         variable=True,
         description=(
@@ -380,7 +380,7 @@ class OpticalLensSubstrate(Sample):
         super().normalize(archive, logger)
 
 
-class OpticalLensSample(Sample):
+class OpticalLensCoating(Sample):
     """
     If the lens has a coating describe the material and its properties. Some
     basic information can be found e.g. [here]
@@ -398,7 +398,7 @@ class OpticalLensSample(Sample):
         variable=True,
         a_nexus_group=NeXusGroup(
             nx_class="NXsample",
-            name=None,
+            name="COATING",
             name_type="any",
             optionality="optional",
         ),

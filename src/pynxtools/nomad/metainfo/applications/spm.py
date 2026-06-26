@@ -59,7 +59,13 @@ from pynxtools.nomad.metainfo.base_classes.fabrication import Fabrication
 from pynxtools.nomad.metainfo.base_classes.lockin import Lockin
 from pynxtools.nomad.metainfo.base_classes.parameters import Parameters
 from pynxtools.nomad.metainfo.base_classes.sensor import Sensor
+from pynxtools.nomad.metainfo.base_classes.spm_bias_spectroscopy import (
+    SpmBiasSpectroscopy,
+)
 from pynxtools.nomad.metainfo.base_classes.spm_piezo_sensor import SpmPiezoSensor
+from pynxtools.nomad.metainfo.base_classes.spm_scan_control import SpmScanControl
+from pynxtools.nomad.metainfo.base_classes.spm_scan_pattern import SpmScanPattern
+from pynxtools.nomad.metainfo.base_classes.spm_scan_region import SpmScanRegion
 
 if TYPE_CHECKING:
     from nomad.datamodel import EntryArchive
@@ -419,6 +425,17 @@ class SpmInstrument(SensorScanInstrument):
             optionality="optional",
         ),
     )
+    scan_environment = SubSection(
+        section_def="pynxtools.nomad.metainfo.applications.spm.SpmInstrumentScanEnvironment",
+        repeats=True,
+        variable=True,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXenvironment",
+            name="SCAN_ENVIRONMENT",
+            name_type="any",
+            optionality="required",
+        ),
+    )
     current_sensorTAG = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.spm.SpmInstrumentCurrent_sensorTAG",
         repeats=True,
@@ -508,6 +525,16 @@ class SpmInstrument(SensorScanInstrument):
         a_nexus_group=NeXusGroup(
             nx_class="NXspm_temperature_sensor",
             name="sample_temperature_sensor",
+            name_type="specified",
+            optionality="optional",
+        ),
+    )
+    bias_spectroscopy_environment = SubSection(
+        section_def="pynxtools.nomad.metainfo.applications.spm.SpmInstrumentBiasSpectroscopyEnvironment",
+        repeats=False,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXenvironment",
+            name="bias_spectroscopy_environment",
             name_type="specified",
             optionality="optional",
         ),
@@ -733,6 +760,576 @@ class SpmInstrumentLockinAmplifier(Lockin):
         a_eln=ELNAnnotation(
             component=ELNComponentEnum.StringEditQuantity,
         ),
+    )
+
+    def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
+        super().normalize(archive, logger)
+
+
+class SpmInstrumentScanEnvironment(Environment):
+    """
+    Information of the scan environment holding concept for temperature,
+    setpoint (current or height), scan area and scan data.
+
+    Note: At least one field from head_temperature, cryo_bottom_temperature and
+    cryo_shield_temperature must be provided.
+    """
+
+    m_def = Section(
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXspm.html#nxspm-entry-instrument-scan-environment-group"
+        ],
+        variable=True,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXenvironment",
+            name="SCAN_ENVIRONMENT",
+            name_type="any",
+            optionality="required",
+        ),
+    )
+
+    current_sensorTAG = SubSection(
+        section_def="pynxtools.nomad.metainfo.base_classes.sensor.Sensor",
+        repeats=True,
+        variable=True,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXsensor",
+            name="current_sensorTAG",
+            name_type="partial",
+            optionality="optional",
+        ),
+    )
+    voltage_sensorTAG = SubSection(
+        section_def="pynxtools.nomad.metainfo.base_classes.sensor.Sensor",
+        repeats=True,
+        variable=True,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXsensor",
+            name="voltage_sensorTAG",
+            name_type="partial",
+            optionality="optional",
+        ),
+    )
+    piezo_sensor = SubSection(
+        section_def="pynxtools.nomad.metainfo.base_classes.spm_piezo_sensor.SpmPiezoSensor",
+        repeats=False,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXspm_piezo_sensor",
+            name="piezo_sensor",
+            name_type="specified",
+            optionality="optional",
+        ),
+    )
+    XYZpiezo_sensor = SubSection(
+        section_def="pynxtools.nomad.metainfo.base_classes.spm_piezo_sensor.SpmPiezoSensor",
+        repeats=True,
+        variable=True,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXspm_piezo_sensor",
+            name="XYZpiezo_sensor",
+            name_type="partial",
+            optionality="optional",
+        ),
+    )
+    height_piezo_sensor = SubSection(
+        section_def="pynxtools.nomad.metainfo.base_classes.spm_piezo_sensor.SpmPiezoSensor",
+        repeats=False,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXspm_piezo_sensor",
+            name="height_piezo_sensor",
+            name_type="specified",
+            optionality="optional",
+        ),
+    )
+    spm_scan_control = SubSection(
+        section_def="pynxtools.nomad.metainfo.applications.spm.SpmInstrumentScanEnvironmentSpmScanControl",
+        repeats=True,
+        variable=True,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXspm_scan_control",
+            name=None,
+            name_type="any",
+            optionality="required",
+        ),
+    )
+
+    head_temperature = Quantity(
+        type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXspm.html#nxspm-entry-instrument-scan-environment-head-temperature-field"
+        ],
+        dimensionality="[temperature]",
+        unit="kelvin",
+        description=(
+            "Temperature (stabilized or target value) of STM head. For array "
+            "data of head_temperature, use head_temperature_sensor group."
+        ),
+        a_nexus_field=NeXusField(
+            name="head_temperature",
+            type="NX_NUMBER",
+            name_type="specified",
+            optionality="recommended",
+            units="NX_TEMPERATURE",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "kelvin"},
+    )
+    identifier_environment = Quantity(
+        type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXspm.html#nxspm-entry-instrument-scan-environment-identifier-environment-field"
+        ],
+        description=(
+            "Unique identifier for the scan environment defined by the user or "
+            "lab. When multiple scans are performed in a single environment "
+            "conditions or settings, the entire scan environment can be "
+            "differentiated by this identifier. For example, scan on a sample of "
+            "TiSe2 with layered of evaporated pyrene and annealed at 300K "
+            "temperature for 5 min process."
+        ),
+        a_nexus_field=NeXusField(
+            name="identifier_environment",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="recommended",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
+    )
+    cryo_bottom_temperature = Quantity(
+        type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXspm.html#nxspm-entry-instrument-scan-environment-cryo-bottom-temperature-field"
+        ],
+        dimensionality="[temperature]",
+        unit="kelvin",
+        description=(
+            "Temperature (stabilized or targeted single value) of the cold tail "
+            "of the cryostat. For array data of cryo_bottom_temperature, use "
+            "cryo_bottom_temperature_sensor group."
+        ),
+        a_nexus_field=NeXusField(
+            name="cryo_bottom_temperature",
+            type="NX_NUMBER",
+            name_type="specified",
+            optionality="recommended",
+            units="NX_TEMPERATURE",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "kelvin"},
+    )
+    cryo_shield_temperature = Quantity(
+        type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXspm.html#nxspm-entry-instrument-scan-environment-cryo-shield-temperature-field"
+        ],
+        dimensionality="[temperature]",
+        unit="kelvin",
+        description=(
+            "Temperature (stabilized or targeted single value) of liquid "
+            "nitrogen shield. For array data of cryo_shield_temperature, use "
+            "cryo_shield_temperature_sensor group."
+        ),
+        a_nexus_field=NeXusField(
+            name="cryo_shield_temperature",
+            type="NX_NUMBER",
+            name_type="specified",
+            optionality="recommended",
+            units="NX_TEMPERATURE",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "kelvin"},
+    )
+
+    def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
+        super().normalize(archive, logger)
+
+
+class SpmInstrumentScanEnvironmentSpmScanControl(SpmScanControl):
+    """
+    The scan control information like scan region or phase space, type of scan
+    (e.g. mesh, spiral, etc.), and scan speed, etc. This group mainly stores
+    the scan settings data. For processed data or final experimental data would
+    go to NXdata group.
+    """
+
+    m_def = Section(
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXspm.html#nxspm-entry-instrument-scan-environment-spm-scan-control-group"
+        ],
+        variable=True,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXspm_scan_control",
+            name=None,
+            name_type="any",
+            optionality="required",
+        ),
+    )
+
+    scan_region = SubSection(
+        section_def="pynxtools.nomad.metainfo.applications.spm.SpmInstrumentScanEnvironmentSpmScanControlScanRegion",
+        repeats=False,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXspm_scan_region",
+            name="scan_region",
+            name_type="specified",
+            optionality="required",
+        ),
+    )
+    meshSCAN = SubSection(
+        section_def="pynxtools.nomad.metainfo.applications.spm.SpmInstrumentScanEnvironmentSpmScanControlMeshSCAN",
+        repeats=True,
+        variable=True,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXspm_scan_pattern",
+            name="meshSCAN",
+            name_type="partial",
+            optionality="required",
+        ),
+    )
+
+    scanTAG = Quantity(
+        type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXspm.html#nxspm-entry-instrument-scan-environment-spm-scan-control-scantag-field"
+        ],
+        variable=True,
+        description=(
+            "If there are multiple scans performed under the same environment, "
+            "use this field to differentiate among them."
+        ),
+        a_nexus_field=NeXusField(
+            name="scanTAG",
+            type="NX_CHAR",
+            name_type="partial",
+            optionality="recommended",
+        ),
+    )
+
+    def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
+        super().normalize(archive, logger)
+
+
+class SpmInstrumentScanEnvironmentSpmScanControlScanRegion(SpmScanRegion):
+    """
+    The scan region (phase space or sub-phase space) is the region where the
+    scan is performed.
+    """
+
+    m_def = Section(
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXspm.html#nxspm-entry-instrument-scan-environment-spm-scan-control-scan-region-group"
+        ],
+        a_nexus_group=NeXusGroup(
+            nx_class="NXspm_scan_region",
+            name="scan_region",
+            name_type="specified",
+            optionality="required",
+        ),
+    )
+
+    scan_range_x = Quantity(
+        type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXspm.html#nxspm-entry-instrument-scan-environment-spm-scan-control-scan-region-scan-range-x-field"
+        ],
+        dimensionality="[length]",
+        unit="m",
+        description=("The range of the scan in x direction."),
+        a_nexus_field=NeXusField(
+            name="scan_range_x",
+            type="NX_NUMBER",
+            name_type="specified",
+            optionality="recommended",
+            units="NX_LENGTH",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "m"},
+    )
+    scan_range_y = Quantity(
+        type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXspm.html#nxspm-entry-instrument-scan-environment-spm-scan-control-scan-region-scan-range-y-field"
+        ],
+        dimensionality="[length]",
+        unit="m",
+        description=("The range of the scan in y direction."),
+        a_nexus_field=NeXusField(
+            name="scan_range_y",
+            type="NX_NUMBER",
+            name_type="specified",
+            optionality="recommended",
+            units="NX_LENGTH",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "m"},
+    )
+    scan_offset_value_x = Quantity(
+        type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXspm.html#nxspm-entry-instrument-scan-environment-spm-scan-control-scan-region-scan-offset-value-x-field"
+        ],
+        dimensionality="[length]",
+        unit="m",
+        description=("The offset of the scan in x direction."),
+        a_nexus_field=NeXusField(
+            name="scan_offset_value_x",
+            type="NX_NUMBER",
+            name_type="specified",
+            optionality="recommended",
+            units="NX_LENGTH",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "m"},
+    )
+    scan_offset_value_y = Quantity(
+        type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXspm.html#nxspm-entry-instrument-scan-environment-spm-scan-control-scan-region-scan-offset-value-y-field"
+        ],
+        dimensionality="[length]",
+        unit="m",
+        description=("The offset of the scan in y direction."),
+        a_nexus_field=NeXusField(
+            name="scan_offset_value_y",
+            type="NX_NUMBER",
+            name_type="specified",
+            optionality="recommended",
+            units="NX_LENGTH",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "m"},
+    )
+    scan_angle_x = Quantity(
+        type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXspm.html#nxspm-entry-instrument-scan-environment-spm-scan-control-scan-region-scan-angle-x-field"
+        ],
+        dimensionality="[angle]",
+        unit="radian",
+        description=("The angle of the scan region in x direction."),
+        a_nexus_field=NeXusField(
+            name="scan_angle_x",
+            type="NX_NUMBER",
+            name_type="specified",
+            optionality="recommended",
+            units="NX_ANGLE",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "radian"},
+    )
+    scan_angle_y = Quantity(
+        type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXspm.html#nxspm-entry-instrument-scan-environment-spm-scan-control-scan-region-scan-angle-y-field"
+        ],
+        dimensionality="[angle]",
+        unit="radian",
+        description=("The angle of the scan region in y direction."),
+        a_nexus_field=NeXusField(
+            name="scan_angle_y",
+            type="NX_NUMBER",
+            name_type="specified",
+            optionality="recommended",
+            units="NX_ANGLE",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "radian"},
+    )
+    scan_start_x = Quantity(
+        type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXspm.html#nxspm-entry-instrument-scan-environment-spm-scan-control-scan-region-scan-start-x-field"
+        ],
+        dimensionality="[length]",
+        unit="m",
+        description=("The start of the scan in x direction."),
+        a_nexus_field=NeXusField(
+            name="scan_start_x",
+            type="NX_NUMBER",
+            name_type="specified",
+            optionality="required",
+            units="NX_LENGTH",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "m"},
+    )
+    scan_start_y = Quantity(
+        type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXspm.html#nxspm-entry-instrument-scan-environment-spm-scan-control-scan-region-scan-start-y-field"
+        ],
+        dimensionality="[length]",
+        unit="m",
+        description=("The start of the scan in y direction."),
+        a_nexus_field=NeXusField(
+            name="scan_start_y",
+            type="NX_NUMBER",
+            name_type="specified",
+            optionality="required",
+            units="NX_LENGTH",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "m"},
+    )
+    scan_end_x = Quantity(
+        type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXspm.html#nxspm-entry-instrument-scan-environment-spm-scan-control-scan-region-scan-end-x-field"
+        ],
+        dimensionality="[length]",
+        unit="m",
+        description=("The end of the scan in x direction."),
+        a_nexus_field=NeXusField(
+            name="scan_end_x",
+            type="NX_NUMBER",
+            name_type="specified",
+            optionality="required",
+            units="NX_LENGTH",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "m"},
+    )
+    scan_end_y = Quantity(
+        type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXspm.html#nxspm-entry-instrument-scan-environment-spm-scan-control-scan-region-scan-end-y-field"
+        ],
+        dimensionality="[length]",
+        unit="m",
+        description=("The end of the scan in y direction."),
+        a_nexus_field=NeXusField(
+            name="scan_end_y",
+            type="NX_NUMBER",
+            name_type="specified",
+            optionality="required",
+            units="NX_LENGTH",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "m"},
+    )
+
+    def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
+        super().normalize(archive, logger)
+
+
+class SpmInstrumentScanEnvironmentSpmScanControlMeshSCAN(SpmScanPattern):
+    """
+    The mesh scan is a common technique used in SPM to scan the surface of the
+    sample in a grid pattern.
+    """
+
+    m_def = Section(
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXspm.html#nxspm-entry-instrument-scan-environment-spm-scan-control-meshscan-group"
+        ],
+        variable=True,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXspm_scan_pattern",
+            name="meshSCAN",
+            name_type="partial",
+            optionality="required",
+        ),
+    )
+
+    scan_points_x = Quantity(
+        type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXspm.html#nxspm-entry-instrument-scan-environment-spm-scan-control-meshscan-scan-points-x-field"
+        ],
+        description=("The number of points scanned in x direction."),
+        a_nexus_field=NeXusField(
+            name="scan_points_x",
+            type="NX_NUMBER",
+            name_type="specified",
+            optionality="required",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+    )
+    scan_points_y = Quantity(
+        type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXspm.html#nxspm-entry-instrument-scan-environment-spm-scan-control-meshscan-scan-points-y-field"
+        ],
+        description=("The number of points scanned in y direction."),
+        a_nexus_field=NeXusField(
+            name="scan_points_y",
+            type="NX_NUMBER",
+            name_type="specified",
+            optionality="required",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+    )
+    step_size_x = Quantity(
+        type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXspm.html#nxspm-entry-instrument-scan-environment-spm-scan-control-meshscan-step-size-x-field"
+        ],
+        dimensionality="[length]",
+        unit="m",
+        description=("The step size in x direction."),
+        a_nexus_field=NeXusField(
+            name="step_size_x",
+            type="NX_NUMBER",
+            name_type="specified",
+            optionality="recommended",
+            units="NX_LENGTH",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "m"},
+    )
+    step_size_y = Quantity(
+        type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXspm.html#nxspm-entry-instrument-scan-environment-spm-scan-control-meshscan-step-size-y-field"
+        ],
+        dimensionality="[length]",
+        unit="m",
+        description=("The step size in y direction."),
+        a_nexus_field=NeXusField(
+            name="step_size_y",
+            type="NX_NUMBER",
+            name_type="specified",
+            optionality="recommended",
+            units="NX_LENGTH",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "m"},
     )
 
     def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
@@ -1267,6 +1864,287 @@ class SpmInstrumentPiezoSensor(SpmPiezoSensor):
         super().normalize(archive, logger)
 
 
+class SpmInstrumentBiasSpectroscopyEnvironment(Environment):
+    """
+    To explain bias and current behavior (sweep measurement especially in STS
+    experiment) due to voltage applied to the sample.
+
+    In some experiments, e.g., STM, bias spectroscopy could also be part of the
+    measurement setup.
+    """
+
+    m_def = Section(
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXspm.html#nxspm-entry-instrument-bias-spectroscopy-environment-group"
+        ],
+        a_nexus_group=NeXusGroup(
+            nx_class="NXenvironment",
+            name="bias_spectroscopy_environment",
+            name_type="specified",
+            optionality="optional",
+        ),
+    )
+
+    spm_bias_spectroscopy = SubSection(
+        section_def="pynxtools.nomad.metainfo.applications.spm.SpmInstrumentBiasSpectroscopyEnvironmentSpmBiasSpectroscopy",
+        repeats=True,
+        variable=True,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXspm_bias_spectroscopy",
+            name=None,
+            name_type="any",
+            optionality="required",
+        ),
+    )
+
+    def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
+        super().normalize(archive, logger)
+
+
+class SpmInstrumentBiasSpectroscopyEnvironmentSpmBiasSpectroscopy(SpmBiasSpectroscopy):
+    """
+    Setup and scan data for continuous measurement of bias voltage on the
+    subject of experiment vs tunneling current from probe.
+    """
+
+    m_def = Section(
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXspm.html#nxspm-entry-instrument-bias-spectroscopy-environment-spm-bias-spectroscopy-group"
+        ],
+        variable=True,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXspm_bias_spectroscopy",
+            name=None,
+            name_type="any",
+            optionality="required",
+        ),
+    )
+
+    bias_sweep = SubSection(
+        section_def="pynxtools.nomad.metainfo.applications.spm.SpmInstrumentBiasSpectroscopyEnvironmentSpmBiasSpectroscopyBiasSweep",
+        repeats=True,
+        variable=True,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXspm_scan_control",
+            name="BIAS_SWEEP",
+            name_type="any",
+            optionality="required",
+        ),
+    )
+
+    def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
+        super().normalize(archive, logger)
+
+
+class SpmInstrumentBiasSpectroscopyEnvironmentSpmBiasSpectroscopyBiasSweep(
+    SpmScanControl
+):
+    """
+    The bias voltage sweep is a common technique used to study properties (in
+    this case current) in the sample or environment due to change in applied
+    bias voltage.
+    """
+
+    m_def = Section(
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXspm.html#nxspm-entry-instrument-bias-spectroscopy-environment-spm-bias-spectroscopy-bias-sweep-group"
+        ],
+        variable=True,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXspm_scan_control",
+            name="BIAS_SWEEP",
+            name_type="any",
+            optionality="required",
+        ),
+    )
+
+    scan_region = SubSection(
+        section_def="pynxtools.nomad.metainfo.applications.spm.SpmInstrumentBiasSpectroscopyEnvironmentSpmBiasSpectroscopyBiasSweepScanRegion",
+        repeats=False,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXspm_scan_region",
+            name="scan_region",
+            name_type="specified",
+            optionality="required",
+        ),
+    )
+    linear_sweep = SubSection(
+        section_def="pynxtools.nomad.metainfo.applications.spm.SpmInstrumentBiasSpectroscopyEnvironmentSpmBiasSpectroscopyBiasSweepLinearSweep",
+        repeats=False,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXspm_scan_pattern",
+            name="linear_sweep",
+            name_type="specified",
+            optionality="required",
+        ),
+    )
+
+    def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
+        super().normalize(archive, logger)
+
+
+class SpmInstrumentBiasSpectroscopyEnvironmentSpmBiasSpectroscopyBiasSweepScanRegion(
+    SpmScanRegion
+):
+    """
+    The scan region (phase space or sub-phase space) is the region where the
+    scan is performed.
+    """
+
+    m_def = Section(
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXspm.html#nxspm-entry-instrument-bias-spectroscopy-environment-spm-bias-spectroscopy-bias-sweep-scan-region-group"
+        ],
+        a_nexus_group=NeXusGroup(
+            nx_class="NXspm_scan_region",
+            name="scan_region",
+            name_type="specified",
+            optionality="required",
+        ),
+    )
+
+    scan_start_bias = Quantity(
+        type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXspm.html#nxspm-entry-instrument-bias-spectroscopy-environment-spm-bias-spectroscopy-bias-sweep-scan-region-scan-start-bias-field"
+        ],
+        dimensionality="[mass] * [length] ** 2 / [time] ** 3 / [current]",
+        unit="volt",
+        a_nexus_field=NeXusField(
+            name="scan_start_bias",
+            type="NX_NUMBER",
+            name_type="specified",
+            optionality="required",
+            units="NX_VOLTAGE",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "volt"},
+    )
+    scan_end_bias = Quantity(
+        type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXspm.html#nxspm-entry-instrument-bias-spectroscopy-environment-spm-bias-spectroscopy-bias-sweep-scan-region-scan-end-bias-field"
+        ],
+        dimensionality="[mass] * [length] ** 2 / [time] ** 3 / [current]",
+        unit="volt",
+        a_nexus_field=NeXusField(
+            name="scan_end_bias",
+            type="NX_NUMBER",
+            name_type="specified",
+            optionality="required",
+            units="NX_VOLTAGE",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "volt"},
+    )
+    scan_offset_bias = Quantity(
+        type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXspm.html#nxspm-entry-instrument-bias-spectroscopy-environment-spm-bias-spectroscopy-bias-sweep-scan-region-scan-offset-bias-field"
+        ],
+        dimensionality="[mass] * [length] ** 2 / [time] ** 3 / [current]",
+        unit="volt",
+        description=("The offset of the bias scan voltage."),
+        a_nexus_field=NeXusField(
+            name="scan_offset_bias",
+            type="NX_NUMBER",
+            name_type="specified",
+            optionality="required",
+            units="NX_VOLTAGE",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "volt"},
+    )
+    scan_range_bias = Quantity(
+        type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXspm.html#nxspm-entry-instrument-bias-spectroscopy-environment-spm-bias-spectroscopy-bias-sweep-scan-region-scan-range-bias-field"
+        ],
+        dimensionality="[mass] * [length] ** 2 / [time] ** 3 / [current]",
+        unit="volt",
+        a_nexus_field=NeXusField(
+            name="scan_range_bias",
+            type="NX_NUMBER",
+            name_type="specified",
+            optionality="recommended",
+            units="NX_VOLTAGE",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "volt"},
+    )
+
+    def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
+        super().normalize(archive, logger)
+
+
+class SpmInstrumentBiasSpectroscopyEnvironmentSpmBiasSpectroscopyBiasSweepLinearSweep(
+    SpmScanPattern
+):
+    """
+    The linear sweep is a common technique used on the substance or sample or
+    environment to study the change in the behavior of the sample or substance
+    or environment due to change in applied bias voltage.
+    """
+
+    m_def = Section(
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXspm.html#nxspm-entry-instrument-bias-spectroscopy-environment-spm-bias-spectroscopy-bias-sweep-linear-sweep-group"
+        ],
+        a_nexus_group=NeXusGroup(
+            nx_class="NXspm_scan_pattern",
+            name="linear_sweep",
+            name_type="specified",
+            optionality="required",
+        ),
+    )
+
+    scan_points_bias = Quantity(
+        type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXspm.html#nxspm-entry-instrument-bias-spectroscopy-environment-spm-bias-spectroscopy-bias-sweep-linear-sweep-scan-points-bias-field"
+        ],
+        a_nexus_field=NeXusField(
+            name="scan_points_bias",
+            type="NX_NUMBER",
+            name_type="specified",
+            optionality="required",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+    )
+    step_size_bias = Quantity(
+        type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXspm.html#nxspm-entry-instrument-bias-spectroscopy-environment-spm-bias-spectroscopy-bias-sweep-linear-sweep-step-size-bias-field"
+        ],
+        dimensionality="[mass] * [length] ** 2 / [time] ** 3 / [current]",
+        unit="volt",
+        a_nexus_field=NeXusField(
+            name="step_size_bias",
+            type="NX_NUMBER",
+            name_type="specified",
+            optionality="required",
+            units="NX_VOLTAGE",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "volt"},
+    )
+
+    def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
+        super().normalize(archive, logger)
+
+
 class SpmInstrumentSampleBiasVoltage(Sensor):
     """
     The DC bias voltage that is applied to the sample (for example in constant-
@@ -1583,13 +2461,13 @@ class SpmReproducibilityIndicators(Collection):
         ),
     )
 
-    collection = SubSection(
+    link_to_group = SubSection(
         section_def="pynxtools.nomad.metainfo.base_classes.collection.Collection",
         repeats=True,
         variable=True,
         a_nexus_group=NeXusGroup(
             nx_class="NXcollection",
-            name=None,
+            name="LINK_TO_GROUP",
             name_type="any",
             optionality="optional",
         ),
@@ -1635,13 +2513,13 @@ class SpmResolutionIndicators(Collection):
         ),
     )
 
-    collection = SubSection(
+    link_to_group = SubSection(
         section_def="pynxtools.nomad.metainfo.base_classes.collection.Collection",
         repeats=True,
         variable=True,
         a_nexus_group=NeXusGroup(
             nx_class="NXcollection",
-            name=None,
+            name="LINK_TO_GROUP",
             name_type="any",
             optionality="optional",
         ),

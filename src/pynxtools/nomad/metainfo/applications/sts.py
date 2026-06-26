@@ -51,6 +51,7 @@ from pynxtools.nomad.metainfo.applications.spm import (
     SpmReproducibilityIndicators,
     SpmResolutionIndicators,
 )
+from pynxtools.nomad.metainfo.base_classes.environment import Environment
 
 if TYPE_CHECKING:
     from nomad.datamodel import EntryArchive
@@ -339,6 +340,60 @@ class StsInstrument(SpmInstrument):
             optionality="recommended",
         ),
     )
+    current_sensorTAG = SubSection(
+        section_def="pynxtools.nomad.metainfo.base_classes.sensor.Sensor",
+        repeats=True,
+        variable=True,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXsensor",
+            name="current_sensorTAG",
+            name_type="partial",
+            optionality="recommended",
+        ),
+    )
+    bias_spectroscopy_environment = SubSection(
+        section_def="pynxtools.nomad.metainfo.applications.sts.StsInstrumentBiasSpectroscopyEnvironment",
+        repeats=False,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXenvironment",
+            name="bias_spectroscopy_environment",
+            name_type="specified",
+            optionality="required",
+        ),
+    )
+
+    def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
+        super().normalize(archive, logger)
+
+
+class StsInstrumentBiasSpectroscopyEnvironment(Environment):
+    """
+    To explain bias (sweep measurement) voltage applied to the sample.
+    """
+
+    m_def = Section(
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXsts.html#nxsts-entry-instrument-bias-spectroscopy-environment-group"
+        ],
+        a_nexus_group=NeXusGroup(
+            nx_class="NXenvironment",
+            name="bias_spectroscopy_environment",
+            name_type="specified",
+            optionality="required",
+        ),
+    )
+
+    spm_bias_spectroscopy = SubSection(
+        section_def="pynxtools.nomad.metainfo.base_classes.spm_bias_spectroscopy.SpmBiasSpectroscopy",
+        repeats=True,
+        variable=True,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXspm_bias_spectroscopy",
+            name=None,
+            name_type="any",
+            optionality="required",
+        ),
+    )
 
     def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
         super().normalize(archive, logger)
@@ -362,13 +417,13 @@ class StsReproducibilityIndicators(SpmReproducibilityIndicators):
         ),
     )
 
-    spm_scan_control = SubSection(
+    bias_sweep = SubSection(
         section_def="pynxtools.nomad.metainfo.base_classes.spm_scan_control.SpmScanControl",
         repeats=True,
         variable=True,
         a_nexus_group=NeXusGroup(
             nx_class="NXspm_scan_control",
-            name=None,
+            name="BIAS_SWEEP",
             name_type="any",
             optionality="optional",
         ),
@@ -513,13 +568,13 @@ class StsResolutionIndicators(SpmResolutionIndicators):
         ),
     )
 
-    spm_scan_control = SubSection(
+    bias_sweep = SubSection(
         section_def="pynxtools.nomad.metainfo.base_classes.spm_scan_control.SpmScanControl",
         repeats=True,
         variable=True,
         a_nexus_group=NeXusGroup(
             nx_class="NXspm_scan_control",
-            name=None,
+            name="BIAS_SWEEP",
             name_type="any",
             optionality="optional",
         ),

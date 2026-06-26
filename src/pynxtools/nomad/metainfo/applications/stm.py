@@ -336,6 +336,16 @@ class StmInstrument(SpmInstrument):
             optionality="required",
         ),
     )
+    bias_spectroscopy_environment = SubSection(
+        section_def="pynxtools.nomad.metainfo.base_classes.environment.Environment",
+        repeats=False,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXenvironment",
+            name="bias_spectroscopy_environment",
+            name_type="specified",
+            optionality="optional",
+        ),
+    )
 
     def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
         super().normalize(archive, logger)
@@ -519,13 +529,13 @@ class StmResolutionIndicators(SpmResolutionIndicators):
         ),
     )
 
-    spm_scan_control = SubSection(
+    bias_sweep = SubSection(
         section_def="pynxtools.nomad.metainfo.base_classes.spm_scan_control.SpmScanControl",
         repeats=True,
         variable=True,
         a_nexus_group=NeXusGroup(
             nx_class="NXspm_scan_control",
-            name=None,
+            name="BIAS_SWEEP",
             name_type="any",
             optionality="optional",
         ),

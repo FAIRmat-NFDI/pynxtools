@@ -46,6 +46,7 @@ from pynxtools.nomad.metainfo.applications.optical_spectroscopy import (
     OpticalSpectroscopy,
     OpticalSpectroscopyInstrument,
 )
+from pynxtools.nomad.metainfo.base_classes.beam import Beam
 
 if TYPE_CHECKING:
     from nomad.datamodel import EntryArchive
@@ -397,6 +398,17 @@ class RamanInstrument(OpticalSpectroscopyInstrument):
         ),
     )
 
+    beam_incident = SubSection(
+        section_def="pynxtools.nomad.metainfo.applications.raman.RamanInstrumentBeamIncident",
+        repeats=False,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXbeam",
+            name="beam_incident",
+            name_type="specified",
+            optionality="required",
+        ),
+    )
+
     scattering_configuration = Quantity(
         type=str,
         links=[
@@ -442,6 +454,43 @@ class RamanInstrument(OpticalSpectroscopyInstrument):
             name_type="specified",
             optionality="recommended",
             parent_field="scattering_configuration",
+        ),
+    )
+
+    def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
+        super().normalize(archive, logger)
+
+
+class RamanInstrumentBeamIncident(Beam):
+    """
+    Beam which is incident to the sample.
+    """
+
+    m_def = Section(
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXraman.html#nxraman-entry-instrument-beam-incident-group"
+        ],
+        a_nexus_group=NeXusGroup(
+            nx_class="NXbeam",
+            name="beam_incident",
+            name_type="specified",
+            optionality="required",
+        ),
+    )
+
+    wavelength = Quantity(
+        type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXraman.html#nxraman-entry-instrument-beam-incident-wavelength-field"
+        ],
+        a_nexus_field=NeXusField(
+            name="wavelength",
+            type="NX_NUMBER",
+            name_type="specified",
+            optionality="required",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
         ),
     )
 

@@ -47,9 +47,11 @@ from pynxtools.nomad.annotations import (
 from pynxtools.nomad.metainfo._category import ExperimentCategory
 from pynxtools.nomad.metainfo.applications.apm_paraprobe_tool_config import (
     ApmParaprobeToolConfig,
-    ApmParaprobeToolConfigApmParaprobeToolParameters,
+    ApmParaprobeToolConfigTaskconfig,
 )
 from pynxtools.nomad.metainfo.base_classes.cg_cylinder import CgCylinder
+from pynxtools.nomad.metainfo.base_classes.match_filter import MatchFilter
+from pynxtools.nomad.metainfo.base_classes.note import Note
 from pynxtools.nomad.metainfo.base_classes.process import Process
 from pynxtools.nomad.metainfo.base_classes.roi_process import RoiProcess
 
@@ -214,9 +216,7 @@ class ApmParaprobeNanochemConfig(ApmParaprobeToolConfig):
 # =============================================================================
 
 
-class ApmParaprobeNanochemConfigDelocalizationID(
-    ApmParaprobeToolConfigApmParaprobeToolParameters
-):
+class ApmParaprobeNanochemConfigDelocalizationID(ApmParaprobeToolConfigTaskconfig):
     """
     Discretization and distributing of the ion point cloud on a 3D grid to
     enable analyses at the continuum scale.
@@ -247,6 +247,46 @@ class ApmParaprobeNanochemConfigDelocalizationID(
         ),
     )
 
+    surface = SubSection(
+        section_def="pynxtools.nomad.metainfo.applications.apm_paraprobe_nanochem_config.ApmParaprobeNanochemConfigDelocalizationIDSurface",
+        repeats=False,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXnote",
+            name="surface",
+            name_type="specified",
+            optionality="required",
+        ),
+    )
+    surface_distance = SubSection(
+        section_def="pynxtools.nomad.metainfo.applications.apm_paraprobe_nanochem_config.ApmParaprobeNanochemConfigDelocalizationIDSurfaceDistance",
+        repeats=False,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXnote",
+            name="surface_distance",
+            name_type="specified",
+            optionality="recommended",
+        ),
+    )
+    decomposition = SubSection(
+        section_def="pynxtools.nomad.metainfo.applications.apm_paraprobe_nanochem_config.ApmParaprobeNanochemConfigDelocalizationIDDecomposition",
+        repeats=False,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXmatch_filter",
+            name="decomposition",
+            name_type="specified",
+            optionality="required",
+        ),
+    )
+    input = SubSection(
+        section_def="pynxtools.nomad.metainfo.applications.apm_paraprobe_nanochem_config.ApmParaprobeNanochemConfigDelocalizationIDInput",
+        repeats=False,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXnote",
+            name="input",
+            name_type="specified",
+            optionality="required",
+        ),
+    )
     isosurfacing = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.apm_paraprobe_nanochem_config.ApmParaprobeNanochemConfigDelocalizationIDIsosurfacing",
         repeats=False,
@@ -428,6 +468,395 @@ class ApmParaprobeNanochemConfigDelocalizationID(
         ),
         a_eln=ELNAnnotation(
             component=ELNComponentEnum.BoolEditQuantity,
+        ),
+    )
+
+    def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
+        super().normalize(archive, logger)
+
+
+class ApmParaprobeNanochemConfigDelocalizationIDSurface(Note):
+    """
+    A precomputed triangulated surface mesh representing a model (of the
+    surface) of the edge of the dataset. This model can be used to detect and
+    control various sources of bias in the analyses.
+    """
+
+    m_def = Section(
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_nanochem_config.html#nxapm_paraprobe_nanochem_config-entry-delocalizationid-surface-group"
+        ],
+        a_nexus_group=NeXusGroup(
+            nx_class="NXnote",
+            name="surface",
+            name_type="specified",
+            optionality="required",
+        ),
+    )
+
+    file_name = Quantity(
+        type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_nanochem_config.html#nxapm_paraprobe_nanochem_config-entry-delocalizationid-surface-file-name-field"
+        ],
+        a_nexus_field=NeXusField(
+            name="file_name",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="required",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
+    )
+    checksum = Quantity(
+        type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_nanochem_config.html#nxapm_paraprobe_nanochem_config-entry-delocalizationid-surface-checksum-field"
+        ],
+        a_nexus_field=NeXusField(
+            name="checksum",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="required",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
+    )
+    algorithm = Quantity(
+        type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_nanochem_config.html#nxapm_paraprobe_nanochem_config-entry-delocalizationid-surface-algorithm-field"
+        ],
+        a_nexus_field=NeXusField(
+            name="algorithm",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="required",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
+    )
+    vertices = Quantity(
+        type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_nanochem_config.html#nxapm_paraprobe_nanochem_config-entry-delocalizationid-surface-vertices-field"
+        ],
+        description=(
+            "Absolute path in the (HDF5) file that points to the array of vertex "
+            "positions for the triangles in that triangle_set."
+        ),
+        a_nexus_field=NeXusField(
+            name="vertices",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="required",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
+    )
+    indices = Quantity(
+        type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_nanochem_config.html#nxapm_paraprobe_nanochem_config-entry-delocalizationid-surface-indices-field"
+        ],
+        description=(
+            "Absolute path in the (HDF5) file that points to the array of vertex "
+            "indices for the triangles in that triangle_set."
+        ),
+        a_nexus_field=NeXusField(
+            name="indices",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="required",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
+    )
+
+    def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
+        super().normalize(archive, logger)
+
+
+class ApmParaprobeNanochemConfigDelocalizationIDSurfaceDistance(Note):
+    """
+    Distance between each ion and triangulated surface mesh.
+    """
+
+    m_def = Section(
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_nanochem_config.html#nxapm_paraprobe_nanochem_config-entry-delocalizationid-surface-distance-group"
+        ],
+        a_nexus_group=NeXusGroup(
+            nx_class="NXnote",
+            name="surface_distance",
+            name_type="specified",
+            optionality="recommended",
+        ),
+    )
+
+    file_name = Quantity(
+        type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_nanochem_config.html#nxapm_paraprobe_nanochem_config-entry-delocalizationid-surface-distance-file-name-field"
+        ],
+        a_nexus_field=NeXusField(
+            name="file_name",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="required",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
+    )
+    checksum = Quantity(
+        type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_nanochem_config.html#nxapm_paraprobe_nanochem_config-entry-delocalizationid-surface-distance-checksum-field"
+        ],
+        a_nexus_field=NeXusField(
+            name="checksum",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="required",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
+    )
+    algorithm = Quantity(
+        type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_nanochem_config.html#nxapm_paraprobe_nanochem_config-entry-delocalizationid-surface-distance-algorithm-field"
+        ],
+        a_nexus_field=NeXusField(
+            name="algorithm",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="required",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
+    )
+    distance = Quantity(
+        type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_nanochem_config.html#nxapm_paraprobe_nanochem_config-entry-delocalizationid-surface-distance-distance-field"
+        ],
+        a_nexus_field=NeXusField(
+            name="distance",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="required",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
+    )
+
+    def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
+        super().normalize(archive, logger)
+
+
+class ApmParaprobeNanochemConfigDelocalizationIDDecomposition(MatchFilter):
+    """
+    Configuration for the algorithm that defines the multiplicity of each
+    reconstructed position during the delocalization.
+    """
+
+    m_def = Section(
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_nanochem_config.html#nxapm_paraprobe_nanochem_config-entry-delocalizationid-decomposition-group"
+        ],
+        a_nexus_group=NeXusGroup(
+            nx_class="NXmatch_filter",
+            name="decomposition",
+            name_type="specified",
+            optionality="required",
+        ),
+    )
+
+    method = Quantity(
+        type=MEnum(
+            [
+                "resolve_unknown",
+                "resolve_point",
+                "resolve_atom",
+                "resolve_element",
+                "resolve_element_charge",
+                "resolve_isotope",
+                "resolve_isotope_charge",
+            ]
+        ),
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_nanochem_config.html#nxapm_paraprobe_nanochem_config-entry-delocalizationid-decomposition-method-field"
+        ],
+        description=(
+            "The multiplicity of an ion at a reconstructed position is defined "
+            "as follows: * resolve_unknown, multiplicity equals 1 for all ions "
+            "of the unknown_type This mode is useful for segmenting regions with "
+            "poor ranging. * resolve_point, multiplicity equals 1 for all ions "
+            "This mode is useful for segmenting point density. * resolve_atom, "
+            "multiplicity equals the number of atoms per ion This mode is useful "
+            "for segmenting atomic density. * resolve_element, multiplicity "
+            "equals the number of elements in the whitelist per ion This mode is "
+            "useful for segmenting regions of specific elemental composition "
+            "(ignoring nuclids) * resolve_element_charge, ???multiplicity like "
+            "resolve_element when charge is met * resolve_isotope, multiplicity "
+            "equals the number of nuclides in the whitelist per ion This mode is "
+            "useful for segmenting regions of specific isotopic composition * "
+            "resolve_isotope_charge, ??? Other multiplicities are 0."
+        ),
+        a_nexus_field=NeXusField(
+            name="method",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="required",
+            enumeration=[
+                "resolve_unknown",
+                "resolve_point",
+                "resolve_atom",
+                "resolve_element",
+                "resolve_element_charge",
+                "resolve_isotope",
+                "resolve_isotope_charge",
+            ],
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.EnumEditQuantity,
+        ),
+    )
+    nuclide_whitelist = Quantity(
+        type=np.int64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_nanochem_config.html#nxapm_paraprobe_nanochem_config-entry-delocalizationid-decomposition-nuclide-whitelist-field"
+        ],
+        dimensionality="dimensionless",
+        unit="dimensionless",
+        description=("TODO"),
+        a_nexus_field=NeXusField(
+            name="nuclide_whitelist",
+            type="NX_UINT",
+            name_type="specified",
+            optionality="required",
+            units="NX_UNITLESS",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "dimensionless"},
+    )
+    charge_state_whitelist = Quantity(
+        type=np.int64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_nanochem_config.html#nxapm_paraprobe_nanochem_config-entry-delocalizationid-decomposition-charge-state-whitelist-field"
+        ],
+        dimensionality="dimensionless",
+        unit="dimensionless",
+        description=("TODO"),
+        a_nexus_field=NeXusField(
+            name="charge_state_whitelist",
+            type="NX_INT",
+            name_type="specified",
+            optionality="required",
+            units="NX_DIMENSIONLESS",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "dimensionless"},
+    )
+
+    def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
+        super().normalize(archive, logger)
+
+
+class ApmParaprobeNanochemConfigDelocalizationIDInput(Note):
+    """
+    Serialized result of an already computed delocalization which is for
+    performance reasons here just loaded and not computed again.
+    """
+
+    m_def = Section(
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_nanochem_config.html#nxapm_paraprobe_nanochem_config-entry-delocalizationid-input-group"
+        ],
+        a_nexus_group=NeXusGroup(
+            nx_class="NXnote",
+            name="input",
+            name_type="specified",
+            optionality="required",
+        ),
+    )
+
+    file_name = Quantity(
+        type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_nanochem_config.html#nxapm_paraprobe_nanochem_config-entry-delocalizationid-input-file-name-field"
+        ],
+        a_nexus_field=NeXusField(
+            name="file_name",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="required",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
+    )
+    checksum = Quantity(
+        type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_nanochem_config.html#nxapm_paraprobe_nanochem_config-entry-delocalizationid-input-checksum-field"
+        ],
+        a_nexus_field=NeXusField(
+            name="checksum",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="required",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
+    )
+    algorithm = Quantity(
+        type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_nanochem_config.html#nxapm_paraprobe_nanochem_config-entry-delocalizationid-input-algorithm-field"
+        ],
+        a_nexus_field=NeXusField(
+            name="algorithm",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="required",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
+    )
+    results = Quantity(
+        type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_nanochem_config.html#nxapm_paraprobe_nanochem_config-entry-delocalizationid-input-results-field"
+        ],
+        description=(
+            "Absolute path in the (HDF5) file that points to the group within "
+            "which individual delocalization results are stored."
+        ),
+        a_nexus_field=NeXusField(
+            name="results",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="required",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
 
@@ -949,9 +1378,7 @@ class ApmParaprobeNanochemConfigDelocalizationIDIsosurfacing(Process):
         super().normalize(archive, logger)
 
 
-class ApmParaprobeNanochemConfigInterface_meshingID(
-    ApmParaprobeToolConfigApmParaprobeToolParameters
-):
+class ApmParaprobeNanochemConfigInterface_meshingID(ApmParaprobeToolConfigTaskconfig):
     """
     Use a principle component analysis (PCA) to mesh a single free-standing
     interface patch within the reconstructed volume that is decorated by ions
@@ -989,6 +1416,37 @@ class ApmParaprobeNanochemConfigInterface_meshingID(
             optionality="optional",
             min_occurs=0,
             max_occurs=1,
+        ),
+    )
+
+    surface = SubSection(
+        section_def="pynxtools.nomad.metainfo.applications.apm_paraprobe_nanochem_config.ApmParaprobeNanochemConfigInterface_meshingIDSurface",
+        repeats=False,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXnote",
+            name="surface",
+            name_type="specified",
+            optionality="optional",
+        ),
+    )
+    control_point = SubSection(
+        section_def="pynxtools.nomad.metainfo.applications.apm_paraprobe_nanochem_config.ApmParaprobeNanochemConfigInterface_meshingIDControlPoint",
+        repeats=False,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXnote",
+            name="control_point",
+            name_type="specified",
+            optionality="required",
+        ),
+    )
+    decoration_filter = SubSection(
+        section_def="pynxtools.nomad.metainfo.applications.apm_paraprobe_nanochem_config.ApmParaprobeNanochemConfigInterface_meshingIDDecorationFilter",
+        repeats=False,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXmatch_filter",
+            name="decoration_filter",
+            name_type="specified",
+            optionality="required",
         ),
     )
 
@@ -1143,9 +1601,257 @@ class ApmParaprobeNanochemConfigInterface_meshingID(
         super().normalize(archive, logger)
 
 
-class ApmParaprobeNanochemConfigOned_profileID(
-    ApmParaprobeToolConfigApmParaprobeToolParameters
-):
+class ApmParaprobeNanochemConfigInterface_meshingIDSurface(Note):
+    """
+    A precomputed triangulated surface mesh representing a model (of the
+    surface) of the edge of the dataset. This model can be used to detect and
+    control various sources of bias in the analyses.
+    """
+
+    m_def = Section(
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_nanochem_config.html#nxapm_paraprobe_nanochem_config-entry-interface-meshingid-surface-group"
+        ],
+        a_nexus_group=NeXusGroup(
+            nx_class="NXnote",
+            name="surface",
+            name_type="specified",
+            optionality="optional",
+        ),
+    )
+
+    file_name = Quantity(
+        type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_nanochem_config.html#nxapm_paraprobe_nanochem_config-entry-interface-meshingid-surface-file-name-field"
+        ],
+        a_nexus_field=NeXusField(
+            name="file_name",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="required",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
+    )
+    checksum = Quantity(
+        type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_nanochem_config.html#nxapm_paraprobe_nanochem_config-entry-interface-meshingid-surface-checksum-field"
+        ],
+        a_nexus_field=NeXusField(
+            name="checksum",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="required",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
+    )
+    algorithm = Quantity(
+        type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_nanochem_config.html#nxapm_paraprobe_nanochem_config-entry-interface-meshingid-surface-algorithm-field"
+        ],
+        a_nexus_field=NeXusField(
+            name="algorithm",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="required",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
+    )
+    vertices = Quantity(
+        type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_nanochem_config.html#nxapm_paraprobe_nanochem_config-entry-interface-meshingid-surface-vertices-field"
+        ],
+        description=(
+            "Absolute path in the (HDF5) file that points to the array of vertex "
+            "positions for the triangles in that triangle_set."
+        ),
+        a_nexus_field=NeXusField(
+            name="vertices",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="required",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
+    )
+    indices = Quantity(
+        type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_nanochem_config.html#nxapm_paraprobe_nanochem_config-entry-interface-meshingid-surface-indices-field"
+        ],
+        description=(
+            "Absolute path in the (HDF5) file that points to the array of vertex "
+            "indices for the triangles in that triangle_set."
+        ),
+        a_nexus_field=NeXusField(
+            name="indices",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="required",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
+    )
+
+    def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
+        super().normalize(archive, logger)
+
+
+class ApmParaprobeNanochemConfigInterface_meshingIDControlPoint(Note):
+    """
+    Details about the control point file used.
+    """
+
+    m_def = Section(
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_nanochem_config.html#nxapm_paraprobe_nanochem_config-entry-interface-meshingid-control-point-group"
+        ],
+        a_nexus_group=NeXusGroup(
+            nx_class="NXnote",
+            name="control_point",
+            name_type="specified",
+            optionality="required",
+        ),
+    )
+
+    file_name = Quantity(
+        type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_nanochem_config.html#nxapm_paraprobe_nanochem_config-entry-interface-meshingid-control-point-file-name-field"
+        ],
+        a_nexus_field=NeXusField(
+            name="file_name",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="required",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
+    )
+    checksum = Quantity(
+        type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_nanochem_config.html#nxapm_paraprobe_nanochem_config-entry-interface-meshingid-control-point-checksum-field"
+        ],
+        a_nexus_field=NeXusField(
+            name="checksum",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="required",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
+    )
+    algorithm = Quantity(
+        type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_nanochem_config.html#nxapm_paraprobe_nanochem_config-entry-interface-meshingid-control-point-algorithm-field"
+        ],
+        a_nexus_field=NeXusField(
+            name="algorithm",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="required",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
+    )
+    control_points = Quantity(
+        type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_nanochem_config.html#nxapm_paraprobe_nanochem_config-entry-interface-meshingid-control-point-control-points-field"
+        ],
+        description=("X, Y, Z position matrix of disjoint control points."),
+        a_nexus_field=NeXusField(
+            name="control_points",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="required",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
+    )
+
+    def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
+        super().normalize(archive, logger)
+
+
+class ApmParaprobeNanochemConfigInterface_meshingIDDecorationFilter(MatchFilter):
+    """
+    Specify those nuclides which the tool should inspect iontypes for if they
+    contain such nuclides. If this is the case ions of such type are taken with
+    the number of nuclides of this multiplicity found. The atoms of these ions
+    are assumed to serve as useful markers for locating the interface and
+    refining the interface mesh.
+    """
+
+    m_def = Section(
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_nanochem_config.html#nxapm_paraprobe_nanochem_config-entry-interface-meshingid-decoration-filter-group"
+        ],
+        a_nexus_group=NeXusGroup(
+            nx_class="NXmatch_filter",
+            name="decoration_filter",
+            name_type="specified",
+            optionality="required",
+        ),
+    )
+
+    method = Quantity(
+        type=MEnum(["whitelist"]),
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_nanochem_config.html#nxapm_paraprobe_nanochem_config-entry-interface-meshingid-decoration-filter-method-field"
+        ],
+        a_nexus_field=NeXusField(
+            name="method",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="required",
+            enumeration=["whitelist"],
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.EnumEditQuantity,
+            default="whitelist",
+        ),
+    )
+    match = Quantity(
+        type=np.int64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_nanochem_config.html#nxapm_paraprobe_nanochem_config-entry-interface-meshingid-decoration-filter-match-field"
+        ],
+        dimensionality="dimensionless",
+        unit="dimensionless",
+        shape=["*", "*"],
+        description=("Array of nuclide iontypes to filter."),
+        a_nexus_field=NeXusField(
+            name="match",
+            type="NX_UINT",
+            name_type="specified",
+            optionality="required",
+            units="NX_UNITLESS",
+        ),
+    )
+
+    def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
+        super().normalize(archive, logger)
+
+
+class ApmParaprobeNanochemConfigOned_profileID(ApmParaprobeToolConfigTaskconfig):
     """
     Analysis of one-dimensional profiles in ROIs placed in the dataset. Such
     analyses are useful for quantifying interfacial excess or for performing
@@ -1193,6 +1899,46 @@ class ApmParaprobeNanochemConfigOned_profileID(
         ),
     )
 
+    surface = SubSection(
+        section_def="pynxtools.nomad.metainfo.applications.apm_paraprobe_nanochem_config.ApmParaprobeNanochemConfigOned_profileIDSurface",
+        repeats=False,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXnote",
+            name="surface",
+            name_type="specified",
+            optionality="optional",
+        ),
+    )
+    surface_distance = SubSection(
+        section_def="pynxtools.nomad.metainfo.applications.apm_paraprobe_nanochem_config.ApmParaprobeNanochemConfigOned_profileIDSurfaceDistance",
+        repeats=False,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXnote",
+            name="surface_distance",
+            name_type="specified",
+            optionality="recommended",
+        ),
+    )
+    feature = SubSection(
+        section_def="pynxtools.nomad.metainfo.applications.apm_paraprobe_nanochem_config.ApmParaprobeNanochemConfigOned_profileIDFeature",
+        repeats=False,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXnote",
+            name="feature",
+            name_type="specified",
+            optionality="optional",
+        ),
+    )
+    feature_distance = SubSection(
+        section_def="pynxtools.nomad.metainfo.applications.apm_paraprobe_nanochem_config.ApmParaprobeNanochemConfigOned_profileIDFeatureDistance",
+        repeats=False,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXnote",
+            name="feature_distance",
+            name_type="specified",
+            optionality="optional",
+        ),
+    )
     user_defined_roi = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.apm_paraprobe_nanochem_config.ApmParaprobeNanochemConfigOned_profileIDUserDefinedRoi",
         repeats=False,
@@ -1289,6 +2035,501 @@ class ApmParaprobeNanochemConfigOned_profileID(
             component=ELNComponentEnum.NumberEditQuantity,
         ),
         a_display={"unit": "m"},
+    )
+
+    def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
+        super().normalize(archive, logger)
+
+
+class ApmParaprobeNanochemConfigOned_profileIDSurface(Note):
+    """
+    A precomputed triangulated surface mesh representing a model (of the
+    surface) of the edge of the dataset. This model can be used to detect and
+    control various sources of bias in the analyses.
+    """
+
+    m_def = Section(
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_nanochem_config.html#nxapm_paraprobe_nanochem_config-entry-oned-profileid-surface-group"
+        ],
+        a_nexus_group=NeXusGroup(
+            nx_class="NXnote",
+            name="surface",
+            name_type="specified",
+            optionality="optional",
+        ),
+    )
+
+    file_name = Quantity(
+        type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_nanochem_config.html#nxapm_paraprobe_nanochem_config-entry-oned-profileid-surface-file-name-field"
+        ],
+        a_nexus_field=NeXusField(
+            name="file_name",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="required",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
+    )
+    checksum = Quantity(
+        type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_nanochem_config.html#nxapm_paraprobe_nanochem_config-entry-oned-profileid-surface-checksum-field"
+        ],
+        a_nexus_field=NeXusField(
+            name="checksum",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="required",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
+    )
+    algorithm = Quantity(
+        type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_nanochem_config.html#nxapm_paraprobe_nanochem_config-entry-oned-profileid-surface-algorithm-field"
+        ],
+        a_nexus_field=NeXusField(
+            name="algorithm",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="required",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
+    )
+    vertices = Quantity(
+        type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_nanochem_config.html#nxapm_paraprobe_nanochem_config-entry-oned-profileid-surface-vertices-field"
+        ],
+        description=(
+            "Absolute path in the (HDF5) file that points to the array of vertex "
+            "positions for the triangles in that triangle_set."
+        ),
+        a_nexus_field=NeXusField(
+            name="vertices",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="required",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
+    )
+    indices = Quantity(
+        type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_nanochem_config.html#nxapm_paraprobe_nanochem_config-entry-oned-profileid-surface-indices-field"
+        ],
+        description=(
+            "Absolute path in the (HDF5) file that points to the array of vertex "
+            "indices for the triangles in that triangle_set."
+        ),
+        a_nexus_field=NeXusField(
+            name="indices",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="required",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
+    )
+
+    def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
+        super().normalize(archive, logger)
+
+
+class ApmParaprobeNanochemConfigOned_profileIDSurfaceDistance(Note):
+    """
+    Distance between each ion and triangulated surface mesh.
+    """
+
+    m_def = Section(
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_nanochem_config.html#nxapm_paraprobe_nanochem_config-entry-oned-profileid-surface-distance-group"
+        ],
+        a_nexus_group=NeXusGroup(
+            nx_class="NXnote",
+            name="surface_distance",
+            name_type="specified",
+            optionality="recommended",
+        ),
+    )
+
+    file_name = Quantity(
+        type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_nanochem_config.html#nxapm_paraprobe_nanochem_config-entry-oned-profileid-surface-distance-file-name-field"
+        ],
+        a_nexus_field=NeXusField(
+            name="file_name",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="required",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
+    )
+    checksum = Quantity(
+        type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_nanochem_config.html#nxapm_paraprobe_nanochem_config-entry-oned-profileid-surface-distance-checksum-field"
+        ],
+        a_nexus_field=NeXusField(
+            name="checksum",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="required",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
+    )
+    algorithm = Quantity(
+        type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_nanochem_config.html#nxapm_paraprobe_nanochem_config-entry-oned-profileid-surface-distance-algorithm-field"
+        ],
+        a_nexus_field=NeXusField(
+            name="algorithm",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="required",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
+    )
+    distance = Quantity(
+        type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_nanochem_config.html#nxapm_paraprobe_nanochem_config-entry-oned-profileid-surface-distance-distance-field"
+        ],
+        description=(
+            "Absolute path in the (HDF5) file that points to the distance "
+            "values. The tool assumes that the values are stored in the same "
+            "order as points (ions)."
+        ),
+        a_nexus_field=NeXusField(
+            name="distance",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="required",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
+    )
+
+    def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
+        super().normalize(archive, logger)
+
+
+class ApmParaprobeNanochemConfigOned_profileIDFeature(Note):
+    """
+    A precomputed triangulated mesh of the feature representing a model of the
+    interface at which to place ROIs to profile. This can be the mesh of an
+    interface as returned e.g. by a previous interface_meshing task or the mesh
+    of an iso-surface from a previous delocalization task.
+    """
+
+    m_def = Section(
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_nanochem_config.html#nxapm_paraprobe_nanochem_config-entry-oned-profileid-feature-group"
+        ],
+        a_nexus_group=NeXusGroup(
+            nx_class="NXnote",
+            name="feature",
+            name_type="specified",
+            optionality="optional",
+        ),
+    )
+
+    patch_filter = SubSection(
+        section_def="pynxtools.nomad.metainfo.applications.apm_paraprobe_nanochem_config.ApmParaprobeNanochemConfigOned_profileIDFeaturePatchFilter",
+        repeats=False,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXmatch_filter",
+            name="patch_filter",
+            name_type="specified",
+            optionality="optional",
+        ),
+    )
+
+    file_name = Quantity(
+        type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_nanochem_config.html#nxapm_paraprobe_nanochem_config-entry-oned-profileid-feature-file-name-field"
+        ],
+        a_nexus_field=NeXusField(
+            name="file_name",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="required",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
+    )
+    checksum = Quantity(
+        type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_nanochem_config.html#nxapm_paraprobe_nanochem_config-entry-oned-profileid-feature-checksum-field"
+        ],
+        a_nexus_field=NeXusField(
+            name="checksum",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="required",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
+    )
+    algorithm = Quantity(
+        type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_nanochem_config.html#nxapm_paraprobe_nanochem_config-entry-oned-profileid-feature-algorithm-field"
+        ],
+        a_nexus_field=NeXusField(
+            name="algorithm",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="required",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
+    )
+    vertices = Quantity(
+        type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_nanochem_config.html#nxapm_paraprobe_nanochem_config-entry-oned-profileid-feature-vertices-field"
+        ],
+        description=(
+            "Absolute HDF5 path to the dataset that specifies the array of "
+            "vertex positions."
+        ),
+        a_nexus_field=NeXusField(
+            name="vertices",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="required",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
+    )
+    indices = Quantity(
+        type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_nanochem_config.html#nxapm_paraprobe_nanochem_config-entry-oned-profileid-feature-indices-field"
+        ],
+        description=(
+            "Absolute HDF5 path to the dataset that specifies the array of facet "
+            "indices which refer to vertices."
+        ),
+        a_nexus_field=NeXusField(
+            name="indices",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="required",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
+    )
+    facet_normals = Quantity(
+        type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_nanochem_config.html#nxapm_paraprobe_nanochem_config-entry-oned-profileid-feature-facet-normals-field"
+        ],
+        description=(
+            "Absolute HDF5 path to the dataset that specifies the array of facet "
+            "signed unit normals."
+        ),
+        a_nexus_field=NeXusField(
+            name="facet_normals",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="required",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
+    )
+    vertex_normals = Quantity(
+        type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_nanochem_config.html#nxapm_paraprobe_nanochem_config-entry-oned-profileid-feature-vertex-normals-field"
+        ],
+        description=(
+            "Absolute HDF5 path to the dataset that specifies the array of "
+            "vertex signed unit normals."
+        ),
+        a_nexus_field=NeXusField(
+            name="vertex_normals",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="required",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
+    )
+
+    def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
+        super().normalize(archive, logger)
+
+
+class ApmParaprobeNanochemConfigOned_profileIDFeaturePatchFilter(MatchFilter):
+    """
+    If interface_model is isosurface this filter can be used to restrict the
+    analysis to specific patches of an iso-surface.
+    """
+
+    m_def = Section(
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_nanochem_config.html#nxapm_paraprobe_nanochem_config-entry-oned-profileid-feature-patch-filter-group"
+        ],
+        a_nexus_group=NeXusGroup(
+            nx_class="NXmatch_filter",
+            name="patch_filter",
+            name_type="specified",
+            optionality="optional",
+        ),
+    )
+
+    method = Quantity(
+        type=MEnum(["whitelist", "blacklist"]),
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_nanochem_config.html#nxapm_paraprobe_nanochem_config-entry-oned-profileid-feature-patch-filter-method-field"
+        ],
+        a_nexus_field=NeXusField(
+            name="method",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="required",
+            enumeration=["whitelist", "blacklist"],
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.EnumEditQuantity,
+        ),
+    )
+    match = Quantity(
+        type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_nanochem_config.html#nxapm_paraprobe_nanochem_config-entry-oned-profileid-feature-patch-filter-match-field"
+        ],
+        dimensionality="dimensionless",
+        unit="dimensionless",
+        shape=["*"],
+        a_nexus_field=NeXusField(
+            name="match",
+            type="NX_NUMBER",
+            name_type="specified",
+            optionality="required",
+            units="NX_UNITLESS",
+        ),
+    )
+
+    def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
+        super().normalize(archive, logger)
+
+
+class ApmParaprobeNanochemConfigOned_profileIDFeatureDistance(Note):
+    """
+    To enable an additional filtration of specific parts of the feature mesh it
+    is recommended to feed precomputed distances of each ion to the triangles
+    of the feature mesh.
+    """
+
+    m_def = Section(
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_nanochem_config.html#nxapm_paraprobe_nanochem_config-entry-oned-profileid-feature-distance-group"
+        ],
+        a_nexus_group=NeXusGroup(
+            nx_class="NXnote",
+            name="feature_distance",
+            name_type="specified",
+            optionality="optional",
+        ),
+    )
+
+    file_name = Quantity(
+        type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_nanochem_config.html#nxapm_paraprobe_nanochem_config-entry-oned-profileid-feature-distance-file-name-field"
+        ],
+        a_nexus_field=NeXusField(
+            name="file_name",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="required",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
+    )
+    checksum = Quantity(
+        type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_nanochem_config.html#nxapm_paraprobe_nanochem_config-entry-oned-profileid-feature-distance-checksum-field"
+        ],
+        a_nexus_field=NeXusField(
+            name="checksum",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="required",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
+    )
+    algorithm = Quantity(
+        type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_nanochem_config.html#nxapm_paraprobe_nanochem_config-entry-oned-profileid-feature-distance-algorithm-field"
+        ],
+        a_nexus_field=NeXusField(
+            name="algorithm",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="required",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
+    )
+    distance = Quantity(
+        type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_nanochem_config.html#nxapm_paraprobe_nanochem_config-entry-oned-profileid-feature-distance-distance-field"
+        ],
+        description=(
+            "Absolute path in the (HDF5) file that points to the distance "
+            "values. The tool assumes that the values are stored in the same "
+            "order as points (ions)."
+        ),
+        a_nexus_field=NeXusField(
+            name="distance",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="required",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
 
     def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:

@@ -52,6 +52,7 @@ from pynxtools.nomad.metainfo.applications.spm import (
     SpmResolutionIndicators,
 )
 from pynxtools.nomad.metainfo.base_classes.detector import Detector
+from pynxtools.nomad.metainfo.base_classes.environment import Environment
 from pynxtools.nomad.metainfo.base_classes.spm_cantilever import SpmCantilever
 from pynxtools.nomad.metainfo.base_classes.spm_cantilever_oscillator import (
     SpmCantileverOscillator,
@@ -382,6 +383,27 @@ class AfmInstrument(SpmInstrument):
             optionality="recommended",
         ),
     )
+    scan_environment = SubSection(
+        section_def="pynxtools.nomad.metainfo.applications.afm.AfmInstrumentScanEnvironment",
+        repeats=True,
+        variable=True,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXenvironment",
+            name="SCAN_ENVIRONMENT",
+            name_type="any",
+            optionality="required",
+        ),
+    )
+    head_temperature_sensor = SubSection(
+        section_def="pynxtools.nomad.metainfo.base_classes.sensor.Sensor",
+        repeats=False,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXsensor",
+            name="head_temperature_sensor",
+            name_type="specified",
+            optionality="optional",
+        ),
+    )
 
     def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
         super().normalize(archive, logger)
@@ -535,6 +557,50 @@ class AfmInstrumentSpmCantileverCantileverOscillator(SpmCantileverOscillator):
             component=ELNComponentEnum.NumberEditQuantity,
         ),
         a_display={"unit": "radian"},
+    )
+
+    def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
+        super().normalize(archive, logger)
+
+
+class AfmInstrumentScanEnvironment(Environment):
+    """
+    The environment information.
+    """
+
+    m_def = Section(
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXafm.html#nxafm-entry-instrument-scan-environment-group"
+        ],
+        variable=True,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXenvironment",
+            name="SCAN_ENVIRONMENT",
+            name_type="any",
+            optionality="required",
+        ),
+    )
+
+    XYpiezo_sensor = SubSection(
+        section_def="pynxtools.nomad.metainfo.base_classes.spm_piezo_sensor.SpmPiezoSensor",
+        repeats=True,
+        variable=True,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXspm_piezo_sensor",
+            name="XYpiezo_sensor",
+            name_type="partial",
+            optionality="optional",
+        ),
+    )
+    head_temperature_sensor = SubSection(
+        section_def="pynxtools.nomad.metainfo.base_classes.sensor.Sensor",
+        repeats=False,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXsensor",
+            name="head_temperature_sensor",
+            name_type="specified",
+            optionality="optional",
+        ),
     )
 
     def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:

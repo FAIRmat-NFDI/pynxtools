@@ -107,8 +107,8 @@ class ApmParaprobeToolConfig(Entry):
         ),
     )
 
-    apm_paraprobe_tool_parameters = SubSection(
-        section_def="pynxtools.nomad.metainfo.applications.apm_paraprobe_tool_config.ApmParaprobeToolConfigApmParaprobeToolParameters",
+    taskconfig = SubSection(
+        section_def="pynxtools.nomad.metainfo.applications.apm_paraprobe_tool_config.ApmParaprobeToolConfigTaskconfig",
         repeats=True,
         variable=True,
         description=("A specific configuration to achieve a processing result"),
@@ -163,7 +163,7 @@ class ApmParaprobeToolConfig(Entry):
 # =============================================================================
 
 
-class ApmParaprobeToolConfigApmParaprobeToolParameters(ApmParaprobeToolParameters):
+class ApmParaprobeToolConfigTaskconfig(ApmParaprobeToolParameters):
     """
     A specific configuration to achieve a processing result
     """
@@ -175,7 +175,7 @@ class ApmParaprobeToolConfigApmParaprobeToolParameters(ApmParaprobeToolParameter
         variable=True,
         a_nexus_group=NeXusGroup(
             nx_class="NXapm_paraprobe_tool_parameters",
-            name=None,
+            name="TASKCONFIG",
             name_type="any",
             optionality="required",
             min_occurs=1,
@@ -183,7 +183,7 @@ class ApmParaprobeToolConfigApmParaprobeToolParameters(ApmParaprobeToolParameter
     )
 
     reconstruction = SubSection(
-        section_def="pynxtools.nomad.metainfo.applications.apm_paraprobe_tool_config.ApmParaprobeToolConfigApmParaprobeToolParametersReconstruction",
+        section_def="pynxtools.nomad.metainfo.applications.apm_paraprobe_tool_config.ApmParaprobeToolConfigTaskconfigReconstruction",
         repeats=False,
         a_nexus_group=NeXusGroup(
             nx_class="NXnote",
@@ -193,7 +193,7 @@ class ApmParaprobeToolConfigApmParaprobeToolParameters(ApmParaprobeToolParameter
         ),
     )
     ranging = SubSection(
-        section_def="pynxtools.nomad.metainfo.applications.apm_paraprobe_tool_config.ApmParaprobeToolConfigApmParaprobeToolParametersRanging",
+        section_def="pynxtools.nomad.metainfo.applications.apm_paraprobe_tool_config.ApmParaprobeToolConfigTaskconfigRanging",
         repeats=False,
         a_nexus_group=NeXusGroup(
             nx_class="NXnote",
@@ -203,7 +203,7 @@ class ApmParaprobeToolConfigApmParaprobeToolParameters(ApmParaprobeToolParameter
         ),
     )
     spatial_filter = SubSection(
-        section_def="pynxtools.nomad.metainfo.applications.apm_paraprobe_tool_config.ApmParaprobeToolConfigApmParaprobeToolParametersSpatialFilter",
+        section_def="pynxtools.nomad.metainfo.applications.apm_paraprobe_tool_config.ApmParaprobeToolConfigTaskconfigSpatialFilter",
         repeats=False,
         a_nexus_group=NeXusGroup(
             nx_class="NXspatial_filter",
@@ -213,7 +213,7 @@ class ApmParaprobeToolConfigApmParaprobeToolParameters(ApmParaprobeToolParameter
         ),
     )
     evaporation_id_filter = SubSection(
-        section_def="pynxtools.nomad.metainfo.applications.apm_paraprobe_tool_config.ApmParaprobeToolConfigApmParaprobeToolParametersEvaporationIdFilter",
+        section_def="pynxtools.nomad.metainfo.applications.apm_paraprobe_tool_config.ApmParaprobeToolConfigTaskconfigEvaporationIdFilter",
         repeats=False,
         a_nexus_group=NeXusGroup(
             nx_class="NXsubsampling_filter",
@@ -223,7 +223,7 @@ class ApmParaprobeToolConfigApmParaprobeToolParameters(ApmParaprobeToolParameter
         ),
     )
     iontype_filter = SubSection(
-        section_def="pynxtools.nomad.metainfo.applications.apm_paraprobe_tool_config.ApmParaprobeToolConfigApmParaprobeToolParametersIontypeFilter",
+        section_def="pynxtools.nomad.metainfo.applications.apm_paraprobe_tool_config.ApmParaprobeToolConfigTaskconfigIontypeFilter",
         repeats=False,
         a_nexus_group=NeXusGroup(
             nx_class="NXmatch_filter",
@@ -233,7 +233,7 @@ class ApmParaprobeToolConfigApmParaprobeToolParameters(ApmParaprobeToolParameter
         ),
     )
     hit_multiplicity_filter = SubSection(
-        section_def="pynxtools.nomad.metainfo.applications.apm_paraprobe_tool_config.ApmParaprobeToolConfigApmParaprobeToolParametersHitMultiplicityFilter",
+        section_def="pynxtools.nomad.metainfo.applications.apm_paraprobe_tool_config.ApmParaprobeToolConfigTaskconfigHitMultiplicityFilter",
         repeats=False,
         a_nexus_group=NeXusGroup(
             nx_class="NXmatch_filter",
@@ -267,7 +267,7 @@ class ApmParaprobeToolConfigApmParaprobeToolParameters(ApmParaprobeToolParameter
         super().normalize(archive, logger)
 
 
-class ApmParaprobeToolConfigApmParaprobeToolParametersReconstruction(Note):
+class ApmParaprobeToolConfigTaskconfigReconstruction(Note):
     m_def = Section(
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_tool_config.html#nxapm_paraprobe_tool_config-entry-taskconfig-reconstruction-group"
@@ -360,7 +360,7 @@ class ApmParaprobeToolConfigApmParaprobeToolParametersReconstruction(Note):
         super().normalize(archive, logger)
 
 
-class ApmParaprobeToolConfigApmParaprobeToolParametersRanging(Note):
+class ApmParaprobeToolConfigTaskconfigRanging(Note):
     m_def = Section(
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_tool_config.html#nxapm_paraprobe_tool_config-entry-taskconfig-ranging-group"
@@ -438,7 +438,7 @@ class ApmParaprobeToolConfigApmParaprobeToolParametersRanging(Note):
         super().normalize(archive, logger)
 
 
-class ApmParaprobeToolConfigApmParaprobeToolParametersSpatialFilter(SpatialFilter):
+class ApmParaprobeToolConfigTaskconfigSpatialFilter(SpatialFilter):
     m_def = Section(
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_tool_config.html#nxapm_paraprobe_tool_config-entry-taskconfig-spatial-filter-group"
@@ -452,7 +452,7 @@ class ApmParaprobeToolConfigApmParaprobeToolParametersSpatialFilter(SpatialFilte
     )
 
     hexahedron_set = SubSection(
-        section_def="pynxtools.nomad.metainfo.applications.apm_paraprobe_tool_config.ApmParaprobeToolConfigApmParaprobeToolParametersSpatialFilterHexahedronSet",
+        section_def="pynxtools.nomad.metainfo.applications.apm_paraprobe_tool_config.ApmParaprobeToolConfigTaskconfigSpatialFilterHexahedronSet",
         repeats=False,
         a_nexus_group=NeXusGroup(
             nx_class="NXcg_hexahedron",
@@ -462,7 +462,7 @@ class ApmParaprobeToolConfigApmParaprobeToolParametersSpatialFilter(SpatialFilte
         ),
     )
     cylinder_set = SubSection(
-        section_def="pynxtools.nomad.metainfo.applications.apm_paraprobe_tool_config.ApmParaprobeToolConfigApmParaprobeToolParametersSpatialFilterCylinderSet",
+        section_def="pynxtools.nomad.metainfo.applications.apm_paraprobe_tool_config.ApmParaprobeToolConfigTaskconfigSpatialFilterCylinderSet",
         repeats=False,
         a_nexus_group=NeXusGroup(
             nx_class="NXcg_cylinder",
@@ -472,7 +472,7 @@ class ApmParaprobeToolConfigApmParaprobeToolParametersSpatialFilter(SpatialFilte
         ),
     )
     ellipsoid_set = SubSection(
-        section_def="pynxtools.nomad.metainfo.applications.apm_paraprobe_tool_config.ApmParaprobeToolConfigApmParaprobeToolParametersSpatialFilterEllipsoidSet",
+        section_def="pynxtools.nomad.metainfo.applications.apm_paraprobe_tool_config.ApmParaprobeToolConfigTaskconfigSpatialFilterEllipsoidSet",
         repeats=False,
         a_nexus_group=NeXusGroup(
             nx_class="NXcg_ellipsoid",
@@ -492,7 +492,7 @@ class ApmParaprobeToolConfigApmParaprobeToolParametersSpatialFilter(SpatialFilte
         ),
     )
     bitmask = SubSection(
-        section_def="pynxtools.nomad.metainfo.applications.apm_paraprobe_tool_config.ApmParaprobeToolConfigApmParaprobeToolParametersSpatialFilterBitmask",
+        section_def="pynxtools.nomad.metainfo.applications.apm_paraprobe_tool_config.ApmParaprobeToolConfigTaskconfigSpatialFilterBitmask",
         repeats=False,
         a_nexus_group=NeXusGroup(
             nx_class="NXcs_filter_boolean_mask",
@@ -523,9 +523,7 @@ class ApmParaprobeToolConfigApmParaprobeToolParametersSpatialFilter(SpatialFilte
         super().normalize(archive, logger)
 
 
-class ApmParaprobeToolConfigApmParaprobeToolParametersSpatialFilterHexahedronSet(
-    CgHexahedron
-):
+class ApmParaprobeToolConfigTaskconfigSpatialFilterHexahedronSet(CgHexahedron):
     m_def = Section(
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_tool_config.html#nxapm_paraprobe_tool_config-entry-taskconfig-spatial-filter-hexahedron-set-group"
@@ -539,7 +537,7 @@ class ApmParaprobeToolConfigApmParaprobeToolParametersSpatialFilterHexahedronSet
     )
 
     hexahedra = SubSection(
-        section_def="pynxtools.nomad.metainfo.applications.apm_paraprobe_tool_config.ApmParaprobeToolConfigApmParaprobeToolParametersSpatialFilterHexahedronSetHexahedra",
+        section_def="pynxtools.nomad.metainfo.applications.apm_paraprobe_tool_config.ApmParaprobeToolConfigTaskconfigSpatialFilterHexahedronSetHexahedra",
         repeats=False,
         a_nexus_group=NeXusGroup(
             nx_class="NXcg_face_list_data_structure",
@@ -611,7 +609,7 @@ class ApmParaprobeToolConfigApmParaprobeToolParametersSpatialFilterHexahedronSet
         super().normalize(archive, logger)
 
 
-class ApmParaprobeToolConfigApmParaprobeToolParametersSpatialFilterHexahedronSetHexahedra(
+class ApmParaprobeToolConfigTaskconfigSpatialFilterHexahedronSetHexahedra(
     CgFaceListDataStructure
 ):
     m_def = Section(
@@ -643,9 +641,7 @@ class ApmParaprobeToolConfigApmParaprobeToolParametersSpatialFilterHexahedronSet
         super().normalize(archive, logger)
 
 
-class ApmParaprobeToolConfigApmParaprobeToolParametersSpatialFilterCylinderSet(
-    CgCylinder
-):
+class ApmParaprobeToolConfigTaskconfigSpatialFilterCylinderSet(CgCylinder):
     m_def = Section(
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_tool_config.html#nxapm_paraprobe_tool_config-entry-taskconfig-spatial-filter-cylinder-set-group"
@@ -766,9 +762,7 @@ class ApmParaprobeToolConfigApmParaprobeToolParametersSpatialFilterCylinderSet(
         super().normalize(archive, logger)
 
 
-class ApmParaprobeToolConfigApmParaprobeToolParametersSpatialFilterEllipsoidSet(
-    CgEllipsoid
-):
+class ApmParaprobeToolConfigTaskconfigSpatialFilterEllipsoidSet(CgEllipsoid):
     m_def = Section(
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_tool_config.html#nxapm_paraprobe_tool_config-entry-taskconfig-spatial-filter-ellipsoid-set-group"
@@ -888,9 +882,7 @@ class ApmParaprobeToolConfigApmParaprobeToolParametersSpatialFilterEllipsoidSet(
         super().normalize(archive, logger)
 
 
-class ApmParaprobeToolConfigApmParaprobeToolParametersSpatialFilterBitmask(
-    CsFilterBooleanMask
-):
+class ApmParaprobeToolConfigTaskconfigSpatialFilterBitmask(CsFilterBooleanMask):
     m_def = Section(
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_tool_config.html#nxapm_paraprobe_tool_config-entry-taskconfig-spatial-filter-bitmask-group"
@@ -965,9 +957,7 @@ class ApmParaprobeToolConfigApmParaprobeToolParametersSpatialFilterBitmask(
         super().normalize(archive, logger)
 
 
-class ApmParaprobeToolConfigApmParaprobeToolParametersEvaporationIdFilter(
-    SubsamplingFilter
-):
+class ApmParaprobeToolConfigTaskconfigEvaporationIdFilter(SubsamplingFilter):
     m_def = Section(
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_tool_config.html#nxapm_paraprobe_tool_config-entry-taskconfig-evaporation-id-filter-group"
@@ -1042,7 +1032,7 @@ class ApmParaprobeToolConfigApmParaprobeToolParametersEvaporationIdFilter(
         super().normalize(archive, logger)
 
 
-class ApmParaprobeToolConfigApmParaprobeToolParametersIontypeFilter(MatchFilter):
+class ApmParaprobeToolConfigTaskconfigIontypeFilter(MatchFilter):
     m_def = Section(
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_tool_config.html#nxapm_paraprobe_tool_config-entry-taskconfig-iontype-filter-group"
@@ -1092,9 +1082,7 @@ class ApmParaprobeToolConfigApmParaprobeToolParametersIontypeFilter(MatchFilter)
         super().normalize(archive, logger)
 
 
-class ApmParaprobeToolConfigApmParaprobeToolParametersHitMultiplicityFilter(
-    MatchFilter
-):
+class ApmParaprobeToolConfigTaskconfigHitMultiplicityFilter(MatchFilter):
     m_def = Section(
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_tool_config.html#nxapm_paraprobe_tool_config-entry-taskconfig-hit-multiplicity-filter-group"

@@ -103,8 +103,8 @@ class SpmBiasSpectroscopy(Object):
         repeats=True,
         variable=True,
     )
-    spm_scan_control = SubSection(
-        section_def="pynxtools.nomad.metainfo.base_classes.spm_bias_spectroscopy.SpmBiasSpectroscopySpmScanControl",
+    bias_sweep = SubSection(
+        section_def="pynxtools.nomad.metainfo.base_classes.spm_bias_spectroscopy.SpmBiasSpectroscopyBiasSweep",
         repeats=True,
         variable=True,
         description=(
@@ -233,7 +233,7 @@ class SpmBiasSpectroscopyCircuit(Circuit):
         super().normalize(archive, logger)
 
 
-class SpmBiasSpectroscopySpmScanControl(SpmScanControl):
+class SpmBiasSpectroscopyBiasSweep(SpmScanControl):
     """
     The bias sweep scan which is is performed in the scanning probe microscopy
     experiments.
@@ -246,7 +246,7 @@ class SpmBiasSpectroscopySpmScanControl(SpmScanControl):
         variable=True,
         a_nexus_group=NeXusGroup(
             nx_class="NXspm_scan_control",
-            name=None,
+            name="BIAS_SWEEP",
             name_type="any",
             optionality="optional",
         ),
@@ -263,7 +263,7 @@ class SpmBiasSpectroscopySpmScanControl(SpmScanControl):
         ),
     )
     scan_region = SubSection(
-        section_def="pynxtools.nomad.metainfo.base_classes.spm_bias_spectroscopy.SpmBiasSpectroscopySpmScanControlScanRegion",
+        section_def="pynxtools.nomad.metainfo.base_classes.spm_bias_spectroscopy.SpmBiasSpectroscopyBiasSweepScanRegion",
         repeats=False,
         a_nexus_group=NeXusGroup(
             nx_class="NXspm_scan_region",
@@ -273,7 +273,7 @@ class SpmBiasSpectroscopySpmScanControl(SpmScanControl):
         ),
     )
     linear_sweep = SubSection(
-        section_def="pynxtools.nomad.metainfo.base_classes.spm_bias_spectroscopy.SpmBiasSpectroscopySpmScanControlLinearSweep",
+        section_def="pynxtools.nomad.metainfo.base_classes.spm_bias_spectroscopy.SpmBiasSpectroscopyBiasSweepLinearSweep",
         repeats=False,
         a_nexus_group=NeXusGroup(
             nx_class="NXspm_scan_pattern",
@@ -462,7 +462,7 @@ class SpmBiasSpectroscopySpmScanControl(SpmScanControl):
         super().normalize(archive, logger)
 
 
-class SpmBiasSpectroscopySpmScanControlScanRegion(SpmScanRegion):
+class SpmBiasSpectroscopyBiasSweepScanRegion(SpmScanRegion):
     """
     The scan region is the area of phase space or sub-phase space where the
     scan is performed.
@@ -574,7 +574,7 @@ class SpmBiasSpectroscopySpmScanControlScanRegion(SpmScanRegion):
         super().normalize(archive, logger)
 
 
-class SpmBiasSpectroscopySpmScanControlLinearSweep(SpmScanPattern):
+class SpmBiasSpectroscopyBiasSweepLinearSweep(SpmScanPattern):
     """
     In the linear sweep, the bias voltage is changed linearly from the start
     value to the end value.

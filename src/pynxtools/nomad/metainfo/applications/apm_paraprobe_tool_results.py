@@ -100,8 +100,8 @@ class ApmParaprobeToolResults(Entry):
         ),
     )
 
-    apm_paraprobe_tool_process = SubSection(
-        section_def="pynxtools.nomad.metainfo.applications.apm_paraprobe_tool_results.ApmParaprobeToolResultsApmParaprobeToolProcess",
+    taskprocessed = SubSection(
+        section_def="pynxtools.nomad.metainfo.applications.apm_paraprobe_tool_results.ApmParaprobeToolResultsTaskprocessed",
         repeats=True,
         variable=True,
         description=("A specific processing result"),
@@ -156,7 +156,7 @@ class ApmParaprobeToolResults(Entry):
 # =============================================================================
 
 
-class ApmParaprobeToolResultsApmParaprobeToolProcess(ApmParaprobeToolProcess):
+class ApmParaprobeToolResultsTaskprocessed(ApmParaprobeToolProcess):
     """
     A specific processing result
     """
@@ -168,7 +168,7 @@ class ApmParaprobeToolResultsApmParaprobeToolProcess(ApmParaprobeToolProcess):
         variable=True,
         a_nexus_group=NeXusGroup(
             nx_class="NXapm_paraprobe_tool_process",
-            name=None,
+            name="TASKPROCESSED",
             name_type="any",
             optionality="required",
             min_occurs=1,
@@ -176,7 +176,7 @@ class ApmParaprobeToolResultsApmParaprobeToolProcess(ApmParaprobeToolProcess):
     )
 
     window = SubSection(
-        section_def="pynxtools.nomad.metainfo.applications.apm_paraprobe_tool_results.ApmParaprobeToolResultsApmParaprobeToolProcessWindow",
+        section_def="pynxtools.nomad.metainfo.applications.apm_paraprobe_tool_results.ApmParaprobeToolResultsTaskprocessedWindow",
         repeats=False,
         a_nexus_group=NeXusGroup(
             nx_class="NXcs_filter_boolean_mask",
@@ -190,7 +190,7 @@ class ApmParaprobeToolResultsApmParaprobeToolProcess(ApmParaprobeToolProcess):
         super().normalize(archive, logger)
 
 
-class ApmParaprobeToolResultsApmParaprobeToolProcessWindow(CsFilterBooleanMask):
+class ApmParaprobeToolResultsTaskprocessedWindow(CsFilterBooleanMask):
     m_def = Section(
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_tool_results.html#nxapm_paraprobe_tool_results-entry-taskprocessed-window-group"

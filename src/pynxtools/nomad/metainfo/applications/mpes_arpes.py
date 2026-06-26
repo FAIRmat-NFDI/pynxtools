@@ -326,6 +326,17 @@ class MpesArpesInstrument(MpesInstrument):
         ),
     )
 
+    angularN_resolution = SubSection(
+        section_def="pynxtools.nomad.metainfo.applications.mpes_arpes.MpesArpesInstrumentAngularN_resolution",
+        repeats=True,
+        variable=True,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXresolution",
+            name="angularN_resolution",
+            name_type="partial",
+            optionality="recommended",
+        ),
+    )
     electronanalyzer = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.mpes_arpes.MpesArpesInstrumentElectronanalyzer",
         repeats=True,
@@ -336,6 +347,85 @@ class MpesArpesInstrument(MpesInstrument):
             name_type="any",
             optionality="required",
         ),
+    )
+
+    def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
+        super().normalize(archive, logger)
+
+
+class MpesArpesInstrumentAngularN_resolution(Resolution):
+    """
+    Overall angular resolution along the Nth angular axis. Create one such
+    entry per relevant angular axis, corresponding to the angular axes in
+    NXdata. For hemispherical analyzers, angular0_resolution corresponds to the
+    direction along the analyzer slit, and angular1_resolution to the one
+    perpendicular to it.
+    """
+
+    m_def = Section(
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXmpes_arpes.html#nxmpes_arpes-entry-instrument-angularn-resolution-group"
+        ],
+        variable=True,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXresolution",
+            name="angularN_resolution",
+            name_type="partial",
+            optionality="recommended",
+        ),
+    )
+
+    physical_quantity = Quantity(
+        type=MEnum(["angle"]),
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXmpes_arpes.html#nxmpes_arpes-entry-instrument-angularn-resolution-physical-quantity-field"
+        ],
+        a_nexus_field=NeXusField(
+            name="physical_quantity",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="required",
+            enumeration=["angle"],
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.EnumEditQuantity,
+            default="angle",
+        ),
+    )
+    type = Quantity(
+        type=MEnum(["estimated", "derived", "calibrated", "other"]),
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXmpes_arpes.html#nxmpes_arpes-entry-instrument-angularn-resolution-type-field"
+        ],
+        a_nexus_field=NeXusField(
+            name="type",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="recommended",
+            enumeration=["estimated", "derived", "calibrated", "other"],
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.EnumEditQuantity,
+        ),
+    )
+    resolution = Quantity(
+        type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXmpes_arpes.html#nxmpes_arpes-entry-instrument-angularn-resolution-resolution-field"
+        ],
+        dimensionality="[angle]",
+        unit="radian",
+        a_nexus_field=NeXusField(
+            name="resolution",
+            type="NX_FLOAT",
+            name_type="specified",
+            optionality="required",
+            units="NX_ANGLE",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "radian"},
     )
 
     def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:

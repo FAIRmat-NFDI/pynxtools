@@ -48,6 +48,7 @@ from pynxtools.nomad.metainfo.applications.mpes import (
     MpesInstrument,
     MpesSample,
 )
+from pynxtools.nomad.metainfo.base_classes.beam import Beam
 from pynxtools.nomad.metainfo.base_classes.collectioncolumn import Collectioncolumn
 from pynxtools.nomad.metainfo.base_classes.coordinate_system import CoordinateSystem
 from pynxtools.nomad.metainfo.base_classes.data import Data
@@ -57,6 +58,7 @@ from pynxtools.nomad.metainfo.base_classes.fit import Fit
 from pynxtools.nomad.metainfo.base_classes.fit_function import FitFunction
 from pynxtools.nomad.metainfo.base_classes.parameters import Parameters
 from pynxtools.nomad.metainfo.base_classes.peak import Peak
+from pynxtools.nomad.metainfo.base_classes.source import Source
 from pynxtools.nomad.metainfo.base_classes.transformations import Transformations
 
 if TYPE_CHECKING:
@@ -451,6 +453,26 @@ class XpsInstrument(MpesInstrument):
         ),
     )
 
+    source_probe = SubSection(
+        section_def="pynxtools.nomad.metainfo.applications.xps.XpsInstrumentSourceProbe",
+        repeats=False,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXsource",
+            name="source_probe",
+            name_type="specified",
+            optionality="recommended",
+        ),
+    )
+    beam_probe = SubSection(
+        section_def="pynxtools.nomad.metainfo.applications.xps.XpsInstrumentBeamProbe",
+        repeats=False,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXbeam",
+            name="beam_probe",
+            name_type="specified",
+            optionality="required",
+        ),
+    )
     electronanalyzer = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.xps.XpsInstrumentElectronanalyzer",
         repeats=True,
@@ -460,6 +482,310 @@ class XpsInstrument(MpesInstrument):
             name=None,
             name_type="any",
             optionality="required",
+        ),
+    )
+
+    def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
+        super().normalize(archive, logger)
+
+
+class XpsInstrumentSourceProbe(Source):
+    m_def = Section(
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXxps.html#nxxps-entry-instrument-source-probe-group"
+        ],
+        a_nexus_group=NeXusGroup(
+            nx_class="NXsource",
+            name="source_probe",
+            name_type="specified",
+            optionality="recommended",
+        ),
+    )
+
+    power = Quantity(
+        type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXxps.html#nxxps-entry-instrument-source-probe-power-field"
+        ],
+        dimensionality="[mass] * [length] ** 2 / [time] ** 3",
+        unit="watt",
+        a_nexus_field=NeXusField(
+            name="power",
+            type="NX_FLOAT",
+            name_type="specified",
+            optionality="recommended",
+            units="NX_POWER",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "watt"},
+    )
+
+    def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
+        super().normalize(archive, logger)
+
+
+class XpsInstrumentBeamProbe(Beam):
+    m_def = Section(
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXxps.html#nxxps-entry-instrument-beam-probe-group"
+        ],
+        a_nexus_group=NeXusGroup(
+            nx_class="NXbeam",
+            name="beam_probe",
+            name_type="specified",
+            optionality="required",
+        ),
+    )
+
+    transformations = SubSection(
+        section_def="pynxtools.nomad.metainfo.applications.xps.XpsInstrumentBeamProbeTransformations",
+        repeats=False,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXtransformations",
+            name="transformations",
+            name_type="specified",
+            optionality="recommended",
+        ),
+    )
+
+    depends_on = Quantity(
+        type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXxps.html#nxxps-entry-instrument-beam-probe-depends-on-field"
+        ],
+        description=(
+            "Reference to the transformation describing the direction of the "
+            "beam relative to a defined coordinate system. Should point to "
+            "/entry/instrument/beam_probe/transformations/beam_direction."
+        ),
+        a_nexus_field=NeXusField(
+            name="depends_on",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="recommended",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
+    )
+
+    def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
+        super().normalize(archive, logger)
+
+
+class XpsInstrumentBeamProbeTransformations(Transformations):
+    m_def = Section(
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXxps.html#nxxps-entry-instrument-beam-probe-transformations-group"
+        ],
+        a_nexus_group=NeXusGroup(
+            nx_class="NXtransformations",
+            name="transformations",
+            name_type="specified",
+            optionality="recommended",
+        ),
+    )
+
+    beam_direction = Quantity(
+        type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXxps.html#nxxps-entry-instrument-beam-probe-transformations-beam-direction-field"
+        ],
+        dimensionality="dimensionless",
+        unit="dimensionless",
+        description=("Beam direction in the XPS coordinate system after rotation."),
+        a_nexus_field=NeXusField(
+            name="beam_direction",
+            type="NX_NUMBER",
+            name_type="specified",
+            optionality="required",
+            units="NX_UNITLESS",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "dimensionless"},
+    )
+    beam_direction__vector = Quantity(
+        type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXxps.html#nxxps-entry-instrument-beam-probe-transformations-beam-direction-vector-attribute"
+        ],
+        shape=[3],
+        a_nexus_attribute=NeXusAttribute(
+            name="vector",
+            type="NX_NUMBER",
+            name_type="specified",
+            optionality="required",
+            parent_field="beam_direction",
+        ),
+    )
+    beam_direction__depends_on = Quantity(
+        type=MEnum(["beam_polar_angle_of_incidence"]),
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXxps.html#nxxps-entry-instrument-beam-probe-transformations-beam-direction-depends-on-attribute"
+        ],
+        a_nexus_attribute=NeXusAttribute(
+            name="depends_on",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="required",
+            parent_field="beam_direction",
+            enumeration=["beam_polar_angle_of_incidence"],
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.EnumEditQuantity,
+            default="beam_polar_angle_of_incidence",
+        ),
+    )
+    beam_polar_angle_of_incidence = Quantity(
+        type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXxps.html#nxxps-entry-instrument-beam-probe-transformations-beam-polar-angle-of-incidence-field"
+        ],
+        dimensionality="[angle]",
+        unit="radian",
+        description=(
+            "Incidence angle of the beam with respect to the upward z-direction, "
+            "defined by the sample stage."
+        ),
+        a_nexus_field=NeXusField(
+            name="beam_polar_angle_of_incidence",
+            type="NX_NUMBER",
+            name_type="specified",
+            optionality="required",
+            units="NX_ANGLE",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "radian"},
+    )
+    beam_polar_angle_of_incidence__transformation_type = Quantity(
+        type=MEnum(["rotation"]),
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXxps.html#nxxps-entry-instrument-beam-probe-transformations-beam-polar-angle-of-incidence-transformation-type-attribute"
+        ],
+        a_nexus_attribute=NeXusAttribute(
+            name="transformation_type",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="required",
+            parent_field="beam_polar_angle_of_incidence",
+            enumeration=["rotation"],
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.EnumEditQuantity,
+            default="rotation",
+        ),
+    )
+    beam_polar_angle_of_incidence__vector = Quantity(
+        type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXxps.html#nxxps-entry-instrument-beam-probe-transformations-beam-polar-angle-of-incidence-vector-attribute"
+        ],
+        shape=[3],
+        a_nexus_attribute=NeXusAttribute(
+            name="vector",
+            type="NX_NUMBER",
+            name_type="specified",
+            optionality="required",
+            parent_field="beam_polar_angle_of_incidence",
+        ),
+    )
+    beam_polar_angle_of_incidence__depends_on = Quantity(
+        type=MEnum(["beam_azimuth_angle"]),
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXxps.html#nxxps-entry-instrument-beam-probe-transformations-beam-polar-angle-of-incidence-depends-on-attribute"
+        ],
+        a_nexus_attribute=NeXusAttribute(
+            name="depends_on",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="required",
+            parent_field="beam_polar_angle_of_incidence",
+            enumeration=["beam_azimuth_angle"],
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.EnumEditQuantity,
+            default="beam_azimuth_angle",
+        ),
+    )
+    beam_azimuth_angle = Quantity(
+        type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXxps.html#nxxps-entry-instrument-beam-probe-transformations-beam-azimuth-angle-field"
+        ],
+        dimensionality="[angle]",
+        unit="radian",
+        description=(
+            "Azimuthal rotation of the beam from the y-direction defined by the "
+            "sample stage."
+        ),
+        a_nexus_field=NeXusField(
+            name="beam_azimuth_angle",
+            type="NX_NUMBER",
+            name_type="specified",
+            optionality="required",
+            units="NX_ANGLE",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "radian"},
+    )
+    beam_azimuth_angle__transformation_type = Quantity(
+        type=MEnum(["rotation"]),
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXxps.html#nxxps-entry-instrument-beam-probe-transformations-beam-azimuth-angle-transformation-type-attribute"
+        ],
+        a_nexus_attribute=NeXusAttribute(
+            name="transformation_type",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="required",
+            parent_field="beam_azimuth_angle",
+            enumeration=["rotation"],
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.EnumEditQuantity,
+            default="rotation",
+        ),
+    )
+    beam_azimuth_angle__vector = Quantity(
+        type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXxps.html#nxxps-entry-instrument-beam-probe-transformations-beam-azimuth-angle-vector-attribute"
+        ],
+        shape=[3],
+        a_nexus_attribute=NeXusAttribute(
+            name="vector",
+            type="NX_NUMBER",
+            name_type="specified",
+            optionality="required",
+            parent_field="beam_azimuth_angle",
+        ),
+    )
+    beam_azimuth_angle__depends_on = Quantity(
+        type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXxps.html#nxxps-entry-instrument-beam-probe-transformations-beam-azimuth-angle-depends-on-attribute"
+        ],
+        description=(
+            "This should point to the coordinate system defined in "
+            "/entry/xps_coordinate_system."
+        ),
+        a_nexus_attribute=NeXusAttribute(
+            name="depends_on",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="required",
+            parent_field="beam_azimuth_angle",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
 

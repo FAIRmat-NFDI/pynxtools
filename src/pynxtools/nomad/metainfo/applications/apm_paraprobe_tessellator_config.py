@@ -47,8 +47,9 @@ from pynxtools.nomad.annotations import (
 from pynxtools.nomad.metainfo._category import ExperimentCategory
 from pynxtools.nomad.metainfo.applications.apm_paraprobe_tool_config import (
     ApmParaprobeToolConfig,
-    ApmParaprobeToolConfigApmParaprobeToolParameters,
+    ApmParaprobeToolConfigTaskconfig,
 )
+from pynxtools.nomad.metainfo.base_classes.note import Note
 
 if TYPE_CHECKING:
     from nomad.datamodel import EntryArchive
@@ -130,9 +131,7 @@ class ApmParaprobeTessellatorConfig(ApmParaprobeToolConfig):
 # =============================================================================
 
 
-class ApmParaprobeTessellatorConfigTessellateID(
-    ApmParaprobeToolConfigApmParaprobeToolParameters
-):
+class ApmParaprobeTessellatorConfigTessellateID(ApmParaprobeToolConfigTaskconfig):
     m_def = Section(
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_tessellator_config.html#nxapm_paraprobe_tessellator_config-entry-tessellateid-group"
@@ -145,6 +144,17 @@ class ApmParaprobeTessellatorConfigTessellateID(
             optionality="required",
             min_occurs=1,
             max_occurs=1,
+        ),
+    )
+
+    surface_distance = SubSection(
+        section_def="pynxtools.nomad.metainfo.applications.apm_paraprobe_tessellator_config.ApmParaprobeTessellatorConfigTessellateIDSurfaceDistance",
+        repeats=False,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXnote",
+            name="surface_distance",
+            name_type="specified",
+            optionality="optional",
         ),
     )
 
@@ -244,6 +254,84 @@ class ApmParaprobeTessellatorConfigTessellateID(
         ),
         a_eln=ELNAnnotation(
             component=ELNComponentEnum.BoolEditQuantity,
+        ),
+    )
+
+    def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
+        super().normalize(archive, logger)
+
+
+class ApmParaprobeTessellatorConfigTessellateIDSurfaceDistance(Note):
+    m_def = Section(
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_tessellator_config.html#nxapm_paraprobe_tessellator_config-entry-tessellateid-surface-distance-group"
+        ],
+        a_nexus_group=NeXusGroup(
+            nx_class="NXnote",
+            name="surface_distance",
+            name_type="specified",
+            optionality="optional",
+        ),
+    )
+
+    file_name = Quantity(
+        type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_tessellator_config.html#nxapm_paraprobe_tessellator_config-entry-tessellateid-surface-distance-file-name-field"
+        ],
+        a_nexus_field=NeXusField(
+            name="file_name",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="required",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
+    )
+    checksum = Quantity(
+        type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_tessellator_config.html#nxapm_paraprobe_tessellator_config-entry-tessellateid-surface-distance-checksum-field"
+        ],
+        a_nexus_field=NeXusField(
+            name="checksum",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="required",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
+    )
+    algorithm = Quantity(
+        type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_tessellator_config.html#nxapm_paraprobe_tessellator_config-entry-tessellateid-surface-distance-algorithm-field"
+        ],
+        a_nexus_field=NeXusField(
+            name="algorithm",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="required",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
+    )
+    distance = Quantity(
+        type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_tessellator_config.html#nxapm_paraprobe_tessellator_config-entry-tessellateid-surface-distance-distance-field"
+        ],
+        a_nexus_field=NeXusField(
+            name="distance",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="required",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
 

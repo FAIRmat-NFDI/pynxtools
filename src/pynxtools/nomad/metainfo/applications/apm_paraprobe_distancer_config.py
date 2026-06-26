@@ -47,8 +47,10 @@ from pynxtools.nomad.annotations import (
 from pynxtools.nomad.metainfo._category import ExperimentCategory
 from pynxtools.nomad.metainfo.applications.apm_paraprobe_tool_config import (
     ApmParaprobeToolConfig,
-    ApmParaprobeToolConfigApmParaprobeToolParameters,
+    ApmParaprobeToolConfigTaskconfig,
 )
+from pynxtools.nomad.metainfo.base_classes.match_filter import MatchFilter
+from pynxtools.nomad.metainfo.base_classes.note import Note
 
 if TYPE_CHECKING:
     from nomad.datamodel import EntryArchive
@@ -138,9 +140,7 @@ class ApmParaprobeDistancerConfig(ApmParaprobeToolConfig):
 # =============================================================================
 
 
-class ApmParaprobeDistancerConfigPoint_to_triangleID(
-    ApmParaprobeToolConfigApmParaprobeToolParameters
-):
+class ApmParaprobeDistancerConfigPoint_to_triangleID(ApmParaprobeToolConfigTaskconfig):
     m_def = Section(
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_distancer_config.html#nxapm_paraprobe_distancer_config-entry-point-to-triangleid-group"
@@ -153,6 +153,19 @@ class ApmParaprobeDistancerConfigPoint_to_triangleID(
             optionality="required",
             min_occurs=1,
             max_occurs=1,
+        ),
+    )
+
+    triangle_setID = SubSection(
+        section_def="pynxtools.nomad.metainfo.applications.apm_paraprobe_distancer_config.ApmParaprobeDistancerConfigPoint_to_triangleIDTriangle_setID",
+        repeats=True,
+        variable=True,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXnote",
+            name="triangle_setID",
+            name_type="partial",
+            optionality="required",
+            min_occurs=1,
         ),
     )
 
@@ -224,6 +237,238 @@ class ApmParaprobeDistancerConfigPoint_to_triangleID(
             component=ELNComponentEnum.NumberEditQuantity,
         ),
         a_display={"unit": "dimensionless"},
+    )
+
+    def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
+        super().normalize(archive, logger)
+
+
+class ApmParaprobeDistancerConfigPoint_to_triangleIDTriangle_setID(Note):
+    """
+    Each triangle_set that is referred to here should be a
+    face_list_data_structure, i.e. an array of (n_vertices, 3) of NX_FLOAT for
+    vertex coordinates, an (n_facets, 3) array of NX_UINT incident vertices of
+    each facet. Vertex indices are assumed to start at zero and must not exceed
+    n_vertices - 1, i.e. the index_offset is 0. Facet normal have to be
+    provided as an array of (n_facets, 3) of NX_FLOAT.
+    """
+
+    m_def = Section(
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_distancer_config.html#nxapm_paraprobe_distancer_config-entry-point-to-triangleid-triangle-setid-group"
+        ],
+        variable=True,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXnote",
+            name="triangle_setID",
+            name_type="partial",
+            optionality="required",
+            min_occurs=1,
+        ),
+    )
+
+    patch_filter = SubSection(
+        section_def="pynxtools.nomad.metainfo.applications.apm_paraprobe_distancer_config.ApmParaprobeDistancerConfigPoint_to_triangleIDTriangle_setIDPatchFilter",
+        repeats=False,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXmatch_filter",
+            name="patch_filter",
+            name_type="specified",
+            optionality="optional",
+        ),
+    )
+
+    algorithm = Quantity(
+        type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_distancer_config.html#nxapm_paraprobe_distancer_config-entry-point-to-triangleid-triangle-setid-algorithm-field"
+        ],
+        a_nexus_field=NeXusField(
+            name="algorithm",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="required",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
+    )
+    checksum = Quantity(
+        type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_distancer_config.html#nxapm_paraprobe_distancer_config-entry-point-to-triangleid-triangle-setid-checksum-field"
+        ],
+        a_nexus_field=NeXusField(
+            name="checksum",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="required",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
+    )
+    file_name = Quantity(
+        type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_distancer_config.html#nxapm_paraprobe_distancer_config-entry-point-to-triangleid-triangle-setid-file-name-field"
+        ],
+        a_nexus_field=NeXusField(
+            name="file_name",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="required",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
+    )
+    vertices = Quantity(
+        type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_distancer_config.html#nxapm_paraprobe_distancer_config-entry-point-to-triangleid-triangle-setid-vertices-field"
+        ],
+        description=(
+            "Absolute path in the (HDF5) file that points to the array of vertex "
+            "positions for the triangles in that triangle_set."
+        ),
+        a_nexus_field=NeXusField(
+            name="vertices",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="required",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
+    )
+    indices = Quantity(
+        type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_distancer_config.html#nxapm_paraprobe_distancer_config-entry-point-to-triangleid-triangle-setid-indices-field"
+        ],
+        description=(
+            "Absolute path in the (HDF5) file that points to the array of vertex "
+            "indices for the triangles in that triangle_set."
+        ),
+        a_nexus_field=NeXusField(
+            name="indices",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="required",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
+    )
+    vertex_normals = Quantity(
+        type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_distancer_config.html#nxapm_paraprobe_distancer_config-entry-point-to-triangleid-triangle-setid-vertex-normals-field"
+        ],
+        description=(
+            "Absolute path in the (HDF5) file that points to the array of vertex "
+            "normal vectors for the triangles in that triangle_set."
+        ),
+        a_nexus_field=NeXusField(
+            name="vertex_normals",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="optional",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
+    )
+    face_normals = Quantity(
+        type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_distancer_config.html#nxapm_paraprobe_distancer_config-entry-point-to-triangleid-triangle-setid-face-normals-field"
+        ],
+        description=(
+            "Absolute path in the (HDF5) file that points to the array of facet "
+            "normal vectors for the triangles in that triangle_set."
+        ),
+        a_nexus_field=NeXusField(
+            name="face_normals",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="optional",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
+    )
+    indices_patch = Quantity(
+        type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_distancer_config.html#nxapm_paraprobe_distancer_config-entry-point-to-triangleid-triangle-setid-indices-patch-field"
+        ],
+        description=(
+            "Absolute path in the (HDF5) file that points to the array of "
+            "identifier for the triangles in that triangle_set."
+        ),
+        a_nexus_field=NeXusField(
+            name="indices_patch",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="optional",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
+    )
+
+    def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
+        super().normalize(archive, logger)
+
+
+class ApmParaprobeDistancerConfigPoint_to_triangleIDTriangle_setIDPatchFilter(
+    MatchFilter
+):
+    m_def = Section(
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_distancer_config.html#nxapm_paraprobe_distancer_config-entry-point-to-triangleid-triangle-setid-patch-filter-group"
+        ],
+        a_nexus_group=NeXusGroup(
+            nx_class="NXmatch_filter",
+            name="patch_filter",
+            name_type="specified",
+            optionality="optional",
+        ),
+    )
+
+    method = Quantity(
+        type=MEnum(["whitelist", "blacklist"]),
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_distancer_config.html#nxapm_paraprobe_distancer_config-entry-point-to-triangleid-triangle-setid-patch-filter-method-field"
+        ],
+        a_nexus_field=NeXusField(
+            name="method",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="required",
+            enumeration=["whitelist", "blacklist"],
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.EnumEditQuantity,
+        ),
+    )
+    match = Quantity(
+        type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_distancer_config.html#nxapm_paraprobe_distancer_config-entry-point-to-triangleid-triangle-setid-patch-filter-match-field"
+        ],
+        dimensionality="dimensionless",
+        unit="dimensionless",
+        shape=["*"],
+        a_nexus_field=NeXusField(
+            name="match",
+            type="NX_NUMBER",
+            name_type="specified",
+            optionality="required",
+            units="NX_UNITLESS",
+        ),
     )
 
     def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
