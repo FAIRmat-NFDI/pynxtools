@@ -853,6 +853,7 @@ class Entry(Object, basesections.Measurement, EntryData):
     # archive data (which is an Entry), and the values are HDF5 paths relative
     # to the NXentry group (e.g. "instrument/detector/data").
     # normalize() resolves these to archive references via m_context.
+    # TODO: we should consider removing this quantity and instead use HDF5References.
     m_nx_data_path = Quantity(
         type=str,
         description="JSON mapping of HDF5 paths (relative to this NXentry) to archive paths.",
