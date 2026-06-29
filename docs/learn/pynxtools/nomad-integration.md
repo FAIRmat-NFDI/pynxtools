@@ -99,8 +99,8 @@ The compiled schema makes every NeXus concept searchable in NOMAD:
 - Every NeXus group becomes a `SubSection`.
 - Every NeXus field becomes a Metainfo `Quantity` with the correct Python type and unit.
 - Every NeXus attributes becomes a Metainfo `Quantity`.
-  - It it is the attribute of a field, it is separated from its parent with two underscores (e.g. ``AXISNAME__long_name``).
-  - It it is the attribute of a group, it gets added by its name (e.g. ``Data.axes``).
+  - If it is the attribute of a field, it is separated from its parent with two underscores (e.g. ``AXISNAME__long_name``).
+  - If it is the attribute of a group, it gets added by its name (e.g. ``Data.axes``).
 - The application definition specifies which sections and quantities are required.
 
 The Metainfo can be browsed in the NOMAD GUI at:
