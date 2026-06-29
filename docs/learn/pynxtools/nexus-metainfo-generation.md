@@ -17,7 +17,7 @@ that domain plugins can build on.
 
 Phase 1 of the NeXus–NOMAD Metainfo refactor introduces a **code generator** that reads
 the NeXus definitions through the `NexusNode` API and writes one Python file per NXDL
-base class.  Each generated file is a normal importable Python module containing a single
+base class. Each generated file is a normal importable Python module containing a single
 NOMAD `Section` class that carries structured annotations connecting every quantity and
 group back to its NXDL definition.
 
