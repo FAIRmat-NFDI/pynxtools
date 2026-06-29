@@ -279,7 +279,7 @@ src/pynxtools/nomad/
         _mapping.py             # nxdl_to_class_name, BASESECTIONS_MAP, type mapping
         nxdl_to_metainfo.py     # generator: NexusNode → .py via Jinja2
         templates/
-            base_class.py.j2    # Jinja2 template
+            nexus.py.j2    # Jinja2 template
     metainfo/
         __init__.py             # public: build_base_classes_package()
         _package.py             # assembles NOMAD Package
