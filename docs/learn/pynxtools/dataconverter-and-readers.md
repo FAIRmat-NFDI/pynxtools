@@ -76,6 +76,33 @@ pynx convert --nxdl nxdl any_data.hdf5 --mapping my_custom_map.mapping.json
 
 You can find actual examples with data files at [`examples/json_map`](https://github.com/FAIRmat-NFDI/pynxtools/tree/master/examples/json_map/).
 
+### Embed NeXus docstrings in the output file
+
+Pass `--write-docs` to embed the NeXus concept documentation from the NXDL schema directly into the output HDF5 file as string attributes:
+
+```console
+pynx convert run --reader <reader-name> --nxdl <NXDL> <files> --write-docs
+```
+
+Each HDF5 group and field receives a `@docs` attribute containing the NXDL docstring, and a `@docs_url` attribute with a direct URL to the concept in the [NeXus manual](https://manual.nexusformat.org/classes) (e.g. `https://manual.nexusformat.org/classes/base_classes/NXdata.html#nxdata-data-field`). Each HDF5 attribute additionally receives `@<attr-name>_docs` and `@<attr-name>_docs_url` companions. When a concept is defined across multiple levels of the NeXus inheritance hierarchy, all contributing docstrings are included in `@docs`, labeled by their concept path (e.g. `NXentry/definition: ...`); `@docs_url` points to the most specific level.
+
+The `--docs-format` option controls how the docstrings in `@docs` are stored:
+
+| Format | Description | Best for |
+|--------|-------------|----------|
+| `default` | Raw RST source as-is | Reading programmatically; editors that render RST |
+| `plain` | RST markup stripped to clean prose; single-line, no embedded newlines | HDF5 viewers such as [h5web](https://h5web.panosc.eu/) |
+
+```console
+pynx convert run --reader <reader-name> --nxdl <NXDL> <files> --write-docs --docs-format plain
+```
+
+!!! warning "Docstrings and HDF5 links"
+    **Links in the template (writing):** When a reader writes a value as an HDF5 link (soft link,
+    virtual dataset, or external link), `--write-docs` does **not** embed docstrings on that link node. The concept at the link source and the concept at the link destination may differ, so writing the source concept's doc at the destination would be misleading. If you need docstrings on linked data, have the reader write the actual data array instead of a link for those fields.
+
+    **Links to a file that already has `@docs` (reading/reuse):** If an HDF5 dataset that already carries `@docs`/`@docs_url` attributes is soft-linked or externally linked into another file at a different path, HDF5 will expose those attributes at the link destination as well. The `@docs` and `@docs_url` values describe the **source concept**, not the concept at the new path. Consumers should therefore treat `@docs`/`@docs_url` as describing the schema concept at the path where the data *was originally written*, not necessarily the path they are currently reading from.
+
 ## Example data for testing and development purposes
 
 Before using your own data we strongly encourage you to download a set of open-source test data for testing the pynxtools readers and reader  plugins. For this purpose, pynxtools and its plugins come with `examples` and `test` directories including reader-specific examples. These examples can be used for downloading test data and use specific readers as a standalone converter to translate given data into a NeXus/HDF5 file.
