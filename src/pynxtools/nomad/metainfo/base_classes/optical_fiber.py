@@ -207,6 +207,7 @@ class OpticalFiber(Component):
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXoptical_fiber.html#nxoptical_fiber-spectral-range-field"
         ],
+        flexible_unit=True,
         shape=[2],
         description=(
             "Spectral range for which the fiber is designed. Enter the minimum "

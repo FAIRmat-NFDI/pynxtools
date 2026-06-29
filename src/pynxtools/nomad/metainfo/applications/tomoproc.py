@@ -495,6 +495,7 @@ class TomoprocData(Data):
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXtomoproc.html#nxtomoproc-entry-data-x-field"
         ],
+        flexible_unit=True,
         shape=["*"],
         description=(
             "This is an array holding the values to use for the x-axis of data. "
@@ -513,6 +514,7 @@ class TomoprocData(Data):
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXtomoproc.html#nxtomoproc-entry-data-y-field"
         ],
+        flexible_unit=True,
         shape=["*"],
         description=(
             "This is an array holding the values to use for the y-axis of data. "
@@ -531,6 +533,7 @@ class TomoprocData(Data):
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXtomoproc.html#nxtomoproc-entry-data-z-field"
         ],
+        flexible_unit=True,
         shape=["*"],
         description=(
             "This is an array holding the values to use for the z-axis of data. "

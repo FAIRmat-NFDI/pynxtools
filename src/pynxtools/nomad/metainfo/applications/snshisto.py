@@ -453,6 +453,7 @@ class SnshistoDaslogsLog(Log):
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXsnshisto.html#nxsnshisto-entry-daslogs-log-average-value-field"
         ],
+        flexible_unit=True,
         a_nexus_field=NeXusField(
             name="average_value",
             type="NX_FLOAT",
@@ -469,6 +470,7 @@ class SnshistoDaslogsLog(Log):
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXsnshisto.html#nxsnshisto-entry-daslogs-log-average-value-errors-field"
         ],
+        flexible_unit=True,
         a_nexus_field=NeXusField(
             name="average_value_errors",
             type="NX_FLOAT",
@@ -500,6 +502,7 @@ class SnshistoDaslogsLog(Log):
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXsnshisto.html#nxsnshisto-entry-daslogs-log-duration-field"
         ],
+        flexible_unit=True,
         a_nexus_field=NeXusField(
             name="duration",
             type="NX_FLOAT",
@@ -516,6 +519,7 @@ class SnshistoDaslogsLog(Log):
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXsnshisto.html#nxsnshisto-entry-daslogs-log-maximum-value-field"
         ],
+        flexible_unit=True,
         a_nexus_field=NeXusField(
             name="maximum_value",
             type="NX_FLOAT",
@@ -532,6 +536,7 @@ class SnshistoDaslogsLog(Log):
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXsnshisto.html#nxsnshisto-entry-daslogs-log-minimum-value-field"
         ],
+        flexible_unit=True,
         a_nexus_field=NeXusField(
             name="minimum_value",
             type="NX_FLOAT",
@@ -564,6 +569,7 @@ class SnshistoDaslogsLog(Log):
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXsnshisto.html#nxsnshisto-entry-daslogs-log-value-field"
         ],
+        flexible_unit=True,
         shape=["*"],
         a_nexus_field=NeXusField(
             name="value",
@@ -721,6 +727,7 @@ class SnshistoDaslogsPositioner(Positioner):
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXsnshisto.html#nxsnshisto-entry-daslogs-positioner-value-field"
         ],
+        flexible_unit=True,
         shape=["*"],
         a_nexus_field=NeXusField(
             name="value",

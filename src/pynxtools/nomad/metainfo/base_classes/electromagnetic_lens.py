@@ -120,6 +120,7 @@ class ElectromagneticLens(Component):
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXelectromagnetic_lens.html#nxelectromagnetic_lens-power-setting-field"
         ],
+        flexible_unit=True,
         description=(
             "Descriptor for the lens excitation when the exact technical details "
             "are unknown or not directly controllable as the control software of "

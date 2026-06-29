@@ -568,6 +568,7 @@ class PhaseLockLoopVoltageControlledOscillator(Component):
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXphase_lock_loop.html#nxphase_lock_loop-voltage-controlled-oscillator-ko-coefficient-field"
         ],
+        flexible_unit=True,
         description=(
             "The output voltage coefficient of the VCO, which determines how "
             "much the output frequency changes in response to a change in input "

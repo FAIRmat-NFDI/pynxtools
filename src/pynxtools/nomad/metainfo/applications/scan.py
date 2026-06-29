@@ -248,6 +248,7 @@ class ScanInstrumentDetector(Detector):
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXscan.html#nxscan-entry-instrument-detector-data-field"
         ],
+        flexible_unit=True,
         shape=["*", "*", "*"],
         a_nexus_field=NeXusField(
             name="data",
@@ -316,6 +317,7 @@ class ScanMonitor(Monitor):
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXscan.html#nxscan-entry-monitor-data-field"
         ],
+        flexible_unit=True,
         shape=["*"],
         a_nexus_field=NeXusField(
             name="data",
@@ -350,6 +352,7 @@ class ScanData(Data):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXscan.html#nxscan-entry-data-data-link"
         ],
         shape=["*", "*", "*"],
+        flexible_unit=True,
         a_nexus_link=NeXusLink(
             name="data",
             target="/NXentry/NXinstrument/NXdetector/data",

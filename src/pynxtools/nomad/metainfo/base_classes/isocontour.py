@@ -127,6 +127,7 @@ class Isocontour(Object):
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXisocontour.html#nxisocontour-isovalue-field"
         ],
+        flexible_unit=True,
         description=("The threshold or iso-contour value."),
         a_nexus_field=NeXusField(
             name="isovalue",

@@ -668,6 +668,7 @@ class CxiPtychoInstrument1Detector1(Detector):
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXcxi_ptycho.html#nxcxi_ptycho-entry-1-instrument-1-detector-1-data-field"
         ],
+        flexible_unit=True,
         a_nexus_field=NeXusField(
             name="data",
             type="NX_INT",
@@ -811,6 +812,7 @@ class CxiPtychoInstrument1Detector1(Detector):
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXcxi_ptycho.html#nxcxi_ptycho-entry-1-instrument-1-detector-1-data-1-link"
         ],
+        flexible_unit=True,
         description=(
             "This data must always have shape (npts_x*npts_y, frame_size_x, "
             "frame_size_y) regardless of the scan pattern. Use hdf5 virtual "
@@ -882,6 +884,7 @@ class CxiPtychoInstrument1Monitor(Monitor):
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXcxi_ptycho.html#nxcxi_ptycho-entry-1-instrument-1-monitor-data-field"
         ],
+        flexible_unit=True,
         a_nexus_field=NeXusField(
             name="data",
             type="NX_FLOAT",

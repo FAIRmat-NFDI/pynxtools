@@ -107,7 +107,7 @@ class ApmParaprobeNanochemConfig(ApmParaprobeToolConfig):
         ),
     )
     interface_meshingID = SubSection(
-        section_def="pynxtools.nomad.metainfo.applications.apm_paraprobe_nanochem_config.ApmParaprobeNanochemConfigInterface_meshingID",
+        section_def="pynxtools.nomad.metainfo.applications.apm_paraprobe_nanochem_config.ApmParaprobeNanochemConfigInterfaceMeshingID",
         repeats=True,
         variable=True,
         description=(
@@ -136,7 +136,7 @@ class ApmParaprobeNanochemConfig(ApmParaprobeToolConfig):
         ),
     )
     oned_profileID = SubSection(
-        section_def="pynxtools.nomad.metainfo.applications.apm_paraprobe_nanochem_config.ApmParaprobeNanochemConfigOned_profileID",
+        section_def="pynxtools.nomad.metainfo.applications.apm_paraprobe_nanochem_config.ApmParaprobeNanochemConfigOnedProfileID",
         repeats=True,
         variable=True,
         description=(
@@ -992,6 +992,7 @@ class ApmParaprobeNanochemConfigDelocalizationIDIsosurfacing(Process):
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_nanochem_config.html#nxapm_paraprobe_nanochem_config-entry-delocalizationid-isosurfacing-phi-field"
         ],
+        flexible_unit=True,
         description=(
             "Iso-contour values. For each value, the tool computes an "
             "iso-surface and performs subsequent analyses for each iso-surface. "
@@ -1378,7 +1379,7 @@ class ApmParaprobeNanochemConfigDelocalizationIDIsosurfacing(Process):
         super().normalize(archive, logger)
 
 
-class ApmParaprobeNanochemConfigInterface_meshingID(ApmParaprobeToolConfigTaskconfig):
+class ApmParaprobeNanochemConfigInterfaceMeshingID(ApmParaprobeToolConfigTaskconfig):
     """
     Use a principle component analysis (PCA) to mesh a single free-standing
     interface patch within the reconstructed volume that is decorated by ions
@@ -1420,7 +1421,7 @@ class ApmParaprobeNanochemConfigInterface_meshingID(ApmParaprobeToolConfigTaskco
     )
 
     surface = SubSection(
-        section_def="pynxtools.nomad.metainfo.applications.apm_paraprobe_nanochem_config.ApmParaprobeNanochemConfigInterface_meshingIDSurface",
+        section_def="pynxtools.nomad.metainfo.applications.apm_paraprobe_nanochem_config.ApmParaprobeNanochemConfigInterfaceMeshingIDSurface",
         repeats=False,
         a_nexus_group=NeXusGroup(
             nx_class="NXnote",
@@ -1430,7 +1431,7 @@ class ApmParaprobeNanochemConfigInterface_meshingID(ApmParaprobeToolConfigTaskco
         ),
     )
     control_point = SubSection(
-        section_def="pynxtools.nomad.metainfo.applications.apm_paraprobe_nanochem_config.ApmParaprobeNanochemConfigInterface_meshingIDControlPoint",
+        section_def="pynxtools.nomad.metainfo.applications.apm_paraprobe_nanochem_config.ApmParaprobeNanochemConfigInterfaceMeshingIDControlPoint",
         repeats=False,
         a_nexus_group=NeXusGroup(
             nx_class="NXnote",
@@ -1440,7 +1441,7 @@ class ApmParaprobeNanochemConfigInterface_meshingID(ApmParaprobeToolConfigTaskco
         ),
     )
     decoration_filter = SubSection(
-        section_def="pynxtools.nomad.metainfo.applications.apm_paraprobe_nanochem_config.ApmParaprobeNanochemConfigInterface_meshingIDDecorationFilter",
+        section_def="pynxtools.nomad.metainfo.applications.apm_paraprobe_nanochem_config.ApmParaprobeNanochemConfigInterfaceMeshingIDDecorationFilter",
         repeats=False,
         a_nexus_group=NeXusGroup(
             nx_class="NXmatch_filter",
@@ -1601,7 +1602,7 @@ class ApmParaprobeNanochemConfigInterface_meshingID(ApmParaprobeToolConfigTaskco
         super().normalize(archive, logger)
 
 
-class ApmParaprobeNanochemConfigInterface_meshingIDSurface(Note):
+class ApmParaprobeNanochemConfigInterfaceMeshingIDSurface(Note):
     """
     A precomputed triangulated surface mesh representing a model (of the
     surface) of the edge of the dataset. This model can be used to detect and
@@ -1708,7 +1709,7 @@ class ApmParaprobeNanochemConfigInterface_meshingIDSurface(Note):
         super().normalize(archive, logger)
 
 
-class ApmParaprobeNanochemConfigInterface_meshingIDControlPoint(Note):
+class ApmParaprobeNanochemConfigInterfaceMeshingIDControlPoint(Note):
     """
     Details about the control point file used.
     """
@@ -1791,7 +1792,7 @@ class ApmParaprobeNanochemConfigInterface_meshingIDControlPoint(Note):
         super().normalize(archive, logger)
 
 
-class ApmParaprobeNanochemConfigInterface_meshingIDDecorationFilter(MatchFilter):
+class ApmParaprobeNanochemConfigInterfaceMeshingIDDecorationFilter(MatchFilter):
     """
     Specify those nuclides which the tool should inspect iontypes for if they
     contain such nuclides. If this is the case ions of such type are taken with
@@ -1851,7 +1852,7 @@ class ApmParaprobeNanochemConfigInterface_meshingIDDecorationFilter(MatchFilter)
         super().normalize(archive, logger)
 
 
-class ApmParaprobeNanochemConfigOned_profileID(ApmParaprobeToolConfigTaskconfig):
+class ApmParaprobeNanochemConfigOnedProfileID(ApmParaprobeToolConfigTaskconfig):
     """
     Analysis of one-dimensional profiles in ROIs placed in the dataset. Such
     analyses are useful for quantifying interfacial excess or for performing
@@ -1900,7 +1901,7 @@ class ApmParaprobeNanochemConfigOned_profileID(ApmParaprobeToolConfigTaskconfig)
     )
 
     surface = SubSection(
-        section_def="pynxtools.nomad.metainfo.applications.apm_paraprobe_nanochem_config.ApmParaprobeNanochemConfigOned_profileIDSurface",
+        section_def="pynxtools.nomad.metainfo.applications.apm_paraprobe_nanochem_config.ApmParaprobeNanochemConfigOnedProfileIDSurface",
         repeats=False,
         a_nexus_group=NeXusGroup(
             nx_class="NXnote",
@@ -1910,7 +1911,7 @@ class ApmParaprobeNanochemConfigOned_profileID(ApmParaprobeToolConfigTaskconfig)
         ),
     )
     surface_distance = SubSection(
-        section_def="pynxtools.nomad.metainfo.applications.apm_paraprobe_nanochem_config.ApmParaprobeNanochemConfigOned_profileIDSurfaceDistance",
+        section_def="pynxtools.nomad.metainfo.applications.apm_paraprobe_nanochem_config.ApmParaprobeNanochemConfigOnedProfileIDSurfaceDistance",
         repeats=False,
         a_nexus_group=NeXusGroup(
             nx_class="NXnote",
@@ -1920,7 +1921,7 @@ class ApmParaprobeNanochemConfigOned_profileID(ApmParaprobeToolConfigTaskconfig)
         ),
     )
     feature = SubSection(
-        section_def="pynxtools.nomad.metainfo.applications.apm_paraprobe_nanochem_config.ApmParaprobeNanochemConfigOned_profileIDFeature",
+        section_def="pynxtools.nomad.metainfo.applications.apm_paraprobe_nanochem_config.ApmParaprobeNanochemConfigOnedProfileIDFeature",
         repeats=False,
         a_nexus_group=NeXusGroup(
             nx_class="NXnote",
@@ -1930,7 +1931,7 @@ class ApmParaprobeNanochemConfigOned_profileID(ApmParaprobeToolConfigTaskconfig)
         ),
     )
     feature_distance = SubSection(
-        section_def="pynxtools.nomad.metainfo.applications.apm_paraprobe_nanochem_config.ApmParaprobeNanochemConfigOned_profileIDFeatureDistance",
+        section_def="pynxtools.nomad.metainfo.applications.apm_paraprobe_nanochem_config.ApmParaprobeNanochemConfigOnedProfileIDFeatureDistance",
         repeats=False,
         a_nexus_group=NeXusGroup(
             nx_class="NXnote",
@@ -1940,7 +1941,7 @@ class ApmParaprobeNanochemConfigOned_profileID(ApmParaprobeToolConfigTaskconfig)
         ),
     )
     user_defined_roi = SubSection(
-        section_def="pynxtools.nomad.metainfo.applications.apm_paraprobe_nanochem_config.ApmParaprobeNanochemConfigOned_profileIDUserDefinedRoi",
+        section_def="pynxtools.nomad.metainfo.applications.apm_paraprobe_nanochem_config.ApmParaprobeNanochemConfigOnedProfileIDUserDefinedRoi",
         repeats=False,
         a_nexus_group=NeXusGroup(
             nx_class="NXroi_process",
@@ -2041,7 +2042,7 @@ class ApmParaprobeNanochemConfigOned_profileID(ApmParaprobeToolConfigTaskconfig)
         super().normalize(archive, logger)
 
 
-class ApmParaprobeNanochemConfigOned_profileIDSurface(Note):
+class ApmParaprobeNanochemConfigOnedProfileIDSurface(Note):
     """
     A precomputed triangulated surface mesh representing a model (of the
     surface) of the edge of the dataset. This model can be used to detect and
@@ -2148,7 +2149,7 @@ class ApmParaprobeNanochemConfigOned_profileIDSurface(Note):
         super().normalize(archive, logger)
 
 
-class ApmParaprobeNanochemConfigOned_profileIDSurfaceDistance(Note):
+class ApmParaprobeNanochemConfigOnedProfileIDSurfaceDistance(Note):
     """
     Distance between each ion and triangulated surface mesh.
     """
@@ -2235,7 +2236,7 @@ class ApmParaprobeNanochemConfigOned_profileIDSurfaceDistance(Note):
         super().normalize(archive, logger)
 
 
-class ApmParaprobeNanochemConfigOned_profileIDFeature(Note):
+class ApmParaprobeNanochemConfigOnedProfileIDFeature(Note):
     """
     A precomputed triangulated mesh of the feature representing a model of the
     interface at which to place ROIs to profile. This can be the mesh of an
@@ -2256,7 +2257,7 @@ class ApmParaprobeNanochemConfigOned_profileIDFeature(Note):
     )
 
     patch_filter = SubSection(
-        section_def="pynxtools.nomad.metainfo.applications.apm_paraprobe_nanochem_config.ApmParaprobeNanochemConfigOned_profileIDFeaturePatchFilter",
+        section_def="pynxtools.nomad.metainfo.applications.apm_paraprobe_nanochem_config.ApmParaprobeNanochemConfigOnedProfileIDFeaturePatchFilter",
         repeats=False,
         a_nexus_group=NeXusGroup(
             nx_class="NXmatch_filter",
@@ -2392,7 +2393,7 @@ class ApmParaprobeNanochemConfigOned_profileIDFeature(Note):
         super().normalize(archive, logger)
 
 
-class ApmParaprobeNanochemConfigOned_profileIDFeaturePatchFilter(MatchFilter):
+class ApmParaprobeNanochemConfigOnedProfileIDFeaturePatchFilter(MatchFilter):
     """
     If interface_model is isosurface this filter can be used to restrict the
     analysis to specific patches of an iso-surface.
@@ -2447,7 +2448,7 @@ class ApmParaprobeNanochemConfigOned_profileIDFeaturePatchFilter(MatchFilter):
         super().normalize(archive, logger)
 
 
-class ApmParaprobeNanochemConfigOned_profileIDFeatureDistance(Note):
+class ApmParaprobeNanochemConfigOnedProfileIDFeatureDistance(Note):
     """
     To enable an additional filtration of specific parts of the feature mesh it
     is recommended to feed precomputed distances of each ion to the triangles
@@ -2536,7 +2537,7 @@ class ApmParaprobeNanochemConfigOned_profileIDFeatureDistance(Note):
         super().normalize(archive, logger)
 
 
-class ApmParaprobeNanochemConfigOned_profileIDUserDefinedRoi(RoiProcess):
+class ApmParaprobeNanochemConfigOnedProfileIDUserDefinedRoi(RoiProcess):
     """
     As an alternative mode the tool can be instructed to place ROIs at specific
     locations into the dataset. This is the programmatic equivalent to the
@@ -2558,7 +2559,7 @@ class ApmParaprobeNanochemConfigOned_profileIDUserDefinedRoi(RoiProcess):
     )
 
     cylinder_set = SubSection(
-        section_def="pynxtools.nomad.metainfo.applications.apm_paraprobe_nanochem_config.ApmParaprobeNanochemConfigOned_profileIDUserDefinedRoiCylinderSet",
+        section_def="pynxtools.nomad.metainfo.applications.apm_paraprobe_nanochem_config.ApmParaprobeNanochemConfigOnedProfileIDUserDefinedRoiCylinderSet",
         repeats=False,
         a_nexus_group=NeXusGroup(
             nx_class="NXcg_cylinder",
@@ -2572,7 +2573,7 @@ class ApmParaprobeNanochemConfigOned_profileIDUserDefinedRoi(RoiProcess):
         super().normalize(archive, logger)
 
 
-class ApmParaprobeNanochemConfigOned_profileIDUserDefinedRoiCylinderSet(CgCylinder):
+class ApmParaprobeNanochemConfigOnedProfileIDUserDefinedRoiCylinderSet(CgCylinder):
     m_def = Section(
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_nanochem_config.html#nxapm_paraprobe_nanochem_config-entry-oned-profileid-user-defined-roi-cylinder-set-group"
@@ -2609,6 +2610,7 @@ class ApmParaprobeNanochemConfigOned_profileIDUserDefinedRoiCylinderSet(CgCylind
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_nanochem_config.html#nxapm_paraprobe_nanochem_config-entry-oned-profileid-user-defined-roi-cylinder-set-center-field"
         ],
+        flexible_unit=True,
         shape=["*", 3],
         a_nexus_field=NeXusField(
             name="center",

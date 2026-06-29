@@ -347,6 +347,7 @@ class TomophaseInstrumentBrightField(Detector):
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXtomophase.html#nxtomophase-entry-instrument-bright-field-data-field"
         ],
+        flexible_unit=True,
         shape=["*", "*", "*"],
         a_nexus_field=NeXusField(
             name="data",
@@ -392,6 +393,7 @@ class TomophaseInstrumentDarkField(Detector):
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXtomophase.html#nxtomophase-entry-instrument-dark-field-data-field"
         ],
+        flexible_unit=True,
         shape=["*", "*", "*"],
         a_nexus_field=NeXusField(
             name="data",
@@ -437,6 +439,7 @@ class TomophaseInstrumentSample(Detector):
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXtomophase.html#nxtomophase-entry-instrument-sample-data-field"
         ],
+        flexible_unit=True,
         shape=["*", "*", "*", "*"],
         a_nexus_field=NeXusField(
             name="data",
@@ -629,6 +632,7 @@ class TomophaseControl(Monitor):
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXtomophase.html#nxtomophase-entry-control-integral-field"
         ],
+        flexible_unit=True,
         shape=["*"],
         description=(
             "Total integral monitor counts for each measured frame. Allows a "

@@ -492,6 +492,7 @@ class GuideReflectivity(Data):
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXguide.html#nxguide-reflectivity-surface-field"
         ],
+        flexible_unit=True,
         shape=["*"],
         description=(
             "List of surfaces. Probably best to use index numbers but the "

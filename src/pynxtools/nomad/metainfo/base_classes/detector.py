@@ -294,6 +294,7 @@ class Detector(Component):
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXdetector.html#nxdetector-data-field"
         ],
+        flexible_unit=True,
         shape=["*", "*", "*", "*"],
         description=(
             "Data values from the detector. The rank and dimension ordering "
@@ -372,6 +373,7 @@ class Detector(Component):
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXdetector.html#nxdetector-data-errors-field"
         ],
+        flexible_unit=True,
         shape=["*", "*", "*", "*"],
         description=(
             "The best estimate of the uncertainty in the data value (array size "

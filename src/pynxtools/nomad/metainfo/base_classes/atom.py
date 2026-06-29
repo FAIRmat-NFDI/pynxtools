@@ -263,6 +263,7 @@ class Atom(Object):
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXatom.html#nxatom-position-field"
         ],
+        flexible_unit=True,
         shape=["*", "*"],
         description=("Position of each atom."),
         a_nexus_field=NeXusField(
@@ -391,6 +392,7 @@ class Atom(Object):
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXatom.html#nxatom-mass-to-charge-range-field"
         ],
+        flexible_unit=True,
         shape=["*", 2],
         description=(
             "Associated lower :math:`{\\frac{m}{q}}_{min}` and upper "

@@ -223,6 +223,7 @@ class Circuit(Component):
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXcircuit.html#nxcircuit-input-impedance-field"
         ],
+        flexible_unit=True,
         description=("Input impedance of the circuit."),
         a_nexus_field=NeXusField(
             name="input_impedance",
@@ -240,6 +241,7 @@ class Circuit(Component):
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXcircuit.html#nxcircuit-output-impedance-field"
         ],
+        flexible_unit=True,
         description=("Output impedance of the circuit."),
         a_nexus_field=NeXusField(
             name="output_impedance",
@@ -280,6 +282,7 @@ class Circuit(Component):
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXcircuit.html#nxcircuit-noise-level-field"
         ],
+        flexible_unit=True,
         description=(
             "Root-mean-square (RMS) noise level (in current or voltage) in the "
             "circuit in voltage or current."
@@ -300,6 +303,7 @@ class Circuit(Component):
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXcircuit.html#nxcircuit-temperature-range-field"
         ],
+        flexible_unit=True,
         description=("Operating temperature range of the circuit."),
         a_nexus_field=NeXusField(
             name="temperature_range",
@@ -317,6 +321,7 @@ class Circuit(Component):
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXcircuit.html#nxcircuit-offset-field"
         ],
+        flexible_unit=True,
         description=("Offset value for current or voltage."),
         a_nexus_field=NeXusField(
             name="offset",
@@ -353,6 +358,7 @@ class Circuit(Component):
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXcircuit.html#nxcircuit-output-signal-field"
         ],
+        flexible_unit=True,
         description=("Type of output signal, e.g., voltage, current, digital."),
         a_nexus_field=NeXusField(
             name="output_signal",
@@ -370,6 +376,7 @@ class Circuit(Component):
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXcircuit.html#nxcircuit-power-consumption-field"
         ],
+        flexible_unit=True,
         description=("Power consumption of the circuit per unit time."),
         a_nexus_field=NeXusField(
             name="power_consumption",

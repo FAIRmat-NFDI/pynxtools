@@ -444,6 +444,7 @@ class SastofInstrumentDetector(Detector):
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXsastof.html#nxsastof-entry-instrument-detector-data-field"
         ],
+        flexible_unit=True,
         shape=["*", "*", "*"],
         description=(
             "This is area detector data, of number of x-pixel versus number of "
@@ -740,6 +741,7 @@ class SastofControl(Monitor):
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXsastof.html#nxsastof-entry-control-preset-field"
         ],
+        flexible_unit=True,
         description=("preset value for time or monitor"),
         a_nexus_field=NeXusField(
             name="preset",
@@ -757,6 +759,7 @@ class SastofControl(Monitor):
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXsastof.html#nxsastof-entry-control-data-field"
         ],
+        flexible_unit=True,
         shape=["*"],
         a_nexus_field=NeXusField(
             name="data",
@@ -806,6 +809,7 @@ class SastofData(Data):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXsastof.html#nxsastof-entry-data-data-link"
         ],
         shape=["*", "*", "*"],
+        flexible_unit=True,
         a_nexus_link=NeXusLink(
             name="data",
             target="/NXentry/NXinstrument/NXdetector/data",

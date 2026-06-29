@@ -174,6 +174,7 @@ class Resolution(Object):
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXresolution.html#nxresolution-resolution-field"
         ],
+        flexible_unit=True,
         description=("The resolution of the physical quantity."),
         a_nexus_field=NeXusField(
             name="resolution",
@@ -191,6 +192,7 @@ class Resolution(Object):
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXresolution.html#nxresolution-resolution-errors-field"
         ],
+        flexible_unit=True,
         description=("Standard deviation of the resolution of the physical quantity."),
         a_nexus_field=NeXusField(
             name="resolution_errors",
@@ -208,6 +210,7 @@ class Resolution(Object):
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXresolution.html#nxresolution-relative-resolution-field"
         ],
+        flexible_unit=True,
         description=(
             "Ratio of the resolution at a specified measurand value to that "
             "measurand value."

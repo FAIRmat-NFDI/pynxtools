@@ -587,6 +587,7 @@ class EbeamColumnMonochromator(Monochromator):
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXebeam_column.html#nxebeam_column-monochromator-dispersion-field"
         ],
+        flexible_unit=True,
         description=("Energy dispersion in e.g. µm/eV."),
         a_nexus_field=NeXusField(
             name="dispersion",
@@ -654,6 +655,7 @@ class EbeamColumnCorrectorAx(Component):
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXebeam_column.html#nxebeam_column-corrector-ax-value-x-field"
         ],
+        flexible_unit=True,
         description=(
             "Descriptor for the correction strength along the first direction "
             "when exact technical details are unknown or not directly "
@@ -676,6 +678,7 @@ class EbeamColumnCorrectorAx(Component):
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXebeam_column.html#nxebeam_column-corrector-ax-value-y-field"
         ],
+        flexible_unit=True,
         description=(
             "Descriptor for the correction strength along the second direction "
             "when exact technical details are unknown or not directly "

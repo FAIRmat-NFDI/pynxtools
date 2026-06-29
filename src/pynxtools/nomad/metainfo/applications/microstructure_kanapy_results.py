@@ -530,6 +530,7 @@ class MicrostructureKanapyResultsMicrostructureIDGrid(CgGrid):
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXmicrostructure_kanapy_results.html#nxmicrostructure_kanapy_results-entry-microstructureid-grid-origin-field"
         ],
+        flexible_unit=True,
         shape=["*"],
         a_nexus_field=NeXusField(
             name="origin",

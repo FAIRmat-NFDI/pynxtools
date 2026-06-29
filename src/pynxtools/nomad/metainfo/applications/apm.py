@@ -455,7 +455,7 @@ class Apm(Entry):
         ),
     )
     atom_probeID = SubSection(
-        section_def="pynxtools.nomad.metainfo.applications.apm.ApmAtom_probeID",
+        section_def="pynxtools.nomad.metainfo.applications.apm.ApmAtomProbeID",
         repeats=True,
         variable=True,
         description=(
@@ -1348,6 +1348,7 @@ class ApmSample(Sample):
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-sample-heat-treatment-quenching-rate-field"
         ],
+        flexible_unit=True,
         description=(
             "If heat_treatment_time is absent, the rate of the last quenching "
             "step. Knowledge about this value can give an idea how the sample "
@@ -1373,6 +1374,7 @@ class ApmSample(Sample):
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-sample-heat-treatment-quenching-rate-errors-field"
         ],
+        flexible_unit=True,
         description=(
             "Magnitude of the standard deviation of the "
             "heat_treatment_quenching_rate. If heat_treatment_time is provided, "
@@ -4422,6 +4424,7 @@ class ApmMeasurementEventIDInstrumentControl(Parameters):
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-measurement-eventid-instrument-control-target-detection-rate-field"
         ],
+        flexible_unit=True,
         a_nexus_field=NeXusField(
             name="target_detection_rate",
             type="NX_NUMBER",
@@ -8758,7 +8761,7 @@ class ApmMeasurementZstagePositionSequence(Data):
         super().normalize(archive, logger)
 
 
-class ApmAtom_probeID(RoiProcess):
+class ApmAtomProbeID(RoiProcess):
     """
     A region-of-interest analyzed either during or after the session for which
     specific processed data of the measured or simulated data are available.
@@ -8783,7 +8786,7 @@ class ApmAtom_probeID(RoiProcess):
     )
 
     initial_specimen = SubSection(
-        section_def="pynxtools.nomad.metainfo.applications.apm.ApmAtom_probeIDInitialSpecimen",
+        section_def="pynxtools.nomad.metainfo.applications.apm.ApmAtomProbeIDInitialSpecimen",
         repeats=False,
         a_nexus_group=NeXusGroup(
             nx_class="NXimage",
@@ -8793,7 +8796,7 @@ class ApmAtom_probeID(RoiProcess):
         ),
     )
     final_specimen = SubSection(
-        section_def="pynxtools.nomad.metainfo.applications.apm.ApmAtom_probeIDFinalSpecimen",
+        section_def="pynxtools.nomad.metainfo.applications.apm.ApmAtomProbeIDFinalSpecimen",
         repeats=False,
         a_nexus_group=NeXusGroup(
             nx_class="NXimage",
@@ -8803,7 +8806,7 @@ class ApmAtom_probeID(RoiProcess):
         ),
     )
     raw_data = SubSection(
-        section_def="pynxtools.nomad.metainfo.applications.apm.ApmAtom_probeIDRawData",
+        section_def="pynxtools.nomad.metainfo.applications.apm.ApmAtomProbeIDRawData",
         repeats=False,
         a_nexus_group=NeXusGroup(
             nx_class="NXprocess",
@@ -8813,7 +8816,7 @@ class ApmAtom_probeID(RoiProcess):
         ),
     )
     hit_finding = SubSection(
-        section_def="pynxtools.nomad.metainfo.applications.apm.ApmAtom_probeIDHitFinding",
+        section_def="pynxtools.nomad.metainfo.applications.apm.ApmAtomProbeIDHitFinding",
         repeats=False,
         a_nexus_group=NeXusGroup(
             nx_class="NXprocess",
@@ -8823,7 +8826,7 @@ class ApmAtom_probeID(RoiProcess):
         ),
     )
     hit_spatial_filtering = SubSection(
-        section_def="pynxtools.nomad.metainfo.applications.apm.ApmAtom_probeIDHitSpatialFiltering",
+        section_def="pynxtools.nomad.metainfo.applications.apm.ApmAtomProbeIDHitSpatialFiltering",
         repeats=False,
         a_nexus_group=NeXusGroup(
             nx_class="NXprocess",
@@ -8833,7 +8836,7 @@ class ApmAtom_probeID(RoiProcess):
         ),
     )
     voltage_and_bowl = SubSection(
-        section_def="pynxtools.nomad.metainfo.applications.apm.ApmAtom_probeIDVoltageAndBowl",
+        section_def="pynxtools.nomad.metainfo.applications.apm.ApmAtomProbeIDVoltageAndBowl",
         repeats=False,
         a_nexus_group=NeXusGroup(
             nx_class="NXprocess",
@@ -8843,7 +8846,7 @@ class ApmAtom_probeID(RoiProcess):
         ),
     )
     mass_to_charge_conversion = SubSection(
-        section_def="pynxtools.nomad.metainfo.applications.apm.ApmAtom_probeIDMassToChargeConversion",
+        section_def="pynxtools.nomad.metainfo.applications.apm.ApmAtomProbeIDMassToChargeConversion",
         repeats=False,
         a_nexus_group=NeXusGroup(
             nx_class="NXprocess",
@@ -8853,7 +8856,7 @@ class ApmAtom_probeID(RoiProcess):
         ),
     )
     reconstruction = SubSection(
-        section_def="pynxtools.nomad.metainfo.applications.apm.ApmAtom_probeIDReconstruction",
+        section_def="pynxtools.nomad.metainfo.applications.apm.ApmAtomProbeIDReconstruction",
         repeats=False,
         a_nexus_group=NeXusGroup(
             nx_class="NXapm_reconstruction",
@@ -8863,7 +8866,7 @@ class ApmAtom_probeID(RoiProcess):
         ),
     )
     ranging = SubSection(
-        section_def="pynxtools.nomad.metainfo.applications.apm.ApmAtom_probeIDRanging",
+        section_def="pynxtools.nomad.metainfo.applications.apm.ApmAtomProbeIDRanging",
         repeats=False,
         a_nexus_group=NeXusGroup(
             nx_class="NXapm_ranging",
@@ -8877,7 +8880,7 @@ class ApmAtom_probeID(RoiProcess):
         super().normalize(archive, logger)
 
 
-class ApmAtom_probeIDInitialSpecimen(Image):
+class ApmAtomProbeIDInitialSpecimen(Image):
     """
     SEM or TEM image of the initial specimen taken before the measurement.
     """
@@ -8895,7 +8898,7 @@ class ApmAtom_probeIDInitialSpecimen(Image):
     )
 
     image_2d = SubSection(
-        section_def="pynxtools.nomad.metainfo.applications.apm.ApmAtom_probeIDInitialSpecimenImage2d",
+        section_def="pynxtools.nomad.metainfo.applications.apm.ApmAtomProbeIDInitialSpecimenImage2d",
         repeats=False,
         a_nexus_group=NeXusGroup(
             nx_class="NXdata",
@@ -8909,7 +8912,7 @@ class ApmAtom_probeIDInitialSpecimen(Image):
         super().normalize(archive, logger)
 
 
-class ApmAtom_probeIDInitialSpecimenImage2d(Data):
+class ApmAtomProbeIDInitialSpecimenImage2d(Data):
     m_def = Section(
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-atom-probeid-initial-specimen-image-2d-group"
@@ -8984,6 +8987,7 @@ class ApmAtom_probeIDInitialSpecimenImage2d(Data):
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-atom-probeid-initial-specimen-image-2d-axis-j-field"
         ],
+        flexible_unit=True,
         shape=["*"],
         a_nexus_field=NeXusField(
             name="axis_j",
@@ -9030,6 +9034,7 @@ class ApmAtom_probeIDInitialSpecimenImage2d(Data):
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-atom-probeid-initial-specimen-image-2d-axis-i-field"
         ],
+        flexible_unit=True,
         shape=["*"],
         a_nexus_field=NeXusField(
             name="axis_i",
@@ -9076,7 +9081,7 @@ class ApmAtom_probeIDInitialSpecimenImage2d(Data):
         super().normalize(archive, logger)
 
 
-class ApmAtom_probeIDFinalSpecimen(Image):
+class ApmAtomProbeIDFinalSpecimen(Image):
     """
     SEM or TEM image of the final specimen taken after completion of the
     measurement.
@@ -9095,7 +9100,7 @@ class ApmAtom_probeIDFinalSpecimen(Image):
     )
 
     image_2d = SubSection(
-        section_def="pynxtools.nomad.metainfo.applications.apm.ApmAtom_probeIDFinalSpecimenImage2d",
+        section_def="pynxtools.nomad.metainfo.applications.apm.ApmAtomProbeIDFinalSpecimenImage2d",
         repeats=False,
         a_nexus_group=NeXusGroup(
             nx_class="NXdata",
@@ -9109,7 +9114,7 @@ class ApmAtom_probeIDFinalSpecimen(Image):
         super().normalize(archive, logger)
 
 
-class ApmAtom_probeIDFinalSpecimenImage2d(Data):
+class ApmAtomProbeIDFinalSpecimenImage2d(Data):
     m_def = Section(
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-atom-probeid-final-specimen-image-2d-group"
@@ -9184,6 +9189,7 @@ class ApmAtom_probeIDFinalSpecimenImage2d(Data):
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-atom-probeid-final-specimen-image-2d-axis-j-field"
         ],
+        flexible_unit=True,
         shape=["*"],
         a_nexus_field=NeXusField(
             name="axis_j",
@@ -9230,6 +9236,7 @@ class ApmAtom_probeIDFinalSpecimenImage2d(Data):
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-atom-probeid-final-specimen-image-2d-axis-i-field"
         ],
+        flexible_unit=True,
         shape=["*"],
         a_nexus_field=NeXusField(
             name="axis_i",
@@ -9276,7 +9283,7 @@ class ApmAtom_probeIDFinalSpecimenImage2d(Data):
         super().normalize(archive, logger)
 
 
-class ApmAtom_probeIDRawData(Process):
+class ApmAtomProbeIDRawData(Process):
     """
     Document the control software that was used on the instrument with which
     raw data were collected.
@@ -9307,7 +9314,7 @@ class ApmAtom_probeIDRawData(Process):
     )
 
     programID = SubSection(
-        section_def="pynxtools.nomad.metainfo.applications.apm.ApmAtom_probeIDRawDataProgramID",
+        section_def="pynxtools.nomad.metainfo.applications.apm.ApmAtomProbeIDRawDataProgramID",
         repeats=True,
         variable=True,
         a_nexus_group=NeXusGroup(
@@ -9319,7 +9326,7 @@ class ApmAtom_probeIDRawData(Process):
         ),
     )
     source = SubSection(
-        section_def="pynxtools.nomad.metainfo.applications.apm.ApmAtom_probeIDRawDataSource",
+        section_def="pynxtools.nomad.metainfo.applications.apm.ApmAtomProbeIDRawDataSource",
         repeats=False,
         a_nexus_group=NeXusGroup(
             nx_class="NXnote",
@@ -9408,7 +9415,7 @@ class ApmAtom_probeIDRawData(Process):
         super().normalize(archive, logger)
 
 
-class ApmAtom_probeIDRawDataProgramID(Program):
+class ApmAtomProbeIDRawDataProgramID(Program):
     """
     The control software that was used for running the measurement.
 
@@ -9479,7 +9486,7 @@ class ApmAtom_probeIDRawDataProgramID(Program):
         super().normalize(archive, logger)
 
 
-class ApmAtom_probeIDRawDataSource(Note):
+class ApmAtomProbeIDRawDataSource(Note):
     """
     Possibility to point to files that contain raw data.
 
@@ -9565,7 +9572,7 @@ class ApmAtom_probeIDRawDataSource(Note):
         super().normalize(archive, logger)
 
 
-class ApmAtom_probeIDHitFinding(Process):
+class ApmAtomProbeIDHitFinding(Process):
     """
     The configuration of a hit finding algorithm and its output.
 
@@ -9587,7 +9594,7 @@ class ApmAtom_probeIDHitFinding(Process):
     )
 
     programID = SubSection(
-        section_def="pynxtools.nomad.metainfo.applications.apm.ApmAtom_probeIDHitFindingProgramID",
+        section_def="pynxtools.nomad.metainfo.applications.apm.ApmAtomProbeIDHitFindingProgramID",
         repeats=True,
         variable=True,
         a_nexus_group=NeXusGroup(
@@ -9599,7 +9606,7 @@ class ApmAtom_probeIDHitFinding(Process):
         ),
     )
     config = SubSection(
-        section_def="pynxtools.nomad.metainfo.applications.apm.ApmAtom_probeIDHitFindingConfig",
+        section_def="pynxtools.nomad.metainfo.applications.apm.ApmAtomProbeIDHitFindingConfig",
         repeats=False,
         a_nexus_group=NeXusGroup(
             nx_class="NXnote",
@@ -9864,7 +9871,7 @@ class ApmAtom_probeIDHitFinding(Process):
         super().normalize(archive, logger)
 
 
-class ApmAtom_probeIDHitFindingProgramID(Program):
+class ApmAtomProbeIDHitFindingProgramID(Program):
     m_def = Section(
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-atom-probeid-hit-finding-programid-group"
@@ -9915,7 +9922,7 @@ class ApmAtom_probeIDHitFindingProgramID(Program):
         super().normalize(archive, logger)
 
 
-class ApmAtom_probeIDHitFindingConfig(Note):
+class ApmAtomProbeIDHitFindingConfig(Note):
     m_def = Section(
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-atom-probeid-hit-finding-config-group"
@@ -9993,7 +10000,7 @@ class ApmAtom_probeIDHitFindingConfig(Note):
         super().normalize(archive, logger)
 
 
-class ApmAtom_probeIDHitSpatialFiltering(Process):
+class ApmAtomProbeIDHitSpatialFiltering(Process):
     m_def = Section(
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-atom-probeid-hit-spatial-filtering-group"
@@ -10007,7 +10014,7 @@ class ApmAtom_probeIDHitSpatialFiltering(Process):
     )
 
     programID = SubSection(
-        section_def="pynxtools.nomad.metainfo.applications.apm.ApmAtom_probeIDHitSpatialFilteringProgramID",
+        section_def="pynxtools.nomad.metainfo.applications.apm.ApmAtomProbeIDHitSpatialFilteringProgramID",
         repeats=True,
         variable=True,
         a_nexus_group=NeXusGroup(
@@ -10019,7 +10026,7 @@ class ApmAtom_probeIDHitSpatialFiltering(Process):
         ),
     )
     source = SubSection(
-        section_def="pynxtools.nomad.metainfo.applications.apm.ApmAtom_probeIDHitSpatialFilteringSource",
+        section_def="pynxtools.nomad.metainfo.applications.apm.ApmAtomProbeIDHitSpatialFilteringSource",
         repeats=False,
         a_nexus_group=NeXusGroup(
             nx_class="NXnote",
@@ -10029,7 +10036,7 @@ class ApmAtom_probeIDHitSpatialFiltering(Process):
         ),
     )
     hit_filter = SubSection(
-        section_def="pynxtools.nomad.metainfo.applications.apm.ApmAtom_probeIDHitSpatialFilteringHitFilter",
+        section_def="pynxtools.nomad.metainfo.applications.apm.ApmAtomProbeIDHitSpatialFilteringHitFilter",
         repeats=False,
         a_nexus_group=NeXusGroup(
             nx_class="NXcs_filter_boolean_mask",
@@ -10107,7 +10114,7 @@ class ApmAtom_probeIDHitSpatialFiltering(Process):
         super().normalize(archive, logger)
 
 
-class ApmAtom_probeIDHitSpatialFilteringProgramID(Program):
+class ApmAtomProbeIDHitSpatialFilteringProgramID(Program):
     m_def = Section(
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-atom-probeid-hit-spatial-filtering-programid-group"
@@ -10158,7 +10165,7 @@ class ApmAtom_probeIDHitSpatialFilteringProgramID(Program):
         super().normalize(archive, logger)
 
 
-class ApmAtom_probeIDHitSpatialFilteringSource(Note):
+class ApmAtomProbeIDHitSpatialFilteringSource(Note):
     m_def = Section(
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-atom-probeid-hit-spatial-filtering-source-group"
@@ -10236,7 +10243,7 @@ class ApmAtom_probeIDHitSpatialFilteringSource(Note):
         super().normalize(archive, logger)
 
 
-class ApmAtom_probeIDHitSpatialFilteringHitFilter(CsFilterBooleanMask):
+class ApmAtomProbeIDHitSpatialFilteringHitFilter(CsFilterBooleanMask):
     m_def = Section(
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-atom-probeid-hit-spatial-filtering-hit-filter-group"
@@ -10311,7 +10318,7 @@ class ApmAtom_probeIDHitSpatialFilteringHitFilter(CsFilterBooleanMask):
         super().normalize(archive, logger)
 
 
-class ApmAtom_probeIDVoltageAndBowl(Process):
+class ApmAtomProbeIDVoltageAndBowl(Process):
     """
     Configuration of and results obtained from a voltage-and-bowl
     time-of-flight correction algorithm.
@@ -10334,7 +10341,7 @@ class ApmAtom_probeIDVoltageAndBowl(Process):
     )
 
     programID = SubSection(
-        section_def="pynxtools.nomad.metainfo.applications.apm.ApmAtom_probeIDVoltageAndBowlProgramID",
+        section_def="pynxtools.nomad.metainfo.applications.apm.ApmAtomProbeIDVoltageAndBowlProgramID",
         repeats=True,
         variable=True,
         a_nexus_group=NeXusGroup(
@@ -10346,7 +10353,7 @@ class ApmAtom_probeIDVoltageAndBowl(Process):
         ),
     )
     source = SubSection(
-        section_def="pynxtools.nomad.metainfo.applications.apm.ApmAtom_probeIDVoltageAndBowlSource",
+        section_def="pynxtools.nomad.metainfo.applications.apm.ApmAtomProbeIDVoltageAndBowlSource",
         repeats=False,
         a_nexus_group=NeXusGroup(
             nx_class="NXnote",
@@ -10356,7 +10363,7 @@ class ApmAtom_probeIDVoltageAndBowl(Process):
         ),
     )
     config = SubSection(
-        section_def="pynxtools.nomad.metainfo.applications.apm.ApmAtom_probeIDVoltageAndBowlConfig",
+        section_def="pynxtools.nomad.metainfo.applications.apm.ApmAtomProbeIDVoltageAndBowlConfig",
         repeats=False,
         a_nexus_group=NeXusGroup(
             nx_class="NXparameters",
@@ -10434,7 +10441,7 @@ class ApmAtom_probeIDVoltageAndBowl(Process):
         super().normalize(archive, logger)
 
 
-class ApmAtom_probeIDVoltageAndBowlProgramID(Program):
+class ApmAtomProbeIDVoltageAndBowlProgramID(Program):
     m_def = Section(
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-atom-probeid-voltage-and-bowl-programid-group"
@@ -10485,7 +10492,7 @@ class ApmAtom_probeIDVoltageAndBowlProgramID(Program):
         super().normalize(archive, logger)
 
 
-class ApmAtom_probeIDVoltageAndBowlSource(Note):
+class ApmAtomProbeIDVoltageAndBowlSource(Note):
     m_def = Section(
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-atom-probeid-voltage-and-bowl-source-group"
@@ -10563,7 +10570,7 @@ class ApmAtom_probeIDVoltageAndBowlSource(Note):
         super().normalize(archive, logger)
 
 
-class ApmAtom_probeIDVoltageAndBowlConfig(Parameters):
+class ApmAtomProbeIDVoltageAndBowlConfig(Parameters):
     m_def = Section(
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-atom-probeid-voltage-and-bowl-config-group"
@@ -10581,6 +10588,7 @@ class ApmAtom_probeIDVoltageAndBowlConfig(Parameters):
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-atom-probeid-voltage-and-bowl-config-correction-peak-field"
         ],
+        flexible_unit=True,
         description=(
             "Reference mass-to-charge state ratio value For example 16 Da as "
             "mentioned by `T. Blum et al. "
@@ -10602,7 +10610,7 @@ class ApmAtom_probeIDVoltageAndBowlConfig(Parameters):
         super().normalize(archive, logger)
 
 
-class ApmAtom_probeIDMassToChargeConversion(Process):
+class ApmAtomProbeIDMassToChargeConversion(Process):
     m_def = Section(
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-atom-probeid-mass-to-charge-conversion-group"
@@ -10616,7 +10624,7 @@ class ApmAtom_probeIDMassToChargeConversion(Process):
     )
 
     programID = SubSection(
-        section_def="pynxtools.nomad.metainfo.applications.apm.ApmAtom_probeIDMassToChargeConversionProgramID",
+        section_def="pynxtools.nomad.metainfo.applications.apm.ApmAtomProbeIDMassToChargeConversionProgramID",
         repeats=True,
         variable=True,
         a_nexus_group=NeXusGroup(
@@ -10628,7 +10636,7 @@ class ApmAtom_probeIDMassToChargeConversion(Process):
         ),
     )
     source = SubSection(
-        section_def="pynxtools.nomad.metainfo.applications.apm.ApmAtom_probeIDMassToChargeConversionSource",
+        section_def="pynxtools.nomad.metainfo.applications.apm.ApmAtomProbeIDMassToChargeConversionSource",
         repeats=False,
         a_nexus_group=NeXusGroup(
             nx_class="NXnote",
@@ -10638,7 +10646,7 @@ class ApmAtom_probeIDMassToChargeConversion(Process):
         ),
     )
     config = SubSection(
-        section_def="pynxtools.nomad.metainfo.applications.apm.ApmAtom_probeIDMassToChargeConversionConfig",
+        section_def="pynxtools.nomad.metainfo.applications.apm.ApmAtomProbeIDMassToChargeConversionConfig",
         repeats=False,
         a_nexus_group=NeXusGroup(
             nx_class="NXparameters",
@@ -10668,6 +10676,7 @@ class ApmAtom_probeIDMassToChargeConversion(Process):
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-atom-probeid-mass-to-charge-conversion-mass-to-charge-field"
         ],
+        flexible_unit=True,
         shape=["*"],
         a_nexus_field=NeXusField(
             name="mass_to_charge",
@@ -10682,7 +10691,7 @@ class ApmAtom_probeIDMassToChargeConversion(Process):
         super().normalize(archive, logger)
 
 
-class ApmAtom_probeIDMassToChargeConversionProgramID(Program):
+class ApmAtomProbeIDMassToChargeConversionProgramID(Program):
     m_def = Section(
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-atom-probeid-mass-to-charge-conversion-programid-group"
@@ -10733,7 +10742,7 @@ class ApmAtom_probeIDMassToChargeConversionProgramID(Program):
         super().normalize(archive, logger)
 
 
-class ApmAtom_probeIDMassToChargeConversionSource(Note):
+class ApmAtomProbeIDMassToChargeConversionSource(Note):
     m_def = Section(
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-atom-probeid-mass-to-charge-conversion-source-group"
@@ -10811,7 +10820,7 @@ class ApmAtom_probeIDMassToChargeConversionSource(Note):
         super().normalize(archive, logger)
 
 
-class ApmAtom_probeIDMassToChargeConversionConfig(Parameters):
+class ApmAtomProbeIDMassToChargeConversionConfig(Parameters):
     m_def = Section(
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-atom-probeid-mass-to-charge-conversion-config-group"
@@ -10825,7 +10834,7 @@ class ApmAtom_probeIDMassToChargeConversionConfig(Parameters):
     )
 
     mass_resolutionION = SubSection(
-        section_def="pynxtools.nomad.metainfo.applications.apm.ApmAtom_probeIDMassToChargeConversionConfigMass_resolutionION",
+        section_def="pynxtools.nomad.metainfo.applications.apm.ApmAtomProbeIDMassToChargeConversionConfigMassResolutionION",
         repeats=True,
         variable=True,
         a_nexus_group=NeXusGroup(
@@ -10841,6 +10850,7 @@ class ApmAtom_probeIDMassToChargeConversionConfig(Parameters):
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-atom-probeid-mass-to-charge-conversion-config-mass-calibration-field"
         ],
+        flexible_unit=True,
         description=(
             "Mass calibration with unit peaks/interp. as mentioned by `T. Blum "
             "et al. <https://doi.org/10.1002/9781119227250.ch18>`_ (page 371)."
@@ -10861,6 +10871,7 @@ class ApmAtom_probeIDMassToChargeConversionConfig(Parameters):
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-atom-probeid-mass-to-charge-conversion-config-mass-resolution-field"
         ],
+        flexible_unit=True,
         shape=["*"],
         description=(
             "Inverse of the mass resolution :math:`\\frac{M}{\\Delta M}` as "
@@ -10891,6 +10902,7 @@ class ApmAtom_probeIDMassToChargeConversionConfig(Parameters):
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-atom-probeid-mass-to-charge-conversion-config-mass-resolution-fw-field"
         ],
+        flexible_unit=True,
         shape=["*"],
         description=(
             "The full width at which :math:`{\\Delta M}_{fw}` fraction of "
@@ -10914,7 +10926,7 @@ class ApmAtom_probeIDMassToChargeConversionConfig(Parameters):
         super().normalize(archive, logger)
 
 
-class ApmAtom_probeIDMassToChargeConversionConfigMass_resolutionION(Atom):
+class ApmAtomProbeIDMassToChargeConversionConfigMassResolutionION(Atom):
     """
     The reference molecular ion e.g. :math:`^{16}{O_{2}}^{+}` As many instances
     of mass_resolutionION should be used with instances numbered starting from
@@ -10970,7 +10982,7 @@ class ApmAtom_probeIDMassToChargeConversionConfigMass_resolutionION(Atom):
         super().normalize(archive, logger)
 
 
-class ApmAtom_probeIDReconstruction(ApmReconstruction):
+class ApmAtomProbeIDReconstruction(ApmReconstruction):
     m_def = Section(
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-atom-probeid-reconstruction-group"
@@ -10984,7 +10996,7 @@ class ApmAtom_probeIDReconstruction(ApmReconstruction):
     )
 
     programID = SubSection(
-        section_def="pynxtools.nomad.metainfo.applications.apm.ApmAtom_probeIDReconstructionProgramID",
+        section_def="pynxtools.nomad.metainfo.applications.apm.ApmAtomProbeIDReconstructionProgramID",
         repeats=True,
         variable=True,
         a_nexus_group=NeXusGroup(
@@ -10996,7 +11008,7 @@ class ApmAtom_probeIDReconstruction(ApmReconstruction):
         ),
     )
     source = SubSection(
-        section_def="pynxtools.nomad.metainfo.applications.apm.ApmAtom_probeIDReconstructionSource",
+        section_def="pynxtools.nomad.metainfo.applications.apm.ApmAtomProbeIDReconstructionSource",
         repeats=False,
         a_nexus_group=NeXusGroup(
             nx_class="NXnote",
@@ -11006,7 +11018,7 @@ class ApmAtom_probeIDReconstruction(ApmReconstruction):
         ),
     )
     results = SubSection(
-        section_def="pynxtools.nomad.metainfo.applications.apm.ApmAtom_probeIDReconstructionResults",
+        section_def="pynxtools.nomad.metainfo.applications.apm.ApmAtomProbeIDReconstructionResults",
         repeats=False,
         a_nexus_group=NeXusGroup(
             nx_class="NXnote",
@@ -11016,7 +11028,7 @@ class ApmAtom_probeIDReconstruction(ApmReconstruction):
         ),
     )
     config = SubSection(
-        section_def="pynxtools.nomad.metainfo.applications.apm.ApmAtom_probeIDReconstructionConfig",
+        section_def="pynxtools.nomad.metainfo.applications.apm.ApmAtomProbeIDReconstructionConfig",
         repeats=False,
         a_nexus_group=NeXusGroup(
             nx_class="NXparameters",
@@ -11026,7 +11038,7 @@ class ApmAtom_probeIDReconstruction(ApmReconstruction):
         ),
     )
     naive_discretization = SubSection(
-        section_def="pynxtools.nomad.metainfo.applications.apm.ApmAtom_probeIDReconstructionNaiveDiscretization",
+        section_def="pynxtools.nomad.metainfo.applications.apm.ApmAtomProbeIDReconstructionNaiveDiscretization",
         repeats=False,
         a_nexus_group=NeXusGroup(
             nx_class="NXprocess",
@@ -11110,7 +11122,7 @@ class ApmAtom_probeIDReconstruction(ApmReconstruction):
         super().normalize(archive, logger)
 
 
-class ApmAtom_probeIDReconstructionProgramID(Program):
+class ApmAtomProbeIDReconstructionProgramID(Program):
     m_def = Section(
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-atom-probeid-reconstruction-programid-group"
@@ -11161,7 +11173,7 @@ class ApmAtom_probeIDReconstructionProgramID(Program):
         super().normalize(archive, logger)
 
 
-class ApmAtom_probeIDReconstructionSource(Note):
+class ApmAtomProbeIDReconstructionSource(Note):
     """
     For LEAP and APSuite/IVAS-based analyses the root file which stores the
     settings whereby an RHIT/HITS file can be used to regenerate the
@@ -11248,7 +11260,7 @@ class ApmAtom_probeIDReconstructionSource(Note):
         super().normalize(archive, logger)
 
 
-class ApmAtom_probeIDReconstructionResults(Note):
+class ApmAtomProbeIDReconstructionResults(Note):
     """
     For LEAP and APSuite/IVAS-based analyses the resulting typically file with
     the reconstructed positions and calibrated mass-to-charge- state ratio
@@ -11339,7 +11351,7 @@ class ApmAtom_probeIDReconstructionResults(Note):
         super().normalize(archive, logger)
 
 
-class ApmAtom_probeIDReconstructionConfig(Parameters):
+class ApmAtomProbeIDReconstructionConfig(Parameters):
     m_def = Section(
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-atom-probeid-reconstruction-config-group"
@@ -11586,7 +11598,7 @@ class ApmAtom_probeIDReconstructionConfig(Parameters):
         super().normalize(archive, logger)
 
 
-class ApmAtom_probeIDReconstructionNaiveDiscretization(Process):
+class ApmAtomProbeIDReconstructionNaiveDiscretization(Process):
     m_def = Section(
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-atom-probeid-reconstruction-naive-discretization-group"
@@ -11600,7 +11612,7 @@ class ApmAtom_probeIDReconstructionNaiveDiscretization(Process):
     )
 
     programID = SubSection(
-        section_def="pynxtools.nomad.metainfo.applications.apm.ApmAtom_probeIDReconstructionNaiveDiscretizationProgramID",
+        section_def="pynxtools.nomad.metainfo.applications.apm.ApmAtomProbeIDReconstructionNaiveDiscretizationProgramID",
         repeats=True,
         variable=True,
         a_nexus_group=NeXusGroup(
@@ -11612,7 +11624,7 @@ class ApmAtom_probeIDReconstructionNaiveDiscretization(Process):
         ),
     )
     data = SubSection(
-        section_def="pynxtools.nomad.metainfo.applications.apm.ApmAtom_probeIDReconstructionNaiveDiscretizationData",
+        section_def="pynxtools.nomad.metainfo.applications.apm.ApmAtomProbeIDReconstructionNaiveDiscretizationData",
         repeats=True,
         variable=True,
         a_nexus_group=NeXusGroup(
@@ -11627,7 +11639,7 @@ class ApmAtom_probeIDReconstructionNaiveDiscretization(Process):
         super().normalize(archive, logger)
 
 
-class ApmAtom_probeIDReconstructionNaiveDiscretizationProgramID(Program):
+class ApmAtomProbeIDReconstructionNaiveDiscretizationProgramID(Program):
     m_def = Section(
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-atom-probeid-reconstruction-naive-discretization-programid-group"
@@ -11678,7 +11690,7 @@ class ApmAtom_probeIDReconstructionNaiveDiscretizationProgramID(Program):
         super().normalize(archive, logger)
 
 
-class ApmAtom_probeIDReconstructionNaiveDiscretizationData(Data):
+class ApmAtomProbeIDReconstructionNaiveDiscretizationData(Data):
     m_def = Section(
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-atom-probeid-reconstruction-naive-discretization-data-group"
@@ -11901,7 +11913,7 @@ class ApmAtom_probeIDReconstructionNaiveDiscretizationData(Data):
         super().normalize(archive, logger)
 
 
-class ApmAtom_probeIDRanging(ApmRanging):
+class ApmAtomProbeIDRanging(ApmRanging):
     m_def = Section(
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-atom-probeid-ranging-group"
@@ -11915,7 +11927,7 @@ class ApmAtom_probeIDRanging(ApmRanging):
     )
 
     programID = SubSection(
-        section_def="pynxtools.nomad.metainfo.applications.apm.ApmAtom_probeIDRangingProgramID",
+        section_def="pynxtools.nomad.metainfo.applications.apm.ApmAtomProbeIDRangingProgramID",
         repeats=True,
         variable=True,
         a_nexus_group=NeXusGroup(
@@ -11927,7 +11939,7 @@ class ApmAtom_probeIDRanging(ApmRanging):
         ),
     )
     source = SubSection(
-        section_def="pynxtools.nomad.metainfo.applications.apm.ApmAtom_probeIDRangingSource",
+        section_def="pynxtools.nomad.metainfo.applications.apm.ApmAtomProbeIDRangingSource",
         repeats=False,
         a_nexus_group=NeXusGroup(
             nx_class="NXnote",
@@ -11937,7 +11949,7 @@ class ApmAtom_probeIDRanging(ApmRanging):
         ),
     )
     mass_to_charge_distribution = SubSection(
-        section_def="pynxtools.nomad.metainfo.applications.apm.ApmAtom_probeIDRangingMassToChargeDistribution",
+        section_def="pynxtools.nomad.metainfo.applications.apm.ApmAtomProbeIDRangingMassToChargeDistribution",
         repeats=False,
         a_nexus_group=NeXusGroup(
             nx_class="NXprocess",
@@ -11947,7 +11959,7 @@ class ApmAtom_probeIDRanging(ApmRanging):
         ),
     )
     background_quantification = SubSection(
-        section_def="pynxtools.nomad.metainfo.applications.apm.ApmAtom_probeIDRangingBackgroundQuantification",
+        section_def="pynxtools.nomad.metainfo.applications.apm.ApmAtomProbeIDRangingBackgroundQuantification",
         repeats=False,
         a_nexus_group=NeXusGroup(
             nx_class="NXprocess",
@@ -11957,7 +11969,7 @@ class ApmAtom_probeIDRanging(ApmRanging):
         ),
     )
     peak_search = SubSection(
-        section_def="pynxtools.nomad.metainfo.applications.apm.ApmAtom_probeIDRangingPeakSearch",
+        section_def="pynxtools.nomad.metainfo.applications.apm.ApmAtomProbeIDRangingPeakSearch",
         repeats=False,
         a_nexus_group=NeXusGroup(
             nx_class="NXprocess",
@@ -11967,7 +11979,7 @@ class ApmAtom_probeIDRanging(ApmRanging):
         ),
     )
     peak_identification = SubSection(
-        section_def="pynxtools.nomad.metainfo.applications.apm.ApmAtom_probeIDRangingPeakIdentification",
+        section_def="pynxtools.nomad.metainfo.applications.apm.ApmAtomProbeIDRangingPeakIdentification",
         repeats=False,
         a_nexus_group=NeXusGroup(
             nx_class="NXprocess",
@@ -11997,7 +12009,7 @@ class ApmAtom_probeIDRanging(ApmRanging):
         super().normalize(archive, logger)
 
 
-class ApmAtom_probeIDRangingProgramID(Program):
+class ApmAtomProbeIDRangingProgramID(Program):
     m_def = Section(
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-atom-probeid-ranging-programid-group"
@@ -12048,7 +12060,7 @@ class ApmAtom_probeIDRangingProgramID(Program):
         super().normalize(archive, logger)
 
 
-class ApmAtom_probeIDRangingSource(Note):
+class ApmAtomProbeIDRangingSource(Note):
     """
     The respective ranging definitions file RNG/RRNG/ENV/HDF5.
     """
@@ -12130,7 +12142,7 @@ class ApmAtom_probeIDRangingSource(Note):
         super().normalize(archive, logger)
 
 
-class ApmAtom_probeIDRangingMassToChargeDistribution(Process):
+class ApmAtomProbeIDRangingMassToChargeDistribution(Process):
     m_def = Section(
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-atom-probeid-ranging-mass-to-charge-distribution-group"
@@ -12144,7 +12156,7 @@ class ApmAtom_probeIDRangingMassToChargeDistribution(Process):
     )
 
     programID = SubSection(
-        section_def="pynxtools.nomad.metainfo.applications.apm.ApmAtom_probeIDRangingMassToChargeDistributionProgramID",
+        section_def="pynxtools.nomad.metainfo.applications.apm.ApmAtomProbeIDRangingMassToChargeDistributionProgramID",
         repeats=True,
         variable=True,
         a_nexus_group=NeXusGroup(
@@ -12156,7 +12168,7 @@ class ApmAtom_probeIDRangingMassToChargeDistribution(Process):
         ),
     )
     mass_spectrum = SubSection(
-        section_def="pynxtools.nomad.metainfo.applications.apm.ApmAtom_probeIDRangingMassToChargeDistributionMassSpectrum",
+        section_def="pynxtools.nomad.metainfo.applications.apm.ApmAtomProbeIDRangingMassToChargeDistributionMassSpectrum",
         repeats=False,
         a_nexus_group=NeXusGroup(
             nx_class="NXdata",
@@ -12186,6 +12198,7 @@ class ApmAtom_probeIDRangingMassToChargeDistribution(Process):
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-atom-probeid-ranging-mass-to-charge-distribution-min-mass-to-charge-field"
         ],
+        flexible_unit=True,
         a_nexus_field=NeXusField(
             name="min_mass_to_charge",
             type="NX_FLOAT",
@@ -12202,6 +12215,7 @@ class ApmAtom_probeIDRangingMassToChargeDistribution(Process):
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-atom-probeid-ranging-mass-to-charge-distribution-max-mass-to-charge-field"
         ],
+        flexible_unit=True,
         a_nexus_field=NeXusField(
             name="max_mass_to_charge",
             type="NX_FLOAT",
@@ -12237,7 +12251,7 @@ class ApmAtom_probeIDRangingMassToChargeDistribution(Process):
         super().normalize(archive, logger)
 
 
-class ApmAtom_probeIDRangingMassToChargeDistributionProgramID(Program):
+class ApmAtomProbeIDRangingMassToChargeDistributionProgramID(Program):
     m_def = Section(
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-atom-probeid-ranging-mass-to-charge-distribution-programid-group"
@@ -12288,7 +12302,7 @@ class ApmAtom_probeIDRangingMassToChargeDistributionProgramID(Program):
         super().normalize(archive, logger)
 
 
-class ApmAtom_probeIDRangingMassToChargeDistributionMassSpectrum(Data):
+class ApmAtomProbeIDRangingMassToChargeDistributionMassSpectrum(Data):
     m_def = Section(
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-atom-probeid-ranging-mass-to-charge-distribution-mass-spectrum-group"
@@ -12436,7 +12450,7 @@ class ApmAtom_probeIDRangingMassToChargeDistributionMassSpectrum(Data):
         super().normalize(archive, logger)
 
 
-class ApmAtom_probeIDRangingBackgroundQuantification(Process):
+class ApmAtomProbeIDRangingBackgroundQuantification(Process):
     m_def = Section(
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-atom-probeid-ranging-background-quantification-group"
@@ -12450,7 +12464,7 @@ class ApmAtom_probeIDRangingBackgroundQuantification(Process):
     )
 
     programID = SubSection(
-        section_def="pynxtools.nomad.metainfo.applications.apm.ApmAtom_probeIDRangingBackgroundQuantificationProgramID",
+        section_def="pynxtools.nomad.metainfo.applications.apm.ApmAtomProbeIDRangingBackgroundQuantificationProgramID",
         repeats=True,
         variable=True,
         a_nexus_group=NeXusGroup(
@@ -12482,6 +12496,7 @@ class ApmAtom_probeIDRangingBackgroundQuantification(Process):
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-atom-probeid-ranging-background-quantification-background-field"
         ],
+        flexible_unit=True,
         description=(
             "(Out-of-sync, time-independent) background levels in ppm/ns "
             "reported by e.g. APSuite/IVAS for LEAP systems."
@@ -12534,6 +12549,7 @@ class ApmAtom_probeIDRangingBackgroundQuantification(Process):
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-atom-probeid-ranging-background-quantification-mrp-mass-to-charge-field"
         ],
+        flexible_unit=True,
         description=(
             "Mass-to-charge state ratio :math:`\\frac{m}{n}` at which mrp_value "
             "was specified."
@@ -12596,7 +12612,7 @@ class ApmAtom_probeIDRangingBackgroundQuantification(Process):
         super().normalize(archive, logger)
 
 
-class ApmAtom_probeIDRangingBackgroundQuantificationProgramID(Program):
+class ApmAtomProbeIDRangingBackgroundQuantificationProgramID(Program):
     m_def = Section(
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-atom-probeid-ranging-background-quantification-programid-group"
@@ -12647,7 +12663,7 @@ class ApmAtom_probeIDRangingBackgroundQuantificationProgramID(Program):
         super().normalize(archive, logger)
 
 
-class ApmAtom_probeIDRangingPeakSearch(Process):
+class ApmAtomProbeIDRangingPeakSearch(Process):
     m_def = Section(
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-atom-probeid-ranging-peak-search-group"
@@ -12661,7 +12677,7 @@ class ApmAtom_probeIDRangingPeakSearch(Process):
     )
 
     programID = SubSection(
-        section_def="pynxtools.nomad.metainfo.applications.apm.ApmAtom_probeIDRangingPeakSearchProgramID",
+        section_def="pynxtools.nomad.metainfo.applications.apm.ApmAtomProbeIDRangingPeakSearchProgramID",
         repeats=True,
         variable=True,
         a_nexus_group=NeXusGroup(
@@ -12673,7 +12689,7 @@ class ApmAtom_probeIDRangingPeakSearch(Process):
         ),
     )
     peakID = SubSection(
-        section_def="pynxtools.nomad.metainfo.applications.apm.ApmAtom_probeIDRangingPeakSearchPeakID",
+        section_def="pynxtools.nomad.metainfo.applications.apm.ApmAtomProbeIDRangingPeakSearchPeakID",
         repeats=True,
         variable=True,
         a_nexus_group=NeXusGroup(
@@ -12705,7 +12721,7 @@ class ApmAtom_probeIDRangingPeakSearch(Process):
         super().normalize(archive, logger)
 
 
-class ApmAtom_probeIDRangingPeakSearchProgramID(Program):
+class ApmAtomProbeIDRangingPeakSearchProgramID(Program):
     m_def = Section(
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-atom-probeid-ranging-peak-search-programid-group"
@@ -12756,7 +12772,7 @@ class ApmAtom_probeIDRangingPeakSearchProgramID(Program):
         super().normalize(archive, logger)
 
 
-class ApmAtom_probeIDRangingPeakSearchPeakID(Peak):
+class ApmAtomProbeIDRangingPeakSearchPeakID(Peak):
     m_def = Section(
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-atom-probeid-ranging-peak-search-peakid-group"
@@ -12855,7 +12871,7 @@ class ApmAtom_probeIDRangingPeakSearchPeakID(Peak):
         super().normalize(archive, logger)
 
 
-class ApmAtom_probeIDRangingPeakIdentification(Process):
+class ApmAtomProbeIDRangingPeakIdentification(Process):
     m_def = Section(
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-atom-probeid-ranging-peak-identification-group"
@@ -12869,7 +12885,7 @@ class ApmAtom_probeIDRangingPeakIdentification(Process):
     )
 
     programID = SubSection(
-        section_def="pynxtools.nomad.metainfo.applications.apm.ApmAtom_probeIDRangingPeakIdentificationProgramID",
+        section_def="pynxtools.nomad.metainfo.applications.apm.ApmAtomProbeIDRangingPeakIdentificationProgramID",
         repeats=True,
         variable=True,
         a_nexus_group=NeXusGroup(
@@ -12881,7 +12897,7 @@ class ApmAtom_probeIDRangingPeakIdentification(Process):
         ),
     )
     ionID = SubSection(
-        section_def="pynxtools.nomad.metainfo.applications.apm.ApmAtom_probeIDRangingPeakIdentificationIonID",
+        section_def="pynxtools.nomad.metainfo.applications.apm.ApmAtomProbeIDRangingPeakIdentificationIonID",
         repeats=True,
         variable=True,
         a_nexus_group=NeXusGroup(
@@ -12974,7 +12990,7 @@ class ApmAtom_probeIDRangingPeakIdentification(Process):
         super().normalize(archive, logger)
 
 
-class ApmAtom_probeIDRangingPeakIdentificationProgramID(Program):
+class ApmAtomProbeIDRangingPeakIdentificationProgramID(Program):
     m_def = Section(
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-atom-probeid-ranging-peak-identification-programid-group"
@@ -13025,7 +13041,7 @@ class ApmAtom_probeIDRangingPeakIdentificationProgramID(Program):
         super().normalize(archive, logger)
 
 
-class ApmAtom_probeIDRangingPeakIdentificationIonID(Atom):
+class ApmAtomProbeIDRangingPeakIdentificationIonID(Atom):
     """
     Ions that were ranged.
 
@@ -13049,7 +13065,7 @@ class ApmAtom_probeIDRangingPeakIdentificationIonID(Atom):
     )
 
     charge_state_analysis = SubSection(
-        section_def="pynxtools.nomad.metainfo.applications.apm.ApmAtom_probeIDRangingPeakIdentificationIonIDChargeStateAnalysis",
+        section_def="pynxtools.nomad.metainfo.applications.apm.ApmAtomProbeIDRangingPeakIdentificationIonIDChargeStateAnalysis",
         repeats=False,
         a_nexus_group=NeXusGroup(
             nx_class="NXapm_charge_state_analysis",
@@ -13099,6 +13115,7 @@ class ApmAtom_probeIDRangingPeakIdentificationIonID(Atom):
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-atom-probeid-ranging-peak-identification-ionid-mass-to-charge-range-field"
         ],
+        flexible_unit=True,
         shape=["*", 2],
         a_nexus_field=NeXusField(
             name="mass_to_charge_range",
@@ -13144,7 +13161,7 @@ class ApmAtom_probeIDRangingPeakIdentificationIonID(Atom):
         super().normalize(archive, logger)
 
 
-class ApmAtom_probeIDRangingPeakIdentificationIonIDChargeStateAnalysis(
+class ApmAtomProbeIDRangingPeakIdentificationIonIDChargeStateAnalysis(
     ApmChargeStateAnalysis
 ):
     m_def = Section(
@@ -13160,7 +13177,7 @@ class ApmAtom_probeIDRangingPeakIdentificationIonIDChargeStateAnalysis(
     )
 
     config = SubSection(
-        section_def="pynxtools.nomad.metainfo.applications.apm.ApmAtom_probeIDRangingPeakIdentificationIonIDChargeStateAnalysisConfig",
+        section_def="pynxtools.nomad.metainfo.applications.apm.ApmAtomProbeIDRangingPeakIdentificationIonIDChargeStateAnalysisConfig",
         repeats=False,
         a_nexus_group=NeXusGroup(
             nx_class="NXparameters",
@@ -13255,9 +13272,7 @@ class ApmAtom_probeIDRangingPeakIdentificationIonIDChargeStateAnalysis(
         super().normalize(archive, logger)
 
 
-class ApmAtom_probeIDRangingPeakIdentificationIonIDChargeStateAnalysisConfig(
-    Parameters
-):
+class ApmAtomProbeIDRangingPeakIdentificationIonIDChargeStateAnalysisConfig(Parameters):
     m_def = Section(
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-atom-probeid-ranging-peak-identification-ionid-charge-state-analysis-config-group"
@@ -13291,6 +13306,7 @@ class ApmAtom_probeIDRangingPeakIdentificationIonIDChargeStateAnalysisConfig(
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-atom-probeid-ranging-peak-identification-ionid-charge-state-analysis-config-mass-to-charge-range-field"
         ],
+        flexible_unit=True,
         shape=[2],
         a_nexus_field=NeXusField(
             name="mass_to_charge_range",

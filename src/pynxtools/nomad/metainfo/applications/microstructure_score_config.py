@@ -675,6 +675,7 @@ class MicrostructureScoreConfigMaterial(Parameters):
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXmicrostructure_score_config.html#nxmicrostructure_score_config-entry-material-lattice-expansion-second-field"
         ],
+        flexible_unit=True,
         description=(
             "Constant :math:`a_2` in the second-order model that is used for "
             "quantifying the temperature-dependent Burgers vector."
@@ -695,6 +696,7 @@ class MicrostructureScoreConfigMaterial(Parameters):
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXmicrostructure_score_config.html#nxmicrostructure_score_config-entry-material-lattice-expansion-first-field"
         ],
+        flexible_unit=True,
         description=(
             "Constant :math:`a_1` in the second-order model that is used for "
             "quantifying the temperature-dependent Burgers vector."
@@ -901,6 +903,7 @@ class MicrostructureScoreConfigDeformationEnsemble(Parameters):
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXmicrostructure_score_config.html#nxmicrostructure_score_config-entry-deformation-ensemble-stored-energy-field"
         ],
+        flexible_unit=True,
         shape=["*"],
         description=(
             "Set of stored elastic energy quantified as a dislocation density "
@@ -1333,6 +1336,7 @@ class MicrostructureScoreConfigGrainBoundaryMobilitySebaldGottstein(Parameters):
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXmicrostructure_score_config.html#nxmicrostructure_score_config-entry-grain-boundary-mobility-sebald-gottstein-lagb-pre-factor-field"
         ],
+        flexible_unit=True,
         description=("Pre-exponential factor for low-angle grain boundaries."),
         a_nexus_field=NeXusField(
             name="lagb_pre_factor",
@@ -1350,6 +1354,7 @@ class MicrostructureScoreConfigGrainBoundaryMobilitySebaldGottstein(Parameters):
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXmicrostructure_score_config.html#nxmicrostructure_score_config-entry-grain-boundary-mobility-sebald-gottstein-lagb-enthalpy-field"
         ],
+        flexible_unit=True,
         description=("Migration activation enthalpy for low-angle grain boundaries."),
         a_nexus_field=NeXusField(
             name="lagb_enthalpy",
@@ -1367,6 +1372,7 @@ class MicrostructureScoreConfigGrainBoundaryMobilitySebaldGottstein(Parameters):
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXmicrostructure_score_config.html#nxmicrostructure_score_config-entry-grain-boundary-mobility-sebald-gottstein-hagb-pre-factor-field"
         ],
+        flexible_unit=True,
         description=("Pre-exponential factor for high-angle grain boundaries."),
         a_nexus_field=NeXusField(
             name="hagb_pre_factor",
@@ -1384,6 +1390,7 @@ class MicrostructureScoreConfigGrainBoundaryMobilitySebaldGottstein(Parameters):
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXmicrostructure_score_config.html#nxmicrostructure_score_config-entry-grain-boundary-mobility-sebald-gottstein-hagb-enthalpy-field"
         ],
+        flexible_unit=True,
         description=("Migration activation enthalpy for high-angle grain boundaries."),
         a_nexus_field=NeXusField(
             name="hagb_enthalpy",
@@ -1401,6 +1408,7 @@ class MicrostructureScoreConfigGrainBoundaryMobilitySebaldGottstein(Parameters):
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXmicrostructure_score_config.html#nxmicrostructure_score_config-entry-grain-boundary-mobility-sebald-gottstein-special-pre-factor-field"
         ],
+        flexible_unit=True,
         description=(
             "Pre-exponential factor for high-angle grain boundaries which in "
             "bicrystal or other tailored experiments showed a particular high "
@@ -1422,6 +1430,7 @@ class MicrostructureScoreConfigGrainBoundaryMobilitySebaldGottstein(Parameters):
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXmicrostructure_score_config.html#nxmicrostructure_score_config-entry-grain-boundary-mobility-sebald-gottstein-special-enthalpy-field"
         ],
+        flexible_unit=True,
         description=(
             "Migration activation enthalpy for high-angle grain boundaries which "
             "in bicrystal or other tailored experiments showed a particular high "
@@ -1465,6 +1474,7 @@ class MicrostructureScoreConfigGrainBoundaryMobilityRollettHolm(Parameters):
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXmicrostructure_score_config.html#nxmicrostructure_score_config-entry-grain-boundary-mobility-rollett-holm-m-null-field"
         ],
+        flexible_unit=True,
         description=(
             "Pre-exponential factor for the fastest grain boundary in the system."
         ),
@@ -1484,6 +1494,7 @@ class MicrostructureScoreConfigGrainBoundaryMobilityRollettHolm(Parameters):
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXmicrostructure_score_config.html#nxmicrostructure_score_config-entry-grain-boundary-mobility-rollett-holm-enthalpy-field"
         ],
+        flexible_unit=True,
         description=(
             "Migration activation enthalpy for the fastest grain boundary in the "
             "system."
@@ -1715,6 +1726,7 @@ class MicrostructureScoreConfigDispersoidDragZenerSmith(Parameters):
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXmicrostructure_score_config.html#nxmicrostructure_score_config-entry-dispersoid-drag-zener-smith-surface-energy-field"
         ],
+        flexible_unit=True,
         description=(
             "Average surface energy of the grain-boundary-dispersoid-surface "
             "configuration which factorizes the drag pressure."
@@ -1914,15 +1926,15 @@ class MicrostructureScoreConfigComponentAnalysis(Parameters):
         ),
     )
 
-    component_name = Quantity(
+    names = Quantity(
         type=str,
         links=[
-            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXmicrostructure_score_config.html#nxmicrostructure_score_config-entry-component-analysis-component-name-field"
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXmicrostructure_score_config.html#nxmicrostructure_score_config-entry-component-analysis-names-field"
         ],
         shape=["*"],
-        description=("Given name of a texture component."),
+        description=("Given name(s) of a texture component."),
         a_nexus_field=NeXusField(
-            name="component_name",
+            name="names",
             type="NX_CHAR",
             name_type="specified",
             optionality="required",
@@ -1938,8 +1950,8 @@ class MicrostructureScoreConfigComponentAnalysis(Parameters):
         shape=["*", 3],
         description=(
             "Bunge-Euler angle representation :math:`\\varphi_1`, :math:`\\Phi`, "
-            ":math:`\\varphi_2` of the of texture components in sequence of the "
-            "component_name field."
+            ":math:`\\varphi_2` of the texture components in sequence of the "
+            "names field."
         ),
         a_nexus_field=NeXusField(
             name="bunge_euler",
@@ -1961,7 +1973,7 @@ class MicrostructureScoreConfigComponentAnalysis(Parameters):
             "Integration radius that constraints the theta angular region of the "
             "orientation space (SO3) about each central location (obeying "
             "symmetries) as specified by bunge_euler indexed in the same "
-            "sequence as the bunge_euler and component_name fields."
+            "sequence as the bunge_euler and names fields."
         ),
         a_nexus_field=NeXusField(
             name="theta",

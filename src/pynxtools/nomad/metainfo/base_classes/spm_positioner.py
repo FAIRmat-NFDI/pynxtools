@@ -226,6 +226,7 @@ class SpmPositionerZController(PidController):
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXspm_positioner.html#nxspm_positioner-z-controller-set-point-field"
         ],
+        flexible_unit=True,
         description=(
             "The set point for the z-controller to be fixed and the target value "
             "could be height or current."

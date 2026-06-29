@@ -172,6 +172,7 @@ class ApmRangingMassToChargeDistribution(Process):
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXapm_ranging.html#nxapm_ranging-mass-to-charge-distribution-min-mass-to-charge-field"
         ],
+        flexible_unit=True,
         description=(
             "Smallest :math:`{\\frac{m}{q}}_{min}` mass-to-charge-state ratio "
             "value. The lower (left-hand side) inclusive bound of the interval "
@@ -193,6 +194,7 @@ class ApmRangingMassToChargeDistribution(Process):
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXapm_ranging.html#nxapm_ranging-mass-to-charge-distribution-max-mass-to-charge-field"
         ],
+        flexible_unit=True,
         description=(
             "Largest :math:`{\\frac{m}{q}}_{max}` mass-to-charge-state ratio "
             "value. The upper (right-hand side) inclusive bound of the interval "

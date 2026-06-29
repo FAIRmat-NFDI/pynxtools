@@ -89,7 +89,7 @@ class Lauetof(Entry):
         section_def="pynxtools.nomad.metainfo.applications.lauetof.LauetofControl",
         repeats=False,
     )
-    name = SubSection(
+    name_group = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.lauetof.LauetofName",
         repeats=False,
     )
@@ -211,6 +211,7 @@ class LauetofInstrumentDetector(Detector):
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXlauetof.html#nxlauetof-entry-instrument-detector-data-field"
         ],
+        flexible_unit=True,
         shape=["*", "*", "*"],
         a_nexus_field=NeXusField(
             name="data",
@@ -418,6 +419,7 @@ class LauetofControl(Monitor):
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXlauetof.html#nxlauetof-entry-control-preset-field"
         ],
+        flexible_unit=True,
         description=("preset value for time or monitor"),
         a_nexus_field=NeXusField(
             name="preset",
@@ -435,6 +437,7 @@ class LauetofControl(Monitor):
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXlauetof.html#nxlauetof-entry-control-data-field"
         ],
+        flexible_unit=True,
         shape=["*"],
         description=("use these attributes ``primary=1 signal=1``"),
         a_nexus_field=NeXusField(
@@ -485,6 +488,7 @@ class LauetofName(Data):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXlauetof.html#nxlauetof-entry-name-data-link"
         ],
         shape=["*", "*", "*"],
+        flexible_unit=True,
         a_nexus_link=NeXusLink(
             name="data",
             target="/NXentry/NXinstrument/NXdetector/data",

@@ -454,6 +454,7 @@ class StxmInstrumentDetector(Detector):
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXstxm.html#nxstxm-entry-instrument-detector-data-field"
         ],
+        flexible_unit=True,
         a_nexus_field=NeXusField(
             name="data",
             type="NX_NUMBER",
@@ -491,6 +492,7 @@ class StxmInstrumentSampleX(Detector):
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXstxm.html#nxstxm-entry-instrument-sample-x-data-field"
         ],
+        flexible_unit=True,
         shape=["*"],
         a_nexus_field=NeXusField(
             name="data",
@@ -529,6 +531,7 @@ class StxmInstrumentSampleY(Detector):
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXstxm.html#nxstxm-entry-instrument-sample-y-data-field"
         ],
+        flexible_unit=True,
         shape=["*"],
         a_nexus_field=NeXusField(
             name="data",
@@ -567,6 +570,7 @@ class StxmInstrumentSampleZ(Detector):
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXstxm.html#nxstxm-entry-instrument-sample-z-data-field"
         ],
+        flexible_unit=True,
         shape=["*"],
         a_nexus_field=NeXusField(
             name="data",
@@ -788,6 +792,7 @@ class StxmControl(Monitor):
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXstxm.html#nxstxm-entry-control-data-field"
         ],
+        flexible_unit=True,
         description=(
             "Values to use to normalise for time-variations in photon flux. "
             "Typically, the synchrotron storage ring electron beam current is "

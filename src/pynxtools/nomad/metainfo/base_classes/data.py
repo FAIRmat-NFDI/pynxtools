@@ -844,6 +844,7 @@ class Data(Object, basesections.ActivityResult):
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXdata.html#nxdata-x-field"
         ],
+        flexible_unit=True,
         shape=["*"],
         description=(
             "This is an array holding the values to use for the x-axis of data. "
@@ -864,6 +865,7 @@ class Data(Object, basesections.ActivityResult):
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXdata.html#nxdata-y-field"
         ],
+        flexible_unit=True,
         shape=["*"],
         description=(
             "This is an array holding the values to use for the y-axis of data. "
@@ -884,6 +886,7 @@ class Data(Object, basesections.ActivityResult):
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXdata.html#nxdata-z-field"
         ],
+        flexible_unit=True,
         shape=["*"],
         description=(
             "This is an array holding the values to use for the z-axis of data. "

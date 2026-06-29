@@ -230,6 +230,7 @@ class CsProfilingEvent(Object):
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXcs_profiling_event.html#nxcs_profiling_event-max-virtual-memory-snapshot-field"
         ],
+        flexible_unit=True,
         shape=["*"],
         description=(
             "Maximum amount of virtual memory allocated per process during the event."
@@ -247,6 +248,7 @@ class CsProfilingEvent(Object):
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXcs_profiling_event.html#nxcs_profiling_event-max-resident-memory-snapshot-field"
         ],
+        flexible_unit=True,
         shape=["*"],
         description=(
             "Maximum amount of resident memory allocated per process during the event."

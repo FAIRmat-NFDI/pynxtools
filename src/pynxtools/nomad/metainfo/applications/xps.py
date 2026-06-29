@@ -1306,6 +1306,7 @@ class XpsFitData(Data):
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXxps.html#nxxps-entry-fit-data-input-dependent-field"
         ],
+        flexible_unit=True,
         description=(
             "Dependent variable for this fit procedure. This could be a link to "
             "entry/data/data."
@@ -1349,6 +1350,7 @@ class XpsFitData(Data):
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXxps.html#nxxps-entry-fit-data-fit-sum-field"
         ],
+        flexible_unit=True,
         a_nexus_field=NeXusField(
             name="fit_sum",
             type="NX_NUMBER",
@@ -1365,6 +1367,7 @@ class XpsFitData(Data):
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXxps.html#nxxps-entry-fit-data-residual-field"
         ],
+        flexible_unit=True,
         a_nexus_field=NeXusField(
             name="residual",
             type="NX_NUMBER",
@@ -1436,6 +1439,7 @@ class XpsFitPeakPEAK(Peak):
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXxps.html#nxxps-entry-fit-peakpeak-total-area-field"
         ],
+        flexible_unit=True,
         description=(
             "Total area under the peak after background removal. This concept is "
             "related to term `3.16`_ of the ISO 18115-1:2023 standard. .. _3.16: "
@@ -1457,6 +1461,7 @@ class XpsFitPeakPEAK(Peak):
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXxps.html#nxxps-entry-fit-peakpeak-relative-atomic-concentration-field"
         ],
+        flexible_unit=True,
         description=(
             "Atomic concentration of the species defined by this peak. This "
             "should be a value between 0 and 1."
@@ -1515,6 +1520,7 @@ class XpsFitPeakPEAKData(Data):
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXxps.html#nxxps-entry-fit-peakpeak-data-intensity-field"
         ],
+        flexible_unit=True,
         description=(
             "Intensity values of the fitted function at each energy in the "
             "position field. This concept is related to term `3.15`_ of the ISO "
@@ -1652,6 +1658,7 @@ class XpsFitPeakPEAKFunctionFitParameters(Parameters):
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXxps.html#nxxps-entry-fit-peakpeak-function-fit-parameters-area-field"
         ],
+        flexible_unit=True,
         description=("Area of the peak."),
         a_nexus_field=NeXusField(
             name="area",
@@ -1818,6 +1825,7 @@ class XpsFitBackgroundBACKGROUNDData(Data):
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXxps.html#nxxps-entry-fit-backgroundbackground-data-intensity-field"
         ],
+        flexible_unit=True,
         a_nexus_field=NeXusField(
             name="intensity",
             type="NX_NUMBER",

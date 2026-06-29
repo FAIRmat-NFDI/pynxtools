@@ -35,6 +35,7 @@ generate_all_base_classes()     : write all base class .py files
 from __future__ import annotations
 
 import ast
+import re
 import subprocess
 import textwrap
 from dataclasses import dataclass
@@ -91,6 +92,7 @@ class QuantityContext:
     python_type: str  # "MEnum([...])" or nx_type_to_source(node.dtype)
     dimensionality: str | None  # NXUnitSet.get_dimensionality(node.unit)
     default_unit: str | None  # NXUnitSet.get_default_unit(node.unit)
+    flexible_unit: bool  # True when unit category is NX_ANY
     shape: list[int | str] | None  # _shape_from_node(node): tuple → list with "*"
     parent_field: str | None  # parent field name (set for attribute-of-field)
     description: str | None  # stripped <doc> text from the primary NXDL element
@@ -469,7 +471,18 @@ def _concept_class_name_from_parts(
     the base class name (e.g. ``ApmApmMeasurement`` is intentional).
     """
     if name_type == "partial":
-        child_suffix = name[0].upper() + name[1:] if name else ""
+        # Partial names are `lowercasePrefix` + `UPPERCASE_MARKER` (e.g.
+        # "peakPEAK", "voltage_sensorTAG") — CamelCase the lowercase prefix
+        # like the "specified" branch below (so "voltage_sensor" becomes
+        # "VoltageSensor", not "Voltage_sensor"), then keep the uppercase
+        # marker as-is: "voltage_sensorTAG" -> "VoltageSensorTAG".
+        match = re.search(r"[A-Z]", name) if name else None
+        split = match.start() if match else len(name or "")
+        prefix, marker = name[:split], name[split:]
+        prefix_camel = "".join(
+            p.capitalize() for p in prefix.lower().replace("-", "_").split("_") if p
+        )
+        child_suffix = prefix_camel + marker
     else:
         child_suffix = "".join(
             p.capitalize() for p in name.lower().replace("-", "_").split("_") if p
@@ -532,14 +545,13 @@ def _build_quantity_from_node(
     the node. Field-only attributes (unit, interpretation, long_name) are
     extracted here and stored as None for NXTreeAttribute nodes.
     """
-    python_name = python_name_override or nxdl_to_quantity_name(node.name)
-
     if isinstance(node, NXTreeField):
         # NX_TRANSFORMATION means any length/angle/dimensionless → map to NX_ANY.
         raw_unit = node.unit if node.unit != "NX_TRANSFORMATION" else "NX_ANY"
         unit = raw_unit
         dimensionality = _get_dimensionality(raw_unit)
         default_unit = _get_default_unit(raw_unit)
+        flexible_unit = node.unit == "NX_ANY"
         shape = _shape_from_node(node)
         interpretation = node.interpretation
         long_name = node.long_name
@@ -547,9 +559,14 @@ def _build_quantity_from_node(
         unit = None
         dimensionality = None
         default_unit = None
+        flexible_unit = False
         shape = _shape_from_node(node)
         interpretation = None
         long_name = None
+
+    python_name = python_name_override or nxdl_to_quantity_name(
+        node.name, has_shape=bool(shape)
+    )
 
     # Enum items whose values are themselves lists (e.g. `['kinetic_energy']`) cannot
     # be used in MEnum (unhashable) or in NeXusQuantity.enumeration (list[str]).
@@ -571,6 +588,7 @@ def _build_quantity_from_node(
         python_type=python_type,
         dimensionality=dimensionality,
         default_unit=default_unit,
+        flexible_unit=flexible_unit,
         shape=shape,
         parent_field=parent_field,
         description=_description_string(node),

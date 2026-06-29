@@ -273,6 +273,7 @@ class TomoInstrumentDetector(Detector):
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXtomo.html#nxtomo-entry-instrument-detector-data-field"
         ],
+        flexible_unit=True,
         shape=["*", "*", "*"],
         a_nexus_field=NeXusField(
             name="data",
@@ -444,6 +445,7 @@ class TomoControl(Monitor):
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXtomo.html#nxtomo-entry-control-data-field"
         ],
+        flexible_unit=True,
         shape=["*"],
         description=(
             "Total integral monitor counts for each measured frame. Allows a to "

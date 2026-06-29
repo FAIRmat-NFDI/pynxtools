@@ -76,6 +76,7 @@ class SpmScanRegion(Object):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXspm_scan_region.html#nxspm_scan_region-scan-offset-valuen-field"
         ],
         variable=True,
+        flexible_unit=True,
         description=(
             "The offset of center of the scan region from the origin along the "
             "specific scan axis. 'N' denotes the name of the specific scan axis. "
@@ -95,6 +96,7 @@ class SpmScanRegion(Object):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXspm_scan_region.html#nxspm_scan_region-scan-rangen-field"
         ],
         variable=True,
+        flexible_unit=True,
         description=(
             "The range of the scan is the difference start and end values of the "
             "scan region along the dimension 'N'."
@@ -136,6 +138,7 @@ class SpmScanRegion(Object):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXspm_scan_region.html#nxspm_scan_region-scan-startn-field"
         ],
         variable=True,
+        flexible_unit=True,
         description=(
             "The start of the scan is the starting point of the scan region "
             "(phase space or sub-phase space) for each independent scan axis. "
@@ -155,6 +158,7 @@ class SpmScanRegion(Object):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXspm_scan_region.html#nxspm_scan_region-scan-endn-field"
         ],
         variable=True,
+        flexible_unit=True,
         description=(
             "The end of the scan is the ending point of the scan region (phase "
             "space or sub-phase space) for each independent scan axis. Note: The "

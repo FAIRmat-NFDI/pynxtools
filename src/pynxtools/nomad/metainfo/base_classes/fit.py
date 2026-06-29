@@ -227,6 +227,7 @@ class FitData(Data):
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXfit.html#nxfit-data-input-independent-field"
         ],
+        flexible_unit=True,
         description=(
             "Independent variable(s) for this fit procedure, representing the "
             "values to be fitted by the ``global_fit_function``."
@@ -247,6 +248,7 @@ class FitData(Data):
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXfit.html#nxfit-data-input-dependent-field"
         ],
+        flexible_unit=True,
         description=(
             "Dependent variable(s) for this fit procedure (i.e., the observed data)."
         ),
@@ -266,6 +268,7 @@ class FitData(Data):
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXfit.html#nxfit-data-fit-sum-field"
         ],
+        flexible_unit=True,
         description=(
             "Resulting fit obtained by evaluating the ``global_fit_function`` at "
             "the points specified in ``input_independent`` using the optimized "
@@ -288,6 +291,7 @@ class FitData(Data):
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXfit.html#nxfit-data-residual-field"
         ],
+        flexible_unit=True,
         description=(
             "The difference between the observed data (``input_dependent``) and "
             "the predicted fit values (``fit_sum``). A lower magnitude of "
@@ -358,6 +362,7 @@ class FitPeakPEAK(Peak):
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXfit.html#nxfit-peakpeak-relative-area-field"
         ],
+        flexible_unit=True,
         description=(
             "Relative area of this peak compared to other peaks. The relative "
             "area can simply be derived by dividing the total_area by the total "

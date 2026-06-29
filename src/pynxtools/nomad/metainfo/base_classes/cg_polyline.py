@@ -163,6 +163,7 @@ class CgPolyline(CgPrimitive):
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXcg_polyline.html#nxcg_polyline-vertices-field"
         ],
+        flexible_unit=True,
         shape=["*", "*"],
         description=(
             "Positions of the vertices which support the members of the polyline "

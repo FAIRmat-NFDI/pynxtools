@@ -405,6 +405,7 @@ class Beam(Object):
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXbeam.html#nxbeam-incident-polarization-field"
         ],
+        flexible_unit=True,
         shape=["*", 2],
         description=("Polarization vector on entering beamline component"),
         a_nexus_field=NeXusField(
@@ -420,6 +421,7 @@ class Beam(Object):
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXbeam.html#nxbeam-final-polarization-field"
         ],
+        flexible_unit=True,
         shape=["*", 2],
         description=("Polarization vector on leaving beamline component"),
         a_nexus_field=NeXusField(
@@ -435,6 +437,7 @@ class Beam(Object):
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXbeam.html#nxbeam-incident-polarization-stokes-field"
         ],
+        flexible_unit=True,
         shape=["*", 4],
         description=(
             "Polarization vector on entering beamline component using Stokes "
@@ -468,6 +471,7 @@ class Beam(Object):
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXbeam.html#nxbeam-final-polarization-stokes-field"
         ],
+        flexible_unit=True,
         shape=["*", 4],
         description=(
             "Polarization vector on leaving beamline component using Stokes "

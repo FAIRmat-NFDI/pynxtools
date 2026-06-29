@@ -1110,6 +1110,7 @@ class ApmInstrumentControl(Parameters):
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXapm_instrument.html#nxapm_instrument-control-target-detection-rate-field"
         ],
+        flexible_unit=True,
         description=(
             "Parameter that assure maintenance of a significant yet not too high "
             "ion influx on the detector to avoid detection losses."

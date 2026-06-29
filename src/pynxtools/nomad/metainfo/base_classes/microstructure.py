@@ -1162,6 +1162,7 @@ class MicrostructureInterfaces(MicrostructureFeature):
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXmicrostructure.html#nxmicrostructure-interfaces-surface-energy-field"
         ],
+        flexible_unit=True,
         shape=["*"],
         description=("Gibbs free surface energy for each interface."),
         a_nexus_field=NeXusField(
@@ -1177,6 +1178,7 @@ class MicrostructureInterfaces(MicrostructureFeature):
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXmicrostructure.html#nxmicrostructure-interfaces-mobility-field"
         ],
+        flexible_unit=True,
         shape=["*"],
         description=("Non-intrinsic mobility of each interface."),
         a_nexus_field=NeXusField(
@@ -1512,6 +1514,7 @@ class MicrostructureTripleJunctions(MicrostructureFeature):
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXmicrostructure.html#nxmicrostructure-triple-junctions-line-energy-field"
         ],
+        flexible_unit=True,
         shape=["*"],
         description=("Specific line energy of each triple junction"),
         a_nexus_field=NeXusField(
@@ -1527,6 +1530,7 @@ class MicrostructureTripleJunctions(MicrostructureFeature):
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXmicrostructure.html#nxmicrostructure-triple-junctions-mobility-field"
         ],
+        flexible_unit=True,
         shape=["*"],
         description=("Non-intrinsic mobility of each triple junction."),
         a_nexus_field=NeXusField(
@@ -1922,6 +1926,7 @@ class MicrostructureQuadrupleJunctions(MicrostructureFeature):
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXmicrostructure.html#nxmicrostructure-quadruple-junctions-energy-field"
         ],
+        flexible_unit=True,
         shape=["*"],
         description=("Energy of the quadruple_junction as a defect."),
         a_nexus_field=NeXusField(
@@ -1937,6 +1942,7 @@ class MicrostructureQuadrupleJunctions(MicrostructureFeature):
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXmicrostructure.html#nxmicrostructure-quadruple-junctions-mobility-field"
         ],
+        flexible_unit=True,
         shape=["*"],
         description=("Non-intrinsic mobility of each quadruple_junction."),
         a_nexus_field=NeXusField(

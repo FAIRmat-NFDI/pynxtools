@@ -128,6 +128,7 @@ class CsMemoryCircuit(Circuit):
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXcs_memory.html#nxcs_memory-circuit-max-physical-capacity-field"
         ],
+        flexible_unit=True,
         description=("Total amount of data which the medium can hold."),
         a_nexus_field=NeXusField(
             name="max_physical_capacity",

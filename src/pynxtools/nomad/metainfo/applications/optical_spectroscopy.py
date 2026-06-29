@@ -178,7 +178,7 @@ class OpticalSpectroscopy(Entry):
         ),
     )
     measurement_data_calibration_TYPE = SubSection(
-        section_def="pynxtools.nomad.metainfo.applications.optical_spectroscopy.OpticalSpectroscopyMeasurement_data_calibration_TYPE",
+        section_def="pynxtools.nomad.metainfo.applications.optical_spectroscopy.OpticalSpectroscopyMeasurementDataCalibrationTYPE",
         repeats=True,
         variable=True,
     )
@@ -516,7 +516,7 @@ class OpticalSpectroscopyInstrument(Instrument):
     )
 
     beam_TYPE = SubSection(
-        section_def="pynxtools.nomad.metainfo.applications.optical_spectroscopy.OpticalSpectroscopyInstrumentBeam_TYPE",
+        section_def="pynxtools.nomad.metainfo.applications.optical_spectroscopy.OpticalSpectroscopyInstrumentBeamTYPE",
         repeats=True,
         variable=True,
         a_nexus_group=NeXusGroup(
@@ -528,7 +528,7 @@ class OpticalSpectroscopyInstrument(Instrument):
         ),
     )
     detector_TYPE = SubSection(
-        section_def="pynxtools.nomad.metainfo.applications.optical_spectroscopy.OpticalSpectroscopyInstrumentDetector_TYPE",
+        section_def="pynxtools.nomad.metainfo.applications.optical_spectroscopy.OpticalSpectroscopyInstrumentDetectorTYPE",
         repeats=True,
         variable=True,
         a_nexus_group=NeXusGroup(
@@ -540,7 +540,7 @@ class OpticalSpectroscopyInstrument(Instrument):
         ),
     )
     source_TYPE = SubSection(
-        section_def="pynxtools.nomad.metainfo.applications.optical_spectroscopy.OpticalSpectroscopyInstrumentSource_TYPE",
+        section_def="pynxtools.nomad.metainfo.applications.optical_spectroscopy.OpticalSpectroscopyInstrumentSourceTYPE",
         repeats=True,
         variable=True,
         a_nexus_group=NeXusGroup(
@@ -562,7 +562,7 @@ class OpticalSpectroscopyInstrument(Instrument):
         ),
     )
     generic_beam_sample_angle_TYPE = SubSection(
-        section_def="pynxtools.nomad.metainfo.applications.optical_spectroscopy.OpticalSpectroscopyInstrumentGeneric_beam_sample_angle_TYPE",
+        section_def="pynxtools.nomad.metainfo.applications.optical_spectroscopy.OpticalSpectroscopyInstrumentGenericBeamSampleAngleTYPE",
         repeats=True,
         variable=True,
         a_nexus_group=NeXusGroup(
@@ -618,7 +618,7 @@ class OpticalSpectroscopyInstrument(Instrument):
         ),
     )
     polfilter_TYPE = SubSection(
-        section_def="pynxtools.nomad.metainfo.applications.optical_spectroscopy.OpticalSpectroscopyInstrumentPolfilter_TYPE",
+        section_def="pynxtools.nomad.metainfo.applications.optical_spectroscopy.OpticalSpectroscopyInstrumentPolfilterTYPE",
         repeats=True,
         variable=True,
         a_nexus_group=NeXusGroup(
@@ -629,7 +629,7 @@ class OpticalSpectroscopyInstrument(Instrument):
         ),
     )
     spectralfilter_TYPE = SubSection(
-        section_def="pynxtools.nomad.metainfo.applications.optical_spectroscopy.OpticalSpectroscopyInstrumentSpectralfilter_TYPE",
+        section_def="pynxtools.nomad.metainfo.applications.optical_spectroscopy.OpticalSpectroscopyInstrumentSpectralfilterTYPE",
         repeats=True,
         variable=True,
         a_nexus_group=NeXusGroup(
@@ -671,7 +671,7 @@ class OpticalSpectroscopyInstrument(Instrument):
         ),
     )
     temp_control_TYPE = SubSection(
-        section_def="pynxtools.nomad.metainfo.applications.optical_spectroscopy.OpticalSpectroscopyInstrumentTemp_control_TYPE",
+        section_def="pynxtools.nomad.metainfo.applications.optical_spectroscopy.OpticalSpectroscopyInstrumentTempControlTYPE",
         repeats=True,
         variable=True,
         a_nexus_group=NeXusGroup(
@@ -692,7 +692,7 @@ class OpticalSpectroscopyInstrument(Instrument):
         ),
     )
     software_TYPE = SubSection(
-        section_def="pynxtools.nomad.metainfo.applications.optical_spectroscopy.OpticalSpectroscopyInstrumentSoftware_TYPE",
+        section_def="pynxtools.nomad.metainfo.applications.optical_spectroscopy.OpticalSpectroscopyInstrumentSoftwareTYPE",
         repeats=True,
         variable=True,
         a_nexus_group=NeXusGroup(
@@ -703,7 +703,7 @@ class OpticalSpectroscopyInstrument(Instrument):
         ),
     )
     instrument_calibration_DEVICE = SubSection(
-        section_def="pynxtools.nomad.metainfo.applications.optical_spectroscopy.OpticalSpectroscopyInstrumentInstrument_calibration_DEVICE",
+        section_def="pynxtools.nomad.metainfo.applications.optical_spectroscopy.OpticalSpectroscopyInstrumentInstrumentCalibrationDEVICE",
         repeats=True,
         variable=True,
         a_nexus_group=NeXusGroup(
@@ -973,7 +973,7 @@ class OpticalSpectroscopyInstrument(Instrument):
         super().normalize(archive, logger)
 
 
-class OpticalSpectroscopyInstrumentBeam_TYPE(Beam):
+class OpticalSpectroscopyInstrumentBeamTYPE(Beam):
     """
     This can be used to describe properties of a photon beam. A beam can be
     connected to components, via their "inputs" and "outputs".
@@ -1055,6 +1055,7 @@ class OpticalSpectroscopyInstrumentBeam_TYPE(Beam):
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXoptical_spectroscopy.html#nxoptical_spectroscopy-entry-instrument-beam-type-incident-polarization-field"
         ],
+        flexible_unit=True,
         shape=["*", 2],
         a_nexus_field=NeXusField(
             name="incident_polarization",
@@ -1155,7 +1156,7 @@ class OpticalSpectroscopyInstrumentBeam_TYPE(Beam):
         super().normalize(archive, logger)
 
 
-class OpticalSpectroscopyInstrumentDetector_TYPE(Detector):
+class OpticalSpectroscopyInstrumentDetectorTYPE(Detector):
     m_def = Section(
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXoptical_spectroscopy.html#nxoptical_spectroscopy-entry-instrument-detector-type-group"
@@ -1171,7 +1172,7 @@ class OpticalSpectroscopyInstrumentDetector_TYPE(Detector):
     )
 
     raw_data = SubSection(
-        section_def="pynxtools.nomad.metainfo.applications.optical_spectroscopy.OpticalSpectroscopyInstrumentDetector_TYPERawData",
+        section_def="pynxtools.nomad.metainfo.applications.optical_spectroscopy.OpticalSpectroscopyInstrumentDetectorTYPERawData",
         repeats=False,
         a_nexus_group=NeXusGroup(
             nx_class="NXdata",
@@ -1260,7 +1261,7 @@ class OpticalSpectroscopyInstrumentDetector_TYPE(Detector):
         super().normalize(archive, logger)
 
 
-class OpticalSpectroscopyInstrumentDetector_TYPERawData(Data):
+class OpticalSpectroscopyInstrumentDetectorTYPERawData(Data):
     """
     Contains the raw data collected by the detector before calibration. The
     data which is considered raw might change from experiment to experiment due
@@ -1318,7 +1319,7 @@ class OpticalSpectroscopyInstrumentDetector_TYPERawData(Data):
         super().normalize(archive, logger)
 
 
-class OpticalSpectroscopyInstrumentSource_TYPE(Source):
+class OpticalSpectroscopyInstrumentSourceTYPE(Source):
     m_def = Section(
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXoptical_spectroscopy.html#nxoptical_spectroscopy-entry-instrument-source-type-group"
@@ -1462,7 +1463,7 @@ class OpticalSpectroscopyInstrumentMonochromator(Monochromator):
         super().normalize(archive, logger)
 
 
-class OpticalSpectroscopyInstrumentGeneric_beam_sample_angle_TYPE(Transformations):
+class OpticalSpectroscopyInstrumentGenericBeamSampleAngleTYPE(Transformations):
     """
     Set of transformations, describing the relative orientation of different
     parts of the experiment (beams or sample). You may select one of the
@@ -1724,7 +1725,7 @@ class OpticalSpectroscopyInstrumentOpticalLens(OpticalLens):
         super().normalize(archive, logger)
 
 
-class OpticalSpectroscopyInstrumentPolfilter_TYPE(Component):
+class OpticalSpectroscopyInstrumentPolfilterTYPE(Component):
     """
     Polarization filter to prepare light to be measured or to be incident on
     the sample. Generic polarization filter properties may be implemented via
@@ -1806,7 +1807,7 @@ class OpticalSpectroscopyInstrumentPolfilter_TYPE(Component):
         super().normalize(archive, logger)
 
 
-class OpticalSpectroscopyInstrumentSpectralfilter_TYPE(Component):
+class OpticalSpectroscopyInstrumentSpectralfilterTYPE(Component):
     """
     Spectral filter used to modify properties of the scattered or incident
     light.
@@ -1826,7 +1827,7 @@ class OpticalSpectroscopyInstrumentSpectralfilter_TYPE(Component):
     )
 
     filter_characteristics = SubSection(
-        section_def="pynxtools.nomad.metainfo.applications.optical_spectroscopy.OpticalSpectroscopyInstrumentSpectralfilter_TYPEFilterCharacteristics",
+        section_def="pynxtools.nomad.metainfo.applications.optical_spectroscopy.OpticalSpectroscopyInstrumentSpectralfilterTYPEFilterCharacteristics",
         repeats=False,
         a_nexus_group=NeXusGroup(
             nx_class="NXdata",
@@ -1904,7 +1905,7 @@ class OpticalSpectroscopyInstrumentSpectralfilter_TYPE(Component):
         super().normalize(archive, logger)
 
 
-class OpticalSpectroscopyInstrumentSpectralfilter_TYPEFilterCharacteristics(Data):
+class OpticalSpectroscopyInstrumentSpectralfilterTYPEFilterCharacteristics(Data):
     """
     Properties of the spectral filter such as wavelength dependent transmission
     or reflectivity.
@@ -2098,6 +2099,7 @@ class OpticalSpectroscopyInstrumentTemperatureSensor(Sensor):
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXoptical_spectroscopy.html#nxoptical_spectroscopy-entry-instrument-temperature-sensor-value-field"
         ],
+        flexible_unit=True,
         shape=["*"],
         a_nexus_field=NeXusField(
             name="value",
@@ -2112,7 +2114,7 @@ class OpticalSpectroscopyInstrumentTemperatureSensor(Sensor):
         super().normalize(archive, logger)
 
 
-class OpticalSpectroscopyInstrumentTemp_control_TYPE(Actuator):
+class OpticalSpectroscopyInstrumentTempControlTYPE(Actuator):
     """
     Type of control for the sample temperature. Replace TYPE by "cryostat" or
     "heater" to specify it.
@@ -2132,7 +2134,7 @@ class OpticalSpectroscopyInstrumentTemp_control_TYPE(Actuator):
     )
 
     pid_controller = SubSection(
-        section_def="pynxtools.nomad.metainfo.applications.optical_spectroscopy.OpticalSpectroscopyInstrumentTemp_control_TYPEPidController",
+        section_def="pynxtools.nomad.metainfo.applications.optical_spectroscopy.OpticalSpectroscopyInstrumentTempControlTYPEPidController",
         repeats=True,
         variable=True,
         a_nexus_group=NeXusGroup(
@@ -2206,7 +2208,7 @@ class OpticalSpectroscopyInstrumentTemp_control_TYPE(Actuator):
         super().normalize(archive, logger)
 
 
-class OpticalSpectroscopyInstrumentTemp_control_TYPEPidController(PidController):
+class OpticalSpectroscopyInstrumentTempControlTYPEPidController(PidController):
     m_def = Section(
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXoptical_spectroscopy.html#nxoptical_spectroscopy-entry-instrument-temp-control-type-pid-controller-group"
@@ -2225,6 +2227,7 @@ class OpticalSpectroscopyInstrumentTemp_control_TYPEPidController(PidController)
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXoptical_spectroscopy.html#nxoptical_spectroscopy-entry-instrument-temp-control-type-pid-controller-setpoint-field"
         ],
+        flexible_unit=True,
         a_nexus_field=NeXusField(
             name="setpoint",
             type="NX_FLOAT",
@@ -2325,7 +2328,7 @@ class OpticalSpectroscopyInstrumentDeviceInformation(Fabrication):
         super().normalize(archive, logger)
 
 
-class OpticalSpectroscopyInstrumentSoftware_TYPE(Program):
+class OpticalSpectroscopyInstrumentSoftwareTYPE(Program):
     m_def = Section(
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXoptical_spectroscopy.html#nxoptical_spectroscopy-entry-instrument-software-type-group"
@@ -2409,7 +2412,7 @@ class OpticalSpectroscopyInstrumentSoftware_TYPE(Program):
         super().normalize(archive, logger)
 
 
-class OpticalSpectroscopyInstrumentInstrument_calibration_DEVICE(Calibration):
+class OpticalSpectroscopyInstrumentInstrumentCalibrationDEVICE(Calibration):
     """
     Pre-calibration of an arbitrary device of the instrumental setup, which has
     the name DEVICE. You can specify here how, at which time by which method
@@ -3084,7 +3087,7 @@ class OpticalSpectroscopyData(Data):
         super().normalize(archive, logger)
 
 
-class OpticalSpectroscopyMeasurement_data_calibration_TYPE(Process):
+class OpticalSpectroscopyMeasurementDataCalibrationTYPE(Process):
     m_def = Section(
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXoptical_spectroscopy.html#nxoptical_spectroscopy-entry-measurement-data-calibration-type-group"
@@ -3099,7 +3102,7 @@ class OpticalSpectroscopyMeasurement_data_calibration_TYPE(Process):
     )
 
     wavelength_calibration = SubSection(
-        section_def="pynxtools.nomad.metainfo.applications.optical_spectroscopy.OpticalSpectroscopyMeasurement_data_calibration_TYPEWavelengthCalibration",
+        section_def="pynxtools.nomad.metainfo.applications.optical_spectroscopy.OpticalSpectroscopyMeasurementDataCalibrationTYPEWavelengthCalibration",
         repeats=False,
         a_nexus_group=NeXusGroup(
             nx_class="NXcalibration",
@@ -3113,7 +3116,7 @@ class OpticalSpectroscopyMeasurement_data_calibration_TYPE(Process):
         super().normalize(archive, logger)
 
 
-class OpticalSpectroscopyMeasurement_data_calibration_TYPEWavelengthCalibration(
+class OpticalSpectroscopyMeasurementDataCalibrationTYPEWavelengthCalibration(
     Calibration
 ):
     m_def = Section(
@@ -3133,6 +3136,7 @@ class OpticalSpectroscopyMeasurement_data_calibration_TYPEWavelengthCalibration(
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXoptical_spectroscopy.html#nxoptical_spectroscopy-entry-measurement-data-calibration-type-wavelength-calibration-calibrated-axis-field"
         ],
+        flexible_unit=True,
         shape=["*"],
         description=("Calibrated wavelength axis."),
         a_nexus_field=NeXusField(

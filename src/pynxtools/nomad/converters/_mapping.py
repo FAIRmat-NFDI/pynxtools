@@ -21,6 +21,27 @@ Naming utilities for converting NXDL names to Python / NOMAD conventions.
 
 from __future__ import annotations
 
+# NOMAD BaseSection quantity names that every generated class inherits via
+# Object(basesections.BaseSection). Used by both naming functions below, for
+# two different reasons:
+# - nxdl_to_subsection_name: a SubSection can never override a same-named
+#   Quantity (different property kinds) — NOMAD raises MetainfoError
+#   ("Cannot inherit from different property types") rather than replacing
+#   it. Confirmed by NXlauetof's NXdata group literally named "name", which
+#   fails to load without the suffix.
+# - nxdl_to_quantity_name: a scalar field MAY safely override (NOMAD replaces
+#   cleanly, confirmed type-compatible across the whole NXDL corpus), but an
+#   array-shaped one should not — BaseSection's own normalize() and related
+#   logic (e.g. `archive.metadata.entry_name = self.name`,
+#   `Workflow(name=self.name)`) treats these as scalars throughout, so an
+#   array override is allowed by NOMAD but silently wrong: confirmed by
+#   NXmicrostructure_score_config's array-of-strings "name" field, which is
+#   deliberately not a scalar (see nexus_definitions#428 — rejected, the
+#   array is intentional, one name per texture component).
+_BASESECTION_RESERVED_NAMES: frozenset[str] = frozenset(
+    {"name", "datetime", "lab_id", "description"}
+)
+
 
 def nxdl_to_class_name(nx_name: str) -> str:
     """Convert an NXDL class name (e.g. 'NXoptical_spectroscopy') to a
@@ -40,18 +61,22 @@ def nxdl_to_class_name(nx_name: str) -> str:
     return "".join(p.capitalize() for p in parts if p)
 
 
-def nxdl_to_quantity_name(nxdl_name: str) -> str:
+def nxdl_to_quantity_name(nxdl_name: str, has_shape: bool = False) -> str:
     """Convert an NXDL field/attribute name to a safe Python quantity name.
 
-    Only Python keywords get a ``_quantity`` suffix. Fields named like a
-    NOMAD BaseSection quantity (e.g. ``name``, ``datetime``, ``lab_id``,
-    ``description``) are *not* suffixed — NOMAD allows a subclass to directly
-    override any inherited quantity of a compatible type, and the generator
-    does not pre-verify that compatibility (it would require importing
-    nomad-lab at generation time, which this module deliberately avoids — the
-    generator runs on NXDL/XML alone). An incompatible override would surface
-    as a NOMAD ``MetainfoError`` when the generated schema is loaded, caught
-    by the existing test suite, not by the generator itself.
+    Python keywords always get a ``_quantity`` suffix. A *scalar* field named
+    like a NOMAD BaseSection quantity (``name``, ``datetime``, ``lab_id``,
+    ``description``) is *not* suffixed — NOMAD allows a subclass to directly
+    override an inherited quantity, replacing it cleanly (confirmed type-
+    compatible across the whole NXDL corpus, and confirmed by reading
+    ``Section.__init_metainfo__()`` that NOMAD never raises for this, only
+    for a property-kind mismatch). An *array-shaped* field with one of these
+    names still gets the suffix, even though NOMAD would also accept that
+    override without error: BaseSection's own ``normalize()`` and related
+    logic treat ``self.name``/``self.datetime``/etc. as scalars throughout
+    its inheritance chain, so an array silently breaks that — not something
+    the generator can rely on NOMAD to catch for us, unlike the property-kind
+    mismatch case.
 
     Examples
     --------
@@ -59,12 +84,16 @@ def nxdl_to_quantity_name(nxdl_name: str) -> str:
     'start_time'
     >>> nxdl_to_quantity_name("name")
     'name'
+    >>> nxdl_to_quantity_name("name", has_shape=True)
+    'name_quantity'
     >>> nxdl_to_quantity_name("lambda")
     'lambda_quantity'
     """
     import keyword
 
     if keyword.iskeyword(nxdl_name):
+        return f"{nxdl_name}_quantity"
+    if has_shape and nxdl_name in _BASESECTION_RESERVED_NAMES:
         return f"{nxdl_name}_quantity"
     return nxdl_name
 
@@ -89,8 +118,19 @@ def nxdl_to_subsection_name(nxdl_name: str) -> str:
     """Convert an NXDL group name to a safe Python subsection name.
 
     Variadic groups (nameType=any/partial) use the lowercase NXDL class name
-    without the NX prefix as the subsection name.
+    without the NX prefix as the subsection name. Groups named like a NOMAD
+    BaseSection quantity get a ``_group`` suffix — see
+    _BASESECTION_RESERVED_NAMES.
+
+    Examples
+    --------
+    >>> nxdl_to_subsection_name("instrument")
+    'instrument'
+    >>> nxdl_to_subsection_name("name")
+    'name_group'
     """
+    if nxdl_name in _BASESECTION_RESERVED_NAMES:
+        return f"{nxdl_name}_group"
     return nxdl_name
 
 

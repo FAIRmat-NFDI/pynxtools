@@ -3,6 +3,7 @@ ATTRIBUTENAME
 AXISNAME
 Aeschlimann
 BASECLASS
+BASESECTION
 BASESECTIONS
 Brockhauser
 Cameca
@@ -223,6 +224,7 @@ orcid
 otherfile
 otypes
 oxidising
+parseable
 pathtovalidate
 plottable
 posint

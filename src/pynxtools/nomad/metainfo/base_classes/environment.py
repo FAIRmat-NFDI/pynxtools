@@ -234,6 +234,7 @@ class Environment(Object):
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXenvironment.html#nxenvironment-value-field"
         ],
+        flexible_unit=True,
         description=(
             "This is to be used if there is no actuator/sensor that "
             "controls/measures the environment parameters, but the user would "

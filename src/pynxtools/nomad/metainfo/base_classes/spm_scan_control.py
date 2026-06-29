@@ -237,6 +237,7 @@ class SpmScanControl(Object):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXspm_scan_control.html#nxspm_scan_control-scan-resolutionn-field"
         ],
         variable=True,
+        flexible_unit=True,
         description=(
             "Define the scan resolution along each dimension as the number of "
             "steps per unit of the dimension parameters. Rename the field "

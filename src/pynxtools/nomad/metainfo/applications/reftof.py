@@ -282,6 +282,7 @@ class ReftofInstrumentDetector(Detector):
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXreftof.html#nxreftof-entry-instrument-detector-data-field"
         ],
+        flexible_unit=True,
         shape=["*", "*", "*"],
         a_nexus_field=NeXusField(
             name="data",
@@ -470,6 +471,7 @@ class ReftofControl(Monitor):
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXreftof.html#nxreftof-entry-control-preset-field"
         ],
+        flexible_unit=True,
         description=("preset value for time or monitor"),
         a_nexus_field=NeXusField(
             name="preset",
@@ -487,6 +489,7 @@ class ReftofControl(Monitor):
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXreftof.html#nxreftof-entry-control-integral-field"
         ],
+        flexible_unit=True,
         description=("Total integral monitor counts"),
         a_nexus_field=NeXusField(
             name="integral",
@@ -524,6 +527,7 @@ class ReftofControl(Monitor):
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXreftof.html#nxreftof-entry-control-data-field"
         ],
+        flexible_unit=True,
         description=("Monitor counts in each time channel"),
         a_nexus_field=NeXusField(
             name="data",
@@ -560,6 +564,7 @@ class ReftofData(Data):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXreftof.html#nxreftof-entry-data-data-link"
         ],
         shape=["*", "*", "*"],
+        flexible_unit=True,
         a_nexus_link=NeXusLink(
             name="data",
             target="/NXentry/NXinstrument/NXdetector/data",

@@ -94,7 +94,7 @@ class ApmParaprobeDistancerResults(ApmParaprobeToolResults):
     )
 
     point_to_triangleID = SubSection(
-        section_def="pynxtools.nomad.metainfo.applications.apm_paraprobe_distancer_results.ApmParaprobeDistancerResultsPoint_to_triangleID",
+        section_def="pynxtools.nomad.metainfo.applications.apm_paraprobe_distancer_results.ApmParaprobeDistancerResultsPointToTriangleID",
         repeats=True,
         variable=True,
     )
@@ -146,7 +146,7 @@ class ApmParaprobeDistancerResults(ApmParaprobeToolResults):
 # =============================================================================
 
 
-class ApmParaprobeDistancerResultsPoint_to_triangleID(ApmParaprobeToolProcess):
+class ApmParaprobeDistancerResultsPointToTriangleID(ApmParaprobeToolProcess):
     m_def = Section(
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_distancer_results.html#nxapm_paraprobe_distancer_results-entry-point-to-triangleid-group"
@@ -163,7 +163,7 @@ class ApmParaprobeDistancerResultsPoint_to_triangleID(ApmParaprobeToolProcess):
     )
 
     sign_valid = SubSection(
-        section_def="pynxtools.nomad.metainfo.applications.apm_paraprobe_distancer_results.ApmParaprobeDistancerResultsPoint_to_triangleIDSignValid",
+        section_def="pynxtools.nomad.metainfo.applications.apm_paraprobe_distancer_results.ApmParaprobeDistancerResultsPointToTriangleIDSignValid",
         repeats=False,
         a_nexus_group=NeXusGroup(
             nx_class="NXcs_filter_boolean_mask",
@@ -173,7 +173,7 @@ class ApmParaprobeDistancerResultsPoint_to_triangleID(ApmParaprobeToolProcess):
         ),
     )
     window_triangles = SubSection(
-        section_def="pynxtools.nomad.metainfo.applications.apm_paraprobe_distancer_results.ApmParaprobeDistancerResultsPoint_to_triangleIDWindowTriangles",
+        section_def="pynxtools.nomad.metainfo.applications.apm_paraprobe_distancer_results.ApmParaprobeDistancerResultsPointToTriangleIDWindowTriangles",
         repeats=False,
         a_nexus_group=NeXusGroup(
             nx_class="NXcs_filter_boolean_mask",
@@ -250,7 +250,7 @@ class ApmParaprobeDistancerResultsPoint_to_triangleID(ApmParaprobeToolProcess):
         super().normalize(archive, logger)
 
 
-class ApmParaprobeDistancerResultsPoint_to_triangleIDSignValid(CsFilterBooleanMask):
+class ApmParaprobeDistancerResultsPointToTriangleIDSignValid(CsFilterBooleanMask):
     """
     A bitmask that identifies which of the distance values is assumed to have a
     consistent sign because the closest triangle had a consistent outer unit
@@ -342,9 +342,7 @@ class ApmParaprobeDistancerResultsPoint_to_triangleIDSignValid(CsFilterBooleanMa
         super().normalize(archive, logger)
 
 
-class ApmParaprobeDistancerResultsPoint_to_triangleIDWindowTriangles(
-    CsFilterBooleanMask
-):
+class ApmParaprobeDistancerResultsPointToTriangleIDWindowTriangles(CsFilterBooleanMask):
     """
     A bitmask that identifies which of the triangles in the set were considered
     when certain triangles have been filtered out.

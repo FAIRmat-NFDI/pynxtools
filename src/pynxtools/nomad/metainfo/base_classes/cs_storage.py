@@ -121,6 +121,7 @@ class CsStorageCircuit(Circuit):
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXcs_storage.html#nxcs_storage-circuit-max-physical-capacity-field"
         ],
+        flexible_unit=True,
         description=("Total amount of data which the medium can hold."),
         a_nexus_field=NeXusField(
             name="max_physical_capacity",
@@ -138,6 +139,7 @@ class CsStorageCircuit(Circuit):
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXcs_storage.html#nxcs_storage-circuit-max-read-rate-field"
         ],
+        flexible_unit=True,
         description=("Maximum read rate of the storage medium."),
         a_nexus_field=NeXusField(
             name="max_read_rate",
@@ -155,6 +157,7 @@ class CsStorageCircuit(Circuit):
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXcs_storage.html#nxcs_storage-circuit-max-write-rate-field"
         ],
+        flexible_unit=True,
         description=("Maximum write rate of the storage medium."),
         a_nexus_field=NeXusField(
             name="max_write_rate",

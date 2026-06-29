@@ -166,6 +166,7 @@ class Monitor(Component):
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXmonitor.html#nxmonitor-preset-field"
         ],
+        flexible_unit=True,
         description=("preset value for time or monitor"),
         a_nexus_field=NeXusField(
             name="preset",
@@ -204,6 +205,7 @@ class Monitor(Component):
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXmonitor.html#nxmonitor-range-field"
         ],
+        flexible_unit=True,
         shape=[2],
         description=(
             "Range (X-axis, Time-of-flight, etc.) over which the integral was "
@@ -222,6 +224,7 @@ class Monitor(Component):
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXmonitor.html#nxmonitor-nominal-field"
         ],
+        flexible_unit=True,
         description=("Nominal reading to be used for normalisation purposes."),
         a_nexus_field=NeXusField(
             name="nominal",
@@ -239,6 +242,7 @@ class Monitor(Component):
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXmonitor.html#nxmonitor-integral-field"
         ],
+        flexible_unit=True,
         description=("Total integral monitor counts"),
         a_nexus_field=NeXusField(
             name="integral",
@@ -312,6 +316,7 @@ class Monitor(Component):
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXmonitor.html#nxmonitor-data-field"
         ],
+        flexible_unit=True,
         description=("Monitor data"),
         a_nexus_field=NeXusField(
             name="data",

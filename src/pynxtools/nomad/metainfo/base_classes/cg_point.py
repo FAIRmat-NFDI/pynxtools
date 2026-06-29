@@ -84,6 +84,7 @@ class CgPoint(CgPrimitive):
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXcg_point.html#nxcg_point-position-field"
         ],
+        flexible_unit=True,
         shape=["*", "*"],
         description=("Coordinates of the points."),
         a_nexus_field=NeXusField(

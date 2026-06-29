@@ -85,7 +85,7 @@ class ApmParaprobeIntersectorResults(ApmParaprobeToolResults):
     )
 
     v_v_spatial_correlationID = SubSection(
-        section_def="pynxtools.nomad.metainfo.applications.apm_paraprobe_intersector_results.ApmParaprobeIntersectorResultsV_v_spatial_correlationID",
+        section_def="pynxtools.nomad.metainfo.applications.apm_paraprobe_intersector_results.ApmParaprobeIntersectorResultsVVSpatialCorrelationID",
         repeats=True,
         variable=True,
         description=("The results of an overlap/intersection analysis."),
@@ -138,7 +138,7 @@ class ApmParaprobeIntersectorResults(ApmParaprobeToolResults):
 # =============================================================================
 
 
-class ApmParaprobeIntersectorResultsV_v_spatial_correlationID(ApmParaprobeToolProcess):
+class ApmParaprobeIntersectorResultsVVSpatialCorrelationID(ApmParaprobeToolProcess):
     """
     The results of an overlap/intersection analysis.
     """
@@ -159,7 +159,7 @@ class ApmParaprobeIntersectorResultsV_v_spatial_correlationID(ApmParaprobeToolPr
     )
 
     coprecipitation_analysis = SubSection(
-        section_def="pynxtools.nomad.metainfo.applications.apm_paraprobe_intersector_results.ApmParaprobeIntersectorResultsV_v_spatial_correlationIDCoprecipitationAnalysis",
+        section_def="pynxtools.nomad.metainfo.applications.apm_paraprobe_intersector_results.ApmParaprobeIntersectorResultsVVSpatialCorrelationIDCoprecipitationAnalysis",
         repeats=False,
         a_nexus_group=NeXusGroup(
             nx_class="NXprocess",
@@ -281,7 +281,7 @@ class ApmParaprobeIntersectorResultsV_v_spatial_correlationID(ApmParaprobeToolPr
         super().normalize(archive, logger)
 
 
-class ApmParaprobeIntersectorResultsV_v_spatial_correlationIDCoprecipitationAnalysis(
+class ApmParaprobeIntersectorResultsVVSpatialCorrelationIDCoprecipitationAnalysis(
     Process
 ):
     """

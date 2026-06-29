@@ -966,6 +966,7 @@ class XrdPanExperimentResult(XrdData):
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXxrd_pan.html#nxxrd_pan-entry-experiment-result-q-parallel-field"
         ],
+        flexible_unit=True,
         description=(
             "The scattering vector component, which is parallel to the sample surface."
         ),
@@ -985,6 +986,7 @@ class XrdPanExperimentResult(XrdData):
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXxrd_pan.html#nxxrd_pan-entry-experiment-result-q-perpendicular-field"
         ],
+        flexible_unit=True,
         description=(
             "The scattering vector component, which is perpendicular to the "
             "sample surface."
@@ -1005,6 +1007,7 @@ class XrdPanExperimentResult(XrdData):
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXxrd_pan.html#nxxrd_pan-entry-experiment-result-q-norm-field"
         ],
+        flexible_unit=True,
         description=(
             "The norm value of the scattering vector, q. The scattering vector "
             "is defined as a difference between the incident and scattered wave "

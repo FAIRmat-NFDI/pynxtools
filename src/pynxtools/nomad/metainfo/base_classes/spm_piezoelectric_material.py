@@ -145,6 +145,7 @@ class SpmPiezoelectricMaterial(Crystal):
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXspm_piezoelectric_material.html#nxspm_piezoelectric_material-density-field"
         ],
+        flexible_unit=True,
         description=("The density of the piezo material."),
         a_nexus_field=NeXusField(
             name="density",
@@ -162,6 +163,7 @@ class SpmPiezoelectricMaterial(Crystal):
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXspm_piezoelectric_material.html#nxspm_piezoelectric_material-relative-permittivity-field"
         ],
+        flexible_unit=True,
         description=(
             "The relative permittivity (dielectric constant) of the piezo material."
         ),
@@ -182,6 +184,7 @@ class SpmPiezoelectricMaterial(Crystal):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXspm_piezoelectric_material.html#nxspm_piezoelectric_material-d-piezoelectric-constant-field"
         ],
         variable=True,
+        flexible_unit=True,
         description=(
             "The D_piezoelectric_constant (with substitutable part D) "
             "piezoelectric charge coefficients of the material. The coefficients "
@@ -204,6 +207,7 @@ class SpmPiezoelectricMaterial(Crystal):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXspm_piezoelectric_material.html#nxspm_piezoelectric_material-g-voltage-constant-field"
         ],
         variable=True,
+        flexible_unit=True,
         description=(
             "The constants (with substitutable part G) define the electric field "
             "produced by the external mechanical strain. Different coefficients "
@@ -223,6 +227,7 @@ class SpmPiezoelectricMaterial(Crystal):
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXspm_piezoelectric_material.html#nxspm_piezoelectric_material-k-electromechanical-constant-field"
         ],
+        flexible_unit=True,
         description=(
             "The electromechanical constant measures the efficiency of the "
             "conversion of mechanical energy into electrical energy."
@@ -243,6 +248,7 @@ class SpmPiezoelectricMaterial(Crystal):
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXspm_piezoelectric_material.html#nxspm_piezoelectric_material-p-pyroelectric-constant-field"
         ],
+        flexible_unit=True,
         description=(
             "The pyroelectric constant defines the change of the polarization "
             "vector of the piezoelectric material per unit change in "
@@ -264,6 +270,7 @@ class SpmPiezoelectricMaterial(Crystal):
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXspm_piezoelectric_material.html#nxspm_piezoelectric_material-acoustic-impedance-field"
         ],
+        flexible_unit=True,
         description=("The acoustic impedance of the piezo material."),
         a_nexus_field=NeXusField(
             name="acoustic_impedance",
@@ -281,6 +288,7 @@ class SpmPiezoelectricMaterial(Crystal):
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXspm_piezoelectric_material.html#nxspm_piezoelectric_material-young-modulus-field"
         ],
+        flexible_unit=True,
         description=("The Young's modulus of the piezo material."),
         a_nexus_field=NeXusField(
             name="young_modulus",
@@ -298,6 +306,7 @@ class SpmPiezoelectricMaterial(Crystal):
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXspm_piezoelectric_material.html#nxspm_piezoelectric_material-surface-resistivity-field"
         ],
+        flexible_unit=True,
         description=("The surface resistivity of the piezo material."),
         a_nexus_field=NeXusField(
             name="surface_resistivity",

@@ -92,7 +92,7 @@ class ApmParaprobeSurfacerResults(ApmParaprobeToolResults):
     )
 
     point_set_wrappingID = SubSection(
-        section_def="pynxtools.nomad.metainfo.applications.apm_paraprobe_surfacer_results.ApmParaprobeSurfacerResultsPoint_set_wrappingID",
+        section_def="pynxtools.nomad.metainfo.applications.apm_paraprobe_surfacer_results.ApmParaprobeSurfacerResultsPointSetWrappingID",
         repeats=True,
         variable=True,
         description=(
@@ -156,7 +156,7 @@ class ApmParaprobeSurfacerResults(ApmParaprobeToolResults):
 # =============================================================================
 
 
-class ApmParaprobeSurfacerResultsPoint_set_wrappingID(ApmParaprobeToolProcess):
+class ApmParaprobeSurfacerResultsPointSetWrappingID(ApmParaprobeToolProcess):
     """
     Paraprobe-surfacer can be used to load a ROI that is the entire or a
     sub-set of the ion point cloud. In the point_cloud_wrapping process the
@@ -187,7 +187,7 @@ class ApmParaprobeSurfacerResultsPoint_set_wrappingID(ApmParaprobeToolProcess):
     )
 
     alpha_complexID = SubSection(
-        section_def="pynxtools.nomad.metainfo.applications.apm_paraprobe_surfacer_results.ApmParaprobeSurfacerResultsPoint_set_wrappingIDAlpha_complexID",
+        section_def="pynxtools.nomad.metainfo.applications.apm_paraprobe_surfacer_results.ApmParaprobeSurfacerResultsPointSetWrappingIDAlphaComplexID",
         repeats=True,
         variable=True,
         a_nexus_group=NeXusGroup(
@@ -203,7 +203,7 @@ class ApmParaprobeSurfacerResultsPoint_set_wrappingID(ApmParaprobeToolProcess):
         super().normalize(archive, logger)
 
 
-class ApmParaprobeSurfacerResultsPoint_set_wrappingIDAlpha_complexID(CgAlphaComplex):
+class ApmParaprobeSurfacerResultsPointSetWrappingIDAlphaComplexID(CgAlphaComplex):
     m_def = Section(
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_surfacer_results.html#nxapm_paraprobe_surfacer_results-entry-point-set-wrappingid-alpha-complexid-group"
@@ -219,7 +219,7 @@ class ApmParaprobeSurfacerResultsPoint_set_wrappingIDAlpha_complexID(CgAlphaComp
     )
 
     window = SubSection(
-        section_def="pynxtools.nomad.metainfo.applications.apm_paraprobe_surfacer_results.ApmParaprobeSurfacerResultsPoint_set_wrappingIDAlpha_complexIDWindow",
+        section_def="pynxtools.nomad.metainfo.applications.apm_paraprobe_surfacer_results.ApmParaprobeSurfacerResultsPointSetWrappingIDAlphaComplexIDWindow",
         repeats=False,
         a_nexus_group=NeXusGroup(
             nx_class="NXcs_filter_boolean_mask",
@@ -229,7 +229,7 @@ class ApmParaprobeSurfacerResultsPoint_set_wrappingIDAlpha_complexID(CgAlphaComp
         ),
     )
     triangle_set = SubSection(
-        section_def="pynxtools.nomad.metainfo.applications.apm_paraprobe_surfacer_results.ApmParaprobeSurfacerResultsPoint_set_wrappingIDAlpha_complexIDTriangleSet",
+        section_def="pynxtools.nomad.metainfo.applications.apm_paraprobe_surfacer_results.ApmParaprobeSurfacerResultsPointSetWrappingIDAlphaComplexIDTriangleSet",
         repeats=False,
         a_nexus_group=NeXusGroup(
             nx_class="NXcg_triangle",
@@ -239,7 +239,7 @@ class ApmParaprobeSurfacerResultsPoint_set_wrappingIDAlpha_complexID(CgAlphaComp
         ),
     )
     interior_tetrahedra = SubSection(
-        section_def="pynxtools.nomad.metainfo.applications.apm_paraprobe_surfacer_results.ApmParaprobeSurfacerResultsPoint_set_wrappingIDAlpha_complexIDInteriorTetrahedra",
+        section_def="pynxtools.nomad.metainfo.applications.apm_paraprobe_surfacer_results.ApmParaprobeSurfacerResultsPointSetWrappingIDAlphaComplexIDInteriorTetrahedra",
         repeats=False,
         a_nexus_group=NeXusGroup(
             nx_class="NXcg_tetrahedron",
@@ -313,6 +313,7 @@ class ApmParaprobeSurfacerResultsPoint_set_wrappingIDAlpha_complexID(CgAlphaComp
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_surfacer_results.html#nxapm_paraprobe_surfacer_results-entry-point-set-wrappingid-alpha-complexid-alpha-field"
         ],
+        flexible_unit=True,
         a_nexus_field=NeXusField(
             name="alpha",
             type="NX_NUMBER",
@@ -329,7 +330,7 @@ class ApmParaprobeSurfacerResultsPoint_set_wrappingIDAlpha_complexID(CgAlphaComp
         super().normalize(archive, logger)
 
 
-class ApmParaprobeSurfacerResultsPoint_set_wrappingIDAlpha_complexIDWindow(
+class ApmParaprobeSurfacerResultsPointSetWrappingIDAlphaComplexIDWindow(
     CsFilterBooleanMask
 ):
     """
@@ -420,7 +421,7 @@ class ApmParaprobeSurfacerResultsPoint_set_wrappingIDAlpha_complexIDWindow(
         super().normalize(archive, logger)
 
 
-class ApmParaprobeSurfacerResultsPoint_set_wrappingIDAlpha_complexIDTriangleSet(
+class ApmParaprobeSurfacerResultsPointSetWrappingIDAlphaComplexIDTriangleSet(
     CgTriangle
 ):
     """
@@ -441,7 +442,7 @@ class ApmParaprobeSurfacerResultsPoint_set_wrappingIDAlpha_complexIDTriangleSet(
     )
 
     triangles = SubSection(
-        section_def="pynxtools.nomad.metainfo.applications.apm_paraprobe_surfacer_results.ApmParaprobeSurfacerResultsPoint_set_wrappingIDAlpha_complexIDTriangleSetTriangles",
+        section_def="pynxtools.nomad.metainfo.applications.apm_paraprobe_surfacer_results.ApmParaprobeSurfacerResultsPointSetWrappingIDAlphaComplexIDTriangleSetTriangles",
         repeats=False,
         a_nexus_group=NeXusGroup(
             nx_class="NXcg_face_list_data_structure",
@@ -475,7 +476,7 @@ class ApmParaprobeSurfacerResultsPoint_set_wrappingIDAlpha_complexIDTriangleSet(
         super().normalize(archive, logger)
 
 
-class ApmParaprobeSurfacerResultsPoint_set_wrappingIDAlpha_complexIDTriangleSetTriangles(
+class ApmParaprobeSurfacerResultsPointSetWrappingIDAlphaComplexIDTriangleSetTriangles(
     CgFaceListDataStructure
 ):
     m_def = Section(
@@ -667,7 +668,7 @@ class ApmParaprobeSurfacerResultsPoint_set_wrappingIDAlpha_complexIDTriangleSetT
         super().normalize(archive, logger)
 
 
-class ApmParaprobeSurfacerResultsPoint_set_wrappingIDAlpha_complexIDInteriorTetrahedra(
+class ApmParaprobeSurfacerResultsPointSetWrappingIDAlphaComplexIDInteriorTetrahedra(
     CgTetrahedron
 ):
     """
@@ -688,7 +689,7 @@ class ApmParaprobeSurfacerResultsPoint_set_wrappingIDAlpha_complexIDInteriorTetr
     )
 
     tetrahedra = SubSection(
-        section_def="pynxtools.nomad.metainfo.applications.apm_paraprobe_surfacer_results.ApmParaprobeSurfacerResultsPoint_set_wrappingIDAlpha_complexIDInteriorTetrahedraTetrahedra",
+        section_def="pynxtools.nomad.metainfo.applications.apm_paraprobe_surfacer_results.ApmParaprobeSurfacerResultsPointSetWrappingIDAlphaComplexIDInteriorTetrahedraTetrahedra",
         repeats=False,
         a_nexus_group=NeXusGroup(
             nx_class="NXcg_face_list_data_structure",
@@ -739,7 +740,7 @@ class ApmParaprobeSurfacerResultsPoint_set_wrappingIDAlpha_complexIDInteriorTetr
         super().normalize(archive, logger)
 
 
-class ApmParaprobeSurfacerResultsPoint_set_wrappingIDAlpha_complexIDInteriorTetrahedraTetrahedra(
+class ApmParaprobeSurfacerResultsPointSetWrappingIDAlphaComplexIDInteriorTetrahedraTetrahedra(
     CgFaceListDataStructure
 ):
     m_def = Section(

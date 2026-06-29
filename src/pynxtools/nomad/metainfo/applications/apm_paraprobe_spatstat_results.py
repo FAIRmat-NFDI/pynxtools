@@ -84,7 +84,7 @@ class ApmParaprobeSpatstatResults(ApmParaprobeToolResults):
     )
 
     spatial_statisticsID = SubSection(
-        section_def="pynxtools.nomad.metainfo.applications.apm_paraprobe_spatstat_results.ApmParaprobeSpatstatResultsSpatial_statisticsID",
+        section_def="pynxtools.nomad.metainfo.applications.apm_paraprobe_spatstat_results.ApmParaprobeSpatstatResultsSpatialStatisticsID",
         repeats=True,
         variable=True,
     )
@@ -136,7 +136,7 @@ class ApmParaprobeSpatstatResults(ApmParaprobeToolResults):
 # =============================================================================
 
 
-class ApmParaprobeSpatstatResultsSpatial_statisticsID(ApmParaprobeToolProcess):
+class ApmParaprobeSpatstatResultsSpatialStatisticsID(ApmParaprobeToolProcess):
     m_def = Section(
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_spatstat_results.html#nxapm_paraprobe_spatstat_results-entry-spatial-statisticsid-group"
@@ -152,7 +152,7 @@ class ApmParaprobeSpatstatResultsSpatial_statisticsID(ApmParaprobeToolProcess):
     )
 
     knn = SubSection(
-        section_def="pynxtools.nomad.metainfo.applications.apm_paraprobe_spatstat_results.ApmParaprobeSpatstatResultsSpatial_statisticsIDKnn",
+        section_def="pynxtools.nomad.metainfo.applications.apm_paraprobe_spatstat_results.ApmParaprobeSpatstatResultsSpatialStatisticsIDKnn",
         repeats=False,
         a_nexus_group=NeXusGroup(
             nx_class="NXprocess",
@@ -162,7 +162,7 @@ class ApmParaprobeSpatstatResultsSpatial_statisticsID(ApmParaprobeToolProcess):
         ),
     )
     rdf = SubSection(
-        section_def="pynxtools.nomad.metainfo.applications.apm_paraprobe_spatstat_results.ApmParaprobeSpatstatResultsSpatial_statisticsIDRdf",
+        section_def="pynxtools.nomad.metainfo.applications.apm_paraprobe_spatstat_results.ApmParaprobeSpatstatResultsSpatialStatisticsIDRdf",
         repeats=False,
         a_nexus_group=NeXusGroup(
             nx_class="NXprocess",
@@ -202,7 +202,7 @@ class ApmParaprobeSpatstatResultsSpatial_statisticsID(ApmParaprobeToolProcess):
         super().normalize(archive, logger)
 
 
-class ApmParaprobeSpatstatResultsSpatial_statisticsIDKnn(Process):
+class ApmParaprobeSpatstatResultsSpatialStatisticsIDKnn(Process):
     """
     K-nearest neighbor statistics.
     """
@@ -291,7 +291,7 @@ class ApmParaprobeSpatstatResultsSpatial_statisticsIDKnn(Process):
         super().normalize(archive, logger)
 
 
-class ApmParaprobeSpatstatResultsSpatial_statisticsIDRdf(Process):
+class ApmParaprobeSpatstatResultsSpatialStatisticsIDRdf(Process):
     """
     Radial distribution statistics.
     """

@@ -662,6 +662,7 @@ class SensorScanInstrumentEnvironmentSensor(Sensor):
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXsensor_scan.html#nxsensor_scan-entry-instrument-environment-sensor-value-field"
         ],
+        flexible_unit=True,
         shape=["*"],
         description=(
             "For each point in the scan space, either the nominal setpoint of an "

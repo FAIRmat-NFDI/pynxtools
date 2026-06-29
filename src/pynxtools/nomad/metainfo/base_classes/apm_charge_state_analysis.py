@@ -261,6 +261,7 @@ class ApmChargeStateAnalysisConfig(Parameters):
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXapm_charge_state_analysis.html#nxapm_charge_state_analysis-config-mass-to-charge-range-field"
         ],
+        flexible_unit=True,
         shape=[2],
         description=(
             "Parameter that defines the interval :math:`[{\\frac{m}{q}}_{min}, "

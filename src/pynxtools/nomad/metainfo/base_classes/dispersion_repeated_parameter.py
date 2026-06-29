@@ -125,6 +125,7 @@ class DispersionRepeatedParameter(Object):
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXdispersion_repeated_parameter.html#nxdispersion_repeated_parameter-values-field"
         ],
+        flexible_unit=True,
         shape=["*"],
         description=("The value of the parameter"),
         a_nexus_field=NeXusField(
