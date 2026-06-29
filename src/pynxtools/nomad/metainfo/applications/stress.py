@@ -1381,7 +1381,7 @@ class StressFit(Process):
             max_occurs=1,
         ),
     )
-    description = SubSection(
+    description_group = SubSection(
         section_def="pynxtools.nomad.metainfo.base_classes.note.Note",
         repeats=True,
         variable=True,
@@ -1655,6 +1655,7 @@ class StressFitPeakParameters(Parameters):
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXstress.html#nxstress-entry-fit-peak-parameters-area-field"
         ],
+        flexible_unit=True,
         shape=["*"],
         description=(
             "Diffraction peak area (not including the background) in *y_Unit* units."
@@ -1709,6 +1710,7 @@ class StressFitPeakParameters(Parameters):
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXstress.html#nxstress-entry-fit-peak-parameters-center-field"
         ],
+        flexible_unit=True,
         shape=["*"],
         description=("Diffraction peak position in *x_Unit* units."),
         a_nexus_field=NeXusField(
@@ -1761,6 +1763,7 @@ class StressFitPeakParameters(Parameters):
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXstress.html#nxstress-entry-fit-peak-parameters-height-field"
         ],
+        flexible_unit=True,
         shape=["*"],
         description=(
             "Diffraction peak height (not including the background) in *y_Unit* units."
@@ -1815,6 +1818,7 @@ class StressFitPeakParameters(Parameters):
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXstress.html#nxstress-entry-fit-peak-parameters-fwhm-field"
         ],
+        flexible_unit=True,
         shape=["*"],
         description=("Diffraction peak full width at half maximum in *x_Unit* units."),
         a_nexus_field=NeXusField(
@@ -1867,6 +1871,7 @@ class StressFitPeakParameters(Parameters):
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXstress.html#nxstress-entry-fit-peak-parameters-fwhm-left-field"
         ],
+        flexible_unit=True,
         shape=["*"],
         description=("Left-side FWHM for split profiles in *x_Unit* units."),
         a_nexus_field=NeXusField(
@@ -1919,6 +1924,7 @@ class StressFitPeakParameters(Parameters):
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXstress.html#nxstress-entry-fit-peak-parameters-fwhm-right-field"
         ],
+        flexible_unit=True,
         shape=["*"],
         description=("Right-side FWHM for split profiles in *x_Unit* units."),
         a_nexus_field=NeXusField(
@@ -2218,6 +2224,7 @@ class StressFitBackgroundParameters(Parameters):
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXstress.html#nxstress-entry-fit-background-parameters-background-area-field"
         ],
+        flexible_unit=True,
         shape=["*"],
         description=(
             "The background area in *y_Unit* units, integrated over a confidence "
@@ -2344,6 +2351,7 @@ class StressFitDiffractogram(Data):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXstress.html#nxstress-entry-fit-diffractogram-xaxis-field"
         ],
         variable=True,
+        flexible_unit=True,
         shape=["*"],
         description=(
             "One or more fields that contain the values for the **n_X** "
@@ -2418,6 +2426,7 @@ class StressFitDiffractogram(Data):
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXstress.html#nxstress-entry-fit-diffractogram-diffractogram-field"
         ],
+        flexible_unit=True,
         shape=["*", "*"],
         description=("Diffractogram counts in *y_Unit* units (default signal)"),
         a_nexus_field=NeXusField(
@@ -2468,6 +2477,7 @@ class StressFitDiffractogram(Data):
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXstress.html#nxstress-entry-fit-diffractogram-diffractogram-errors-field"
         ],
+        flexible_unit=True,
         shape=["*", "*"],
         description=("Diffractogram counts error in *y_Unit* units (default signal)"),
         a_nexus_field=NeXusField(
@@ -2518,6 +2528,7 @@ class StressFitDiffractogram(Data):
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXstress.html#nxstress-entry-fit-diffractogram-fit-field"
         ],
+        flexible_unit=True,
         shape=["*", "*"],
         description=("Diffractogram fit counts (auxiliary signal)."),
         a_nexus_field=NeXusField(
@@ -2568,6 +2579,7 @@ class StressFitDiffractogram(Data):
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXstress.html#nxstress-entry-fit-diffractogram-fit-errors-field"
         ],
+        flexible_unit=True,
         shape=["*", "*"],
         description=("Diffractogram fit counts error (auxiliary signal)."),
         a_nexus_field=NeXusField(
@@ -2600,6 +2612,7 @@ class StressFitDiffractogram(Data):
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXstress.html#nxstress-entry-fit-diffractogram-background-field"
         ],
+        flexible_unit=True,
         shape=["*", "*"],
         description=(
             "In case the diffraction background was manually determined. "
@@ -2653,6 +2666,7 @@ class StressFitDiffractogram(Data):
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXstress.html#nxstress-entry-fit-diffractogram-residuals-field"
         ],
+        flexible_unit=True,
         shape=["*", "*"],
         description=("Difference between diffractogram and fit (auxiliary signal)."),
         a_nexus_field=NeXusField(
@@ -2894,6 +2908,7 @@ class StressPeaks(Reflections):
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXstress.html#nxstress-entry-peaks-center-field"
         ],
+        flexible_unit=True,
         shape=["*"],
         description=("Diffraction peak position in *c_Unit* units."),
         a_nexus_field=NeXusField(
@@ -2937,6 +2952,7 @@ class StressPeaks(Reflections):
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXstress.html#nxstress-entry-peaks-center-errors-field"
         ],
+        flexible_unit=True,
         shape=["*"],
         description=(
             "Uncentrainties on :ref:`center "

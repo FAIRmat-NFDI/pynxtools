@@ -281,6 +281,7 @@ class CgFaceListDataStructure(CgPrimitive):
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXcg_face_list_data_structure.html#nxcg_face_list_data_structure-vertices-field"
         ],
+        flexible_unit=True,
         shape=["*", "*"],
         description=(
             "Positions of the vertices. Users are encouraged to reduce the "

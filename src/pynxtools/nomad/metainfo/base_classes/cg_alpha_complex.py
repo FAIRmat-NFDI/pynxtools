@@ -207,6 +207,7 @@ class CgAlphaComplex(CgPrimitive):
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXcg_alpha_complex.html#nxcg_alpha_complex-alpha-field"
         ],
+        flexible_unit=True,
         description=(
             "The alpha parameter, i.e. the squared radius of the alpha-sphere "
             "that is used when computing the alpha complex."

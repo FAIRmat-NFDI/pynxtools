@@ -334,6 +334,7 @@ class SpmPiezoConfigCalibration(Calibration):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXspm_piezo_config.html#nxspm_piezo_config-calibration-driftn-field"
         ],
         variable=True,
+        flexible_unit=True,
         description=(
             "The N (substring) denotes X, Y and Z directions (e.g., drift_x). "
             "Define the drift speed [m/s] for all three axes. When the "
@@ -371,6 +372,7 @@ class SpmPiezoConfigCalibrationCalibrationParameters(Parameters):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXspm_piezo_config.html#nxspm_piezo_config-calibration-calibration-parameters-coefficientn-field"
         ],
         variable=True,
+        flexible_unit=True,
         description=(
             "The calibration coefficient is the ratio of the actual distance "
             "moved by the piezo due to the voltage or external force applied to "
@@ -391,6 +393,7 @@ class SpmPiezoConfigCalibrationCalibrationParameters(Parameters):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXspm_piezo_config.html#nxspm_piezo_config-calibration-calibration-parameters-second-order-correctionn-field"
         ],
         variable=True,
+        flexible_unit=True,
         description=(
             "The N (substring) denotes X and Y directions (e.g., "
             "second_order_correction_x). If you know them, you can enter the 2nd "

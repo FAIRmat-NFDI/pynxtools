@@ -88,7 +88,7 @@ class ApmParaprobeDistancerConfig(ApmParaprobeToolConfig):
     )
 
     point_to_triangleID = SubSection(
-        section_def="pynxtools.nomad.metainfo.applications.apm_paraprobe_distancer_config.ApmParaprobeDistancerConfigPoint_to_triangleID",
+        section_def="pynxtools.nomad.metainfo.applications.apm_paraprobe_distancer_config.ApmParaprobeDistancerConfigPointToTriangleID",
         repeats=True,
         variable=True,
     )
@@ -140,7 +140,7 @@ class ApmParaprobeDistancerConfig(ApmParaprobeToolConfig):
 # =============================================================================
 
 
-class ApmParaprobeDistancerConfigPoint_to_triangleID(ApmParaprobeToolConfigTaskconfig):
+class ApmParaprobeDistancerConfigPointToTriangleID(ApmParaprobeToolConfigTaskconfig):
     m_def = Section(
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_distancer_config.html#nxapm_paraprobe_distancer_config-entry-point-to-triangleid-group"
@@ -157,7 +157,7 @@ class ApmParaprobeDistancerConfigPoint_to_triangleID(ApmParaprobeToolConfigTaskc
     )
 
     triangle_setID = SubSection(
-        section_def="pynxtools.nomad.metainfo.applications.apm_paraprobe_distancer_config.ApmParaprobeDistancerConfigPoint_to_triangleIDTriangle_setID",
+        section_def="pynxtools.nomad.metainfo.applications.apm_paraprobe_distancer_config.ApmParaprobeDistancerConfigPointToTriangleIDTriangleSetID",
         repeats=True,
         variable=True,
         a_nexus_group=NeXusGroup(
@@ -243,7 +243,7 @@ class ApmParaprobeDistancerConfigPoint_to_triangleID(ApmParaprobeToolConfigTaskc
         super().normalize(archive, logger)
 
 
-class ApmParaprobeDistancerConfigPoint_to_triangleIDTriangle_setID(Note):
+class ApmParaprobeDistancerConfigPointToTriangleIDTriangleSetID(Note):
     """
     Each triangle_set that is referred to here should be a
     face_list_data_structure, i.e. an array of (n_vertices, 3) of NX_FLOAT for
@@ -268,7 +268,7 @@ class ApmParaprobeDistancerConfigPoint_to_triangleIDTriangle_setID(Note):
     )
 
     patch_filter = SubSection(
-        section_def="pynxtools.nomad.metainfo.applications.apm_paraprobe_distancer_config.ApmParaprobeDistancerConfigPoint_to_triangleIDTriangle_setIDPatchFilter",
+        section_def="pynxtools.nomad.metainfo.applications.apm_paraprobe_distancer_config.ApmParaprobeDistancerConfigPointToTriangleIDTriangleSetIDPatchFilter",
         repeats=False,
         a_nexus_group=NeXusGroup(
             nx_class="NXmatch_filter",
@@ -423,9 +423,7 @@ class ApmParaprobeDistancerConfigPoint_to_triangleIDTriangle_setID(Note):
         super().normalize(archive, logger)
 
 
-class ApmParaprobeDistancerConfigPoint_to_triangleIDTriangle_setIDPatchFilter(
-    MatchFilter
-):
+class ApmParaprobeDistancerConfigPointToTriangleIDTriangleSetIDPatchFilter(MatchFilter):
     m_def = Section(
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_distancer_config.html#nxapm_paraprobe_distancer_config-entry-point-to-triangleid-triangle-setid-patch-filter-group"

@@ -97,7 +97,7 @@ class ApmParaprobeClustererConfig(ApmParaprobeToolConfig):
         ),
     )
     cluster_analysisID = SubSection(
-        section_def="pynxtools.nomad.metainfo.applications.apm_paraprobe_clusterer_config.ApmParaprobeClustererConfigCluster_analysisID",
+        section_def="pynxtools.nomad.metainfo.applications.apm_paraprobe_clusterer_config.ApmParaprobeClustererConfigClusterAnalysisID",
         repeats=True,
         variable=True,
         description=(
@@ -393,7 +393,7 @@ class ApmParaprobeClustererConfigCamecaToNexusResults(Note):
         super().normalize(archive, logger)
 
 
-class ApmParaprobeClustererConfigCluster_analysisID(ApmParaprobeToolConfigTaskconfig):
+class ApmParaprobeClustererConfigClusterAnalysisID(ApmParaprobeToolConfigTaskconfig):
     """
     This process performs a cluster analysis on a reconstructed dataset or a
     ROI within it.
@@ -414,7 +414,7 @@ class ApmParaprobeClustererConfigCluster_analysisID(ApmParaprobeToolConfigTaskco
     )
 
     surface_distance = SubSection(
-        section_def="pynxtools.nomad.metainfo.applications.apm_paraprobe_clusterer_config.ApmParaprobeClustererConfigCluster_analysisIDSurfaceDistance",
+        section_def="pynxtools.nomad.metainfo.applications.apm_paraprobe_clusterer_config.ApmParaprobeClustererConfigClusterAnalysisIDSurfaceDistance",
         repeats=False,
         a_nexus_group=NeXusGroup(
             nx_class="NXnote",
@@ -424,7 +424,7 @@ class ApmParaprobeClustererConfigCluster_analysisID(ApmParaprobeToolConfigTaskco
         ),
     )
     dbscan = SubSection(
-        section_def="pynxtools.nomad.metainfo.applications.apm_paraprobe_clusterer_config.ApmParaprobeClustererConfigCluster_analysisIDDbscan",
+        section_def="pynxtools.nomad.metainfo.applications.apm_paraprobe_clusterer_config.ApmParaprobeClustererConfigClusterAnalysisIDDbscan",
         repeats=False,
         a_nexus_group=NeXusGroup(
             nx_class="NXprocess",
@@ -434,7 +434,7 @@ class ApmParaprobeClustererConfigCluster_analysisID(ApmParaprobeToolConfigTaskco
         ),
     )
     hdbscan = SubSection(
-        section_def="pynxtools.nomad.metainfo.applications.apm_paraprobe_clusterer_config.ApmParaprobeClustererConfigCluster_analysisIDHdbscan",
+        section_def="pynxtools.nomad.metainfo.applications.apm_paraprobe_clusterer_config.ApmParaprobeClustererConfigClusterAnalysisIDHdbscan",
         repeats=False,
         a_nexus_group=NeXusGroup(
             nx_class="NXprocess",
@@ -510,7 +510,7 @@ class ApmParaprobeClustererConfigCluster_analysisID(ApmParaprobeToolConfigTaskco
         super().normalize(archive, logger)
 
 
-class ApmParaprobeClustererConfigCluster_analysisIDSurfaceDistance(Note):
+class ApmParaprobeClustererConfigClusterAnalysisIDSurfaceDistance(Note):
     """
     Distance between each ion and triangulated surface mesh.
     """
@@ -592,7 +592,7 @@ class ApmParaprobeClustererConfigCluster_analysisIDSurfaceDistance(Note):
         super().normalize(archive, logger)
 
 
-class ApmParaprobeClustererConfigCluster_analysisIDDbscan(Process):
+class ApmParaprobeClustererConfigClusterAnalysisIDDbscan(Process):
     """
     Settings for DBScan clustering algorithm. For original details about the
     algorithm and (performance-relevant) details consider:
@@ -690,7 +690,7 @@ class ApmParaprobeClustererConfigCluster_analysisIDDbscan(Process):
         super().normalize(archive, logger)
 
 
-class ApmParaprobeClustererConfigCluster_analysisIDHdbscan(Process):
+class ApmParaprobeClustererConfigClusterAnalysisIDHdbscan(Process):
     """
     Settings for the HPDBScan clustering algorithm.
 
@@ -739,6 +739,7 @@ class ApmParaprobeClustererConfigCluster_analysisIDHdbscan(Process):
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_clusterer_config.html#nxapm_paraprobe_clusterer_config-entry-cluster-analysisid-hdbscan-min-cluster-size-field"
         ],
+        flexible_unit=True,
         shape=["*"],
         description=("Array of min_cluster_size parameter values."),
         a_nexus_field=NeXusField(
@@ -754,6 +755,7 @@ class ApmParaprobeClustererConfigCluster_analysisIDHdbscan(Process):
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_clusterer_config.html#nxapm_paraprobe_clusterer_config-entry-cluster-analysisid-hdbscan-min-samples-field"
         ],
+        flexible_unit=True,
         shape=["*"],
         description=("Array of min_samples parameter values."),
         a_nexus_field=NeXusField(
@@ -769,6 +771,7 @@ class ApmParaprobeClustererConfigCluster_analysisIDHdbscan(Process):
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_clusterer_config.html#nxapm_paraprobe_clusterer_config-entry-cluster-analysisid-hdbscan-cluster-selection-epsilon-field"
         ],
+        flexible_unit=True,
         shape=["*"],
         description=("Array of cluster_selection parameter values."),
         a_nexus_field=NeXusField(
@@ -784,6 +787,7 @@ class ApmParaprobeClustererConfigCluster_analysisIDHdbscan(Process):
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_clusterer_config.html#nxapm_paraprobe_clusterer_config-entry-cluster-analysisid-hdbscan-alpha-field"
         ],
+        flexible_unit=True,
         shape=["*"],
         description=("Array of alpha parameter values."),
         a_nexus_field=NeXusField(

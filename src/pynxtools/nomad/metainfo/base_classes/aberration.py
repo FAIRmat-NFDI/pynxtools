@@ -82,6 +82,7 @@ class Aberration(Object):
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXaberration.html#nxaberration-magnitude-field"
         ],
+        flexible_unit=True,
         description=("Magnitude of the aberration"),
         a_nexus_field=NeXusField(
             name="magnitude",
@@ -99,6 +100,7 @@ class Aberration(Object):
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXaberration.html#nxaberration-magnitude-errors-field"
         ],
+        flexible_unit=True,
         description=("Uncertainty of the magnitude of the aberration"),
         a_nexus_field=NeXusField(
             name="magnitude_errors",

@@ -411,6 +411,7 @@ class TasInstrumentDetector(Detector):
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXtas.html#nxtas-entry-instrument-detector-data-field"
         ],
+        flexible_unit=True,
         shape=["*"],
         a_nexus_field=NeXusField(
             name="data",
@@ -675,6 +676,7 @@ class TasMonitor(Monitor):
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXtas.html#nxtas-entry-monitor-preset-field"
         ],
+        flexible_unit=True,
         description=("preset value for time or monitor"),
         a_nexus_field=NeXusField(
             name="preset",
@@ -692,6 +694,7 @@ class TasMonitor(Monitor):
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXtas.html#nxtas-entry-monitor-data-field"
         ],
+        flexible_unit=True,
         shape=["*"],
         description=("Total integral monitor counts"),
         a_nexus_field=NeXusField(
@@ -810,6 +813,7 @@ class TasData(Data):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXtas.html#nxtas-entry-data-data-link"
         ],
         shape=["*"],
+        flexible_unit=True,
         a_nexus_link=NeXusLink(
             name="data",
             target="/NXentry/NXinstrument/NXdetector/data",

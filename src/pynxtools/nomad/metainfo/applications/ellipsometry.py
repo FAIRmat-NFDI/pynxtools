@@ -808,6 +808,7 @@ class EllipsometryDataCollection(OpticalSpectroscopyData):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXellipsometry.html#nxellipsometry-entry-data-collection-name-spectrum-field"
         ],
         variable=True,
+        flexible_unit=True,
         shape=["*"],
         description=(
             "Spectral values (e.g. wavelength or energy) used for the "
@@ -849,6 +850,7 @@ class EllipsometryDataCollection(OpticalSpectroscopyData):
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXellipsometry.html#nxellipsometry-entry-data-collection-measured-data-field"
         ],
+        flexible_unit=True,
         shape=["*", "*", "*"],
         description=(
             "Resulting data from the measurement, described by 'data_type'. The "
@@ -896,6 +898,7 @@ class EllipsometryDataCollection(OpticalSpectroscopyData):
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXellipsometry.html#nxellipsometry-entry-data-collection-measured-data-errors-field"
         ],
+        flexible_unit=True,
         shape=["*", "*", "*"],
         description=(
             "Specified uncertainties (errors) of the data described by "

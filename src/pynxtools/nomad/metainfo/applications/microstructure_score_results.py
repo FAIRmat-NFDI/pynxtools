@@ -732,6 +732,7 @@ class MicrostructureScoreResultsDiscretizationGrid(CgGrid):
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXmicrostructure_score_results.html#nxmicrostructure_score_results-entry-discretization-grid-origin-field"
         ],
+        flexible_unit=True,
         shape=["*"],
         a_nexus_field=NeXusField(
             name="origin",
@@ -1240,6 +1241,7 @@ class MicrostructureScoreResultsSpatiotemporalIDSummaryStatisticsStress(Data):
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXmicrostructure_score_results.html#nxmicrostructure_score_results-entry-spatiotemporalid-summary-statistics-stress-tensor-field"
         ],
+        flexible_unit=True,
         shape=["*", 3, 3],
         description=("Applied external stress tensor on the ROI."),
         a_nexus_field=NeXusField(
@@ -1289,6 +1291,7 @@ class MicrostructureScoreResultsSpatiotemporalIDSummaryStatisticsStrain(Data):
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXmicrostructure_score_results.html#nxmicrostructure_score_results-entry-spatiotemporalid-summary-statistics-strain-tensor-field"
         ],
+        flexible_unit=True,
         shape=["*", 3, 3],
         description=("Applied external strain tensor on the ROI."),
         a_nexus_field=NeXusField(
@@ -1342,6 +1345,7 @@ class MicrostructureScoreResultsSpatiotemporalIDSummaryStatisticsDeformationGrad
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXmicrostructure_score_results.html#nxmicrostructure_score_results-entry-spatiotemporalid-summary-statistics-deformation-gradient-tensor-field"
         ],
+        flexible_unit=True,
         shape=["*", 3, 3],
         description=("Applied deformation gradient tensor on the ROI."),
         a_nexus_field=NeXusField(
@@ -1741,6 +1745,7 @@ class MicrostructureScoreResultsSpatiotemporalIDMicrostructureIDCrystals(
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXmicrostructure_score_results.html#nxmicrostructure_score_results-entry-spatiotemporalid-microstructureid-crystals-dislocation-density-field"
         ],
+        flexible_unit=True,
         shape=["*"],
         description=(
             "Current value for the dislocation density as a measure of the "

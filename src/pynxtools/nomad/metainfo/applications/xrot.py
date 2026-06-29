@@ -83,7 +83,7 @@ class Xrot(Xbase):
         section_def="pynxtools.nomad.metainfo.applications.xrot.XrotSample",
         repeats=False,
     )
-    name = SubSection(
+    name_group = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.xrot.XrotName",
         repeats=False,
     )
@@ -289,6 +289,7 @@ class XrotInstrumentAttenuator(Attenuator):
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXxrot.html#nxxrot-entry-instrument-attenuator-attenuator-transmission-field"
         ],
+        flexible_unit=True,
         a_nexus_field=NeXusField(
             name="attenuator_transmission",
             type="NX_FLOAT",

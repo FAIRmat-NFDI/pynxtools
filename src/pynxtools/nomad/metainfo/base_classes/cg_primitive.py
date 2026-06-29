@@ -216,6 +216,7 @@ class CgPrimitive(Object):
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXcg_primitive.html#nxcg_primitive-center-field"
         ],
+        flexible_unit=True,
         shape=["*", "*"],
         description=("The center of each primitive"),
         a_nexus_field=NeXusField(
@@ -342,6 +343,7 @@ class CgPrimitive(Object):
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXcg_primitive.html#nxcg_primitive-volume-field"
         ],
+        flexible_unit=True,
         shape=["*"],
         description=(
             "Volume of each primitive. Set to NaN if does not apply for "

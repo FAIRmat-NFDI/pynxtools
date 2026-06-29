@@ -78,7 +78,7 @@ class ApmParaprobeIntersectorConfig(ApmParaprobeToolConfig):
     )
 
     v_v_spatial_correlationID = SubSection(
-        section_def="pynxtools.nomad.metainfo.applications.apm_paraprobe_intersector_config.ApmParaprobeIntersectorConfigV_v_spatial_correlationID",
+        section_def="pynxtools.nomad.metainfo.applications.apm_paraprobe_intersector_config.ApmParaprobeIntersectorConfigVVSpatialCorrelationID",
         repeats=True,
         variable=True,
         description=(
@@ -142,7 +142,7 @@ class ApmParaprobeIntersectorConfig(ApmParaprobeToolConfig):
 # =============================================================================
 
 
-class ApmParaprobeIntersectorConfigV_v_spatial_correlationID(
+class ApmParaprobeIntersectorConfigVVSpatialCorrelationID(
     ApmParaprobeToolConfigTaskconfig
 ):
     """
@@ -173,7 +173,7 @@ class ApmParaprobeIntersectorConfigV_v_spatial_correlationID(
     )
 
     current_set = SubSection(
-        section_def="pynxtools.nomad.metainfo.applications.apm_paraprobe_intersector_config.ApmParaprobeIntersectorConfigV_v_spatial_correlationIDCurrentSet",
+        section_def="pynxtools.nomad.metainfo.applications.apm_paraprobe_intersector_config.ApmParaprobeIntersectorConfigVVSpatialCorrelationIDCurrentSet",
         repeats=False,
         a_nexus_group=NeXusGroup(
             nx_class="NXparameters",
@@ -183,7 +183,7 @@ class ApmParaprobeIntersectorConfigV_v_spatial_correlationID(
         ),
     )
     next_set = SubSection(
-        section_def="pynxtools.nomad.metainfo.applications.apm_paraprobe_intersector_config.ApmParaprobeIntersectorConfigV_v_spatial_correlationIDNextSet",
+        section_def="pynxtools.nomad.metainfo.applications.apm_paraprobe_intersector_config.ApmParaprobeIntersectorConfigVVSpatialCorrelationIDNextSet",
         repeats=False,
         a_nexus_group=NeXusGroup(
             nx_class="NXparameters",
@@ -361,7 +361,7 @@ class ApmParaprobeIntersectorConfigV_v_spatial_correlationID(
         super().normalize(archive, logger)
 
 
-class ApmParaprobeIntersectorConfigV_v_spatial_correlationIDCurrentSet(Parameters):
+class ApmParaprobeIntersectorConfigVVSpatialCorrelationIDCurrentSet(Parameters):
     """
     Current set stores a set of members, meshes of volumetric features, which
     will be checked for proximity and/or volumetric intersection, to members of
@@ -382,7 +382,7 @@ class ApmParaprobeIntersectorConfigV_v_spatial_correlationIDCurrentSet(Parameter
     )
 
     objectID = SubSection(
-        section_def="pynxtools.nomad.metainfo.applications.apm_paraprobe_intersector_config.ApmParaprobeIntersectorConfigV_v_spatial_correlationIDCurrentSetObjectID",
+        section_def="pynxtools.nomad.metainfo.applications.apm_paraprobe_intersector_config.ApmParaprobeIntersectorConfigVVSpatialCorrelationIDCurrentSetObjectID",
         repeats=True,
         variable=True,
         a_nexus_group=NeXusGroup(
@@ -400,6 +400,7 @@ class ApmParaprobeIntersectorConfigV_v_spatial_correlationIDCurrentSet(Parameter
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_intersector_config.html#nxapm_paraprobe_intersector_config-entry-v-v-spatial-correlationid-current-set-set-identifier-field"
         ],
+        flexible_unit=True,
         description=(
             "This identifier can be used to label the current set. The label "
             "effectively can be interpreted as the time/iteration (i.e. "
@@ -455,7 +456,7 @@ class ApmParaprobeIntersectorConfigV_v_spatial_correlationIDCurrentSet(Parameter
         super().normalize(archive, logger)
 
 
-class ApmParaprobeIntersectorConfigV_v_spatial_correlationIDCurrentSetObjectID(Note):
+class ApmParaprobeIntersectorConfigVVSpatialCorrelationIDCurrentSetObjectID(Note):
     """
     Name of the (NeXus)/HDF5 file which contains triangulated surface meshes of
     the members of the set as instances of NXcg_polyhedron.
@@ -596,7 +597,7 @@ class ApmParaprobeIntersectorConfigV_v_spatial_correlationIDCurrentSetObjectID(N
         super().normalize(archive, logger)
 
 
-class ApmParaprobeIntersectorConfigV_v_spatial_correlationIDNextSet(Parameters):
+class ApmParaprobeIntersectorConfigVVSpatialCorrelationIDNextSet(Parameters):
     """
     Next set stores a set of members, meshes of volumetric features, which will
     be checked for proximity and/or volumetric intersection, to members of the
@@ -617,7 +618,7 @@ class ApmParaprobeIntersectorConfigV_v_spatial_correlationIDNextSet(Parameters):
     )
 
     objectID = SubSection(
-        section_def="pynxtools.nomad.metainfo.applications.apm_paraprobe_intersector_config.ApmParaprobeIntersectorConfigV_v_spatial_correlationIDNextSetObjectID",
+        section_def="pynxtools.nomad.metainfo.applications.apm_paraprobe_intersector_config.ApmParaprobeIntersectorConfigVVSpatialCorrelationIDNextSetObjectID",
         repeats=True,
         variable=True,
         a_nexus_group=NeXusGroup(
@@ -635,6 +636,7 @@ class ApmParaprobeIntersectorConfigV_v_spatial_correlationIDNextSet(Parameters):
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_intersector_config.html#nxapm_paraprobe_intersector_config-entry-v-v-spatial-correlationid-next-set-set-identifier-field"
         ],
+        flexible_unit=True,
         description=(
             "This identifier can be used to label the current set. The label "
             "effectively can be interpreted as the time/iteration (i.e. :math:`k "
@@ -690,7 +692,7 @@ class ApmParaprobeIntersectorConfigV_v_spatial_correlationIDNextSet(Parameters):
         super().normalize(archive, logger)
 
 
-class ApmParaprobeIntersectorConfigV_v_spatial_correlationIDNextSetObjectID(Note):
+class ApmParaprobeIntersectorConfigVVSpatialCorrelationIDNextSetObjectID(Note):
     m_def = Section(
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_intersector_config.html#nxapm_paraprobe_intersector_config-entry-v-v-spatial-correlationid-next-set-objectid-group"

@@ -100,6 +100,7 @@ class SpmCantileverConfig(Object):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXspm_cantilever_config.html#nxspm_cantilever_config-curvature-radiusn-field"
         ],
         variable=True,
+        flexible_unit=True,
         description=(
             "The radius of curvature of the cantilever tip. The (substring) N "
             "denotes X or Y."
@@ -221,6 +222,7 @@ class SpmCantileverConfig(Object):
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXspm_cantilever_config.html#nxspm_cantilever_config-amplitude-excitation-field"
         ],
+        flexible_unit=True,
         description=(
             "Either the drive amplitude in mv for the driving cantilever or the "
             "free-oscillation amplitude which is the resulted movement amplitude "
@@ -285,6 +287,7 @@ class SpmCantileverConfig(Object):
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXspm_cantilever_config.html#nxspm_cantilever_config-spring-constant-field"
         ],
+        flexible_unit=True,
         description=("The spring constant coefficient of the cantilever."),
         a_nexus_field=NeXusField(
             name="spring_constant",
@@ -334,6 +337,7 @@ class SpmCantileverConfigCalibration(Calibration):
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXspm_cantilever_config.html#nxspm_cantilever_config-calibration-sensitivity-field"
         ],
+        flexible_unit=True,
         description=(
             "A force applied to the cantilever tip will cause a change in "
             "cantilever's oscillation amplitude (in dynamic mode) or deflection "

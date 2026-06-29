@@ -407,6 +407,7 @@ class MicrostructureOdfKthExtrema(Process):
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXmicrostructure_odf.html#nxmicrostructure_odf-kth-extrema-volume-fraction-field"
         ],
+        flexible_unit=True,
         shape=["*"],
         description=(
             "Integrated ODF intensity within a theta angular region of the "

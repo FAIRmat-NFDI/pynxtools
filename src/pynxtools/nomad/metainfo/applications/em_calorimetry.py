@@ -1141,6 +1141,7 @@ class EmCalorimetryIntegrationResultBACKGROUND(Data):
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXem_calorimetry.html#nxem_calorimetry-entry-integration-resultbackground-s-field"
         ],
+        flexible_unit=True,
         shape=["*"],
         description=("Positions in reciprocal space."),
         a_nexus_field=NeXusField(

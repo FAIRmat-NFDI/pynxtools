@@ -85,7 +85,7 @@ class ApmParaprobeSpatstatConfig(ApmParaprobeToolConfig):
     )
 
     spatial_statisticsID = SubSection(
-        section_def="pynxtools.nomad.metainfo.applications.apm_paraprobe_spatstat_config.ApmParaprobeSpatstatConfigSpatial_statisticsID",
+        section_def="pynxtools.nomad.metainfo.applications.apm_paraprobe_spatstat_config.ApmParaprobeSpatstatConfigSpatialStatisticsID",
         repeats=True,
         variable=True,
     )
@@ -137,7 +137,7 @@ class ApmParaprobeSpatstatConfig(ApmParaprobeToolConfig):
 # =============================================================================
 
 
-class ApmParaprobeSpatstatConfigSpatial_statisticsID(ApmParaprobeToolConfigTaskconfig):
+class ApmParaprobeSpatstatConfigSpatialStatisticsID(ApmParaprobeToolConfigTaskconfig):
     m_def = Section(
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_spatstat_config.html#nxapm_paraprobe_spatstat_config-entry-spatial-statisticsid-group"
@@ -153,7 +153,7 @@ class ApmParaprobeSpatstatConfigSpatial_statisticsID(ApmParaprobeToolConfigTaskc
     )
 
     surface_distance = SubSection(
-        section_def="pynxtools.nomad.metainfo.applications.apm_paraprobe_spatstat_config.ApmParaprobeSpatstatConfigSpatial_statisticsIDSurfaceDistance",
+        section_def="pynxtools.nomad.metainfo.applications.apm_paraprobe_spatstat_config.ApmParaprobeSpatstatConfigSpatialStatisticsIDSurfaceDistance",
         repeats=False,
         a_nexus_group=NeXusGroup(
             nx_class="NXnote",
@@ -163,7 +163,7 @@ class ApmParaprobeSpatstatConfigSpatial_statisticsID(ApmParaprobeToolConfigTaskc
         ),
     )
     feature_distance = SubSection(
-        section_def="pynxtools.nomad.metainfo.applications.apm_paraprobe_spatstat_config.ApmParaprobeSpatstatConfigSpatial_statisticsIDFeatureDistance",
+        section_def="pynxtools.nomad.metainfo.applications.apm_paraprobe_spatstat_config.ApmParaprobeSpatstatConfigSpatialStatisticsIDFeatureDistance",
         repeats=False,
         a_nexus_group=NeXusGroup(
             nx_class="NXnote",
@@ -173,7 +173,7 @@ class ApmParaprobeSpatstatConfigSpatial_statisticsID(ApmParaprobeToolConfigTaskc
         ),
     )
     random_number_generator = SubSection(
-        section_def="pynxtools.nomad.metainfo.applications.apm_paraprobe_spatstat_config.ApmParaprobeSpatstatConfigSpatial_statisticsIDRandomNumberGenerator",
+        section_def="pynxtools.nomad.metainfo.applications.apm_paraprobe_spatstat_config.ApmParaprobeSpatstatConfigSpatialStatisticsIDRandomNumberGenerator",
         repeats=False,
         a_nexus_group=NeXusGroup(
             nx_class="NXcs_prng",
@@ -183,7 +183,7 @@ class ApmParaprobeSpatstatConfigSpatial_statisticsID(ApmParaprobeToolConfigTaskc
         ),
     )
     statistics = SubSection(
-        section_def="pynxtools.nomad.metainfo.applications.apm_paraprobe_spatstat_config.ApmParaprobeSpatstatConfigSpatial_statisticsIDStatistics",
+        section_def="pynxtools.nomad.metainfo.applications.apm_paraprobe_spatstat_config.ApmParaprobeSpatstatConfigSpatialStatisticsIDStatistics",
         repeats=False,
         a_nexus_group=NeXusGroup(
             nx_class="NXprocess",
@@ -361,7 +361,7 @@ class ApmParaprobeSpatstatConfigSpatial_statisticsID(ApmParaprobeToolConfigTaskc
         super().normalize(archive, logger)
 
 
-class ApmParaprobeSpatstatConfigSpatial_statisticsIDSurfaceDistance(Note):
+class ApmParaprobeSpatstatConfigSpatialStatisticsIDSurfaceDistance(Note):
     m_def = Section(
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_spatstat_config.html#nxapm_paraprobe_spatstat_config-entry-spatial-statisticsid-surface-distance-group"
@@ -469,7 +469,7 @@ class ApmParaprobeSpatstatConfigSpatial_statisticsIDSurfaceDistance(Note):
         super().normalize(archive, logger)
 
 
-class ApmParaprobeSpatstatConfigSpatial_statisticsIDFeatureDistance(Note):
+class ApmParaprobeSpatstatConfigSpatialStatisticsIDFeatureDistance(Note):
     """
     Distance between each ion and triangulated mesh of microstructural
     features. In addition to spatial filtering and considering how far ions lie
@@ -586,7 +586,7 @@ class ApmParaprobeSpatstatConfigSpatial_statisticsIDFeatureDistance(Note):
         super().normalize(archive, logger)
 
 
-class ApmParaprobeSpatstatConfigSpatial_statisticsIDRandomNumberGenerator(CsPrng):
+class ApmParaprobeSpatstatConfigSpatialStatisticsIDRandomNumberGenerator(CsPrng):
     m_def = Section(
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_spatstat_config.html#nxapm_paraprobe_spatstat_config-entry-spatial-statisticsid-random-number-generator-group"
@@ -650,7 +650,7 @@ class ApmParaprobeSpatstatConfigSpatial_statisticsIDRandomNumberGenerator(CsPrng
         super().normalize(archive, logger)
 
 
-class ApmParaprobeSpatstatConfigSpatial_statisticsIDStatistics(Process):
+class ApmParaprobeSpatstatConfigSpatialStatisticsIDStatistics(Process):
     """
     Specifies which spatial statistics to compute.
     """
@@ -668,7 +668,7 @@ class ApmParaprobeSpatstatConfigSpatial_statisticsIDStatistics(Process):
     )
 
     knn = SubSection(
-        section_def="pynxtools.nomad.metainfo.applications.apm_paraprobe_spatstat_config.ApmParaprobeSpatstatConfigSpatial_statisticsIDStatisticsKnn",
+        section_def="pynxtools.nomad.metainfo.applications.apm_paraprobe_spatstat_config.ApmParaprobeSpatstatConfigSpatialStatisticsIDStatisticsKnn",
         repeats=False,
         a_nexus_group=NeXusGroup(
             nx_class="NXprocess",
@@ -680,7 +680,7 @@ class ApmParaprobeSpatstatConfigSpatial_statisticsIDStatistics(Process):
         ),
     )
     rdf = SubSection(
-        section_def="pynxtools.nomad.metainfo.applications.apm_paraprobe_spatstat_config.ApmParaprobeSpatstatConfigSpatial_statisticsIDStatisticsRdf",
+        section_def="pynxtools.nomad.metainfo.applications.apm_paraprobe_spatstat_config.ApmParaprobeSpatstatConfigSpatialStatisticsIDStatisticsRdf",
         repeats=False,
         a_nexus_group=NeXusGroup(
             nx_class="NXprocess",
@@ -696,7 +696,7 @@ class ApmParaprobeSpatstatConfigSpatial_statisticsIDStatistics(Process):
         super().normalize(archive, logger)
 
 
-class ApmParaprobeSpatstatConfigSpatial_statisticsIDStatisticsKnn(Process):
+class ApmParaprobeSpatstatConfigSpatialStatisticsIDStatisticsKnn(Process):
     """
     Compute k-th nearest neighbour statistics.
     """
@@ -800,7 +800,7 @@ class ApmParaprobeSpatstatConfigSpatial_statisticsIDStatisticsKnn(Process):
         super().normalize(archive, logger)
 
 
-class ApmParaprobeSpatstatConfigSpatial_statisticsIDStatisticsRdf(Process):
+class ApmParaprobeSpatstatConfigSpatialStatisticsIDStatisticsRdf(Process):
     """
     Compute radial distribution function.
     """

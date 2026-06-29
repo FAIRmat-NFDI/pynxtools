@@ -80,7 +80,7 @@ class ApmParaprobeSurfacerConfig(ApmParaprobeToolConfig):
     )
 
     surface_meshingID = SubSection(
-        section_def="pynxtools.nomad.metainfo.applications.apm_paraprobe_surfacer_config.ApmParaprobeSurfacerConfigSurface_meshingID",
+        section_def="pynxtools.nomad.metainfo.applications.apm_paraprobe_surfacer_config.ApmParaprobeSurfacerConfigSurfaceMeshingID",
         repeats=True,
         variable=True,
     )
@@ -132,7 +132,7 @@ class ApmParaprobeSurfacerConfig(ApmParaprobeToolConfig):
 # =============================================================================
 
 
-class ApmParaprobeSurfacerConfigSurface_meshingID(ApmParaprobeToolConfigTaskconfig):
+class ApmParaprobeSurfacerConfigSurfaceMeshingID(ApmParaprobeToolConfigTaskconfig):
     m_def = Section(
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_surfacer_config.html#nxapm_paraprobe_surfacer_config-entry-surface-meshingid-group"
@@ -149,7 +149,7 @@ class ApmParaprobeSurfacerConfigSurface_meshingID(ApmParaprobeToolConfigTaskconf
     )
 
     preprocessing = SubSection(
-        section_def="pynxtools.nomad.metainfo.applications.apm_paraprobe_surfacer_config.ApmParaprobeSurfacerConfigSurface_meshingIDPreprocessing",
+        section_def="pynxtools.nomad.metainfo.applications.apm_paraprobe_surfacer_config.ApmParaprobeSurfacerConfigSurfaceMeshingIDPreprocessing",
         repeats=False,
         a_nexus_group=NeXusGroup(
             nx_class="NXparameters",
@@ -216,6 +216,7 @@ class ApmParaprobeSurfacerConfigSurface_meshingID(ApmParaprobeToolConfigTaskconf
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_surfacer_config.html#nxapm_paraprobe_surfacer_config-entry-surface-meshingid-alpha-values-field"
         ],
+        flexible_unit=True,
         shape=["*"],
         description=(
             "Array of alpha values to use when alpha_value_choice is "
@@ -313,7 +314,7 @@ class ApmParaprobeSurfacerConfigSurface_meshingID(ApmParaprobeToolConfigTaskconf
         super().normalize(archive, logger)
 
 
-class ApmParaprobeSurfacerConfigSurface_meshingIDPreprocessing(Parameters):
+class ApmParaprobeSurfacerConfigSurfaceMeshingIDPreprocessing(Parameters):
     m_def = Section(
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_surfacer_config.html#nxapm_paraprobe_surfacer_config-entry-surface-meshingid-preprocessing-group"

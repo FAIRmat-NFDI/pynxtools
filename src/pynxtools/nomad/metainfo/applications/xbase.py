@@ -363,6 +363,7 @@ class XbaseInstrumentDetector(Detector):
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXxbase.html#nxxbase-entry-instrument-detector-data-field"
         ],
+        flexible_unit=True,
         shape=["*", "*", "*"],
         description=(
             "The area detector data, the first dimension is always the number of "
@@ -671,6 +672,7 @@ class XbaseControl(Monitor):
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXxbase.html#nxxbase-entry-control-preset-field"
         ],
+        flexible_unit=True,
         description=("preset value for time or monitor"),
         a_nexus_field=NeXusField(
             name="preset",
@@ -688,6 +690,7 @@ class XbaseControl(Monitor):
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXxbase.html#nxxbase-entry-control-integral-field"
         ],
+        flexible_unit=True,
         description=("Total integral monitor counts"),
         a_nexus_field=NeXusField(
             name="integral",
@@ -731,6 +734,7 @@ class XbaseData(Data):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXxbase.html#nxxbase-entry-data-data-link"
         ],
         shape=["*", "*", "*"],
+        flexible_unit=True,
         a_nexus_link=NeXusLink(
             name="data",
             target="/NXentry/NXinstrument/NXdetector/data",

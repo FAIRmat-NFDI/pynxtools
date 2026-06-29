@@ -262,6 +262,7 @@ class MicrostructurePfPf(Data):
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXmicrostructure_pf.html#nxmicrostructure_pf-pf-axis-y-field"
         ],
+        flexible_unit=True,
         shape=["*"],
         description=(
             "Pixel center along y direction in the equatorial plane of a "
@@ -280,6 +281,7 @@ class MicrostructurePfPf(Data):
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXmicrostructure_pf.html#nxmicrostructure_pf-pf-axis-x-field"
         ],
+        flexible_unit=True,
         shape=["*"],
         description=(
             "Pixel center along x direction in the equatorial plane of a "

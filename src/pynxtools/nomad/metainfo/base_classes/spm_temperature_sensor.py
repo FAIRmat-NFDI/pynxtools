@@ -234,6 +234,7 @@ class SpmTemperatureSensorCalibrationCalibrationParameters(Parameters):
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXspm_temperature_sensor.html#nxspm_temperature_sensor-calibration-calibration-parameters-coefficient-field"
         ],
+        flexible_unit=True,
         description=("The coefficient of the calibration."),
         a_nexus_field=NeXusField(
             name="coefficient",
@@ -293,6 +294,7 @@ class SpmTemperatureSensorData(Data):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXspm_temperature_sensor.html#nxspm_temperature_sensor-data-axisname-field"
         ],
         variable=True,
+        flexible_unit=True,
         description=("independent axis data like time or position or bias voltage."),
         a_nexus_field=NeXusField(
             name="AXISNAME",

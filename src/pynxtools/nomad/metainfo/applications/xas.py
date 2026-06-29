@@ -364,6 +364,7 @@ class XasInstrumentIncomingBeam(Detector):
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXxas.html#nxxas-entry-instrument-incoming-beam-data-field"
         ],
+        flexible_unit=True,
         shape=["*"],
         a_nexus_field=NeXusField(
             name="data",
@@ -396,6 +397,7 @@ class XasInstrumentAbsorbedBeam(Detector):
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXxas.html#nxxas-entry-instrument-absorbed-beam-data-field"
         ],
+        flexible_unit=True,
         shape=["*"],
         description=("This data corresponds to the sample signal."),
         a_nexus_field=NeXusField(
@@ -485,6 +487,7 @@ class XasMonitor(Monitor):
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXxas.html#nxxas-entry-monitor-preset-field"
         ],
+        flexible_unit=True,
         description=("preset value for time or monitor"),
         a_nexus_field=NeXusField(
             name="preset",
@@ -502,6 +505,7 @@ class XasMonitor(Monitor):
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXxas.html#nxxas-entry-monitor-data-field"
         ],
+        flexible_unit=True,
         shape=["*"],
         description=(
             "This field could be a link to "

@@ -491,6 +491,47 @@ data = Quantity(
 
 ---
 
+## Units
+
+A NXDL `<field>`'s `@units` category (e.g. `NX_ENERGY`) maps to `dimensionality`
+(a pint-parseable dimensionality string) and `default_unit` on the generated
+`Quantity`:
+
+```python
+# NXDL: <field name="energy" type="NX_FLOAT" units="NX_ENERGY">
+energy = Quantity(
+    type=np.float64,
+    dimensionality="[mass] * [length] ** 2 / [time] ** 2",
+    unit="joule",
+    ...
+)
+```
+
+`NX_ANY` is different: it means the field's unit is **not fixed by the
+schema at all** — the actual unit varies per file/value. There is no
+`dimensionality`/`unit` to assign, so instead the generated `Quantity` gets
+`flexible_unit=True` — a first-class NOMAD `Quantity` parameter for exactly
+this case ("this quantity may have a unit that is not the default unit");
+NOMAD then stores the value in full-storage mode (`MQuantity`), preserving
+whichever unit was actually written:
+
+```python
+# NXDL: <field name="resolution" type="NX_FLOAT" units="NX_ANY">
+resolution = Quantity(
+    type=np.float64,
+    flexible_unit=True,
+    ...
+    a_eln=ELNAnnotation(component=ELNComponentEnum.NumberEditQuantity),
+)
+```
+
+No special ELN handling is needed beyond the usual `NumberEditQuantity`: its
+GUI implementation already supports typing a value together with any unit
+(and a unit-selection dropdown) when the field has no fixed dimensionality —
+exactly the `NX_ANY` case.
+
+---
+
 ## Additive-only generation
 
 The generator never removes hand-written additions. When a file already exists:
@@ -620,8 +661,12 @@ names](#subsection-names) below but CamelCased instead of lowercased:
   attribute if it has one (e.g. `name="BIAS_SWEEP"` → `BiasSweep` →
   `StsInstrumentBiasSweep`), otherwise the NX class itself (e.g. any `NXlog` →
   `Log` → `ObjectLog`).
-- `name_type="partial"`: suffix from the lower-case prefix of the partial name,
-  e.g. `peakPEAK` → `Peak` → `FitPeak`.
+- `name_type="partial"`: the lower-case prefix of the partial name is
+  CamelCased (splitting on `_`, same as the "specified" case), then the
+  upper-case marker is appended as-is — e.g. `peakPEAK` → `Peak` → `FitPeak`,
+  or `voltage_sensorTAG` → `VoltageSensorTAG` →
+  `SpmInstrumentVoltageSensorTAG` (not `Voltage_sensorTAG`, which is what a
+  naive "just uppercase the first letter" rule would produce).
 
 If the resulting name would equal the base class name itself (circular
 inheritance, e.g. `NXapm_measurement`'s own `measurement` child resolving to
@@ -631,8 +676,42 @@ not a naming bug.
 
 ### Quantity names
 
-Field and attribute names are kept as-is (NeXus convention uses snake_case throughout).
-Attributes are emitted without the `@` prefix. A small set of NOMAD `BaseSection`-reserved names get a `_quantity` suffix (e.g. `name` → `name_quantity`). When a field name collides with a same-class or ancestor `SubSection` name, the field also gets `_quantity` (groups always win the unqualified name).
+Field and attribute names are kept as-is (NeXus convention uses snake_case
+throughout). Two cases get a `_quantity` suffix instead:
+
+- **Python keywords**, always — e.g. `lambda` → `lambda_quantity`.
+- **An array-shaped field** named like a NOMAD `BaseSection` quantity
+  (`name`, `datetime`, `lab_id`, `description`) — e.g. a `shape=["*"]` field
+  literally named `name` → `name_quantity`.
+
+A **scalar** field named like one of those four is *not* suffixed — NOMAD
+allows a subclass to directly override an inherited quantity, replacing it
+cleanly rather than merging or conflicting with it (confirmed by reading
+`Section.__init_metainfo__()` in `nomad/metainfo/metainfo.py`: it only raises
+`MetainfoError` when overriding properties are different *kinds* — Quantity
+vs. SubSection — never for two Quantities of different type/shape; and
+confirmed type-compatible — `str`/`Datetime` as appropriate — across every
+occurrence of these four names in the whole NXDL corpus).
+
+The array case is still suffixed even though NOMAD itself wouldn't object,
+because `BaseSection`'s own `normalize()` and related logic
+(`nomad/datamodel/metainfo/basesections.py`) treat `self.name`/
+`self.datetime`/etc. as scalars throughout its inheritance chain (e.g.
+`archive.metadata.entry_name = self.name`, `Workflow(name=self.name)`) — an
+array there is accepted by NOMAD's metaclass but silently wrong at runtime,
+which the generator has no way to rely on NOMAD to catch. This was a real
+case, not hypothetical: `NXmicrostructure_score_config` had a field literally
+named `name` holding a one-dimensional array of per-texture-component names
+(one string per entry, deliberately — see
+[nexus_definitions#428](https://github.com/FAIRmat-NFDI/nexus_definitions/pull/428),
+rejected upstream because the array is intentional). That field has since
+been renamed to `names` upstream, removing the collision at the source, but
+the shape check stays as a general safeguard for any other such field.
+
+Separately, when a field name collides with a same-class or ancestor
+`SubSection` name, the field always gets `_quantity` regardless of shape
+(groups always win the unqualified name — *that* collision genuinely can't
+be resolved by overriding, see [Subsection names](#subsection-names) below).
 
 ### Subsection names
 
@@ -660,6 +739,23 @@ NXDL actually declares: `None` only for a genuinely anonymous group (no
 for any `NXuser`, but `name="BIAS_SWEEP"` for the explicitly-named variadic
 group above, even though both get lowercased the same way for the Python
 attribute name.
+
+**One exception to "groups always win the unqualified name"**: a group
+literally named `name`, `datetime`, `lab_id`, or `description` gets a
+`_group` suffix instead (e.g. `name` → `name_group`). These four names take
+precedence over any NXDL group because every single generated class — without
+exception — inherits them first: `Object`, the universal root all generated
+classes derive from, itself extends `basesections.BaseSection`, which defines
+exactly these four quantities. By the time a NeXus-specific group is added,
+the slot is already occupied by a `Quantity`, not optionally or
+class-specifically but structurally, for every class in the hierarchy. A
+`SubSection` can never override a same-named `Quantity` the way a *field* can
+(see [Quantity names](#quantity-names) above) — they're different property
+*kinds*, which NOMAD rejects outright with `MetainfoError: Cannot inherit
+from different property types.` So while any NXDL *field* may safely reuse
+one of these four names, a *group* using one of them always needs the
+suffix — there is no field/group asymmetry here other than what NOMAD's
+override mechanism itself allows.
 
 ### Field-attribute quantities
 

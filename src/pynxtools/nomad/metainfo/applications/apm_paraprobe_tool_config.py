@@ -716,6 +716,7 @@ class ApmParaprobeToolConfigTaskconfigSpatialFilterCylinderSet(CgCylinder):
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_tool_config.html#nxapm_paraprobe_tool_config-entry-taskconfig-spatial-filter-cylinder-set-center-field"
         ],
+        flexible_unit=True,
         shape=["*", "*"],
         a_nexus_field=NeXusField(
             name="center",
@@ -837,6 +838,7 @@ class ApmParaprobeToolConfigTaskconfigSpatialFilterEllipsoidSet(CgEllipsoid):
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_tool_config.html#nxapm_paraprobe_tool_config-entry-taskconfig-spatial-filter-ellipsoid-set-center-field"
         ],
+        flexible_unit=True,
         shape=["*", "*"],
         a_nexus_field=NeXusField(
             name="center",

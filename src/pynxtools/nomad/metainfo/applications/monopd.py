@@ -379,6 +379,7 @@ class MonopdInstrumentDetector(Detector):
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXmonopd.html#nxmonopd-entry-instrument-detector-data-field"
         ],
+        flexible_unit=True,
         shape=["*"],
         description=(
             "detector signal (usually counts) are already corrected for detector "
@@ -495,6 +496,7 @@ class MonopdMonitor(Monitor):
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXmonopd.html#nxmonopd-entry-monitor-preset-field"
         ],
+        flexible_unit=True,
         description=("preset value for time or monitor"),
         a_nexus_field=NeXusField(
             name="preset",
@@ -512,6 +514,7 @@ class MonopdMonitor(Monitor):
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXmonopd.html#nxmonopd-entry-monitor-integral-field"
         ],
+        flexible_unit=True,
         description=("Total integral monitor counts"),
         a_nexus_field=NeXusField(
             name="integral",
@@ -564,6 +567,7 @@ class MonopdData(Data):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXmonopd.html#nxmonopd-entry-data-data-link"
         ],
         shape=["*"],
+        flexible_unit=True,
         description=("Link to data in /NXentry/NXinstrument/NXdetector"),
         a_nexus_link=NeXusLink(
             name="data",

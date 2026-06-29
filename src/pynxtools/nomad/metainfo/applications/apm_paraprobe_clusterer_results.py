@@ -94,7 +94,7 @@ class ApmParaprobeClustererResults(ApmParaprobeToolResults):
         ),
     )
     cluster_analysisID = SubSection(
-        section_def="pynxtools.nomad.metainfo.applications.apm_paraprobe_clusterer_results.ApmParaprobeClustererResultsCluster_analysisID",
+        section_def="pynxtools.nomad.metainfo.applications.apm_paraprobe_clusterer_results.ApmParaprobeClustererResultsClusterAnalysisID",
         repeats=True,
         variable=True,
     )
@@ -146,7 +146,7 @@ class ApmParaprobeClustererResults(ApmParaprobeToolResults):
 # =============================================================================
 
 
-class ApmParaprobeClustererResultsCluster_analysisID(ApmParaprobeToolProcess):
+class ApmParaprobeClustererResultsClusterAnalysisID(ApmParaprobeToolProcess):
     m_def = Section(
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_clusterer_results.html#nxapm_paraprobe_clusterer_results-entry-cluster-analysisid-group"
@@ -162,7 +162,7 @@ class ApmParaprobeClustererResultsCluster_analysisID(ApmParaprobeToolProcess):
     )
 
     dbscanID = SubSection(
-        section_def="pynxtools.nomad.metainfo.applications.apm_paraprobe_clusterer_results.ApmParaprobeClustererResultsCluster_analysisIDDbscanID",
+        section_def="pynxtools.nomad.metainfo.applications.apm_paraprobe_clusterer_results.ApmParaprobeClustererResultsClusterAnalysisIDDbscanID",
         repeats=True,
         variable=True,
         a_nexus_group=NeXusGroup(
@@ -178,7 +178,7 @@ class ApmParaprobeClustererResultsCluster_analysisID(ApmParaprobeToolProcess):
         super().normalize(archive, logger)
 
 
-class ApmParaprobeClustererResultsCluster_analysisIDDbscanID(SimilarityGrouping):
+class ApmParaprobeClustererResultsClusterAnalysisIDDbscanID(SimilarityGrouping):
     """
     Results of a DBScan clustering analysis.
     """
@@ -198,7 +198,7 @@ class ApmParaprobeClustererResultsCluster_analysisIDDbscanID(SimilarityGrouping)
     )
 
     statistics = SubSection(
-        section_def="pynxtools.nomad.metainfo.applications.apm_paraprobe_clusterer_results.ApmParaprobeClustererResultsCluster_analysisIDDbscanIDStatistics",
+        section_def="pynxtools.nomad.metainfo.applications.apm_paraprobe_clusterer_results.ApmParaprobeClustererResultsClusterAnalysisIDDbscanIDStatistics",
         repeats=False,
         a_nexus_group=NeXusGroup(
             nx_class="NXprocess",
@@ -468,7 +468,7 @@ class ApmParaprobeClustererResultsCluster_analysisIDDbscanID(SimilarityGrouping)
         super().normalize(archive, logger)
 
 
-class ApmParaprobeClustererResultsCluster_analysisIDDbscanIDStatistics(Process):
+class ApmParaprobeClustererResultsClusterAnalysisIDDbscanIDStatistics(Process):
     """
     In addition to the detailed storage which members were grouped to which
     feature here summary statistics are stored that communicate e.g. how many

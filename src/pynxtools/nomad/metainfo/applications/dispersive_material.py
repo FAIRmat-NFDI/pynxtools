@@ -772,6 +772,7 @@ class DispersiveMaterialDispersionXDispersionFunctionDispersionSingleParameter(
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXdispersive_material.html#nxdispersive_material-entry-dispersion-x-dispersion-function-dispersion-single-parameter-value-field"
         ],
+        flexible_unit=True,
         a_nexus_field=NeXusField(
             name="value",
             type="NX_NUMBER",
@@ -824,6 +825,7 @@ class DispersiveMaterialDispersionXDispersionFunctionDispersionRepeatedParameter
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXdispersive_material.html#nxdispersive_material-entry-dispersion-x-dispersion-function-dispersion-repeated-parameter-values-field"
         ],
+        flexible_unit=True,
         shape=["*"],
         a_nexus_field=NeXusField(
             name="values",
@@ -1216,6 +1218,7 @@ class DispersiveMaterialDispersionYDispersionFunctionDispersionSingleParameter(
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXdispersive_material.html#nxdispersive_material-entry-dispersion-y-dispersion-function-dispersion-single-parameter-value-field"
         ],
+        flexible_unit=True,
         a_nexus_field=NeXusField(
             name="value",
             type="NX_NUMBER",
@@ -1268,6 +1271,7 @@ class DispersiveMaterialDispersionYDispersionFunctionDispersionRepeatedParameter
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXdispersive_material.html#nxdispersive_material-entry-dispersion-y-dispersion-function-dispersion-repeated-parameter-values-field"
         ],
+        flexible_unit=True,
         shape=["*"],
         a_nexus_field=NeXusField(
             name="values",
@@ -1662,6 +1666,7 @@ class DispersiveMaterialDispersionZDispersionFunctionDispersionSingleParameter(
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXdispersive_material.html#nxdispersive_material-entry-dispersion-z-dispersion-function-dispersion-single-parameter-value-field"
         ],
+        flexible_unit=True,
         a_nexus_field=NeXusField(
             name="value",
             type="NX_NUMBER",
@@ -1714,6 +1719,7 @@ class DispersiveMaterialDispersionZDispersionFunctionDispersionRepeatedParameter
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXdispersive_material.html#nxdispersive_material-entry-dispersion-z-dispersion-function-dispersion-repeated-parameter-values-field"
         ],
+        flexible_unit=True,
         shape=["*"],
         a_nexus_field=NeXusField(
             name="values",

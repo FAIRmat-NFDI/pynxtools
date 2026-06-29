@@ -252,6 +252,7 @@ class MicrostructureMtexConfigPlotting(Collection):
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXmicrostructure_mtex_config.html#nxmicrostructure_mtex_config-plotting-font-size-field"
         ],
+        flexible_unit=True,
         description=("TODO with MTex developers"),
         a_nexus_field=NeXusField(
             name="font_size",
@@ -269,6 +270,7 @@ class MicrostructureMtexConfigPlotting(Collection):
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXmicrostructure_mtex_config.html#nxmicrostructure_mtex_config-plotting-inner-plot-spacing-field"
         ],
+        flexible_unit=True,
         description=("TODO with MTex developers"),
         a_nexus_field=NeXusField(
             name="inner_plot_spacing",
@@ -286,6 +288,7 @@ class MicrostructureMtexConfigPlotting(Collection):
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXmicrostructure_mtex_config.html#nxmicrostructure_mtex_config-plotting-outer-plot-spacing-field"
         ],
+        flexible_unit=True,
         description=("TODO with MTex developers"),
         a_nexus_field=NeXusField(
             name="outer_plot_spacing",
@@ -303,6 +306,7 @@ class MicrostructureMtexConfigPlotting(Collection):
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXmicrostructure_mtex_config.html#nxmicrostructure_mtex_config-plotting-marker-size-field"
         ],
+        flexible_unit=True,
         description=("TODO with MTex developers"),
         a_nexus_field=NeXusField(
             name="marker_size",
@@ -691,6 +695,7 @@ class MicrostructureMtexConfigNumerics(Collection):
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXmicrostructure_mtex_config.html#nxmicrostructure_mtex_config-numerics-fft-accuracy-field"
         ],
+        flexible_unit=True,
         description=("TODO with MTex developers"),
         a_nexus_field=NeXusField(
             name="fft_accuracy",
@@ -708,6 +713,7 @@ class MicrostructureMtexConfigNumerics(Collection):
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXmicrostructure_mtex_config.html#nxmicrostructure_mtex_config-numerics-max-stwo-bandwidth-field"
         ],
+        flexible_unit=True,
         description=("TODO with MTex developers"),
         a_nexus_field=NeXusField(
             name="max_stwo_bandwidth",
@@ -725,6 +731,7 @@ class MicrostructureMtexConfigNumerics(Collection):
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXmicrostructure_mtex_config.html#nxmicrostructure_mtex_config-numerics-max-sothree-bandwidth-field"
         ],
+        flexible_unit=True,
         description=("TODO with MTex developers"),
         a_nexus_field=NeXusField(
             name="max_sothree_bandwidth",

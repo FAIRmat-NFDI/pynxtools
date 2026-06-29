@@ -114,12 +114,12 @@ class ApmParaprobeNanochemResults(ApmParaprobeToolResults):
         variable=True,
     )
     interface_meshingID = SubSection(
-        section_def="pynxtools.nomad.metainfo.applications.apm_paraprobe_nanochem_results.ApmParaprobeNanochemResultsInterface_meshingID",
+        section_def="pynxtools.nomad.metainfo.applications.apm_paraprobe_nanochem_results.ApmParaprobeNanochemResultsInterfaceMeshingID",
         repeats=True,
         variable=True,
     )
     oned_profileID = SubSection(
-        section_def="pynxtools.nomad.metainfo.applications.apm_paraprobe_nanochem_results.ApmParaprobeNanochemResultsOned_profileID",
+        section_def="pynxtools.nomad.metainfo.applications.apm_paraprobe_nanochem_results.ApmParaprobeNanochemResultsOnedProfileID",
         repeats=True,
         variable=True,
     )
@@ -310,7 +310,7 @@ class ApmParaprobeNanochemResultsDelocalizationIDGrid(CgGrid):
         ),
     )
     scalar_field_magn_SUFFIX = SubSection(
-        section_def="pynxtools.nomad.metainfo.applications.apm_paraprobe_nanochem_results.ApmParaprobeNanochemResultsDelocalizationIDGridScalar_field_magn_SUFFIX",
+        section_def="pynxtools.nomad.metainfo.applications.apm_paraprobe_nanochem_results.ApmParaprobeNanochemResultsDelocalizationIDGridScalarFieldMagnSUFFIX",
         repeats=True,
         variable=True,
         a_nexus_group=NeXusGroup(
@@ -322,7 +322,7 @@ class ApmParaprobeNanochemResultsDelocalizationIDGrid(CgGrid):
         ),
     )
     scalar_field_grad_SUFFIX = SubSection(
-        section_def="pynxtools.nomad.metainfo.applications.apm_paraprobe_nanochem_results.ApmParaprobeNanochemResultsDelocalizationIDGridScalar_field_grad_SUFFIX",
+        section_def="pynxtools.nomad.metainfo.applications.apm_paraprobe_nanochem_results.ApmParaprobeNanochemResultsDelocalizationIDGridScalarFieldGradSUFFIX",
         repeats=True,
         variable=True,
         a_nexus_group=NeXusGroup(
@@ -334,7 +334,7 @@ class ApmParaprobeNanochemResultsDelocalizationIDGrid(CgGrid):
         ),
     )
     iso_surfaceID = SubSection(
-        section_def="pynxtools.nomad.metainfo.applications.apm_paraprobe_nanochem_results.ApmParaprobeNanochemResultsDelocalizationIDGridIso_surfaceID",
+        section_def="pynxtools.nomad.metainfo.applications.apm_paraprobe_nanochem_results.ApmParaprobeNanochemResultsDelocalizationIDGridIsoSurfaceID",
         repeats=True,
         variable=True,
         a_nexus_group=NeXusGroup(
@@ -390,6 +390,7 @@ class ApmParaprobeNanochemResultsDelocalizationIDGrid(CgGrid):
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_nanochem_results.html#nxapm_paraprobe_nanochem_results-entry-delocalizationid-grid-origin-field"
         ],
+        flexible_unit=True,
         shape=["*"],
         a_nexus_field=NeXusField(
             name="origin",
@@ -886,7 +887,7 @@ class ApmParaprobeNanochemResultsDelocalizationIDGridBoundingBoxHexahedron(
         super().normalize(archive, logger)
 
 
-class ApmParaprobeNanochemResultsDelocalizationIDGridScalar_field_magn_SUFFIX(Data):
+class ApmParaprobeNanochemResultsDelocalizationIDGridScalarFieldMagnSUFFIX(Data):
     r"""
     The result of the delocalization :math:`\Phi = f(x, y, z)` based on which
     subsequent iso-surfaces will be computed. In commercial software so far
@@ -922,6 +923,7 @@ class ApmParaprobeNanochemResultsDelocalizationIDGridScalar_field_magn_SUFFIX(Da
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_nanochem_results.html#nxapm_paraprobe_nanochem_results-entry-delocalizationid-grid-scalar-field-magn-suffix-xdmf-intensity-field"
         ],
+        flexible_unit=True,
         shape=["*"],
         description=("Intensity of the field at given point"),
         a_nexus_field=NeXusField(
@@ -977,7 +979,7 @@ class ApmParaprobeNanochemResultsDelocalizationIDGridScalar_field_magn_SUFFIX(Da
         super().normalize(archive, logger)
 
 
-class ApmParaprobeNanochemResultsDelocalizationIDGridScalar_field_grad_SUFFIX(Data):
+class ApmParaprobeNanochemResultsDelocalizationIDGridScalarFieldGradSUFFIX(Data):
     """
     The three-dimensional gradient :math:`\nabla \\Phi`. Follow the naming
     convention of scalar_field_magn_SUFFIX to report parallel structures.
@@ -1002,6 +1004,7 @@ class ApmParaprobeNanochemResultsDelocalizationIDGridScalar_field_grad_SUFFIX(Da
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_nanochem_results.html#nxapm_paraprobe_nanochem_results-entry-delocalizationid-grid-scalar-field-grad-suffix-xdmf-gradient-field"
         ],
+        flexible_unit=True,
         shape=["*", 3],
         description=(
             "The gradient vector formatted for direct visualization via XDMF in "
@@ -1060,7 +1063,7 @@ class ApmParaprobeNanochemResultsDelocalizationIDGridScalar_field_grad_SUFFIX(Da
         super().normalize(archive, logger)
 
 
-class ApmParaprobeNanochemResultsDelocalizationIDGridIso_surfaceID(Isocontour):
+class ApmParaprobeNanochemResultsDelocalizationIDGridIsoSurfaceID(Isocontour):
     """
     An iso-surface is the boundary between two regions across which the
     magnitude of a scalar field falls below/exceeds a threshold magnitude
@@ -1089,7 +1092,7 @@ class ApmParaprobeNanochemResultsDelocalizationIDGridIso_surfaceID(Isocontour):
     )
 
     triangle_soup = SubSection(
-        section_def="pynxtools.nomad.metainfo.applications.apm_paraprobe_nanochem_results.ApmParaprobeNanochemResultsDelocalizationIDGridIso_surfaceIDTriangleSoup",
+        section_def="pynxtools.nomad.metainfo.applications.apm_paraprobe_nanochem_results.ApmParaprobeNanochemResultsDelocalizationIDGridIsoSurfaceIDTriangleSoup",
         repeats=False,
         a_nexus_group=NeXusGroup(
             nx_class="NXcg_triangle",
@@ -1123,6 +1126,7 @@ class ApmParaprobeNanochemResultsDelocalizationIDGridIso_surfaceID(Isocontour):
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_nanochem_results.html#nxapm_paraprobe_nanochem_results-entry-delocalizationid-grid-iso-surfaceid-isovalue-field"
         ],
+        flexible_unit=True,
         description=("The threshold or iso-contour value :math:`\\varphi`."),
         a_nexus_field=NeXusField(
             name="isovalue",
@@ -1162,7 +1166,7 @@ class ApmParaprobeNanochemResultsDelocalizationIDGridIso_surfaceID(Isocontour):
         super().normalize(archive, logger)
 
 
-class ApmParaprobeNanochemResultsDelocalizationIDGridIso_surfaceIDTriangleSoup(
+class ApmParaprobeNanochemResultsDelocalizationIDGridIsoSurfaceIDTriangleSoup(
     CgTriangle
 ):
     """
@@ -1182,7 +1186,7 @@ class ApmParaprobeNanochemResultsDelocalizationIDGridIso_surfaceIDTriangleSoup(
     )
 
     triangles = SubSection(
-        section_def="pynxtools.nomad.metainfo.applications.apm_paraprobe_nanochem_results.ApmParaprobeNanochemResultsDelocalizationIDGridIso_surfaceIDTriangleSoupTriangles",
+        section_def="pynxtools.nomad.metainfo.applications.apm_paraprobe_nanochem_results.ApmParaprobeNanochemResultsDelocalizationIDGridIsoSurfaceIDTriangleSoupTriangles",
         repeats=False,
         a_nexus_group=NeXusGroup(
             nx_class="NXcg_face_list_data_structure",
@@ -1254,7 +1258,7 @@ class ApmParaprobeNanochemResultsDelocalizationIDGridIso_surfaceIDTriangleSoup(
         super().normalize(archive, logger)
 
 
-class ApmParaprobeNanochemResultsDelocalizationIDGridIso_surfaceIDTriangleSoupTriangles(
+class ApmParaprobeNanochemResultsDelocalizationIDGridIsoSurfaceIDTriangleSoupTriangles(
     CgFaceListDataStructure
 ):
     m_def = Section(
@@ -1270,7 +1274,7 @@ class ApmParaprobeNanochemResultsDelocalizationIDGridIso_surfaceIDTriangleSoupTr
     )
 
     vertex_normal = SubSection(
-        section_def="pynxtools.nomad.metainfo.applications.apm_paraprobe_nanochem_results.ApmParaprobeNanochemResultsDelocalizationIDGridIso_surfaceIDTriangleSoupTrianglesVertexNormal",
+        section_def="pynxtools.nomad.metainfo.applications.apm_paraprobe_nanochem_results.ApmParaprobeNanochemResultsDelocalizationIDGridIsoSurfaceIDTriangleSoupTrianglesVertexNormal",
         repeats=False,
         a_nexus_group=NeXusGroup(
             nx_class="NXcg_unit_normal",
@@ -1280,7 +1284,7 @@ class ApmParaprobeNanochemResultsDelocalizationIDGridIso_surfaceIDTriangleSoupTr
         ),
     )
     face_normal = SubSection(
-        section_def="pynxtools.nomad.metainfo.applications.apm_paraprobe_nanochem_results.ApmParaprobeNanochemResultsDelocalizationIDGridIso_surfaceIDTriangleSoupTrianglesFaceNormal",
+        section_def="pynxtools.nomad.metainfo.applications.apm_paraprobe_nanochem_results.ApmParaprobeNanochemResultsDelocalizationIDGridIsoSurfaceIDTriangleSoupTrianglesFaceNormal",
         repeats=False,
         a_nexus_group=NeXusGroup(
             nx_class="NXcg_unit_normal",
@@ -1290,7 +1294,7 @@ class ApmParaprobeNanochemResultsDelocalizationIDGridIso_surfaceIDTriangleSoupTr
         ),
     )
     volumetric_features = SubSection(
-        section_def="pynxtools.nomad.metainfo.applications.apm_paraprobe_nanochem_results.ApmParaprobeNanochemResultsDelocalizationIDGridIso_surfaceIDTriangleSoupTrianglesVolumetricFeatures",
+        section_def="pynxtools.nomad.metainfo.applications.apm_paraprobe_nanochem_results.ApmParaprobeNanochemResultsDelocalizationIDGridIsoSurfaceIDTriangleSoupTrianglesVolumetricFeatures",
         repeats=False,
         a_nexus_group=NeXusGroup(
             nx_class="NXprocess",
@@ -1515,7 +1519,7 @@ class ApmParaprobeNanochemResultsDelocalizationIDGridIso_surfaceIDTriangleSoupTr
         super().normalize(archive, logger)
 
 
-class ApmParaprobeNanochemResultsDelocalizationIDGridIso_surfaceIDTriangleSoupTrianglesVertexNormal(
+class ApmParaprobeNanochemResultsDelocalizationIDGridIsoSurfaceIDTriangleSoupTrianglesVertexNormal(
     CgUnitNormal
 ):
     m_def = Section(
@@ -1572,7 +1576,7 @@ class ApmParaprobeNanochemResultsDelocalizationIDGridIso_surfaceIDTriangleSoupTr
         super().normalize(archive, logger)
 
 
-class ApmParaprobeNanochemResultsDelocalizationIDGridIso_surfaceIDTriangleSoupTrianglesFaceNormal(
+class ApmParaprobeNanochemResultsDelocalizationIDGridIsoSurfaceIDTriangleSoupTrianglesFaceNormal(
     CgUnitNormal
 ):
     m_def = Section(
@@ -1629,6 +1633,7 @@ class ApmParaprobeNanochemResultsDelocalizationIDGridIso_surfaceIDTriangleSoupTr
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_nanochem_results.html#nxapm_paraprobe_nanochem_results-entry-delocalizationid-grid-iso-surfaceid-triangle-soup-triangles-face-normal-gradient-guide-magnitude-field"
         ],
+        flexible_unit=True,
         shape=["*"],
         description=(
             "Triangle normals are oriented in the direction of the gradient "
@@ -1648,6 +1653,7 @@ class ApmParaprobeNanochemResultsDelocalizationIDGridIso_surfaceIDTriangleSoupTr
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_nanochem_results.html#nxapm_paraprobe_nanochem_results-entry-delocalizationid-grid-iso-surfaceid-triangle-soup-triangles-face-normal-gradient-guide-projection-field"
         ],
+        flexible_unit=True,
         shape=["*"],
         description=(
             "Triangle normals are oriented in the direction of the gradient "
@@ -1671,7 +1677,7 @@ class ApmParaprobeNanochemResultsDelocalizationIDGridIso_surfaceIDTriangleSoupTr
         super().normalize(archive, logger)
 
 
-class ApmParaprobeNanochemResultsDelocalizationIDGridIso_surfaceIDTriangleSoupTrianglesVolumetricFeatures(
+class ApmParaprobeNanochemResultsDelocalizationIDGridIsoSurfaceIDTriangleSoupTrianglesVolumetricFeatures(
     Process
 ):
     """
@@ -1720,7 +1726,7 @@ class ApmParaprobeNanochemResultsDelocalizationIDGridIso_surfaceIDTriangleSoupTr
     )
 
     FEATURE = SubSection(
-        section_def="pynxtools.nomad.metainfo.applications.apm_paraprobe_nanochem_results.ApmParaprobeNanochemResultsDelocalizationIDGridIso_surfaceIDTriangleSoupTrianglesVolumetricFeaturesFeature",
+        section_def="pynxtools.nomad.metainfo.applications.apm_paraprobe_nanochem_results.ApmParaprobeNanochemResultsDelocalizationIDGridIsoSurfaceIDTriangleSoupTrianglesVolumetricFeaturesFeature",
         repeats=False,
         a_nexus_group=NeXusGroup(
             nx_class="NXprocess",
@@ -1830,7 +1836,7 @@ class ApmParaprobeNanochemResultsDelocalizationIDGridIso_surfaceIDTriangleSoupTr
         super().normalize(archive, logger)
 
 
-class ApmParaprobeNanochemResultsDelocalizationIDGridIso_surfaceIDTriangleSoupTrianglesVolumetricFeaturesFeature(
+class ApmParaprobeNanochemResultsDelocalizationIDGridIsoSurfaceIDTriangleSoupTrianglesVolumetricFeaturesFeature(
     Process
 ):
     """
@@ -1862,7 +1868,7 @@ class ApmParaprobeNanochemResultsDelocalizationIDGridIso_surfaceIDTriangleSoupTr
     )
 
     obb = SubSection(
-        section_def="pynxtools.nomad.metainfo.applications.apm_paraprobe_nanochem_results.ApmParaprobeNanochemResultsDelocalizationIDGridIso_surfaceIDTriangleSoupTrianglesVolumetricFeaturesFeatureObb",
+        section_def="pynxtools.nomad.metainfo.applications.apm_paraprobe_nanochem_results.ApmParaprobeNanochemResultsDelocalizationIDGridIsoSurfaceIDTriangleSoupTrianglesVolumetricFeaturesFeatureObb",
         repeats=False,
         a_nexus_group=NeXusGroup(
             nx_class="NXcg_hexahedron",
@@ -1872,7 +1878,7 @@ class ApmParaprobeNanochemResultsDelocalizationIDGridIso_surfaceIDTriangleSoupTr
         ),
     )
     objectID = SubSection(
-        section_def="pynxtools.nomad.metainfo.applications.apm_paraprobe_nanochem_results.ApmParaprobeNanochemResultsDelocalizationIDGridIso_surfaceIDTriangleSoupTrianglesVolumetricFeaturesFeatureObjectID",
+        section_def="pynxtools.nomad.metainfo.applications.apm_paraprobe_nanochem_results.ApmParaprobeNanochemResultsDelocalizationIDGridIsoSurfaceIDTriangleSoupTrianglesVolumetricFeaturesFeatureObjectID",
         repeats=True,
         variable=True,
         a_nexus_group=NeXusGroup(
@@ -1884,7 +1890,7 @@ class ApmParaprobeNanochemResultsDelocalizationIDGridIso_surfaceIDTriangleSoupTr
         ),
     )
     composition = SubSection(
-        section_def="pynxtools.nomad.metainfo.applications.apm_paraprobe_nanochem_results.ApmParaprobeNanochemResultsDelocalizationIDGridIso_surfaceIDTriangleSoupTrianglesVolumetricFeaturesFeatureComposition",
+        section_def="pynxtools.nomad.metainfo.applications.apm_paraprobe_nanochem_results.ApmParaprobeNanochemResultsDelocalizationIDGridIsoSurfaceIDTriangleSoupTrianglesVolumetricFeaturesFeatureComposition",
         repeats=False,
         a_nexus_group=NeXusGroup(
             nx_class="NXchemical_composition",
@@ -1936,7 +1942,7 @@ class ApmParaprobeNanochemResultsDelocalizationIDGridIso_surfaceIDTriangleSoupTr
         super().normalize(archive, logger)
 
 
-class ApmParaprobeNanochemResultsDelocalizationIDGridIso_surfaceIDTriangleSoupTrianglesVolumetricFeaturesFeatureObb(
+class ApmParaprobeNanochemResultsDelocalizationIDGridIsoSurfaceIDTriangleSoupTrianglesVolumetricFeaturesFeatureObb(
     CgHexahedron
 ):
     """
@@ -1956,7 +1962,7 @@ class ApmParaprobeNanochemResultsDelocalizationIDGridIso_surfaceIDTriangleSoupTr
     )
 
     hexahedra = SubSection(
-        section_def="pynxtools.nomad.metainfo.applications.apm_paraprobe_nanochem_results.ApmParaprobeNanochemResultsDelocalizationIDGridIso_surfaceIDTriangleSoupTrianglesVolumetricFeaturesFeatureObbHexahedra",
+        section_def="pynxtools.nomad.metainfo.applications.apm_paraprobe_nanochem_results.ApmParaprobeNanochemResultsDelocalizationIDGridIsoSurfaceIDTriangleSoupTrianglesVolumetricFeaturesFeatureObbHexahedra",
         repeats=False,
         a_nexus_group=NeXusGroup(
             nx_class="NXcg_face_list_data_structure",
@@ -2031,7 +2037,7 @@ class ApmParaprobeNanochemResultsDelocalizationIDGridIso_surfaceIDTriangleSoupTr
         super().normalize(archive, logger)
 
 
-class ApmParaprobeNanochemResultsDelocalizationIDGridIso_surfaceIDTriangleSoupTrianglesVolumetricFeaturesFeatureObbHexahedra(
+class ApmParaprobeNanochemResultsDelocalizationIDGridIsoSurfaceIDTriangleSoupTrianglesVolumetricFeaturesFeatureObbHexahedra(
     CgFaceListDataStructure
 ):
     """
@@ -2104,7 +2110,7 @@ class ApmParaprobeNanochemResultsDelocalizationIDGridIso_surfaceIDTriangleSoupTr
         super().normalize(archive, logger)
 
 
-class ApmParaprobeNanochemResultsDelocalizationIDGridIso_surfaceIDTriangleSoupTrianglesVolumetricFeaturesFeatureObjectID(
+class ApmParaprobeNanochemResultsDelocalizationIDGridIsoSurfaceIDTriangleSoupTrianglesVolumetricFeaturesFeatureObjectID(
     CgPolyhedron
 ):
     m_def = Section(
@@ -2122,7 +2128,7 @@ class ApmParaprobeNanochemResultsDelocalizationIDGridIso_surfaceIDTriangleSoupTr
     )
 
     polyhedron = SubSection(
-        section_def="pynxtools.nomad.metainfo.applications.apm_paraprobe_nanochem_results.ApmParaprobeNanochemResultsDelocalizationIDGridIso_surfaceIDTriangleSoupTrianglesVolumetricFeaturesFeatureObjectIDPolyhedron",
+        section_def="pynxtools.nomad.metainfo.applications.apm_paraprobe_nanochem_results.ApmParaprobeNanochemResultsDelocalizationIDGridIsoSurfaceIDTriangleSoupTrianglesVolumetricFeaturesFeatureObjectIDPolyhedron",
         repeats=False,
         a_nexus_group=NeXusGroup(
             nx_class="NXcg_face_list_data_structure",
@@ -2136,7 +2142,7 @@ class ApmParaprobeNanochemResultsDelocalizationIDGridIso_surfaceIDTriangleSoupTr
         super().normalize(archive, logger)
 
 
-class ApmParaprobeNanochemResultsDelocalizationIDGridIso_surfaceIDTriangleSoupTrianglesVolumetricFeaturesFeatureObjectIDPolyhedron(
+class ApmParaprobeNanochemResultsDelocalizationIDGridIsoSurfaceIDTriangleSoupTrianglesVolumetricFeaturesFeatureObjectIDPolyhedron(
     CgFaceListDataStructure
 ):
     m_def = Section(
@@ -2253,7 +2259,7 @@ class ApmParaprobeNanochemResultsDelocalizationIDGridIso_surfaceIDTriangleSoupTr
         super().normalize(archive, logger)
 
 
-class ApmParaprobeNanochemResultsDelocalizationIDGridIso_surfaceIDTriangleSoupTrianglesVolumetricFeaturesFeatureComposition(
+class ApmParaprobeNanochemResultsDelocalizationIDGridIsoSurfaceIDTriangleSoupTrianglesVolumetricFeaturesFeatureComposition(
     ChemicalComposition
 ):
     m_def = Section(
@@ -2269,7 +2275,7 @@ class ApmParaprobeNanochemResultsDelocalizationIDGridIso_surfaceIDTriangleSoupTr
     )
 
     atom = SubSection(
-        section_def="pynxtools.nomad.metainfo.applications.apm_paraprobe_nanochem_results.ApmParaprobeNanochemResultsDelocalizationIDGridIso_surfaceIDTriangleSoupTrianglesVolumetricFeaturesFeatureCompositionAtom",
+        section_def="pynxtools.nomad.metainfo.applications.apm_paraprobe_nanochem_results.ApmParaprobeNanochemResultsDelocalizationIDGridIsoSurfaceIDTriangleSoupTrianglesVolumetricFeaturesFeatureCompositionAtom",
         repeats=True,
         variable=True,
         a_nexus_group=NeXusGroup(
@@ -2306,7 +2312,7 @@ class ApmParaprobeNanochemResultsDelocalizationIDGridIso_surfaceIDTriangleSoupTr
         super().normalize(archive, logger)
 
 
-class ApmParaprobeNanochemResultsDelocalizationIDGridIso_surfaceIDTriangleSoupTrianglesVolumetricFeaturesFeatureCompositionAtom(
+class ApmParaprobeNanochemResultsDelocalizationIDGridIsoSurfaceIDTriangleSoupTrianglesVolumetricFeaturesFeatureCompositionAtom(
     Atom
 ):
     m_def = Section(
@@ -2400,7 +2406,7 @@ class ApmParaprobeNanochemResultsDelocalizationIDGridIso_surfaceIDTriangleSoupTr
         super().normalize(archive, logger)
 
 
-class ApmParaprobeNanochemResultsInterface_meshingID(ApmParaprobeToolProcess):
+class ApmParaprobeNanochemResultsInterfaceMeshingID(ApmParaprobeToolProcess):
     m_def = Section(
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_nanochem_results.html#nxapm_paraprobe_nanochem_results-entry-interface-meshingid-group"
@@ -2417,7 +2423,7 @@ class ApmParaprobeNanochemResultsInterface_meshingID(ApmParaprobeToolProcess):
     )
 
     initial_interface = SubSection(
-        section_def="pynxtools.nomad.metainfo.applications.apm_paraprobe_nanochem_results.ApmParaprobeNanochemResultsInterface_meshingIDInitialInterface",
+        section_def="pynxtools.nomad.metainfo.applications.apm_paraprobe_nanochem_results.ApmParaprobeNanochemResultsInterfaceMeshingIDInitialInterface",
         repeats=False,
         a_nexus_group=NeXusGroup(
             nx_class="NXprocess",
@@ -2427,7 +2433,7 @@ class ApmParaprobeNanochemResultsInterface_meshingID(ApmParaprobeToolProcess):
         ),
     )
     mesh_stateID = SubSection(
-        section_def="pynxtools.nomad.metainfo.applications.apm_paraprobe_nanochem_results.ApmParaprobeNanochemResultsInterface_meshingIDMesh_stateID",
+        section_def="pynxtools.nomad.metainfo.applications.apm_paraprobe_nanochem_results.ApmParaprobeNanochemResultsInterfaceMeshingIDMeshStateID",
         repeats=True,
         variable=True,
         a_nexus_group=NeXusGroup(
@@ -2491,7 +2497,7 @@ class ApmParaprobeNanochemResultsInterface_meshingID(ApmParaprobeToolProcess):
         super().normalize(archive, logger)
 
 
-class ApmParaprobeNanochemResultsInterface_meshingIDInitialInterface(Process):
+class ApmParaprobeNanochemResultsInterfaceMeshingIDInitialInterface(Process):
     """
     The equation of the plane that is fitted initially.
     """
@@ -2532,7 +2538,7 @@ class ApmParaprobeNanochemResultsInterface_meshingIDInitialInterface(Process):
         super().normalize(archive, logger)
 
 
-class ApmParaprobeNanochemResultsInterface_meshingIDMesh_stateID(CgTriangle):
+class ApmParaprobeNanochemResultsInterfaceMeshingIDMeshStateID(CgTriangle):
     """
     The triangle surface mesh representing the interface model. Exported at
     state before or after the next DCOM step.
@@ -2553,7 +2559,7 @@ class ApmParaprobeNanochemResultsInterface_meshingIDMesh_stateID(CgTriangle):
     )
 
     triangles = SubSection(
-        section_def="pynxtools.nomad.metainfo.applications.apm_paraprobe_nanochem_results.ApmParaprobeNanochemResultsInterface_meshingIDMesh_stateIDTriangles",
+        section_def="pynxtools.nomad.metainfo.applications.apm_paraprobe_nanochem_results.ApmParaprobeNanochemResultsInterfaceMeshingIDMeshStateIDTriangles",
         repeats=False,
         a_nexus_group=NeXusGroup(
             nx_class="NXcg_face_list_data_structure",
@@ -2701,7 +2707,7 @@ class ApmParaprobeNanochemResultsInterface_meshingIDMesh_stateID(CgTriangle):
         super().normalize(archive, logger)
 
 
-class ApmParaprobeNanochemResultsInterface_meshingIDMesh_stateIDTriangles(
+class ApmParaprobeNanochemResultsInterfaceMeshingIDMeshStateIDTriangles(
     CgFaceListDataStructure
 ):
     m_def = Section(
@@ -2969,7 +2975,7 @@ class ApmParaprobeNanochemResultsInterface_meshingIDMesh_stateIDTriangles(
         super().normalize(archive, logger)
 
 
-class ApmParaprobeNanochemResultsOned_profileID(ApmParaprobeToolProcess):
+class ApmParaprobeNanochemResultsOnedProfileID(ApmParaprobeToolProcess):
     m_def = Section(
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_nanochem_results.html#nxapm_paraprobe_nanochem_results-entry-oned-profileid-group"
@@ -2986,7 +2992,7 @@ class ApmParaprobeNanochemResultsOned_profileID(ApmParaprobeToolProcess):
     )
 
     xdmf_cylinder = SubSection(
-        section_def="pynxtools.nomad.metainfo.applications.apm_paraprobe_nanochem_results.ApmParaprobeNanochemResultsOned_profileIDXdmfCylinder",
+        section_def="pynxtools.nomad.metainfo.applications.apm_paraprobe_nanochem_results.ApmParaprobeNanochemResultsOnedProfileIDXdmfCylinder",
         repeats=False,
         a_nexus_group=NeXusGroup(
             nx_class="NXcg_polyhedron",
@@ -3000,7 +3006,7 @@ class ApmParaprobeNanochemResultsOned_profileID(ApmParaprobeToolProcess):
         super().normalize(archive, logger)
 
 
-class ApmParaprobeNanochemResultsOned_profileIDXdmfCylinder(CgPolyhedron):
+class ApmParaprobeNanochemResultsOnedProfileIDXdmfCylinder(CgPolyhedron):
     """
     The ROIs are defined as cylinders for the computations. To visualize these
     we discretize them into regular n-gons. Using for instance 360-gons, i.e. a
@@ -3022,7 +3028,7 @@ class ApmParaprobeNanochemResultsOned_profileIDXdmfCylinder(CgPolyhedron):
     )
 
     rois_far_from_edge = SubSection(
-        section_def="pynxtools.nomad.metainfo.applications.apm_paraprobe_nanochem_results.ApmParaprobeNanochemResultsOned_profileIDXdmfCylinderRoisFarFromEdge",
+        section_def="pynxtools.nomad.metainfo.applications.apm_paraprobe_nanochem_results.ApmParaprobeNanochemResultsOnedProfileIDXdmfCylinderRoisFarFromEdge",
         repeats=False,
         a_nexus_group=NeXusGroup(
             nx_class="NXprocess",
@@ -3188,7 +3194,7 @@ class ApmParaprobeNanochemResultsOned_profileIDXdmfCylinder(CgPolyhedron):
         super().normalize(archive, logger)
 
 
-class ApmParaprobeNanochemResultsOned_profileIDXdmfCylinderRoisFarFromEdge(Process):
+class ApmParaprobeNanochemResultsOnedProfileIDXdmfCylinderRoisFarFromEdge(Process):
     """
     Distance and iontype-specific processed data for each ROI. Arrays
     signed_distance and nuclide_hash are sorted by increasing distance. Array
@@ -3213,7 +3219,7 @@ class ApmParaprobeNanochemResultsOned_profileIDXdmfCylinderRoisFarFromEdge(Proce
     )
 
     roiID = SubSection(
-        section_def="pynxtools.nomad.metainfo.applications.apm_paraprobe_nanochem_results.ApmParaprobeNanochemResultsOned_profileIDXdmfCylinderRoisFarFromEdgeRoiID",
+        section_def="pynxtools.nomad.metainfo.applications.apm_paraprobe_nanochem_results.ApmParaprobeNanochemResultsOnedProfileIDXdmfCylinderRoisFarFromEdgeRoiID",
         repeats=True,
         variable=True,
         a_nexus_group=NeXusGroup(
@@ -3229,7 +3235,7 @@ class ApmParaprobeNanochemResultsOned_profileIDXdmfCylinderRoisFarFromEdge(Proce
         super().normalize(archive, logger)
 
 
-class ApmParaprobeNanochemResultsOned_profileIDXdmfCylinderRoisFarFromEdgeRoiID(CgRoi):
+class ApmParaprobeNanochemResultsOnedProfileIDXdmfCylinderRoisFarFromEdgeRoiID(CgRoi):
     m_def = Section(
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_nanochem_results.html#nxapm_paraprobe_nanochem_results-entry-oned-profileid-xdmf-cylinder-rois-far-from-edge-roiid-group"

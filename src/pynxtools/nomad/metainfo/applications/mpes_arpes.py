@@ -1677,6 +1677,7 @@ class MpesArpesData(MpesData):
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXmpes_arpes.html#nxmpes_arpes-entry-data-data-field"
         ],
+        flexible_unit=True,
         description=(
             "Represents a measurement of photoemission counts over a "
             "three-dimensional space where the varied axes are energy, and one "

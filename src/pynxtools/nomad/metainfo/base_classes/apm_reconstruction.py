@@ -426,6 +426,7 @@ class ApmReconstructionConfig(Parameters):
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXapm_reconstruction.html#nxapm_reconstruction-config-evaporation-field-field"
         ],
+        flexible_unit=True,
         description=(
             "Assumed evaporation electric field The value can be extracted from "
             "the CAnalysis.CSpatial.fEvaporationField field of a CamecaRoot ROOT "

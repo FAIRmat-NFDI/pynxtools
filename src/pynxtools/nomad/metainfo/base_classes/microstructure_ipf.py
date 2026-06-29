@@ -437,6 +437,7 @@ class MicrostructureIpfLegend(Data):
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXmicrostructure_ipf.html#nxmicrostructure_ipf-legend-data-field"
         ],
+        flexible_unit=True,
         shape=["*", "*", 3],
         description=("Inverse pole figure color code for each map coordinate."),
         a_nexus_field=NeXusField(

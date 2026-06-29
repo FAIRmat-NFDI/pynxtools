@@ -215,6 +215,7 @@ class CgHalfEdgeDataStructure(CgPrimitive):
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXcg_half_edge_data_structure.html#nxcg_half_edge_data_structure-position-field"
         ],
+        flexible_unit=True,
         shape=["*", "*"],
         description=("The position of the vertices."),
         a_nexus_field=NeXusField(

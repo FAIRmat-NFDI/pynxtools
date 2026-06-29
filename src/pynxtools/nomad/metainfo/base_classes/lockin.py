@@ -187,6 +187,7 @@ class Lockin(Object):
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXlockin.html#nxlockin-reference-amplitude-field"
         ],
+        flexible_unit=True,
         description=(
             "Amplitude of the reference signal for the lock-in amplifier. Unit "
             "could be NX_VOLTAGE or NX_CURRENT depending on the type of the "
@@ -380,6 +381,7 @@ class Lockin(Object):
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXlockin.html#nxlockin-demodulated-amplitude-field"
         ],
+        flexible_unit=True,
         description=(
             "The amplitude of the demodulated signal. Unit could be NX_VOLTAGE "
             "or NX_CURRENT depending on the type of the demodulated signal."
@@ -579,6 +581,7 @@ class Lockin(Object):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXlockin.html#nxlockin-dc-offset-valuen-field"
         ],
         variable=True,
+        flexible_unit=True,
         description=(
             "The DC offset of the demodulated signal. This is used to remove the "
             "DC component from the demodulated signal. The same DC offset might "

@@ -155,6 +155,7 @@ class Log(Object):
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXlog.html#nxlog-value-field"
         ],
+        flexible_unit=True,
         description=(
             "Array of logged value, such as temperature. If this is a single "
             "value the dimensionality is nEntries. However, NXlog can also be "
@@ -178,6 +179,7 @@ class Log(Object):
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXlog.html#nxlog-raw-value-field"
         ],
+        flexible_unit=True,
         description=("Array of raw information, such as thermocouple voltage"),
         a_nexus_field=NeXusField(
             name="raw_value",
@@ -211,6 +213,7 @@ class Log(Object):
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXlog.html#nxlog-average-value-field"
         ],
+        flexible_unit=True,
         a_nexus_field=NeXusField(
             name="average_value",
             type="NX_FLOAT",
@@ -227,6 +230,7 @@ class Log(Object):
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXlog.html#nxlog-average-value-error-field"
         ],
+        flexible_unit=True,
         description=(
             "estimated uncertainty (often used: standard deviation) of average_value"
         ),
@@ -247,6 +251,7 @@ class Log(Object):
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXlog.html#nxlog-average-value-errors-field"
         ],
+        flexible_unit=True,
         description=(
             "estimated uncertainty (often used: standard deviation) of average_value"
         ),
@@ -266,6 +271,7 @@ class Log(Object):
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXlog.html#nxlog-minimum-value-field"
         ],
+        flexible_unit=True,
         a_nexus_field=NeXusField(
             name="minimum_value",
             type="NX_FLOAT",
@@ -282,6 +288,7 @@ class Log(Object):
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXlog.html#nxlog-maximum-value-field"
         ],
+        flexible_unit=True,
         a_nexus_field=NeXusField(
             name="maximum_value",
             type="NX_FLOAT",
@@ -298,6 +305,7 @@ class Log(Object):
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXlog.html#nxlog-duration-field"
         ],
+        flexible_unit=True,
         description=("Total time log was taken"),
         a_nexus_field=NeXusField(
             name="duration",

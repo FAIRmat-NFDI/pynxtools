@@ -101,6 +101,7 @@ class SpmScanPattern(Object):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXspm_scan_pattern.html#nxspm_scan_pattern-scan-speedn-field"
         ],
         variable=True,
+        flexible_unit=True,
         description=(
             "Define the scan speed in the forward direction along the axis "
             "(except the spiral and trajectory scans), if forward and backward "
@@ -125,6 +126,7 @@ class SpmScanPattern(Object):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXspm_scan_pattern.html#nxspm_scan_pattern-forward-speedn-field"
         ],
         variable=True,
+        flexible_unit=True,
         description=(
             "Define the scan speed in the forward directions (except the spiral "
             "and trajectory scans). Rename the field, according to the name of "
@@ -146,6 +148,7 @@ class SpmScanPattern(Object):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXspm_scan_pattern.html#nxspm_scan_pattern-backward-speedn-field"
         ],
         variable=True,
+        flexible_unit=True,
         description=(
             "Define the scan speed in the backward directions (except the spiral "
             "and trajectory scans). Rename the field, according to the name of "
@@ -230,6 +233,7 @@ class SpmScanPattern(Object):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXspm_scan_pattern.html#nxspm_scan_pattern-step-sizen-field"
         ],
         variable=True,
+        flexible_unit=True,
         description=(
             "The size of each step in the scan on each dimension (except the "
             "spiral and trajectory scans). Rename the field, according to the "
@@ -346,6 +350,7 @@ class SpmScanPattern(Object):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXspm_scan_pattern.html#nxspm_scan_pattern-spiral-radiusn-field"
         ],
         variable=True,
+        flexible_unit=True,
         description=(
             "Define the radius of the spiral circle of scanning. Rename the "
             "field, according to the circle order, the nearest circle to the "
@@ -399,6 +404,7 @@ class SpmScanPatternData(Data):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXspm_scan_pattern.html#nxspm_scan_pattern-data-data-field"
         ],
         variable=True,
+        flexible_unit=True,
         description=(
             "The data (e.g. current, voltage, temperature) field that can be "
             "plotted against the axes."
@@ -417,6 +423,7 @@ class SpmScanPatternData(Data):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXspm_scan_pattern.html#nxspm_scan_pattern-data-axisname-field"
         ],
         variable=True,
+        flexible_unit=True,
         description=("The name of the axis that corresponds to the data field."),
         a_nexus_field=NeXusField(
             name="AXISNAME",

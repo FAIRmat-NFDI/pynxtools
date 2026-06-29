@@ -540,6 +540,7 @@ class SasInstrumentDetector(Detector):
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXsas.html#nxsas-entry-instrument-detector-data-field"
         ],
+        flexible_unit=True,
         shape=["*", "*"],
         description=(
             "This is area detector data, number of x-pixel versus number of "
@@ -746,6 +747,7 @@ class SasMonitor(Monitor):
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXsas.html#nxsas-entry-monitor-preset-field"
         ],
+        flexible_unit=True,
         description=("Preset value for time or monitor."),
         a_nexus_field=NeXusField(
             name="preset",
@@ -763,6 +765,7 @@ class SasMonitor(Monitor):
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXsas.html#nxsas-entry-monitor-integral-field"
         ],
+        flexible_unit=True,
         description=("Total integral monitor counts."),
         a_nexus_field=NeXusField(
             name="integral",
@@ -821,6 +824,7 @@ class SasData(Data):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXsas.html#nxsas-entry-data-data-link"
         ],
         shape=["*", "*"],
+        flexible_unit=True,
         a_nexus_link=NeXusLink(
             name="data",
             target="/NXentry/NXinstrument/NXdetector/data",

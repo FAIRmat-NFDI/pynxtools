@@ -615,6 +615,7 @@ class ApmParaprobeTessellatorResultsTessellationIDVoronoiCellsPolyhedra(
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_tessellator_results.html#nxapm_paraprobe_tessellator_results-entry-tessellationid-voronoi-cells-polyhedra-vertices-field"
         ],
+        flexible_unit=True,
         shape=["*", "*"],
         a_nexus_field=NeXusField(
             name="vertices",

@@ -740,6 +740,7 @@ class ApmCompositionspaceResultsVoxelizationGrid(CgGrid):
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_compositionspace_results.html#nxapm_compositionspace_results-entry-voxelization-grid-origin-field"
         ],
+        flexible_unit=True,
         shape=["*"],
         a_nexus_field=NeXusField(
             name="origin",
@@ -1360,7 +1361,7 @@ class ApmCompositionspaceResultsSegmentationIcOpt(Process):
     )
 
     cluster_analysisID = SubSection(
-        section_def="pynxtools.nomad.metainfo.applications.apm_compositionspace_results.ApmCompositionspaceResultsSegmentationIcOptCluster_analysisID",
+        section_def="pynxtools.nomad.metainfo.applications.apm_compositionspace_results.ApmCompositionspaceResultsSegmentationIcOptClusterAnalysisID",
         repeats=True,
         variable=True,
         a_nexus_group=NeXusGroup(
@@ -1402,7 +1403,7 @@ class ApmCompositionspaceResultsSegmentationIcOpt(Process):
         super().normalize(archive, logger)
 
 
-class ApmCompositionspaceResultsSegmentationIcOptCluster_analysisID(Process):
+class ApmCompositionspaceResultsSegmentationIcOptClusterAnalysisID(Process):
     """
     Results of the Gaussian mixture analysis for n_components equal to
     n_ic_cluster.
@@ -1542,6 +1543,7 @@ class ApmCompositionspaceResultsSegmentationIcOptResult(Data):
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_compositionspace_results.html#nxapm_compositionspace_results-entry-segmentation-ic-opt-result-axis-aic-field"
         ],
+        flexible_unit=True,
         shape=["*"],
         description=("Akaike information criterion values"),
         a_nexus_field=NeXusField(
@@ -1664,7 +1666,7 @@ class ApmCompositionspaceResultsClusteringIcOpt(Process):
     )
 
     cluster_analysisID = SubSection(
-        section_def="pynxtools.nomad.metainfo.applications.apm_compositionspace_results.ApmCompositionspaceResultsClusteringIcOptCluster_analysisID",
+        section_def="pynxtools.nomad.metainfo.applications.apm_compositionspace_results.ApmCompositionspaceResultsClusteringIcOptClusterAnalysisID",
         repeats=True,
         variable=True,
         a_nexus_group=NeXusGroup(
@@ -1680,7 +1682,7 @@ class ApmCompositionspaceResultsClusteringIcOpt(Process):
         super().normalize(archive, logger)
 
 
-class ApmCompositionspaceResultsClusteringIcOptCluster_analysisID(Process):
+class ApmCompositionspaceResultsClusteringIcOptClusterAnalysisID(Process):
     m_def = Section(
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_compositionspace_results.html#nxapm_compositionspace_results-entry-clustering-ic-opt-cluster-analysisid-group"
@@ -1696,7 +1698,7 @@ class ApmCompositionspaceResultsClusteringIcOptCluster_analysisID(Process):
     )
 
     dbscanID = SubSection(
-        section_def="pynxtools.nomad.metainfo.applications.apm_compositionspace_results.ApmCompositionspaceResultsClusteringIcOptCluster_analysisIDDbscanID",
+        section_def="pynxtools.nomad.metainfo.applications.apm_compositionspace_results.ApmCompositionspaceResultsClusteringIcOptClusterAnalysisIDDbscanID",
         repeats=True,
         variable=True,
         a_nexus_group=NeXusGroup(
@@ -1712,7 +1714,7 @@ class ApmCompositionspaceResultsClusteringIcOptCluster_analysisID(Process):
         super().normalize(archive, logger)
 
 
-class ApmCompositionspaceResultsClusteringIcOptCluster_analysisIDDbscanID(Process):
+class ApmCompositionspaceResultsClusteringIcOptClusterAnalysisIDDbscanID(Process):
     m_def = Section(
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_compositionspace_results.html#nxapm_compositionspace_results-entry-clustering-ic-opt-cluster-analysisid-dbscanid-group"

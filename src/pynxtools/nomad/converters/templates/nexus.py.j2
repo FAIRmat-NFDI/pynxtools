@@ -145,6 +145,9 @@ class {{ class_name }}({{ base_class }}{% if base_is_generated %}{% for mod, cls
         {% if qty.default_unit %}
         unit="{{ qty.default_unit }}",
         {% endif %}
+        {% if qty.flexible_unit %}
+        flexible_unit=True,
+        {% endif %}
         {% if qty.shape %}
         shape={{ qty.shape }},
         {% endif %}
@@ -221,6 +224,9 @@ class {{ class_name }}({{ base_class }}{% if base_is_generated %}{% for mod, cls
         {% endif %}
         {% if lnk.target_quantity and lnk.target_quantity.default_unit %}
         unit="{{ lnk.target_quantity.default_unit }}",
+        {% endif %}
+        {% if lnk.target_quantity and lnk.target_quantity.flexible_unit %}
+        flexible_unit=True,
         {% endif %}
         {% if lnk.target_quantity and lnk.target_quantity.shape %}
         shape={{ lnk.target_quantity.shape }},
@@ -338,6 +344,9 @@ class {{ concept.class_name }}({{ concept.base_class_name }}):
         {% if qty.default_unit %}
         unit="{{ qty.default_unit }}",
         {% endif %}
+        {% if qty.flexible_unit %}
+        flexible_unit=True,
+        {% endif %}
         {% if qty.shape %}
         shape={{ qty.shape }},
         {% endif %}
@@ -417,6 +426,9 @@ class {{ concept.class_name }}({{ concept.base_class_name }}):
         {% endif %}
         {% if lnk.target_quantity and lnk.target_quantity.shape %}
         shape={{ lnk.target_quantity.shape }},
+        {% endif %}
+        {% if lnk.target_quantity and lnk.target_quantity.flexible_unit %}
+        flexible_unit=True,
         {% endif %}
         {% if lnk.description %}
         description=(

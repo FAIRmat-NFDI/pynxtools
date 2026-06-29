@@ -285,6 +285,7 @@ class Sensor(Component):
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXsensor.html#nxsensor-high-trip-value-field"
         ],
+        flexible_unit=True,
         description=("Upper control bound of sensor reading if using run_control"),
         a_nexus_field=NeXusField(
             name="high_trip_value",
@@ -302,6 +303,7 @@ class Sensor(Component):
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXsensor.html#nxsensor-low-trip-value-field"
         ],
+        flexible_unit=True,
         description=("Lower control bound of sensor reading if using run_control"),
         a_nexus_field=NeXusField(
             name="low_trip_value",
@@ -319,6 +321,7 @@ class Sensor(Component):
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXsensor.html#nxsensor-value-field"
         ],
+        flexible_unit=True,
         shape=["*"],
         description=("nominal setpoint or average value - need [n] as may be a vector"),
         a_nexus_field=NeXusField(
@@ -334,6 +337,7 @@ class Sensor(Component):
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXsensor.html#nxsensor-value-deriv1-field"
         ],
+        flexible_unit=True,
         description=(
             "Nominal/average first derivative of value e.g. strain rate - same "
             'dimensions as "value" (may be a vector)'
@@ -354,6 +358,7 @@ class Sensor(Component):
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXsensor.html#nxsensor-value-deriv2-field"
         ],
+        flexible_unit=True,
         description=(
             "Nominal/average second derivative of value - same dimensions as "
             '"value" (may be a vector)'

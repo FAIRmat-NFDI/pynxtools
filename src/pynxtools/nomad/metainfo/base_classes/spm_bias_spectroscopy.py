@@ -401,6 +401,7 @@ class SpmBiasSpectroscopyBiasSweep(SpmScanControl):
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXspm_bias_spectroscopy.html#nxspm_bias_spectroscopy-bias-sweep-max-slew-rate-field"
         ],
+        flexible_unit=True,
         description=(
             "The rate at which the amplifier responds to the voltage change (to "
             "reach at the desired value). It defines if the tip movement and "

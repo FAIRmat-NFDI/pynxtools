@@ -318,6 +318,7 @@ class IbeamColumnIonSource(Source):
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXibeam_column.html#nxibeam_column-ion-source-flux-field"
         ],
+        flexible_unit=True,
         description=("Average/nominal flux"),
         a_nexus_field=NeXusField(
             name="flux",
@@ -335,6 +336,7 @@ class IbeamColumnIonSource(Source):
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXibeam_column.html#nxibeam_column-ion-source-brightness-field"
         ],
+        flexible_unit=True,
         description=("Average/nominal brightness"),
         a_nexus_field=NeXusField(
             name="brightness",

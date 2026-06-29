@@ -271,6 +271,7 @@ class TofnpdInstrumentDetector(Detector):
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXtofnpd.html#nxtofnpd-entry-instrument-detector-data-field"
         ],
+        flexible_unit=True,
         shape=["*", "*"],
         a_nexus_field=NeXusField(
             name="data",
@@ -439,6 +440,7 @@ class TofnpdMonitor(Monitor):
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXtofnpd.html#nxtofnpd-entry-monitor-preset-field"
         ],
+        flexible_unit=True,
         description=("preset value for time or monitor"),
         a_nexus_field=NeXusField(
             name="preset",
@@ -475,6 +477,7 @@ class TofnpdMonitor(Monitor):
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXtofnpd.html#nxtofnpd-entry-monitor-data-field"
         ],
+        flexible_unit=True,
         shape=["*"],
         a_nexus_field=NeXusField(
             name="data",
@@ -524,6 +527,7 @@ class TofnpdData(Data):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXtofnpd.html#nxtofnpd-entry-data-data-link"
         ],
         shape=["*", "*"],
+        flexible_unit=True,
         a_nexus_link=NeXusLink(
             name="data",
             target="/NXentry/NXinstrument/NXdetector/data",

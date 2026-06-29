@@ -113,6 +113,7 @@ class Peak(Object):
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXpeak.html#nxpeak-total-area-field"
         ],
+        flexible_unit=True,
         description=("Total area under the curve."),
         a_nexus_field=NeXusField(
             name="total_area",
@@ -157,6 +158,7 @@ class PeakData(Data):
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXpeak.html#nxpeak-data-position-field"
         ],
+        flexible_unit=True,
         description=(
             "Position values along one or more data dimensions (to hold the "
             "values for the independent variable)."
@@ -177,6 +179,7 @@ class PeakData(Data):
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXpeak.html#nxpeak-data-intensity-field"
         ],
+        flexible_unit=True,
         description=(
             "This array holds the intensity/count values of the fitted peak at "
             "each position."

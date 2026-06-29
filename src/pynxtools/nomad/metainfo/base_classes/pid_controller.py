@@ -139,6 +139,7 @@ class PidController(Component):
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXpid_controller.html#nxpid_controller-setpoint-field"
         ],
+        flexible_unit=True,
         description=(
             "The Setpoint(s) used as an input for the PID controller. It can "
             "also be a link to an ``NXsensor.value`` field."

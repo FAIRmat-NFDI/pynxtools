@@ -374,6 +374,7 @@ class Sample(Component, basesections.CompositeSystem):
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXsample.html#nxsample-magnetic-field-field"
         ],
+        flexible_unit=True,
         shape=["*"],
         description=("Applied magnetic field"),
         a_nexus_field=NeXusField(
@@ -406,6 +407,7 @@ class Sample(Component, basesections.CompositeSystem):
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXsample.html#nxsample-stress-field-field"
         ],
+        flexible_unit=True,
         shape=["*"],
         description=("Applied external stress field"),
         a_nexus_field=NeXusField(
@@ -968,6 +970,7 @@ class Sample(Component, basesections.CompositeSystem):
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXsample.html#nxsample-external-dac-field"
         ],
+        flexible_unit=True,
         description=("value sent to user's sample setup"),
         a_nexus_field=NeXusField(
             name="external_DAC",

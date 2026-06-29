@@ -360,6 +360,7 @@ class ArpesInstrumentAnalyser(Detector):
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXarpes.html#nxarpes-entry-instrument-analyser-data-field"
         ],
+        flexible_unit=True,
         shape=["*", "*", "*", "*"],
         a_nexus_field=NeXusField(
             name="data",
@@ -422,6 +423,7 @@ class ArpesInstrumentAnalyser(Detector):
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXarpes.html#nxarpes-entry-instrument-analyser-entrance-slit-setting-field"
         ],
+        flexible_unit=True,
         description=("dial setting of the entrance slit"),
         a_nexus_field=NeXusField(
             name="entrance_slit_setting",

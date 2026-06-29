@@ -399,6 +399,7 @@ class ImageImage1d(Data):
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXimage.html#nximage-image-1d-axis-i-field"
         ],
+        flexible_unit=True,
         shape=["*"],
         description=(
             "Point coordinate along the fastest dimension. Different NeXus Unit "
@@ -532,6 +533,7 @@ class ImageImage2d(Data):
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXimage.html#nximage-image-2d-axis-j-field"
         ],
+        flexible_unit=True,
         shape=["*"],
         description=(
             "Point coordinate along the fast dimension. Different NeXus Unit "
@@ -569,6 +571,7 @@ class ImageImage2d(Data):
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXimage.html#nximage-image-2d-axis-i-field"
         ],
+        flexible_unit=True,
         shape=["*"],
         description=(
             "Point coordinate along the fastest dimension. Different NeXus Unit "
@@ -702,6 +705,7 @@ class ImageImage3d(Data):
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXimage.html#nximage-image-3d-axis-k-field"
         ],
+        flexible_unit=True,
         shape=["*"],
         description=(
             "Point coordinate along the slow dimension. Different NeXus Unit "
@@ -739,6 +743,7 @@ class ImageImage3d(Data):
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXimage.html#nximage-image-3d-axis-j-field"
         ],
+        flexible_unit=True,
         shape=["*"],
         description=(
             "Point coordinate along the fast dimension. Different NeXus Unit "
@@ -776,6 +781,7 @@ class ImageImage3d(Data):
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXimage.html#nximage-image-3d-axis-i-field"
         ],
+        flexible_unit=True,
         shape=["*"],
         description=(
             "Point coordinate along the fastest dimension. Different NeXus Unit "
@@ -909,6 +915,7 @@ class ImageImage4d(Data):
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXimage.html#nximage-image-4d-axis-m-field"
         ],
+        flexible_unit=True,
         shape=["*"],
         description=(
             "Point coordinate along the slowest dimension. Different NeXus Unit "
@@ -946,6 +953,7 @@ class ImageImage4d(Data):
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXimage.html#nximage-image-4d-axis-k-field"
         ],
+        flexible_unit=True,
         shape=["*"],
         description=(
             "Point coordinate along the slow dimension. Different NeXus Unit "
@@ -983,6 +991,7 @@ class ImageImage4d(Data):
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXimage.html#nximage-image-4d-axis-j-field"
         ],
+        flexible_unit=True,
         shape=["*"],
         description=(
             "Point coordinate along the fast dimension. Different NeXus Unit "
@@ -1020,6 +1029,7 @@ class ImageImage4d(Data):
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXimage.html#nximage-image-4d-axis-i-field"
         ],
+        flexible_unit=True,
         shape=["*"],
         description=(
             "Point coordinate along the fastest dimension. Different NeXus Unit "
@@ -1221,6 +1231,7 @@ class ImageStack1d(Data):
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXimage.html#nximage-stack-1d-axis-i-field"
         ],
+        flexible_unit=True,
         shape=["*"],
         description=(
             "Point coordinate along the fastest dimension. Different NeXus Unit "
@@ -1422,6 +1433,7 @@ class ImageStack2d(Data):
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXimage.html#nximage-stack-2d-axis-j-field"
         ],
+        flexible_unit=True,
         shape=["*"],
         description=(
             "Point coordinate along the fast dimension. Different NeXus Unit "
@@ -1459,6 +1471,7 @@ class ImageStack2d(Data):
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXimage.html#nximage-stack-2d-axis-i-field"
         ],
+        flexible_unit=True,
         shape=["*"],
         description=(
             "Point coordinate along the fastest dimension. Different NeXus Unit "
@@ -1660,6 +1673,7 @@ class ImageStack3d(Data):
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXimage.html#nximage-stack-3d-axis-k-field"
         ],
+        flexible_unit=True,
         shape=["*"],
         description=(
             "Point coordinate along the slow dimension. Different NeXus Unit "
@@ -1697,6 +1711,7 @@ class ImageStack3d(Data):
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXimage.html#nximage-stack-3d-axis-j-field"
         ],
+        flexible_unit=True,
         shape=["*"],
         description=(
             "Point coordinate along the fast dimension. Different NeXus Unit "
@@ -1734,6 +1749,7 @@ class ImageStack3d(Data):
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXimage.html#nximage-stack-3d-axis-i-field"
         ],
+        flexible_unit=True,
         shape=["*"],
         description=(
             "Point coordinate along the fastest dimension. Different NeXus Unit "

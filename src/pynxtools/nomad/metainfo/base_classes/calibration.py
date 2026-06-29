@@ -240,6 +240,7 @@ class Calibration(Process):
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXcalibration.html#nxcalibration-original-axis-field"
         ],
+        flexible_unit=True,
         shape=["*"],
         description=(
             "Array containing the data coordinates in the original uncalibrated axis"
@@ -352,6 +353,7 @@ class Calibration(Process):
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXcalibration.html#nxcalibration-calibrated-axis-field"
         ],
+        flexible_unit=True,
         shape=["*"],
         description=(
             "An array representing the axis after calibration, matching the data length"
@@ -488,6 +490,7 @@ class CalibrationParameters(Parameters):
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXcalibration.html#nxcalibration-calibration-parameters-scaling-factor-field"
         ],
+        flexible_unit=True,
         description=(
             "For linear calibration. Scaling parameter. This should yield the "
             "relation `calibrated_axis` = (`original_axis` + `offset`) * "
@@ -511,6 +514,7 @@ class CalibrationParameters(Parameters):
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXcalibration.html#nxcalibration-calibration-parameters-offset-field"
         ],
+        flexible_unit=True,
         description=(
             "For linear calibration. Offset parameter. This should yield the "
             "relation `calibrated_axis` = (`original_axis` + `offset`) * "

@@ -578,7 +578,7 @@ class MpesInstrument(Instrument):
         ),
     )
     source_TYPE = SubSection(
-        section_def="pynxtools.nomad.metainfo.applications.mpes.MpesInstrumentSource_TYPE",
+        section_def="pynxtools.nomad.metainfo.applications.mpes.MpesInstrumentSourceTYPE",
         repeats=True,
         variable=True,
         a_nexus_group=NeXusGroup(
@@ -609,7 +609,7 @@ class MpesInstrument(Instrument):
         ),
     )
     beam_TYPE = SubSection(
-        section_def="pynxtools.nomad.metainfo.applications.mpes.MpesInstrumentBeam_TYPE",
+        section_def="pynxtools.nomad.metainfo.applications.mpes.MpesInstrumentBeamTYPE",
         repeats=True,
         variable=True,
         a_nexus_group=NeXusGroup(
@@ -662,7 +662,7 @@ class MpesInstrument(Instrument):
         ),
     )
     monochromator_TYPE = SubSection(
-        section_def="pynxtools.nomad.metainfo.applications.mpes.MpesInstrumentMonochromator_TYPE",
+        section_def="pynxtools.nomad.metainfo.applications.mpes.MpesInstrumentMonochromatorTYPE",
         repeats=True,
         variable=True,
         a_nexus_group=NeXusGroup(
@@ -1164,7 +1164,7 @@ class MpesInstrumentSourcePumpDeviceInformation(Fabrication):
         super().normalize(archive, logger)
 
 
-class MpesInstrumentSource_TYPE(Source):
+class MpesInstrumentSourceTYPE(Source):
     """
     Any other source used to generate a beam.
 
@@ -1201,7 +1201,7 @@ class MpesInstrumentSource_TYPE(Source):
     )
 
     device_information = SubSection(
-        section_def="pynxtools.nomad.metainfo.applications.mpes.MpesInstrumentSource_TYPEDeviceInformation",
+        section_def="pynxtools.nomad.metainfo.applications.mpes.MpesInstrumentSourceTYPEDeviceInformation",
         repeats=False,
         a_nexus_group=NeXusGroup(
             nx_class="NXfabrication",
@@ -1293,7 +1293,7 @@ class MpesInstrumentSource_TYPE(Source):
         super().normalize(archive, logger)
 
 
-class MpesInstrumentSource_TYPEDeviceInformation(Fabrication):
+class MpesInstrumentSourceTYPEDeviceInformation(Fabrication):
     m_def = Section(
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXmpes.html#nxmpes-entry-instrument-source-type-device-information-group"
@@ -1441,6 +1441,7 @@ class MpesInstrumentBeamProbe(Beam):
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXmpes.html#nxmpes-entry-instrument-beam-probe-incident-polarization-field"
         ],
+        flexible_unit=True,
         shape=["*", 2],
         a_nexus_field=NeXusField(
             name="incident_polarization",
@@ -1579,6 +1580,7 @@ class MpesInstrumentBeamPump(Beam):
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXmpes.html#nxmpes-entry-instrument-beam-pump-incident-polarization-field"
         ],
+        flexible_unit=True,
         shape=["*", 2],
         a_nexus_field=NeXusField(
             name="incident_polarization",
@@ -1631,7 +1633,7 @@ class MpesInstrumentBeamPump(Beam):
         super().normalize(archive, logger)
 
 
-class MpesInstrumentBeam_TYPE(Beam):
+class MpesInstrumentBeamTYPE(Beam):
     """
     Properties of any other beam at a given location.
 
@@ -1721,6 +1723,7 @@ class MpesInstrumentBeam_TYPE(Beam):
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXmpes.html#nxmpes-entry-instrument-beam-type-incident-polarization-field"
         ],
+        flexible_unit=True,
         shape=["*", 2],
         a_nexus_field=NeXusField(
             name="incident_polarization",
@@ -3974,7 +3977,7 @@ class MpesInstrumentFloodGunCurrentLog(Log):
         super().normalize(archive, logger)
 
 
-class MpesInstrumentMonochromator_TYPE(Monochromator):
+class MpesInstrumentMonochromatorTYPE(Monochromator):
     """
     If any of the beams is monochromatized, an ``NXmonochromator`` can be used
     to describe the properties of the monochromator.
@@ -4130,6 +4133,7 @@ class MpesAXIS_axis_calibration(Calibration):
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXmpes.html#nxmpes-entry-axis-axis-calibration-calibrated-axis-field"
         ],
+        flexible_unit=True,
         shape=["*"],
         a_nexus_field=NeXusField(
             name="calibrated_axis",
@@ -5109,6 +5113,7 @@ class MpesData(Data):
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXmpes.html#nxmpes-entry-data-data-field"
         ],
+        flexible_unit=True,
         description=(
             "Represents a measure of one- or more-dimensional photoemission "
             "counts, where the varied axis may be for example energy, momentum, "

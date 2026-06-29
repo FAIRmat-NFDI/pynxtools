@@ -450,6 +450,7 @@ class XpcsData(Data):
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXxpcs.html#nxxpcs-entry-data-g2-unnormalized-field"
         ],
+        flexible_unit=True,
         description=(
             "unnormalized intensity auto-correlation function. Specifically, "
             "``g2`` without the denominator. The data should be in the same "
@@ -557,6 +558,7 @@ class XpcsTwotime(Data):
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXxpcs.html#nxxpcs-entry-twotime-two-time-corr-func-field"
         ],
+        flexible_unit=True,
         description=(
             "two-time correlation of speckle intensity for a given q-bin or roi "
             "(represented by the nth roi_map value) See Fluerasu, Phys Rev E "

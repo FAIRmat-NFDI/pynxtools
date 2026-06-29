@@ -893,6 +893,7 @@ class Crystal(Component):
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXcrystal.html#nxcrystal-temperature-coefficient-field"
         ],
+        flexible_unit=True,
         description=("how lattice parameter changes with temperature"),
         a_nexus_field=NeXusField(
             name="temperature_coefficient",

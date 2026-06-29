@@ -84,7 +84,7 @@ class Xkappa(Xbase):
         section_def="pynxtools.nomad.metainfo.applications.xkappa.XkappaSample",
         repeats=False,
     )
-    name = SubSection(
+    name_group = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.xkappa.XkappaName",
         repeats=False,
     )

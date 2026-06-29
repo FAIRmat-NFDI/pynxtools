@@ -437,7 +437,7 @@ class SpmInstrument(SensorScanInstrument):
         ),
     )
     current_sensorTAG = SubSection(
-        section_def="pynxtools.nomad.metainfo.applications.spm.SpmInstrumentCurrent_sensorTAG",
+        section_def="pynxtools.nomad.metainfo.applications.spm.SpmInstrumentCurrentSensorTAG",
         repeats=True,
         variable=True,
         a_nexus_group=NeXusGroup(
@@ -448,7 +448,7 @@ class SpmInstrument(SensorScanInstrument):
         ),
     )
     voltage_sensorTAG = SubSection(
-        section_def="pynxtools.nomad.metainfo.applications.spm.SpmInstrumentVoltage_sensorTAG",
+        section_def="pynxtools.nomad.metainfo.applications.spm.SpmInstrumentVoltageSensorTAG",
         repeats=True,
         variable=True,
         a_nexus_group=NeXusGroup(
@@ -1336,7 +1336,7 @@ class SpmInstrumentScanEnvironmentSpmScanControlMeshSCAN(SpmScanPattern):
         super().normalize(archive, logger)
 
 
-class SpmInstrumentCurrent_sensorTAG(Sensor):
+class SpmInstrumentCurrentSensorTAG(Sensor):
     """
     Information for current sensor. Any current sensor such as a
     current-voltage transimpedance amplifier involved in the experiment or in
@@ -1358,7 +1358,7 @@ class SpmInstrumentCurrent_sensorTAG(Sensor):
     )
 
     calibration = SubSection(
-        section_def="pynxtools.nomad.metainfo.applications.spm.SpmInstrumentCurrent_sensorTAGCalibration",
+        section_def="pynxtools.nomad.metainfo.applications.spm.SpmInstrumentCurrentSensorTAGCalibration",
         repeats=False,
         a_nexus_group=NeXusGroup(
             nx_class="NXcalibration",
@@ -1368,7 +1368,7 @@ class SpmInstrumentCurrent_sensorTAG(Sensor):
         ),
     )
     amplifier = SubSection(
-        section_def="pynxtools.nomad.metainfo.applications.spm.SpmInstrumentCurrent_sensorTAGAmplifier",
+        section_def="pynxtools.nomad.metainfo.applications.spm.SpmInstrumentCurrentSensorTAGAmplifier",
         repeats=True,
         variable=True,
         a_nexus_group=NeXusGroup(
@@ -1445,7 +1445,7 @@ class SpmInstrumentCurrent_sensorTAG(Sensor):
         super().normalize(archive, logger)
 
 
-class SpmInstrumentCurrent_sensorTAGCalibration(Calibration):
+class SpmInstrumentCurrentSensorTAGCalibration(Calibration):
     """
     Calibration data of the current sensor.
     """
@@ -1463,7 +1463,7 @@ class SpmInstrumentCurrent_sensorTAGCalibration(Calibration):
     )
 
     calibration_parameters = SubSection(
-        section_def="pynxtools.nomad.metainfo.applications.spm.SpmInstrumentCurrent_sensorTAGCalibrationCalibrationParameters",
+        section_def="pynxtools.nomad.metainfo.applications.spm.SpmInstrumentCurrentSensorTAGCalibrationCalibrationParameters",
         repeats=False,
         a_nexus_group=NeXusGroup(
             nx_class="NXparameters",
@@ -1477,7 +1477,7 @@ class SpmInstrumentCurrent_sensorTAGCalibration(Calibration):
         super().normalize(archive, logger)
 
 
-class SpmInstrumentCurrent_sensorTAGCalibrationCalibrationParameters(Parameters):
+class SpmInstrumentCurrentSensorTAGCalibrationCalibrationParameters(Parameters):
     m_def = Section(
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXspm.html#nxspm-entry-instrument-current-sensortag-calibration-calibration-parameters-group"
@@ -1495,6 +1495,7 @@ class SpmInstrumentCurrent_sensorTAGCalibrationCalibrationParameters(Parameters)
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXspm.html#nxspm-entry-instrument-current-sensortag-calibration-calibration-parameters-coefficient-field"
         ],
+        flexible_unit=True,
         description=("The coefficient of the calibration."),
         a_nexus_field=NeXusField(
             name="coefficient",
@@ -1512,7 +1513,7 @@ class SpmInstrumentCurrent_sensorTAGCalibrationCalibrationParameters(Parameters)
         super().normalize(archive, logger)
 
 
-class SpmInstrumentCurrent_sensorTAGAmplifier(Amplifier):
+class SpmInstrumentCurrentSensorTAGAmplifier(Amplifier):
     """
     An amplifier information that amplifies the input signal.
     """
@@ -1555,7 +1556,7 @@ class SpmInstrumentCurrent_sensorTAGAmplifier(Amplifier):
         super().normalize(archive, logger)
 
 
-class SpmInstrumentVoltage_sensorTAG(Sensor):
+class SpmInstrumentVoltageSensorTAG(Sensor):
     """
     The sensor information for the voltage device. Any voltage sensor involved
     in the experiment or in any special measurement or in any specialized
@@ -1583,7 +1584,7 @@ class SpmInstrumentVoltage_sensorTAG(Sensor):
     )
 
     calibration = SubSection(
-        section_def="pynxtools.nomad.metainfo.applications.spm.SpmInstrumentVoltage_sensorTAGCalibration",
+        section_def="pynxtools.nomad.metainfo.applications.spm.SpmInstrumentVoltageSensorTAGCalibration",
         repeats=False,
         a_nexus_group=NeXusGroup(
             nx_class="NXcalibration",
@@ -1593,7 +1594,7 @@ class SpmInstrumentVoltage_sensorTAG(Sensor):
         ),
     )
     amplifier = SubSection(
-        section_def="pynxtools.nomad.metainfo.applications.spm.SpmInstrumentVoltage_sensorTAGAmplifier",
+        section_def="pynxtools.nomad.metainfo.applications.spm.SpmInstrumentVoltageSensorTAGAmplifier",
         repeats=True,
         variable=True,
         a_nexus_group=NeXusGroup(
@@ -1672,7 +1673,7 @@ class SpmInstrumentVoltage_sensorTAG(Sensor):
         super().normalize(archive, logger)
 
 
-class SpmInstrumentVoltage_sensorTAGCalibration(Calibration):
+class SpmInstrumentVoltageSensorTAGCalibration(Calibration):
     """
     Calibration data of the voltage sensor.
     """
@@ -1690,7 +1691,7 @@ class SpmInstrumentVoltage_sensorTAGCalibration(Calibration):
     )
 
     calibration_parameters = SubSection(
-        section_def="pynxtools.nomad.metainfo.applications.spm.SpmInstrumentVoltage_sensorTAGCalibrationCalibrationParameters",
+        section_def="pynxtools.nomad.metainfo.applications.spm.SpmInstrumentVoltageSensorTAGCalibrationCalibrationParameters",
         repeats=False,
         a_nexus_group=NeXusGroup(
             nx_class="NXparameters",
@@ -1704,7 +1705,7 @@ class SpmInstrumentVoltage_sensorTAGCalibration(Calibration):
         super().normalize(archive, logger)
 
 
-class SpmInstrumentVoltage_sensorTAGCalibrationCalibrationParameters(Parameters):
+class SpmInstrumentVoltageSensorTAGCalibrationCalibrationParameters(Parameters):
     m_def = Section(
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXspm.html#nxspm-entry-instrument-voltage-sensortag-calibration-calibration-parameters-group"
@@ -1722,6 +1723,7 @@ class SpmInstrumentVoltage_sensorTAGCalibrationCalibrationParameters(Parameters)
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXspm.html#nxspm-entry-instrument-voltage-sensortag-calibration-calibration-parameters-coefficient-field"
         ],
+        flexible_unit=True,
         description=("The coefficient of the calibration."),
         a_nexus_field=NeXusField(
             name="coefficient",
@@ -1739,7 +1741,7 @@ class SpmInstrumentVoltage_sensorTAGCalibrationCalibrationParameters(Parameters)
         super().normalize(archive, logger)
 
 
-class SpmInstrumentVoltage_sensorTAGAmplifier(Amplifier):
+class SpmInstrumentVoltageSensorTAGAmplifier(Amplifier):
     """
     An amplifier information that amplifies the input signal.
     """
@@ -2269,6 +2271,7 @@ class SpmInstrumentSampleBiasVoltageCalibrationCalibrationParameters(Parameters)
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXspm.html#nxspm-entry-instrument-sample-bias-voltage-calibration-calibration-parameters-coefficient-field"
         ],
+        flexible_unit=True,
         description=("The coefficient of the calibration."),
         a_nexus_field=NeXusField(
             name="coefficient",
@@ -2411,6 +2414,7 @@ class SpmData(Data):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXspm.html#nxspm-entry-data-data-field"
         ],
         variable=True,
+        flexible_unit=True,
         description=(
             "The data (e.g. current, voltage, temperature) field that can be "
             "plotted against the axes."
@@ -2429,6 +2433,7 @@ class SpmData(Data):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXspm.html#nxspm-entry-data-axisname-field"
         ],
         variable=True,
+        flexible_unit=True,
         description=("The name of the axis that corresponds to the data field."),
         a_nexus_field=NeXusField(
             name="AXISNAME",

@@ -105,6 +105,7 @@ class DispersionSingleParameter(Object):
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXdispersion_single_parameter.html#nxdispersion_single_parameter-value-field"
         ],
+        flexible_unit=True,
         description=("The value of the parameter"),
         a_nexus_field=NeXusField(
             name="value",

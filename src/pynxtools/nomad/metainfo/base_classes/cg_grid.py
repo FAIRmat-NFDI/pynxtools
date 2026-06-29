@@ -94,6 +94,7 @@ class CgGrid(CgPrimitive):
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXcg_grid.html#nxcg_grid-origin-field"
         ],
+        flexible_unit=True,
         shape=["*"],
         description=(
             "Location of the origin of the grid. Use the depends_on field that "
@@ -174,6 +175,7 @@ class CgGrid(CgPrimitive):
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXcg_grid.html#nxcg_grid-position-field"
         ],
+        flexible_unit=True,
         shape=["*", "*"],
         description=("Position of each cell in Euclidean space."),
         a_nexus_field=NeXusField(

@@ -112,6 +112,7 @@ class Positioner(Component):
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXpositioner.html#nxpositioner-value-field"
         ],
+        flexible_unit=True,
         shape=["*"],
         description=("best known value of positioner - need [n] as may be scanned"),
         a_nexus_field=NeXusField(
@@ -127,6 +128,7 @@ class Positioner(Component):
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXpositioner.html#nxpositioner-raw-value-field"
         ],
+        flexible_unit=True,
         shape=["*"],
         description=("raw value of positioner - need [n] as may be scanned"),
         a_nexus_field=NeXusField(
@@ -142,6 +144,7 @@ class Positioner(Component):
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXpositioner.html#nxpositioner-target-value-field"
         ],
+        flexible_unit=True,
         shape=["*"],
         description=(
             "targeted (commanded) value of positioner - need [n] as may be scanned"
@@ -159,6 +162,7 @@ class Positioner(Component):
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXpositioner.html#nxpositioner-tolerance-field"
         ],
+        flexible_unit=True,
         shape=["*"],
         description=("maximum allowable difference between target_value and value"),
         a_nexus_field=NeXusField(
@@ -174,6 +178,7 @@ class Positioner(Component):
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXpositioner.html#nxpositioner-soft-limit-min-field"
         ],
+        flexible_unit=True,
         description=("minimum allowed limit to set value"),
         a_nexus_field=NeXusField(
             name="soft_limit_min",
@@ -191,6 +196,7 @@ class Positioner(Component):
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXpositioner.html#nxpositioner-soft-limit-max-field"
         ],
+        flexible_unit=True,
         description=("maximum allowed limit to set value"),
         a_nexus_field=NeXusField(
             name="soft_limit_max",
@@ -208,6 +214,7 @@ class Positioner(Component):
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXpositioner.html#nxpositioner-velocity-field"
         ],
+        flexible_unit=True,
         description=("velocity of the positioner (distance moved per unit time)"),
         a_nexus_field=NeXusField(
             name="velocity",
@@ -225,6 +232,7 @@ class Positioner(Component):
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXpositioner.html#nxpositioner-acceleration-time-field"
         ],
+        flexible_unit=True,
         description=("time to ramp the velocity up to full speed"),
         a_nexus_field=NeXusField(
             name="acceleration_time",

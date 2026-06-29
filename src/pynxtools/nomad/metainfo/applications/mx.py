@@ -744,6 +744,7 @@ class MxInstrumentDetector(Detector):
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXmx.html#nxmx-entry-instrument-detector-data-field"
         ],
+        flexible_unit=True,
         description=(
             "For a dimension-2 detector, the rank of the data array will be 3. "
             "For a dimension-3 detector, the rank of the data array will be 4. "
@@ -1695,6 +1696,7 @@ class MxInstrumentBeam(Beam):
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXmx.html#nxmx-entry-instrument-beam-incident-polarization-stokes-field"
         ],
+        flexible_unit=True,
         shape=["*", 4],
         description=(
             "Polarization vector on entering beamline component using Stokes "
