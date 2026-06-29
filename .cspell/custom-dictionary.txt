@@ -13,6 +13,8 @@ Downsample
 Downsampled
 Draxl
 ELECTRONANALYZER
+ESRF
+ESRFET
 Emminger
 Florian
 Forschungsgemeinschaft
@@ -46,6 +48,7 @@ Namefits
 Namefitting
 OPCPA
 ORCID
+OWLREADY
 PATHCONV
 PDBX
 PYNX
@@ -214,7 +217,9 @@ optionalities
 orcid
 otherfile
 otypes
+owlready
 oxidising
+panet
 pathtovalidate
 plottable
 posint
@@ -227,6 +232,8 @@ pynxtools
 pyupgrade
 raman
 rdcc
+rdfs
+rdfxml
 redef
 renamable
 reqs
@@ -242,6 +249,7 @@ skiprows
 straße
 submoduled
 superproject
+testdata
 threed
 tnxdl
 tofile

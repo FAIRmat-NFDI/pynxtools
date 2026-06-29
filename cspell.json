@@ -10,7 +10,8 @@
         "__pycache__",
         "dist",
         "build",
-        "src/pynxtools/definitions"
+        "src/pynxtools/definitions",
+        "src/pynxtools/NeXusOntology"
     ],
   "dictionaryDefinitions": [
     {
