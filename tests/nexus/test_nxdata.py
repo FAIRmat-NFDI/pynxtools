@@ -18,7 +18,7 @@ from pynxtools.nexus.nxdata import (
 
 
 def test_classify_field_signal_v3(tmp_path):
-    with h5py.File(tmp_path / "f.h5", "w") as f:
+    with h5py.File(tmp_path / "classify_field_signal_v3.nxs", "w") as f:
         g = f.create_group("entry/data")
         g.attrs["NX_class"] = "NXdata"
         g.attrs["signal"] = "I"
@@ -27,7 +27,7 @@ def test_classify_field_signal_v3(tmp_path):
 
 
 def test_classify_field_axis_v3_from_axes_array(tmp_path):
-    with h5py.File(tmp_path / "f.h5", "w") as f:
+    with h5py.File(tmp_path / "classify_field_axis_v3_from_axes_array.nxs", "w") as f:
         g = f.create_group("entry/data")
         g.attrs["NX_class"] = "NXdata"
         g.attrs["signal"] = "I"
@@ -38,7 +38,7 @@ def test_classify_field_axis_v3_from_axes_array(tmp_path):
 
 
 def test_classify_field_axis_v3_from_axes_string(tmp_path):
-    with h5py.File(tmp_path / "f.h5", "w") as f:
+    with h5py.File(tmp_path / "classify_field_axis_v3_from_axes_string.nxs", "w") as f:
         g = f.create_group("entry/data")
         g.attrs["NX_class"] = "NXdata"
         g.attrs["signal"] = "I"
@@ -49,7 +49,7 @@ def test_classify_field_axis_v3_from_axes_string(tmp_path):
 
 
 def test_classify_field_axis_v3_via_indices_attr(tmp_path):
-    with h5py.File(tmp_path / "f.h5", "w") as f:
+    with h5py.File(tmp_path / "classify_field_axis_v3_via_indices_attr.nxs", "w") as f:
         g = f.create_group("entry/data")
         g.attrs["NX_class"] = "NXdata"
         g.attrs["signal"] = "I"
@@ -65,7 +65,7 @@ def test_classify_field_axis_v3_via_indices_attr(tmp_path):
 
 
 def test_classify_field_signal_v2(tmp_path):
-    with h5py.File(tmp_path / "f.h5", "w") as f:
+    with h5py.File(tmp_path / "classify_field_signal_v2.nxs", "w") as f:
         g = f.create_group("entry/data")
         g.attrs["NX_class"] = "NXdata"
         ds = g.create_dataset("I", data=np.zeros(10))
@@ -74,7 +74,7 @@ def test_classify_field_signal_v2(tmp_path):
 
 
 def test_classify_field_axis_v2_via_axis_attr(tmp_path):
-    with h5py.File(tmp_path / "f.h5", "w") as f:
+    with h5py.File(tmp_path / "classify_field_axis_v2_via_axis_attr.nxs", "w") as f:
         g = f.create_group("entry/data")
         g.attrs["NX_class"] = "NXdata"
         sig = g.create_dataset("I", data=np.zeros(10))
@@ -85,7 +85,7 @@ def test_classify_field_axis_v2_via_axis_attr(tmp_path):
 
 
 def test_classify_field_axis_v2_via_colon_axes(tmp_path):
-    with h5py.File(tmp_path / "f.h5", "w") as f:
+    with h5py.File(tmp_path / "classify_field_axis_v2_via_colon_axes.nxs", "w") as f:
         g = f.create_group("entry/data")
         g.attrs["NX_class"] = "NXdata"
         sig = g.create_dataset("I", data=np.zeros(10))
@@ -95,8 +95,20 @@ def test_classify_field_axis_v2_via_colon_axes(tmp_path):
         assert classify_field(ds, "q") == "axis"
 
 
+def test_classify_field_none_when_signal_attr_absent(tmp_path):
+    """No @signal attr on the NXdata group → dataset is not a signal."""
+    with h5py.File(
+        tmp_path / "classify_field_none_when_signal_attr_absent.nxs", "w"
+    ) as f:
+        g = f.create_group("entry/data")
+        g.attrs["NX_class"] = "NXdata"
+        # no @signal attribute set
+        ds = g.create_dataset("I", data=np.zeros(10))
+        assert classify_field(ds, "I") != "signal"
+
+
 def test_classify_field_none_for_non_nxdata(tmp_path):
-    with h5py.File(tmp_path / "f.h5", "w") as f:
+    with h5py.File(tmp_path / "classify_field_none_for_non_nxdata.nxs", "w") as f:
         g = f.create_group("entry/instrument")
         g.attrs["NX_class"] = "NXinstrument"
         ds = g.create_dataset("value", data=1.0)
@@ -104,7 +116,7 @@ def test_classify_field_none_for_non_nxdata(tmp_path):
 
 
 def test_classify_field_none_for_non_dataset(tmp_path):
-    with h5py.File(tmp_path / "f.h5", "w") as f:
+    with h5py.File(tmp_path / "classify_field_none_for_non_dataset.nxs", "w") as f:
         g = f.create_group("entry/data")
         g.attrs["NX_class"] = "NXdata"
         sub = g.create_group("subgroup")
@@ -117,7 +129,7 @@ def test_classify_field_none_for_non_dataset(tmp_path):
 
 
 def test_find_default_nxentry_via_default_attr(tmp_path):
-    with h5py.File(tmp_path / "f.h5", "w") as f:
+    with h5py.File(tmp_path / "find_default_nxentry_via_default_attr.nxs", "w") as f:
         f.attrs["default"] = "scan"
         scan = f.create_group("scan")
         scan.attrs["NX_class"] = "NXentry"
@@ -129,7 +141,7 @@ def test_find_default_nxentry_via_default_attr(tmp_path):
 
 
 def test_find_default_nxentry_fallback_to_first(tmp_path):
-    with h5py.File(tmp_path / "f.h5", "w") as f:
+    with h5py.File(tmp_path / "find_default_nxentry_fallback_to_first.nxs", "w") as f:
         entry = f.create_group("entry")
         entry.attrs["NX_class"] = "NXentry"
         result = find_default_nxentry(f)
@@ -138,7 +150,9 @@ def test_find_default_nxentry_fallback_to_first(tmp_path):
 
 
 def test_find_default_nxentry_returns_none_if_absent(tmp_path):
-    with h5py.File(tmp_path / "f.h5", "w") as f:
+    with h5py.File(
+        tmp_path / "find_default_nxentry_returns_none_if_absent.nxs", "w"
+    ) as f:
         f.create_group("not_an_entry")
         assert find_default_nxentry(f) is None
 
@@ -149,7 +163,7 @@ def test_find_default_nxentry_returns_none_if_absent(tmp_path):
 
 
 def test_find_default_nxdata_v3_full_chain(tmp_path):
-    with h5py.File(tmp_path / "f.h5", "w") as f:
+    with h5py.File(tmp_path / "find_default_nxdata_v3_full_chain.nxs", "w") as f:
         f.attrs["default"] = "entry"
         entry = f.create_group("entry")
         entry.attrs["NX_class"] = "NXentry"
@@ -165,7 +179,7 @@ def test_find_default_nxdata_v3_full_chain(tmp_path):
 
 def test_find_default_nxdata_v3_deep_chain(tmp_path):
     """@default chain through an intermediate group."""
-    with h5py.File(tmp_path / "f.h5", "w") as f:
+    with h5py.File(tmp_path / "find_default_nxdata_v3_deep_chain.nxs", "w") as f:
         f.attrs["default"] = "entry"
         entry = f.create_group("entry")
         entry.attrs["NX_class"] = "NXentry"
@@ -182,7 +196,7 @@ def test_find_default_nxdata_v3_deep_chain(tmp_path):
 
 
 def test_find_default_nxdata_v1_fallback(tmp_path):
-    with h5py.File(tmp_path / "f.h5", "w") as f:
+    with h5py.File(tmp_path / "find_default_nxdata_v1_fallback.nxs", "w") as f:
         entry = f.create_group("entry")
         entry.attrs["NX_class"] = "NXentry"
         data = entry.create_group("data")
@@ -194,7 +208,9 @@ def test_find_default_nxdata_v1_fallback(tmp_path):
 
 
 def test_find_default_nxdata_returns_none_if_absent(tmp_path):
-    with h5py.File(tmp_path / "f.h5", "w") as f:
+    with h5py.File(
+        tmp_path / "find_default_nxdata_returns_none_if_absent.nxs", "w"
+    ) as f:
         entry = f.create_group("entry")
         entry.attrs["NX_class"] = "NXentry"
         assert find_default_nxdata(f) is None
@@ -202,7 +218,7 @@ def test_find_default_nxdata_returns_none_if_absent(tmp_path):
 
 def test_find_default_nxdata_broken_default_attr(tmp_path):
     """Broken @default pointing to nonexistent group falls through to first NXdata."""
-    with h5py.File(tmp_path / "f.h5", "w") as f:
+    with h5py.File(tmp_path / "find_default_nxdata_broken_default_attr.nxs", "w") as f:
         f.attrs["default"] = "entry"
         entry = f.create_group("entry")
         entry.attrs["NX_class"] = "NXentry"
@@ -221,7 +237,7 @@ def test_find_default_nxdata_broken_default_attr(tmp_path):
 
 
 def test_inspect_nxdata_v3_signal_and_axis(tmp_path):
-    with h5py.File(tmp_path / "f.h5", "w") as f:
+    with h5py.File(tmp_path / "inspect_nxdata_v3_signal_and_axis.nxs", "w") as f:
         g = f.create_group("data")
         g.attrs["NX_class"] = "NXdata"
         g.attrs["signal"] = "I"
@@ -237,7 +253,7 @@ def test_inspect_nxdata_v3_signal_and_axis(tmp_path):
 
 
 def test_inspect_nxdata_v3_auxiliary_signals(tmp_path):
-    with h5py.File(tmp_path / "f.h5", "w") as f:
+    with h5py.File(tmp_path / "inspect_nxdata_v3_auxiliary_signals.nxs", "w") as f:
         g = f.create_group("data")
         g.attrs["NX_class"] = "NXdata"
         g.attrs["signal"] = "I"
@@ -247,11 +263,27 @@ def test_inspect_nxdata_v3_auxiliary_signals(tmp_path):
         g.create_dataset("I3", data=np.ones(10))
         info = inspect_nxdata(g)
         assert info.convention == "v3"
-        assert set(info.aux_signals) == {"I2", "I3"}
+        assert info.aux_signals == ["I2", "I3"]
+
+
+def test_inspect_nxdata_v3_auxiliary_signals_order(tmp_path):
+    """aux_signals list preserves the order declared in @auxiliary_signals."""
+    with h5py.File(
+        tmp_path / "inspect_nxdata_v3_auxiliary_signals_order.nxs", "w"
+    ) as f:
+        g = f.create_group("data")
+        g.attrs["NX_class"] = "NXdata"
+        g.attrs["signal"] = "I"
+        g.attrs["auxiliary_signals"] = np.array(["I3", "I2"], dtype="S10")
+        g.create_dataset("I", data=np.zeros(10))
+        g.create_dataset("I2", data=np.ones(10))
+        g.create_dataset("I3", data=np.ones(10))
+        info = inspect_nxdata(g)
+        assert info.aux_signals == ["I3", "I2"]
 
 
 def test_inspect_nxdata_v3_multi_dim_axes(tmp_path):
-    with h5py.File(tmp_path / "f.h5", "w") as f:
+    with h5py.File(tmp_path / "inspect_nxdata_v3_multi_dim_axes.nxs", "w") as f:
         g = f.create_group("data")
         g.attrs["NX_class"] = "NXdata"
         g.attrs["signal"] = "I"
@@ -265,7 +297,9 @@ def test_inspect_nxdata_v3_multi_dim_axes(tmp_path):
 
 
 def test_inspect_nxdata_v3_signal_missing_returns_none(tmp_path):
-    with h5py.File(tmp_path / "f.h5", "w") as f:
+    with h5py.File(
+        tmp_path / "inspect_nxdata_v3_signal_missing_returns_none.nxs", "w"
+    ) as f:
         g = f.create_group("data")
         g.attrs["NX_class"] = "NXdata"
         g.attrs["signal"] = "missing"
@@ -280,7 +314,7 @@ def test_inspect_nxdata_v3_signal_missing_returns_none(tmp_path):
 
 
 def test_inspect_nxdata_v2(tmp_path):
-    with h5py.File(tmp_path / "f.h5", "w") as f:
+    with h5py.File(tmp_path / "inspect_nxdata_v2.nxs", "w") as f:
         g = f.create_group("data")
         g.attrs["NX_class"] = "NXdata"
         ds = g.create_dataset("I", data=np.zeros(10))
@@ -298,23 +332,64 @@ def test_inspect_nxdata_v2(tmp_path):
 # ---------------------------------------------------------------------------
 
 
-def test_inspect_nxdata_v1_single_dataset(tmp_path):
-    with h5py.File(tmp_path / "f.h5", "w") as f:
+def test_inspect_nxdata_v1(tmp_path):
+    """v1: signal="1" on a field, axes via axis=N attribute (no @axes on signal)."""
+    with h5py.File(tmp_path / "inspect_nxdata_v1.nxs", "w") as f:
+        g = f.create_group("data")
+        g.attrs["NX_class"] = "NXdata"
+        ds = g.create_dataset("I", data=np.zeros(10))
+        ds.attrs["signal"] = "1"
+        ax = g.create_dataset("q", data=np.arange(10, dtype=float))
+        ax.attrs["axis"] = np.int32(1)
+        ax.attrs["primary"] = np.int32(1)
+        info = inspect_nxdata(g)
+        assert info.convention == "v1"
+        assert info.signal_name == "I"
+        assert len(info.axes) == 1
+        assert len(info.axes[0]) == 1
+        assert info.axes[0][0].name.endswith("q")
+
+
+def test_inspect_nxdata_v1_primary_ordering(tmp_path):
+    """v1: among multiple axis=1 candidates, primary=1 must come first."""
+    with h5py.File(tmp_path / "inspect_nxdata_v1_primary_ordering.nxs", "w") as f:
+        g = f.create_group("data")
+        g.attrs["NX_class"] = "NXdata"
+        ds = g.create_dataset("I", data=np.zeros(10))
+        ds.attrs["signal"] = "1"
+        alt = g.create_dataset("q_alt", data=np.arange(10, dtype=float))
+        alt.attrs["axis"] = np.int32(1)  # alternative — no primary
+        prim = g.create_dataset("q", data=np.arange(10, dtype=float))
+        prim.attrs["axis"] = np.int32(1)
+        prim.attrs["primary"] = np.int32(1)
+        info = inspect_nxdata(g)
+        assert info.convention == "v1"
+        assert len(info.axes[0]) == 2
+        assert info.axes[0][0].name.endswith("q")  # primary first
+        assert info.axes[0][1].name.endswith("q_alt")  # alternative second
+
+
+def test_inspect_nxdata_no_convention_single_dataset_no_signal(tmp_path):
+    """Single dataset with no signal marker is not spec-compliant → convention=None."""
+    with h5py.File(
+        tmp_path / "inspect_nxdata_no_convention_single_dataset_no_signal.nxs", "w"
+    ) as f:
         g = f.create_group("data")
         g.attrs["NX_class"] = "NXdata"
         g.create_dataset("I", data=np.zeros(5))
         info = inspect_nxdata(g)
-        assert info.convention == "v1"
-        assert info.signal_name == "I"
+        assert info.signal is None
+        assert info.convention is None
 
 
 def test_inspect_nxdata_no_convention_multiple_datasets_no_signal(tmp_path):
-    with h5py.File(tmp_path / "f.h5", "w") as f:
+    with h5py.File(
+        tmp_path / "inspect_nxdata_no_convention_multiple_datasets_no_signal.nxs", "w"
+    ) as f:
         g = f.create_group("data")
         g.attrs["NX_class"] = "NXdata"
         g.create_dataset("I", data=np.zeros(5))
         g.create_dataset("I2", data=np.zeros(5))
         info = inspect_nxdata(g)
-        # multiple datasets with no signal attr → no convention
         assert info.signal is None
         assert info.convention is None

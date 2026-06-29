@@ -190,7 +190,7 @@ Key methods:
 
 `pynx read` creates an `Annotator` visitor and passes it to `NexusFileHandler`.  The annotator holds a `NexusSchemaResolver` and uses it on every `on_field` / `on_attribute` callback to look up the matching `NexusNode`, then emits documentation, optionality, enumeration values, and inheritance information.
 
-When an `NXdata` group is encountered, the annotator calls `inspect_nxdata` (from `pynxtools.nexus.nxdata`) once at the group level to detect the primary signal, axis datasets, and convention (v3/v2/v1). The result is cached and used to annotate each field in that group with its NXdata role (`SIGNAL` / `AXIS #N`). After the full traversal, the default-plottable chain is also logged via `get_default_plottable`.
+When an `NXdata` group is encountered, the annotator calls `inspect_nxdata` (from `pynxtools.nexus.nxdata`) once at the group level to detect the primary signal and axis datasets. In this process, different versions of the NeXus default plotting conventions (v3/v2/v1) are analyzed. The result is cached and used to annotate each field in that group with its NXdata role (`SIGNAL` / `AXIS #N`). After the full traversal, the default-plottable chain is also logged via `get_default_plottable`.
 
 Three operating modes are supported:
 
@@ -241,7 +241,7 @@ Because `NexusFileHandler` accepts any `NexusVisitor`, it is straightforward to 
 
 ## Shared NXdata detection: `pynxtools.nexus.nxdata`
 
-The [NeXus Data Plotting Standard](https://manual.nexusformat.org/examples/python/plotting/index.html) defines three conventions — v3 (NIAC2014), v2 (~2004), and v1 (oldest) — for identifying the plottable signal and its axes in an `NXdata` group. Rather than duplicating this logic in the annotator and the validator, pynxtools centralizes it in `pynxtools.nexus.nxdata` with no logging dependency.
+The [NeXus Data Plotting Standard](https://manual.nexusformat.org/examples/python/plotting/index.html) defines three conventions — v3 (NIAC2014), v2 (~2004), and v1 (oldest) — for identifying the plottable signal and its axes in an `NXdata` group (see [NeXus manual > Find the plottable data](https://manual.nexusformat.org/datarules.html#find-plottable-data)). Rather than duplicating this logic in the annotator and the validator, pynxtools centralizes it in `pynxtools.nexus.nxdata` with no logging dependency.
 
 ### Public API
 
