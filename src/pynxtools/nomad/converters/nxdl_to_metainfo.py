@@ -1090,7 +1090,7 @@ def build_context(nx_name: str) -> dict:
 
 def render(context: dict) -> str:
     """Render the Jinja2 template and format with ruff."""
-    template = _jinja_env.get_template("base_class.py.j2")
+    template = _jinja_env.get_template("nexus.py.j2")
     raw = template.render(**context)
     try:
         result = subprocess.run(
