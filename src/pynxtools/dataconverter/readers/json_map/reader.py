@@ -44,6 +44,7 @@ import numpy as np
 import xarray
 import yaml
 from mergedeep import merge
+import h5py
 
 from pynxtools.dataconverter import hdfdict
 from pynxtools.dataconverter.helpers import decode_if_bytes
@@ -259,6 +260,45 @@ class JsonMapReader(MultiFormatReader):
             file_path, lazy=False, unpacker=unpack_hdf_dataset_for_json_map
         )
         merge(self.data, hdf)
+        # Walk the HDF5 file and extract attributes for groups and datasets.
+        def _insert_attrs_from_h5(h5group, parent_dict):
+            for name, item in h5group.items():
+                # If the parent dict does not yet have an entry for this
+                # child, ensure we create a mapping for groups so we can
+                # recurse into it. Do not clobber existing dataset values.
+                if name not in parent_dict or isinstance(parent_dict[name], dict):
+                    if name not in parent_dict:
+                        parent_dict[name] = {}
+
+                # Extract attributes for this child. Store them both as an
+                # aggregate dict as individual entries '<name>@<attr>'.
+                if getattr(item, "attrs", None):
+                    attrs = {}
+                    for k, v in item.attrs.items():
+                        # normalize bytes -> str and numpy types when needed
+                        try:
+                            val = decode_if_bytes(v)
+                        except Exception:
+                            val = v
+                        attrs[k] = val
+                        # individual attribute entry: 'name@attr'
+                        parent_dict[f"{name}@{k}"] = val
+
+                # Recurse into groups only
+                if isinstance(item, h5py.Group):
+                    # Ensure we have a dict to recurse into
+                    if not isinstance(parent_dict.get(name), dict):
+                        parent_dict[name] = {}
+                    _insert_attrs_from_h5(item, parent_dict[name])
+
+        try:
+            with h5py.File(file_path, "r") as h5f:
+                _insert_attrs_from_h5(h5f, self.data)
+        except Exception:
+            # If h5py can't open the file or traversal fails, ignore and
+            # continue; the primary data was already loaded via hdfdict.
+            pass
+
         if "entry@" in self.data and "partial" in self.data["entry@"]:
             self.partials.extend(self.data["entry@"]["partial"])
         return {}
