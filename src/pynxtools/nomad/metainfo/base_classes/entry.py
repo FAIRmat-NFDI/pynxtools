@@ -846,6 +846,20 @@ class Entry(Object, basesections.Measurement, EntryData):
         a_display={"unit": "m"},
     )
 
+    # Non-NXDL quantity added manually — preserved by additive-only generator.
+    # JSON storage of HDF5 paths to archive paths, populated at parse time.
+    # This is used to enable GUI navigation to raw HDF5 data..
+    # The keys are archive paths (e.g. "entry/instrument/detector/data") relative to
+    # archive data (which is an Entry), and the values are HDF5 paths relative
+    # to the NXentry group (e.g. "instrument/detector/data").
+    # normalize() resolves these to archive references via m_context.
+    # TODO: we should consider removing this quantity and instead use HDF5References.
+    m_nx_data_path = Quantity(
+        type=str,
+        description="JSON mapping of HDF5 paths (relative to this NXentry) to archive paths.",
+        a_browser=dict(render_value="JsonValue"),
+    )
+
     def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
         super().normalize(archive, logger)
 

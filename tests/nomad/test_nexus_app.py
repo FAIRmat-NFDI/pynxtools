@@ -28,6 +28,7 @@ except ImportError:
     )
 
 from pynxtools.nomad.apps import nexus_app
+from pynxtools.nomad.apps.app_v2 import nexus_app_v2, schema
 
 
 def test_nexus_app_basic_properties():
@@ -74,6 +75,73 @@ def test_nexus_app_menu_contains_elements_section():
 
 
 def test_nexus_app_dashboard_widgets():
+    """Ensure the dashboard contains a valid periodic table widget."""
+    dashboard = nexus_app.app.dashboard
+
+    assert len(dashboard.widgets) > 0
+
+    periodic_table = next(w for w in dashboard.widgets if w.type == "periodic_table")
+    assert periodic_table.search_quantity == "results.material.elements"
+    assert periodic_table.layout
+
+
+# ---------------------------------------------------------------------------
+# App v2 configuration
+# ---------------------------------------------------------------------------
+
+
+def test_nexus_app_v2_schema():
+    """App v2 must reference the correct Entry class."""
+    assert schema == "pynxtools.nomad.metainfo.base_classes.Entry"
+    filters = nexus_app_v2.app.filters_locked
+    assert "section_defs.definition_qualified_name" in filters
+    assert filters["section_defs.definition_qualified_name"] == [schema]
+
+
+def test_nexus_app_v2_basic_properties():
+    """App v2 must have correct label, path, and category."""
+    app = nexus_app_v2.app
+    assert app.label == "NeXus v2"
+    assert app.path == "nexusappv2"
+    assert app.category == "Experiment"
+
+
+def test_nexus_app_v2_locked_filters():
+    """Ensure required locked filters are defined and well-formed."""
+    app = nexus_app_v2.app
+
+    assert "section_defs.definition_qualified_name" in app.filters_locked
+    assert isinstance(
+        app.filters_locked["section_defs.definition_qualified_name"], list
+    )
+    assert len(app.filters_locked["section_defs.definition_qualified_name"]) == 1
+
+
+def test_nexus_app_v2_columns():
+    """Check that a representative result column is configured correctly."""
+    app = nexus_app_v2.app
+
+    definition_column = next(col for col in app.columns if col.title == "Definition")
+
+    assert definition_column.selected is True
+    print(definition_column.search_quantity)
+    assert "data.definition" in definition_column.search_quantity
+
+
+def test_nexus_app_v2_menu_contains_elements_section():
+    """Validate presence and structure of the Elements menu section."""
+    app = nexus_app_v2.app
+
+    elements_menu = next(item for item in app.menu.items if item.title == "Elements")
+
+    assert elements_menu.size.name == "XXL"
+    assert any(
+        item.__class__.__name__ == "MenuItemPeriodicTable"
+        for item in elements_menu.items
+    )
+
+
+def test_nexus_app_v2_dashboard_widgets():
     """Ensure the dashboard contains a valid periodic table widget."""
     dashboard = nexus_app.app.dashboard
 

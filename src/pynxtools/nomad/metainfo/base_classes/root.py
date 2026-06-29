@@ -25,6 +25,8 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 
 import numpy as np
+from nomad.datamodel.data import EntryData
+from nomad.datamodel.metainfo import basesections
 from nomad.datamodel.metainfo.annotations import (
     ELNAnnotation,
     ELNComponentEnum,
@@ -50,7 +52,7 @@ if TYPE_CHECKING:
 __all__ = ["Root"]
 
 
-class Root(Object):
+class Root(Object, basesections.Experiment, EntryData):
     """
     The root of a NeXus file.
 
@@ -362,5 +364,40 @@ class Root(Object):
         ),
     )
 
+    # Manually added: stores HDF5 NXentry group names at parse time.
+    # normalize() resolves these to ExperimentStep.activity references via m_context.
+    m_entry_paths = Quantity(
+        type=str,
+        shape=["*"],
+        description="HDF5 NXentry group names from the originating NeXus file.",
+    )
+
     def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
+        if not self.m_entry_paths:
+            return
+        try:
+            from nomad.datamodel.metainfo.basesections import ExperimentStep
+            from nomad.utils import generate_entry_id
+
+            upload_id = archive.m_context.upload_id
+            mainfile = archive.metadata.mainfile
+            if not upload_id or not mainfile:
+                return
+
+            new_steps = []
+            for i, entry_name in enumerate(self.m_entry_paths):
+                # entry_names[0] → main archive (no mainfile_key)
+                # entry_names[1:] → child archives (mainfile_key = entry_name)
+                if i == 0:
+                    entry_id = generate_entry_id(upload_id, mainfile)
+                else:
+                    entry_id = generate_entry_id(upload_id, mainfile, entry_name)
+                step = ExperimentStep()
+                step.name = entry_name
+                step.activity = f"../upload/archive/{entry_id}#data"
+                new_steps.append(step)
+            self.steps = new_steps
+        except Exception as e:
+            logger.warning("Could not resolve NXentry references for Root: %s", e)
+
         super().normalize(archive, logger)
