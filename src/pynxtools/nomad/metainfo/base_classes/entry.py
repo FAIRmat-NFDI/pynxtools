@@ -18,7 +18,7 @@
 #
 # This file is AUTO-GENERATED from the NeXus definitions (NXDL).
 # Run `pynx nomad generate-metainfo --nxdl NXentry` to regenerate.
-# Additive-only: the generator will never remove or rename existing members.
+# Additive-only: the generator will never remove or rename existing class members.
 # Add normalize() logic directly; it will be preserved on regeneration.
 from __future__ import annotations
 
@@ -851,10 +851,10 @@ class Entry(Object, basesections.Measurement, EntryData):
 
 
 # =============================================================================
-# Named concept groups — only when the group element defines own quantities that
-# differ from the generic class (changed optionality, extra fields, different
-# type/units/enumeration). These inherit from the specific generic class so all
-# base quantities are available.
+# Named NeXus concept groups — only when the group element defines own
+# quantities that differ from the generic class (changed optionality, extra
+# fields, different type/units/enumeration). These inherit from the specific
+# generic class so all # base quantities are available.
 # Resolved lazily by NOMAD at __init_metainfo__() time via string FQNs.
 # =============================================================================
 

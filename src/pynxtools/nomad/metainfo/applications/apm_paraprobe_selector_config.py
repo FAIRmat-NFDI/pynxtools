@@ -18,7 +18,7 @@
 #
 # This file is AUTO-GENERATED from the NeXus definitions (NXDL).
 # Run `pynx nomad generate-metainfo --nxdl NXapm_paraprobe_selector_config` to regenerate.
-# Additive-only: the generator will never remove or rename existing members.
+# Additive-only: the generator will never remove or rename existing class members.
 # Add normalize() logic directly; it will be preserved on regeneration.
 #
 # NOTE: This class is generated from a community-contributed NXDL definition.
