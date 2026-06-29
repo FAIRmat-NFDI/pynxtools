@@ -1,0 +1,472 @@
+#
+# Copyright The NOMAD Authors.
+#
+# This file is part of NOMAD. See https://nomad-lab.eu for further info.
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+#
+#
+# This file is AUTO-GENERATED from the NeXus definitions (NXDL).
+# Run `pynx nomad generate-metainfo --nxdl {{ nx_name }}` to regenerate.
+# Additive-only: the generator will never remove or rename existing class members.
+# Add normalize() logic directly; it will be preserved on regeneration.
+{% if is_contributed -%}
+#
+# NOTE: This class is generated from a community-contributed NXDL definition.
+# The NXDL source may change across versions. Regenerate after updating definitions.
+{% endif -%}
+from __future__ import annotations
+
+from typing import TYPE_CHECKING
+
+import numpy as np
+
+{% for mod, cls in nomad_extra_bases %}{% if mod != "nomad.datamodel.metainfo.basesections" %}from {{ mod }} import {{ cls }}
+{% endif %}{% endfor %}{% if needs_basesections %}from nomad.datamodel.metainfo import basesections
+{% endif %}from nomad.datamodel.metainfo.annotations import ELNAnnotation, ELNComponentEnum, SchemaAnnotation
+from nomad.metainfo import (
+    MEnum,
+    Quantity,
+    Section,
+    SubSection,
+)
+from nomad.metainfo.data_type import Bytes, Datetime
+from pynxtools.nomad.annotations import (
+    NeXusAttribute,
+    NeXusChoice,
+    NeXusDefinition,
+    NeXusField,
+    NeXusGroup,
+    NeXusLink,
+)
+{% if nx_category == "application" or nx_name == "NXentry" %}
+from pynxtools.nomad.metainfo._category import ExperimentCategory
+{% endif %}
+{% if base_import %}
+from {{ base_import }} import {{ base_class }}
+{% endif %}
+{% for mod, cls in concept_imports %}
+from {{ mod }} import {{ cls }}
+{% endfor %}
+
+if TYPE_CHECKING:
+    from nomad.datamodel import EntryArchive
+    from structlog.stdlib import BoundLogger
+
+__all__ = ["{{ class_name }}"]
+
+
+class {{ class_name }}({{ base_class }}{% if base_is_generated %}{% for mod, cls in nomad_extra_bases %}, {% if mod == "nomad.datamodel.metainfo.basesections" %}basesections.{{ cls }}{% else %}{{ cls }}{% endif %}{% endfor %}{% endif %}):
+    """
+    {{ docstring | indent(4) }}
+    """
+
+    m_def = Section(
+        links=["{{ class_doc_url }}"],
+        {% if nx_category == "application" or nx_name == "NXentry" %}
+        categories=[ExperimentCategory],
+        {% endif %}
+        {% if nx_name in ("NXentry", "NXroot") %}
+        a_schema=SchemaAnnotation(label="{{ class_name }}", enabled=False),
+        {% endif %}
+        a_nexus_definition=NeXusDefinition(
+            nx_class="{{ nx_name }}",
+            category="{{ nx_category }}",
+            {% if ignore_extra_groups %}
+            ignore_extra_groups=True,
+            {% endif %}
+            {% if ignore_extra_fields %}
+            ignore_extra_fields=True,
+            {% endif %}
+            {% if ignore_extra_attributes %}
+            ignore_extra_attributes=True,
+            {% endif %}
+            {% if nx_symbols %}
+            symbols={{ nx_symbols }},
+            {% endif %}
+            {% if nx_deprecated %}
+            deprecated="{{ nx_deprecated }}",
+            {% endif %}
+        ),
+    )
+
+    {% for sub_sec in subsections %}
+    {{ sub_sec.python_name }} = SubSection(
+        section_def="{{ sub_sec.section_fqn }}",
+        repeats={{ sub_sec.repeats }},
+        {% if sub_sec.variable %}
+        variable=True,
+        {% endif %}
+        {% if sub_sec.description %}
+        description=(
+            {{ sub_sec.description }}
+        ),
+        {% endif %}
+        {% if not sub_sec.is_named_concept %}
+        a_nexus_group=NeXusGroup(
+            nx_class="{{ sub_sec.node.nx_class }}",
+            name={{ sub_sec.nx_name_literal }},
+            name_type="{{ sub_sec.node.name_type or 'specified' }}",
+            optionality="{{ sub_sec.node.optionality }}",
+            {% if sub_sec.node.occurrence_limits[0] is not none %}
+            min_occurs={{ sub_sec.node.occurrence_limits[0] }},
+            {% endif %}
+            {% if sub_sec.node.occurrence_limits[1] is not none %}
+            max_occurs={{ sub_sec.node.occurrence_limits[1] }},
+            {% endif %}
+            {% if sub_sec.node.deprecated %}
+            deprecated="{{ sub_sec.node.deprecated }}",
+            {% endif %}
+        ),
+        {% endif %}
+    )
+    {% endfor %}
+
+    {% for qty in quantities %}
+    {{ qty.python_name }} = Quantity(
+        type={{ qty.python_type }},
+        links=["{{ qty.node.get_link() }}"],
+        {% if qty.node.name_type in ("any", "partial") %}
+        variable=True,
+        {% endif %}
+        {% if qty.dimensionality %}
+        dimensionality="{{ qty.dimensionality }}",
+        {% endif %}
+        {% if qty.default_unit %}
+        unit="{{ qty.default_unit }}",
+        {% endif %}
+        {% if qty.flexible_unit %}
+        flexible_unit=True,
+        {% endif %}
+        {% if qty.shape %}
+        shape={{ qty.shape }},
+        {% endif %}
+        {% if qty.description %}
+        description=(
+            {{ qty.description }}
+        ),
+        {% endif %}
+        {% if qty.node.nx_type == "field" %}
+        a_nexus_field=NeXusField(
+            name="{{ qty.node.name }}",
+            type="{{ qty.node.dtype }}",
+            name_type="{{ qty.node.name_type or 'specified' }}",
+            optionality="{{ qty.node.optionality }}",
+            {% if qty.unit %}
+            units="{{ qty.unit }}",
+            {% endif %}
+            {% if qty.scalar_items %}
+            enumeration={{ qty.scalar_items }},
+            {% endif %}
+            {% if qty.node.open_enum %}
+            open_enum=True,
+            {% endif %}
+            {% if qty.interpretation %}
+            interpretation="{{ qty.interpretation }}",
+            {% endif %}
+            {% if qty.long_name %}
+            long_name="{{ qty.long_name }}",
+            {% endif %}
+            {% if qty.node.deprecated %}
+            deprecated="{{ qty.node.deprecated }}",
+            {% endif %}
+        ),
+        {% else %}
+        a_nexus_attribute=NeXusAttribute(
+            name="{{ qty.node.name }}",
+            type="{{ qty.node.dtype }}",
+            name_type="{{ qty.node.name_type or 'specified' }}",
+            optionality="{{ qty.node.optionality }}",
+            {% if qty.parent_field %}
+            parent_field="{{ qty.parent_field }}",
+            {% endif %}
+            {% if qty.scalar_items %}
+            enumeration={{ qty.scalar_items }},
+            {% endif %}
+            {% if qty.node.open_enum %}
+            open_enum=True,
+            {% endif %}
+            {% if qty.node.deprecated %}
+            deprecated="{{ qty.node.deprecated }}",
+            {% endif %}
+        ),
+        {% endif %}
+        {% if qty.eln_component %}
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.{{ qty.eln_component }},
+            {% if qty.eln_default is not none %}
+            default={{ qty.eln_default | tojson }},
+            {% endif %}
+        ),
+        {% if qty.eln_component == "NumberEditQuantity" and qty.default_unit %}
+        a_display={'unit': '{{ qty.default_unit }}'},
+        {% endif %}
+        {% endif %}
+    )
+    {% endfor %}
+
+    {% for lnk in links %}
+    {{ lnk.python_name }} = Quantity(
+        type={{ lnk.target_quantity.python_type if lnk.target_quantity else "str" }},
+        links=["{{ lnk.node.get_link() }}"],
+        {% if lnk.target_quantity and lnk.target_quantity.dimensionality %}
+        dimensionality="{{ lnk.target_quantity.dimensionality }}",
+        {% endif %}
+        {% if lnk.target_quantity and lnk.target_quantity.default_unit %}
+        unit="{{ lnk.target_quantity.default_unit }}",
+        {% endif %}
+        {% if lnk.target_quantity and lnk.target_quantity.flexible_unit %}
+        flexible_unit=True,
+        {% endif %}
+        {% if lnk.target_quantity and lnk.target_quantity.shape %}
+        shape={{ lnk.target_quantity.shape }},
+        {% endif %}
+        {% if lnk.description %}
+        description=(
+            {{ lnk.description }}
+        ),
+        {% endif %}
+        a_nexus_link=NeXusLink(
+            name="{{ lnk.node.name }}",
+            target="{{ lnk.node.target }}",
+            optionality="{{ lnk.node.optionality }}",
+            {% if lnk.node.deprecated %}
+            deprecated="{{ lnk.node.deprecated }}",
+            {% endif %}
+        ),
+    )
+    {% endfor %}
+
+    {% for ch in choices %}
+    {{ ch.python_name }} = SubSection(
+        section_def="{{ ch.section_fqn }}",
+        {% if ch.description %}
+        description=(
+            {{ ch.description }}
+        ),
+        {% endif %}
+        a_nexus_choice=NeXusChoice(
+            nx_class="{{ ch.node.nx_class }}",
+            group_name="{{ ch.group_name }}",
+            optionality="{{ ch.node.optionality }}",
+            {% if ch.node.deprecated %}
+            deprecated="{{ ch.node.deprecated }}",
+            {% endif %}
+        ),
+    )
+    {% endfor %}
+
+    def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
+        super().normalize(archive, logger)
+
+{% if named_concepts %}
+
+# =============================================================================
+# Named NeXus concept groups — only when the group element defines own
+# quantities that differ from the generic class (changed optionality, extra
+# fields, different type/units/enumeration). These inherit from the specific
+# generic class so all # base quantities are available.
+# Resolved lazily by NOMAD at __init_metainfo__() time via string FQNs.
+# =============================================================================
+{% for concept in named_concepts %}
+
+
+class {{ concept.class_name }}({{ concept.base_class_name }}):
+    {% if concept.docstring %}
+    """
+    {{ concept.docstring | indent(4) }}
+    """
+    {% endif %}
+    m_def = Section(
+        links=["{{ concept.node.get_link() }}"],
+        {% if concept.variable %}
+        variable=True,
+        {% endif %}
+        a_nexus_group=NeXusGroup(
+            nx_class="{{ concept.node.nx_class }}",
+            name={{ concept.nx_name_literal }},
+            name_type="{{ concept.node.name_type or 'specified' }}",
+            optionality="{{ concept.node.optionality }}",
+            {% if concept.node.occurrence_limits[0] is not none %}
+            min_occurs={{ concept.node.occurrence_limits[0] }},
+            {% endif %}
+            {% if concept.node.occurrence_limits[1] is not none %}
+            max_occurs={{ concept.node.occurrence_limits[1] }},
+            {% endif %}
+            {% if concept.node.deprecated %}
+            deprecated="{{ concept.node.deprecated }}",
+            {% endif %}
+        ),
+    )
+
+    {% for ss in concept.subsections %}
+    {{ ss.python_name }} = SubSection(
+        section_def="{{ ss.section_fqn }}",
+        repeats={{ ss.repeats }},
+        {% if ss.variable %}
+        variable=True,
+        {% endif %}
+        a_nexus_group=NeXusGroup(
+            nx_class="{{ ss.node.nx_class }}",
+            name={{ ss.nx_name_literal }},
+            name_type="{{ ss.node.name_type or 'specified' }}",
+            optionality="{{ ss.node.optionality }}",
+            {% if ss.node.occurrence_limits[0] is not none %}
+            min_occurs={{ ss.node.occurrence_limits[0] }},
+            {% endif %}
+            {% if ss.node.occurrence_limits[1] is not none %}
+            max_occurs={{ ss.node.occurrence_limits[1] }},
+            {% endif %}
+        ),
+    )
+    {% endfor %}
+
+    {% for qty in concept.quantities %}
+    {{ qty.python_name }} = Quantity(
+        type={{ qty.python_type }},
+        links=["{{ qty.node.get_link() }}"],
+        {% if qty.node.name_type in ("any", "partial") %}
+        variable=True,
+        {% endif %}
+        {% if qty.dimensionality %}
+        dimensionality="{{ qty.dimensionality }}",
+        {% endif %}
+        {% if qty.default_unit %}
+        unit="{{ qty.default_unit }}",
+        {% endif %}
+        {% if qty.flexible_unit %}
+        flexible_unit=True,
+        {% endif %}
+        {% if qty.shape %}
+        shape={{ qty.shape }},
+        {% endif %}
+        {% if qty.description %}
+        description=(
+            {{ qty.description }}
+        ),
+        {% endif %}
+        {% if qty.node.nx_type == "field" %}
+        a_nexus_field=NeXusField(
+            name="{{ qty.node.name }}",
+            type="{{ qty.node.dtype }}",
+            name_type="{{ qty.node.name_type or 'specified' }}",
+            optionality="{{ qty.node.optionality }}",
+            {% if qty.unit %}
+            units="{{ qty.unit }}",
+            {% endif %}
+            {% if qty.scalar_items %}
+            enumeration={{ qty.scalar_items }},
+            {% endif %}
+            {% if qty.node.open_enum %}
+            open_enum=True,
+            {% endif %}
+            {% if qty.interpretation %}
+            interpretation="{{ qty.interpretation }}",
+            {% endif %}
+            {% if qty.long_name %}
+            long_name="{{ qty.long_name }}",
+            {% endif %}
+            {% if qty.node.deprecated %}
+            deprecated="{{ qty.node.deprecated }}",
+            {% endif %}
+        ),
+        {% else %}
+        a_nexus_attribute=NeXusAttribute(
+            name="{{ qty.node.name }}",
+            type="{{ qty.node.dtype }}",
+            name_type="{{ qty.node.name_type or 'specified' }}",
+            optionality="{{ qty.node.optionality }}",
+            {% if qty.parent_field %}
+            parent_field="{{ qty.parent_field }}",
+            {% endif %}
+            {% if qty.scalar_items %}
+            enumeration={{ qty.scalar_items }},
+            {% endif %}
+            {% if qty.node.open_enum %}
+            open_enum=True,
+            {% endif %}
+            {% if qty.node.deprecated %}
+            deprecated="{{ qty.node.deprecated }}",
+            {% endif %}
+        ),
+        {% endif %}
+        {% if qty.eln_component %}
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.{{ qty.eln_component }},
+            {% if qty.eln_default is not none %}
+            default={{ qty.eln_default | tojson }},
+            {% endif %}
+        ),
+        {% if qty.eln_component == "NumberEditQuantity" and qty.default_unit %}
+        a_display={'unit': '{{ qty.default_unit }}'},
+        {% endif %}
+        {% endif %}
+    )
+    {% endfor %}
+
+    {% for lnk in concept.links %}
+    {{ lnk.python_name }} = Quantity(
+        type={{ lnk.target_quantity.python_type if lnk.target_quantity else "str" }},
+        links=["{{ lnk.node.get_link() }}"],
+        {% if lnk.target_quantity and lnk.target_quantity.dimensionality %}
+        dimensionality="{{ lnk.target_quantity.dimensionality }}",
+        {% endif %}
+        {% if lnk.target_quantity and lnk.target_quantity.default_unit %}
+        unit="{{ lnk.target_quantity.default_unit }}",
+        {% endif %}
+        {% if lnk.target_quantity and lnk.target_quantity.shape %}
+        shape={{ lnk.target_quantity.shape }},
+        {% endif %}
+        {% if lnk.target_quantity and lnk.target_quantity.flexible_unit %}
+        flexible_unit=True,
+        {% endif %}
+        {% if lnk.description %}
+        description=(
+            {{ lnk.description }}
+        ),
+        {% endif %}
+        a_nexus_link=NeXusLink(
+            name="{{ lnk.node.name }}",
+            target="{{ lnk.node.target }}",
+            optionality="{{ lnk.node.optionality }}",
+            {% if lnk.node.deprecated %}
+            deprecated="{{ lnk.node.deprecated }}",
+            {% endif %}
+        ),
+    )
+    {% endfor %}
+
+    {% for ch in choices %}
+    {{ ch.python_name }} = SubSection(
+        section_def="{{ ch.section_fqn }}",
+        {% if ch.description %}
+        description=(
+            {{ ch.description }}
+        ),
+        {% endif %}
+        a_nexus_choice=NeXusChoice(
+            nx_class="{{ ch.node.nx_class }}",
+            group_name="{{ ch.group_name }}",
+            optionality="{{ ch.node.optionality }}",
+            {% if ch.node.deprecated %}
+            deprecated="{{ ch.node.deprecated }}",
+            {% endif %}
+        ),
+    )
+    {% endfor %}
+
+    def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
+        super().normalize(archive, logger)
+
+{% endfor %}
+{% endif %}

@@ -262,6 +262,7 @@ class NexusNode(NodeMixin):
     is_a: list["NexusNode"]
     parent_of: list["NexusNode"]
     nxdl_base: str
+    deprecated: str | None = None
     occurrence_limits: tuple[
         # TODO: Use Annotated[int, Field(strict=True, ge=0)] for py>3.8
         int | None,
@@ -272,6 +273,11 @@ class NexusNode(NodeMixin):
         "recommended": ("recommended", "required"),
         "optional": ("optional", "recommended", "required"),
     }
+
+    def _set_deprecated(self) -> None:
+        """Read the ``deprecated`` attribute from the first element in the inheritance chain."""
+        if self.inheritance:
+            self.deprecated = self.inheritance[0].attrib.get("deprecated")
 
     def _set_optionality(self):
         """
@@ -324,6 +330,7 @@ class NexusNode(NodeMixin):
         self.parent = parent
         self.is_a = []
         self.parent_of = []
+        self._set_deprecated()
 
     def get_path(self) -> str:
         """
@@ -918,7 +925,6 @@ class NexusNode(NodeMixin):
                 nxdl_base=xml_elem.base,
             )
         else:
-            # TODO: Tags: link
             # We don't know the tag, skip processing children of it
             # TODO: Add logging or raise an error as this is not a known nxdl tag
             return None
@@ -957,6 +963,38 @@ class NexusNode(NodeMixin):
     def get_child_by_name(self, name: str) -> Optional["NexusNode"]:
         """Get a child node by its name."""
         return next((c for c in self.children if c.name == name), None)
+
+    def definition_file_at(self, idx: int) -> str | None:
+        """Return the NXDL file path (``elem.base``) for ``inheritance[idx]``, or None."""
+        if idx < len(self.inheritance):
+            return self.inheritance[idx].base
+        return None
+
+    def own_children(self) -> list["NexusNode"]:
+        """Return children defined in the same NXDL file as this node (``self.nxdl_base``).
+
+        After ``generate_tree_from`` + ``populate_tree_from_parents`` all children
+        from the full inheritance chain are present.  ``own_children()`` filters to
+        those whose ``nxdl_base`` matches this node's own definition file — i.e. the
+        direct contributions of the current application or base class, excluding what
+        was inherited from ancestors.
+        """
+        return self.children_at_definition(self.nxdl_base)
+
+    def children_at_definition(self, definition_base: str) -> list["NexusNode"]:
+        """Return children whose ``nxdl_base`` matches ``definition_base``.
+
+        ``generate_tree_from`` + ``populate_tree_from_parents`` populate all
+        children across the full inheritance chain.  Each child carries
+        ``nxdl_base`` — the path of the NXDL file where it is *defined* at
+        this level.  This method filters to children defined at one specific
+        application/base-class level, which is needed to distinguish own
+        contributions from inherited ones without re-parsing the NXDL.
+
+        Typical use: ``child.children_at_definition(root.inheritance[1].base)``
+        returns the children the parent application defines for this group.
+        """
+        return [c for c in self.children if c.nxdl_base == definition_base]
 
     def __repr__(self) -> str:
         if self.nx_type == "attribute":
@@ -1023,9 +1061,21 @@ class NexusDefinition(NexusNode):
                 self.symbols[sym_name] = doc
             break
 
+    def get_link(self) -> str:
+        """Return the NeXus manual URL for this class definition."""
+        definitions_url = get_definitions_url()
+        doc_base = NX_DOC_BASES.get(
+            definitions_url, "https://manual.nexusformat.org/classes"
+        )
+        nx_file = self.nxdl_base.split("/definitions/")[-1].split(".nxdl.xml")[0]
+        anchor = self.name.lower()
+        return f"{doc_base}/{nx_file}.html#{anchor}"
+
     def __init__(self, **data) -> None:
+        self.symbols = {}
         super().__init__(nx_type=self.nx_type, **data)
         self._set_definition_attrs()
+        self._set_deprecated()
 
 
 class NexusChoice(NexusNode):
@@ -1215,11 +1265,36 @@ class NexusGroup(NexusNode):
             max_occurs,
         )
 
+    def group_naming_at(self, idx: int) -> tuple[str, str, str] | None:
+        """Return ``(name, name_type, nx_class)`` as declared at ``inheritance[idx]``.
+
+        Used by the code generator to compute concept class names for the group at a
+        specific inheritance level without constructing a full NexusGroup node.  This
+        is necessary because the group may have a different name at different levels
+        (e.g. a parent application's variadic ``TASKCONFIG`` vs a derived application's
+        specific ``cameca_to_nexus`` — same type, different names).
+
+        Returns None if ``idx`` is out of range.
+        """
+        if idx >= len(self.inheritance):
+            return None
+        xml_elem = self.inheritance[idx]
+        nx_class = xml_elem.attrib.get("type", self.nx_class)
+        name = xml_elem.attrib.get("name")
+        if name is None:
+            # No @name → nameType is implicitly "any"
+            name = strip_nx_prefix(nx_class)
+            name_type = "any"
+        else:
+            name_type = xml_elem.attrib.get("nameType", "specified")
+        return name, name_type, nx_class
+
     def __init__(self, nx_class: str, **data) -> None:
         super().__init__(**data)
         self.nx_class = nx_class
         self._set_occurrence_limits()
         self._set_optionality()
+        self._set_deprecated()
         self._check_sibling_namefit()
 
 
@@ -1334,6 +1409,7 @@ class _NexusEntityBase(NexusNode):
                             raise Exception(
                                 f"Error parsing enumeration item in the provided NXDL: {value}"
                             )
+
                     else:
                         elem_enum_items.append(value)
 
@@ -1503,6 +1579,7 @@ class _NexusEntityBase(NexusNode):
         self._set_items_and_enum_type()
         self._set_optionality()
         self._set_shape()
+        self._set_deprecated()
 
 
 class NexusAttribute(_NexusEntityBase):

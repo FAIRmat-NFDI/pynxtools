@@ -3,8 +3,10 @@ ATTRIBUTENAME
 AXISNAME
 Aeschlimann
 BASECLASS
+BASESECTION
 BASESECTIONS
 Brockhauser
+Cameca
 Carola
 DECTRIS
 Dataconverter
@@ -50,9 +52,11 @@ PATHCONV
 PDBX
 PYNX
 PYNXTOOLS
+Paraprobe
 Pielsticker
 Pincelli
 Plottable
+Prescan
 Prieto
 Pynxtools
 Raman
@@ -62,6 +66,7 @@ Sandor
 Scheidgen
 Shabih
 Sherjeel
+TASKCONFIG
 Tommaso
 UNALLOWED
 Uniquified
@@ -97,6 +102,8 @@ basesections
 blosc
 bulletpoint
 callspec
+cameca
+cands
 caplog
 clevel
 cnxvalidate
@@ -106,6 +113,7 @@ dataconverter
 datamodel
 ddof
 defaultdicts
+defn
 docstrings
 downstreams
 dtype
@@ -125,6 +133,7 @@ flatdict
 flatfield
 fluence
 fourd
+fqns
 fxcef
 gcpl
 genfromtxt
@@ -215,10 +224,12 @@ orcid
 otherfile
 otypes
 oxidising
+parseable
 pathtovalidate
 plottable
 posint
 posteriori
+prescan
 printoptions
 prng
 punx
@@ -232,6 +243,7 @@ renamable
 reqs
 requiredness
 rtol
+saxs
 sequentialization
 setpoint
 sherjeelshabih
@@ -260,6 +272,7 @@ vamas
 vectorizable
 visititems
 vlen
+waxs
 xarrays
 xaxis
 xdist

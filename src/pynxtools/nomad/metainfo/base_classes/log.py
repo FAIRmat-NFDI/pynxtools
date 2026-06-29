@@ -1,0 +1,398 @@
+#
+# Copyright The NOMAD Authors.
+#
+# This file is part of NOMAD. See https://nomad-lab.eu for further info.
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+#
+#
+# This file is AUTO-GENERATED from the NeXus definitions (NXDL).
+# Run `pynx nomad generate-metainfo --nxdl NXlog` to regenerate.
+# Additive-only: the generator will never remove or rename existing class members.
+# Add normalize() logic directly; it will be preserved on regeneration.
+from __future__ import annotations
+
+from typing import TYPE_CHECKING
+
+import numpy as np
+from nomad.datamodel.metainfo.annotations import (
+    ELNAnnotation,
+    ELNComponentEnum,
+    SchemaAnnotation,
+)
+from nomad.metainfo import MEnum, Quantity, Section, SubSection
+from nomad.metainfo.data_type import Bytes, Datetime
+
+from pynxtools.nomad.annotations import (
+    NeXusAttribute,
+    NeXusChoice,
+    NeXusDefinition,
+    NeXusField,
+    NeXusGroup,
+    NeXusLink,
+)
+from pynxtools.nomad.metainfo.base_classes.object import Object
+
+if TYPE_CHECKING:
+    from nomad.datamodel import EntryArchive
+    from structlog.stdlib import BoundLogger
+
+__all__ = ["Log"]
+
+
+class Log(Object):
+    """
+    Information recorded as a function of time.
+
+    Description of information that is recorded against time. There are two
+    common use cases for this:
+
+    - When logging data such as temperature during a run - When data is taken
+    in streaming mode data acquisition, i.e. just timestamp, value pairs are
+    stored and correlated later in data reduction with other data,
+
+    In both cases, NXlog contains the logged or streamed values and the times
+    at which they were measured as elapsed time since a starting time recorded
+    in ISO8601 format. The time units are specified in the units attribute. An
+    optional scaling attribute can be used to accommodate non standard clocks.
+
+    This method of storing logged data helps to distinguish instances in which
+    a variable contains signal or axis coordinate values of plottable data, in
+    which case it is stored in an :ref:`NXdata` group, and instances in which
+    it is logged during the run, when it should be stored in an :ref:`NXlog`
+    group.
+
+    In order to make random access to timestamped data faster there is an
+    optional array pair of ``cue_timestamp_zero`` and ``cue_index``. The
+    ``cue_timestamp_zero`` will contain coarser timestamps than in the time
+    array, say every five minutes. The ``cue_index`` will then contain the
+    index into the time,value pair of arrays for that coarser
+    ``cue_timestamp_zero``.
+    """
+
+    m_def = Section(
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXlog.html#nxlog"
+        ],
+        a_nexus_definition=NeXusDefinition(
+            nx_class="NXlog",
+            category="base",
+        ),
+    )
+
+    time = Quantity(
+        type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXlog.html#nxlog-time-field"
+        ],
+        dimensionality="[time]",
+        unit="second",
+        description=(
+            'Time of logged entry. The times are relative to the "start" '
+            'attribute and in the units specified in the "units" attribute. '
+            "Please note that absolute timestamps under unix are relative to "
+            "``1970-01-01T00:00:00.0Z``. The scaling_factor, when present, has "
+            "to be applied to the time values in order to arrive at the units "
+            "specified in the units attribute. The scaling_factor allows for "
+            "arbitrary time units such as ticks of some hardware clock."
+        ),
+        a_nexus_field=NeXusField(
+            name="time",
+            type="NX_NUMBER",
+            name_type="specified",
+            optionality="optional",
+            units="NX_TIME",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "second"},
+    )
+    time__start = Quantity(
+        type=Datetime,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXlog.html#nxlog-time-start-attribute"
+        ],
+        a_nexus_attribute=NeXusAttribute(
+            name="start",
+            type="NX_DATE_TIME",
+            name_type="specified",
+            optionality="optional",
+            parent_field="time",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.DateTimeEditQuantity,
+        ),
+    )
+    time__scaling_factor = Quantity(
+        type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXlog.html#nxlog-time-scaling-factor-attribute"
+        ],
+        a_nexus_attribute=NeXusAttribute(
+            name="scaling_factor",
+            type="NX_NUMBER",
+            name_type="specified",
+            optionality="optional",
+            parent_field="time",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+    )
+    value = Quantity(
+        type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXlog.html#nxlog-value-field"
+        ],
+        flexible_unit=True,
+        description=(
+            "Array of logged value, such as temperature. If this is a single "
+            "value the dimensionality is nEntries. However, NXlog can also be "
+            "used to store multi dimensional time stamped data such as images. "
+            "In this example the dimensionality of values would be "
+            "value[nEntries,xdim,ydim]."
+        ),
+        a_nexus_field=NeXusField(
+            name="value",
+            type="NX_NUMBER",
+            name_type="specified",
+            optionality="optional",
+            units="NX_ANY",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+    )
+    raw_value = Quantity(
+        type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXlog.html#nxlog-raw-value-field"
+        ],
+        flexible_unit=True,
+        description=("Array of raw information, such as thermocouple voltage"),
+        a_nexus_field=NeXusField(
+            name="raw_value",
+            type="NX_NUMBER",
+            name_type="specified",
+            optionality="optional",
+            units="NX_ANY",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+    )
+    description = Quantity(
+        type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXlog.html#nxlog-description-field"
+        ],
+        description=("Description of logged value"),
+        a_nexus_field=NeXusField(
+            name="description",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="optional",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
+    )
+    average_value = Quantity(
+        type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXlog.html#nxlog-average-value-field"
+        ],
+        flexible_unit=True,
+        a_nexus_field=NeXusField(
+            name="average_value",
+            type="NX_FLOAT",
+            name_type="specified",
+            optionality="optional",
+            units="NX_ANY",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+    )
+    average_value_error = Quantity(
+        type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXlog.html#nxlog-average-value-error-field"
+        ],
+        flexible_unit=True,
+        description=(
+            "estimated uncertainty (often used: standard deviation) of average_value"
+        ),
+        a_nexus_field=NeXusField(
+            name="average_value_error",
+            type="NX_FLOAT",
+            name_type="specified",
+            optionality="optional",
+            units="NX_ANY",
+            deprecated="see: https://github.com/nexusformat/definitions/issues/639",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+    )
+    average_value_errors = Quantity(
+        type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXlog.html#nxlog-average-value-errors-field"
+        ],
+        flexible_unit=True,
+        description=(
+            "estimated uncertainty (often used: standard deviation) of average_value"
+        ),
+        a_nexus_field=NeXusField(
+            name="average_value_errors",
+            type="NX_FLOAT",
+            name_type="specified",
+            optionality="optional",
+            units="NX_ANY",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+    )
+    minimum_value = Quantity(
+        type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXlog.html#nxlog-minimum-value-field"
+        ],
+        flexible_unit=True,
+        a_nexus_field=NeXusField(
+            name="minimum_value",
+            type="NX_FLOAT",
+            name_type="specified",
+            optionality="optional",
+            units="NX_ANY",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+    )
+    maximum_value = Quantity(
+        type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXlog.html#nxlog-maximum-value-field"
+        ],
+        flexible_unit=True,
+        a_nexus_field=NeXusField(
+            name="maximum_value",
+            type="NX_FLOAT",
+            name_type="specified",
+            optionality="optional",
+            units="NX_ANY",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+    )
+    duration = Quantity(
+        type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXlog.html#nxlog-duration-field"
+        ],
+        flexible_unit=True,
+        description=("Total time log was taken"),
+        a_nexus_field=NeXusField(
+            name="duration",
+            type="NX_FLOAT",
+            name_type="specified",
+            optionality="optional",
+            units="NX_ANY",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+    )
+    cue_timestamp_zero = Quantity(
+        type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXlog.html#nxlog-cue-timestamp-zero-field"
+        ],
+        dimensionality="[time]",
+        unit="second",
+        description=(
+            "Timestamps matching the corresponding cue_index into the time, value pair."
+        ),
+        a_nexus_field=NeXusField(
+            name="cue_timestamp_zero",
+            type="NX_NUMBER",
+            name_type="specified",
+            optionality="optional",
+            units="NX_TIME",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "second"},
+    )
+    cue_timestamp_zero__start = Quantity(
+        type=Datetime,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXlog.html#nxlog-cue-timestamp-zero-start-attribute"
+        ],
+        description=('If missing start is assumed to be the same as for "time".'),
+        a_nexus_attribute=NeXusAttribute(
+            name="start",
+            type="NX_DATE_TIME",
+            name_type="specified",
+            optionality="optional",
+            parent_field="cue_timestamp_zero",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.DateTimeEditQuantity,
+        ),
+    )
+    cue_timestamp_zero__scaling_factor = Quantity(
+        type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXlog.html#nxlog-cue-timestamp-zero-scaling-factor-attribute"
+        ],
+        description=('If missing start is assumed to be the same as for "time".'),
+        a_nexus_attribute=NeXusAttribute(
+            name="scaling_factor",
+            type="NX_NUMBER",
+            name_type="specified",
+            optionality="optional",
+            parent_field="cue_timestamp_zero",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+    )
+    cue_index = Quantity(
+        type=np.int64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXlog.html#nxlog-cue-index-field"
+        ],
+        description=(
+            "Index into the time, value pair matching the corresponding "
+            "cue_timestamp_zero."
+        ),
+        a_nexus_field=NeXusField(
+            name="cue_index",
+            type="NX_INT",
+            name_type="specified",
+            optionality="optional",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+    )
+
+    def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
+        super().normalize(archive, logger)
