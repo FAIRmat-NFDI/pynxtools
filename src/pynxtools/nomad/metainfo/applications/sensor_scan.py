@@ -312,7 +312,7 @@ class SensorScanProcess(Process):
         ),
     )
 
-    program_quantity = Quantity(
+    program = Quantity(
         type=str,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXsensor_scan.html#nxsensor_scan-entry-process-program-field"
@@ -331,7 +331,7 @@ class SensorScanProcess(Process):
             component=ELNComponentEnum.StringEditQuantity,
         ),
     )
-    program_quantity__version = Quantity(
+    program__version = Quantity(
         type=str,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXsensor_scan.html#nxsensor_scan-entry-process-program-version-attribute"
@@ -354,7 +354,7 @@ class SensorScanProcess(Process):
             component=ELNComponentEnum.StringEditQuantity,
         ),
     )
-    program_quantity__program_url = Quantity(
+    program__program_url = Quantity(
         type=str,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXsensor_scan.html#nxsensor_scan-entry-process-program-program-url-attribute"

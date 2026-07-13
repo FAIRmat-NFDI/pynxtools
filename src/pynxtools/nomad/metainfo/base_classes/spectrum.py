@@ -149,6 +149,17 @@ class SpectrumProcess(Process):
         section_def="pynxtools.nomad.metainfo.base_classes.spectrum.SpectrumProcessInput",
         repeats=False,
     )
+    program_group = SubSection(
+        section_def="pynxtools.nomad.metainfo.base_classes.program.Program",
+        repeats=True,
+        variable=True,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXprogram",
+            name=None,
+            name_type="any",
+            optionality="optional",
+        ),
+    )
 
     mode = Quantity(
         type=str,

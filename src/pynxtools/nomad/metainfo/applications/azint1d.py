@@ -481,7 +481,7 @@ class Azint1dReduction(Process):
         ),
     )
 
-    program_quantity = Quantity(
+    program = Quantity(
         type=str,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXazint1d.html#nxazint1d-entry-reduction-program-field"

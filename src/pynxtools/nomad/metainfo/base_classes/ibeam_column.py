@@ -273,6 +273,21 @@ class IbeamColumnIonSource(Source):
         ),
     )
 
+    probe_group = SubSection(
+        section_def="pynxtools.nomad.metainfo.base_classes.atom.Atom",
+        repeats=False,
+        description=(
+            "Which elements, ions, or molecular ions form the beam. Examples are "
+            "gallium, helium, neon, argon, krypton, or xenon, O2+."
+        ),
+        a_nexus_group=NeXusGroup(
+            nx_class="NXatom",
+            name="probe",
+            name_type="specified",
+            optionality="optional",
+        ),
+    )
+
     name = Quantity(
         type=str,
         links=[

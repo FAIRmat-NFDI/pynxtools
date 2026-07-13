@@ -210,6 +210,18 @@ class ImageProcess(Process):
         section_def="pynxtools.nomad.metainfo.base_classes.image.ImageProcessInput",
         repeats=False,
     )
+    program_group = SubSection(
+        section_def="pynxtools.nomad.metainfo.base_classes.program.Program",
+        repeats=True,
+        variable=True,
+        description=("Program used for processing."),
+        a_nexus_group=NeXusGroup(
+            nx_class="NXprogram",
+            name=None,
+            name_type="any",
+            optionality="optional",
+        ),
+    )
 
     detector_identifier = Quantity(
         type=str,

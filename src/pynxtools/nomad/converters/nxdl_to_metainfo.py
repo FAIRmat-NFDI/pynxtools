@@ -864,6 +864,17 @@ def _build_named_concept(
     Nested concepts are named from the un-doubled ``EmMeasurement`` (giving
     ``EmMeasurementInstrument``, not ``EmEmMeasurementInstrument``), since
     they have no analogous collision with their own base class.
+
+    **Conflict resolution (symmetric inheritance rule):**
+    The concept at a higher level in the NeXus inheritance chain keeps the
+    unqualified Python name; the lower-level (more specific) concept is renamed.
+
+    - Ancestor GROUP vs. own FIELD/ATTRIBUTE: the field is renamed to
+      ``<name>_quantity`` (``field_conflicts_with_group``).
+    - Ancestor FIELD/ATTRIBUTE vs. own GROUP (sub-group of this concept): the
+      group's SubSection is renamed to ``<name>_group``, leaving the ancestor
+      field unchanged. The rename is local to this named concept — it does not
+      propagate to the ancestor class's generated Python file.
     """
     _seen_concept = seen_concept if seen_concept is not None else set()
     _naming_base = naming_base if naming_base is not None else concept_class_name
@@ -887,10 +898,12 @@ def _build_named_concept(
         base_module = _class_module_name(node.nx_class)
     base_lookup = _base_class_quantities(node.nx_class)
 
-    # Collect SubSection names from the full ancestor chain of the base class
-    # so we can detect Quantity-vs-SubSection conflicts in own quantities.
-    _, concept_ancestor_sub_names = _all_ancestor_member_names(node.nx_class)
-    concept_field_suffix = _qty_field_suffix_for.get(node.nx_class, frozenset())
+    # Collect member names from the full ancestor chain of the base class.
+    # qty_names: detect group-vs-field conflicts (group gets _group suffix).
+    # sub_names: detect field-vs-group conflicts (field gets _quantity suffix).
+    concept_ancestor_qty_names, concept_ancestor_sub_names = _all_ancestor_member_names(
+        node.nx_class
+    )
 
     # Own quantities: fields and attributes defined inside the group in NXDL
     # that genuinely differ from the generic class (new field, different
@@ -906,11 +919,9 @@ def _build_named_concept(
     for child in node_children:
         if child.nx_type == "link":
             python_name = nxdl_to_quantity_name(child.name)
-            # Apply conflict resolution: if the link name collides with an
-            # inherited SubSection or a known field-suffix conflict, rename.
-            if python_name in concept_field_suffix:
-                python_name = field_conflicts_with_group(python_name)
-            elif python_name in concept_ancestor_sub_names:
+            # Ancestor SubSection wins: if the link name collides with an
+            # inherited SubSection, rename with _quantity suffix.
+            if python_name in concept_ancestor_sub_names:
                 python_name = field_conflicts_with_group(python_name)
             if python_name not in seen:
                 seen.add(python_name)
@@ -944,11 +955,8 @@ def _build_named_concept(
             ):
                 qty.eln_component = None
                 qty.eln_default = None
-        # Apply same conflict resolution as top-level quantities: ancestor
-        # SubSection wins, field Quantity gets _field suffix.
-        if qty.python_name in concept_field_suffix:
-            qty.python_name = field_conflicts_with_group(qty.python_name)
-        elif qty.python_name in concept_ancestor_sub_names:
+        # Ancestor SubSection wins: field Quantity gets _quantity suffix.
+        if qty.python_name in concept_ancestor_sub_names:
             qty.python_name = field_conflicts_with_group(qty.python_name)
         if qty.python_name in seen:
             continue
@@ -995,10 +1003,6 @@ def _build_named_concept(
         if parent_concept_file is not None
         else frozenset()
     )
-    # Python names inherited from base class quantities — SubSections with the
-    # same name would cause MetainfoError (cannot inherit different property types).
-    base_qty_python_names = {nxdl_to_quantity_name(name) for name in base_lookup}
-
     own_subsections: list[SubSectionContext] = []
     extra_concepts: list[NamedConceptContext] = []
     seen_sub: set[str] = set()
@@ -1008,8 +1012,6 @@ def _build_named_concept(
         sub_python_name = _group_python_name(child)
         if sub_python_name in parent_concept_group_names:
             continue  # already declared in parent concept class
-        if sub_python_name in base_qty_python_names:
-            continue  # would shadow an inherited Quantity with a SubSection
         if sub_python_name in seen_sub:
             continue
         # If the python_name collides with a SubSection the generic class
@@ -1020,6 +1022,17 @@ def _build_named_concept(
         # `["x-ray"]`, warranting ArpesInstrumentSource(Source). Otherwise the
         # inherited SubSection already covers it and nothing is emitted here.
         is_collision = sub_python_name in base_group_python_names
+
+        # Symmetric inheritance rule: if the ancestor chain defines a field/
+        # attribute with this name, the group introduced at this level is the
+        # lower-level concept and gets a _group suffix, leaving the ancestor
+        # field's name unchanged.
+        effective_python_name = sub_python_name
+        if sub_python_name in concept_ancestor_qty_names:
+            effective_python_name = f"{sub_python_name}_group"
+
+        if effective_python_name in seen_sub:
+            continue
 
         # New, specifically-named sub-group: recursively check whether it adds
         # quantities/links/subsections of its own beyond its generic class —
@@ -1064,7 +1077,8 @@ def _build_named_concept(
                 child, section_fqn=_section_fqn(child.nx_class)
             )
 
-        seen_sub.add(sub_python_name)
+        sub_section.python_name = effective_python_name
+        seen_sub.add(effective_python_name)
         own_subsections.append(sub_section)
 
     return (
@@ -1196,88 +1210,6 @@ def _split_fqn(fqn: str) -> tuple[str, str]:
     return fqn[:last_dot], fqn[last_dot + 1 :]
 
 
-_qty_field_suffix_for: dict[str, frozenset[str]] = {}
-_conflicts_precomputed: bool = False
-
-
-def _ensure_conflicts_precomputed() -> None:
-    """Precompute which Quantity python_names in which NXDL classes need a
-    ``_field`` suffix to avoid NOMAD ``MetainfoError: Cannot inherit from
-    different property types``.
-
-    Rule: when a descendant class defines a GROUP named X and an ancestor
-    defines a FIELD named X, the ancestor's field is renamed to X_field.
-    Groups always win the unqualified name.
-
-    This scan runs once (lazily on the first ``build_context`` call) and
-    caches results in ``_qty_field_suffix_for``. It uses only
-    ``generate_tree_from`` (no ``build_context``) to avoid circularity.
-    """
-    global _conflicts_precomputed
-    if _conflicts_precomputed:
-        return
-    _conflicts_precomputed = True
-
-    all_classes = _discover_base_classes() + _discover_applications()
-
-    # Pass 1: collect own group python_names per class
-    class_group_names: dict[str, set[str]] = {}
-    for nx_class in all_classes:
-        group_names: set[str] = set()
-        try:
-            root = generate_tree_from(nx_class)
-            primary = root.nxdl_base
-            for c in root.children:
-                if c.nx_type != "group" or c.nxdl_base != primary:
-                    continue
-                nx_nt = c.name_type or "specified"
-                if nx_nt == "any":
-                    group_names.add(nxdl_to_subsection_name(c.name.lower()))
-                else:
-                    group_names.add(nxdl_to_subsection_name(c.name))
-        except FileNotFoundError:
-            pass
-        class_group_names[nx_class] = group_names
-
-    # Pass 2: for each class, walk ancestor chain to find conflicting fields
-    pending: dict[str, set[str]] = {}
-    for nx_class, group_names in class_group_names.items():
-        if not group_names:
-            continue
-        visited: set[str] = set()
-        current: str | None = _nx_extends(nx_class)
-        while current and current not in visited:
-            visited.add(current)
-            try:
-                root = generate_tree_from(current)
-                primary = root.nxdl_base
-                for c in root.children:
-                    if c.nx_type == "field" and c.nxdl_base == primary:
-                        py_name = nxdl_to_quantity_name(c.name)
-                        if py_name in group_names:
-                            pending.setdefault(current, set()).add(py_name)
-            except FileNotFoundError:
-                pass
-            parent = _nx_extends(current)
-            if parent == current or parent == "NXobject":
-                if "NXobject" not in visited:
-                    visited.add("NXobject")
-                    try:
-                        root = generate_tree_from("NXobject")
-                        primary = root.nxdl_base
-                        for c in root.children:
-                            if c.nx_type == "field" and c.nxdl_base == primary:
-                                py_name = nxdl_to_quantity_name(c.name)
-                                if py_name in group_names:
-                                    pending.setdefault("NXobject", set()).add(py_name)
-                    except FileNotFoundError:
-                        pass
-                break
-            current = parent
-
-    _qty_field_suffix_for.update({k: frozenset(v) for k, v in pending.items()})
-
-
 def _base_from_extends(
     nx_name: str, root_node: NXTreeDefinition
 ) -> tuple[str, str, bool, list[str]]:
@@ -1353,7 +1285,6 @@ def build_context(nx_name: str) -> dict:
     All NXDL attributes are read exclusively through NexusNode properties —
     no raw XML attribute access inside this function.
     """
-    _ensure_conflicts_precomputed()
     root_node: NXTreeDefinition = generate_tree_from(nx_name)
 
     nx_category = root_node.category
@@ -1442,9 +1373,9 @@ def build_context(nx_name: str) -> dict:
 
     # Collect all SubSection python_names from the full ancestor chain to detect
     # Quantity-vs-SubSection type conflicts. When a child Quantity has the same
-    # python_name as an ancestor SubSection, the Quantity is renamed to _field.
-    # The reverse direction (child SubSection vs ancestor Quantity) is handled by
-    # _ensure_conflicts_precomputed() which marks the ancestor Quantity for _field.
+    # python_name as an ancestor SubSection, the Quantity is renamed to _quantity
+    # (ancestor concept wins). The reverse (child SubSection vs ancestor Quantity)
+    # is handled locally in named concepts: the group gets a _group suffix there.
     parent_sub_names: frozenset[str] = frozenset()
     if base_is_generated:
         if _unwrapped_children is not None:
@@ -1492,11 +1423,8 @@ def build_context(nx_name: str) -> dict:
 
         if child.nx_type == "attribute":
             qty = _build_quantity_from_node(child)
-            # Group wins: if a descendant uses this name for a group, the field
-            # was precomputed to need _field suffix.
-            if qty.python_name in _qty_field_suffix_for.get(nx_name, frozenset()):
-                qty.python_name = field_conflicts_with_group(qty.python_name)
-            elif qty.python_name in all_sub_names:
+            # Ancestor SubSection wins: rename field with _quantity suffix.
+            if qty.python_name in all_sub_names:
                 qty.python_name = field_conflicts_with_group(qty.python_name)
             if qty.python_name in seen_quantities:
                 continue
@@ -1505,9 +1433,7 @@ def build_context(nx_name: str) -> dict:
 
         elif child.nx_type == "field":
             qty = _build_quantity_from_node(child)
-            if qty.python_name in _qty_field_suffix_for.get(nx_name, frozenset()):
-                qty.python_name = field_conflicts_with_group(qty.python_name)
-            elif qty.python_name in all_sub_names:
+            if qty.python_name in all_sub_names:
                 qty.python_name = field_conflicts_with_group(qty.python_name)
             if qty.python_name in seen_quantities:
                 continue

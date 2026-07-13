@@ -312,7 +312,7 @@ class TomoprocReconstruction(Process):
         repeats=False,
     )
 
-    program_quantity = Quantity(
+    program = Quantity(
         type=str,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXtomoproc.html#nxtomoproc-entry-reconstruction-program-field"

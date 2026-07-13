@@ -412,6 +412,19 @@ class MicrostructureConfiguration(Process):
         ),
     )
 
+    program_group = SubSection(
+        section_def="pynxtools.nomad.metainfo.base_classes.program.Program",
+        repeats=True,
+        variable=True,
+        description=("The program with which the microstructure was reconstructed."),
+        a_nexus_group=NeXusGroup(
+            nx_class="NXprogram",
+            name=None,
+            name_type="any",
+            optionality="optional",
+        ),
+    )
+
     dimensionality = Quantity(
         type=MEnum(["1", "2", "3"]),
         links=[

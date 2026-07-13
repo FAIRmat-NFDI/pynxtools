@@ -111,7 +111,7 @@ class Process(Object, basesections.ActivityStep):
         ),
     )
 
-    program_quantity = Quantity(
+    program = Quantity(
         type=str,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXprocess.html#nxprocess-program-field"

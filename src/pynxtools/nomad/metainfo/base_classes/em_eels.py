@@ -66,17 +66,8 @@ class EmEels(Process):
     )
 
     zlp_correction = SubSection(
-        section_def="pynxtools.nomad.metainfo.base_classes.process.Process",
+        section_def="pynxtools.nomad.metainfo.base_classes.em_eels.EmEelsZlpCorrection",
         repeats=False,
-        description=(
-            "Details about computational steps how the zero-loss peak was threaded."
-        ),
-        a_nexus_group=NeXusGroup(
-            nx_class="NXprocess",
-            name="zlp_correction",
-            name_type="specified",
-            optionality="optional",
-        ),
     )
     indexing = SubSection(
         section_def="pynxtools.nomad.metainfo.base_classes.em_eels.EmEelsIndexing",
@@ -96,6 +87,42 @@ class EmEels(Process):
 # =============================================================================
 
 
+class EmEelsZlpCorrection(Process):
+    """
+    Details about computational steps how the zero-loss peak was threaded.
+    """
+
+    m_def = Section(
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXem_eels.html#nxem_eels-zlp-correction-group"
+        ],
+        a_nexus_group=NeXusGroup(
+            nx_class="NXprocess",
+            name="zlp_correction",
+            name_type="specified",
+            optionality="optional",
+        ),
+    )
+
+    program_group = SubSection(
+        section_def="pynxtools.nomad.metainfo.base_classes.program.Program",
+        repeats=True,
+        variable=True,
+        description=(
+            "The program with which the zero-loss peak correction was performed."
+        ),
+        a_nexus_group=NeXusGroup(
+            nx_class="NXprogram",
+            name=None,
+            name_type="any",
+            optionality="optional",
+        ),
+    )
+
+    def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
+        super().normalize(archive, logger)
+
+
 class EmEelsIndexing(Process):
     """
     Details about computational steps how peaks were indexed as elements.
@@ -113,6 +140,18 @@ class EmEelsIndexing(Process):
         ),
     )
 
+    program_group = SubSection(
+        section_def="pynxtools.nomad.metainfo.base_classes.program.Program",
+        repeats=True,
+        variable=True,
+        description=("The program with which the indexing was performed."),
+        a_nexus_group=NeXusGroup(
+            nx_class="NXprogram",
+            name=None,
+            name_type="any",
+            optionality="optional",
+        ),
+    )
     peak = SubSection(
         section_def="pynxtools.nomad.metainfo.base_classes.peak.Peak",
         repeats=True,

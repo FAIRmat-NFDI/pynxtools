@@ -102,14 +102,8 @@ class ApmReconstruction(Process):
         repeats=False,
     )
     naive_discretization = SubSection(
-        section_def="pynxtools.nomad.metainfo.base_classes.process.Process",
+        section_def="pynxtools.nomad.metainfo.base_classes.apm_reconstruction.ApmReconstructionNaiveDiscretization",
         repeats=False,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXprocess",
-            name="naive_discretization",
-            name_type="specified",
-            optionality="optional",
-        ),
     )
     obb = SubSection(
         section_def="pynxtools.nomad.metainfo.base_classes.apm_reconstruction.ApmReconstructionObb",
@@ -630,6 +624,35 @@ class ApmReconstructionConfig(Parameters):
         ),
         a_eln=ELNAnnotation(
             component=ELNComponentEnum.StringEditQuantity,
+        ),
+    )
+
+    def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
+        super().normalize(archive, logger)
+
+
+class ApmReconstructionNaiveDiscretization(Process):
+    m_def = Section(
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXapm_reconstruction.html#nxapm_reconstruction-naive-discretization-group"
+        ],
+        a_nexus_group=NeXusGroup(
+            nx_class="NXprocess",
+            name="naive_discretization",
+            name_type="specified",
+            optionality="optional",
+        ),
+    )
+
+    program_group = SubSection(
+        section_def="pynxtools.nomad.metainfo.base_classes.program.Program",
+        repeats=True,
+        variable=True,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXprogram",
+            name=None,
+            name_type="any",
+            optionality="optional",
         ),
     )
 

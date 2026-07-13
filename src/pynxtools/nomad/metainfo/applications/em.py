@@ -3987,6 +3987,16 @@ class EmMeasurementInstrumentIbeamColumnIonSource(Source):
         ),
     )
 
+    probe_group = SubSection(
+        section_def="pynxtools.nomad.metainfo.base_classes.atom.Atom",
+        repeats=False,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXatom",
+            name="probe",
+            name_type="specified",
+            optionality="required",
+        ),
+    )
     fabrication = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.em.EmMeasurementInstrumentIbeamColumnIonSourceFabrication",
         repeats=False,
@@ -11552,6 +11562,17 @@ class EmMeasurementEventIDInstrumentIbeamColumnIonSource(Source):
         a_nexus_group=NeXusGroup(
             nx_class="NXsource",
             name="ion_source",
+            name_type="specified",
+            optionality="required",
+        ),
+    )
+
+    probe_group = SubSection(
+        section_def="pynxtools.nomad.metainfo.base_classes.atom.Atom",
+        repeats=False,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXatom",
+            name="probe",
             name_type="specified",
             optionality="required",
         ),

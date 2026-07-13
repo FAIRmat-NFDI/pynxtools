@@ -1624,7 +1624,7 @@ class StressFit(Process):
             component=ELNComponentEnum.DateTimeEditQuantity,
         ),
     )
-    program_quantity = Quantity(
+    program = Quantity(
         type=str,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXstress.html#nxstress-entry-fit-program-field"

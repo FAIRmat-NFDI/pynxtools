@@ -187,7 +187,7 @@ class XasprocXasDataReduction(Process):
         repeats=False,
     )
 
-    program_quantity = Quantity(
+    program = Quantity(
         type=str,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXxasproc.html#nxxasproc-entry-xas-data-reduction-program-field"

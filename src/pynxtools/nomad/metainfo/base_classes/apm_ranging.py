@@ -144,6 +144,17 @@ class ApmRangingMassToChargeDistribution(Process):
         ),
     )
 
+    program_group = SubSection(
+        section_def="pynxtools.nomad.metainfo.base_classes.program.Program",
+        repeats=True,
+        variable=True,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXprogram",
+            name=None,
+            name_type="any",
+            optionality="optional",
+        ),
+    )
     mass_spectrum = SubSection(
         section_def="pynxtools.nomad.metainfo.base_classes.data.Data",
         repeats=False,
@@ -249,6 +260,18 @@ class ApmRangingBackgroundQuantification(Process):
         ),
     )
 
+    program_group = SubSection(
+        section_def="pynxtools.nomad.metainfo.base_classes.program.Program",
+        repeats=True,
+        variable=True,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXprogram",
+            name=None,
+            name_type="any",
+            optionality="optional",
+        ),
+    )
+
     description = Quantity(
         type=str,
         links=[
@@ -291,6 +314,17 @@ class ApmRangingPeakSearchAndDeconvolution(Process):
         ),
     )
 
+    program_group = SubSection(
+        section_def="pynxtools.nomad.metainfo.base_classes.program.Program",
+        repeats=True,
+        variable=True,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXprogram",
+            name=None,
+            name_type="any",
+            optionality="optional",
+        ),
+    )
     peak = SubSection(
         section_def="pynxtools.nomad.metainfo.base_classes.peak.Peak",
         repeats=True,
@@ -325,6 +359,17 @@ class ApmRangingPeakIdentification(Process):
         ),
     )
 
+    program_group = SubSection(
+        section_def="pynxtools.nomad.metainfo.base_classes.program.Program",
+        repeats=True,
+        variable=True,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXprogram",
+            name=None,
+            name_type="any",
+            optionality="optional",
+        ),
+    )
     atom = SubSection(
         section_def="pynxtools.nomad.metainfo.base_classes.atom.Atom",
         repeats=True,

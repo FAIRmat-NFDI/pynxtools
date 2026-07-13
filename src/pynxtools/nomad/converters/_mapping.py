@@ -101,8 +101,9 @@ def nxdl_to_quantity_name(nxdl_name: str, has_shape: bool = False) -> str:
 def field_conflicts_with_group(python_name: str) -> str:
     """Return a renamed Quantity python_name that no longer collides with a SubSection.
 
-    Groups always win the unqualified name. The conflicting field Quantity is
-    renamed with a ``_quantity`` suffix.
+    The higher-level (ancestor) concept wins the unqualified name. When a field
+    collides with an inherited SubSection, the field is renamed with a
+    ``_quantity`` suffix.
 
     Examples
     --------

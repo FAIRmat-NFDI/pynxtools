@@ -339,7 +339,7 @@ class SqomReduction(Process):
         ),
     )
 
-    program_quantity = Quantity(
+    program = Quantity(
         type=str,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXsqom.html#nxsqom-entry-reduction-program-field"
