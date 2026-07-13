@@ -470,6 +470,50 @@ class OpticalPolarizerCoatingTYPE(Sample):
         ),
     )
 
+    type = Quantity(
+        type=MEnum(
+            [
+                "sample",
+                "sample+can",
+                "can",
+                "sample+buffer",
+                "buffer",
+                "calibration sample",
+                "normalisation sample",
+                "simulated data",
+                "none",
+                "sample environment",
+            ]
+        ),
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXoptical_polarizer.html#nxoptical_polarizer-coatingtype-type-field"
+        ],
+        description=(
+            "Specify the coating type (e.g. dielectric, anti-reflection (AR), "
+            "multilayer coating etc.)."
+        ),
+        a_nexus_field=NeXusField(
+            name="type",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="optional",
+            enumeration=[
+                "sample",
+                "sample+can",
+                "can",
+                "sample+buffer",
+                "buffer",
+                "calibration sample",
+                "normalisation sample",
+                "simulated data",
+                "none",
+                "sample environment",
+            ],
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.EnumEditQuantity,
+        ),
+    )
     material = Quantity(
         type=str,
         links=[
@@ -485,6 +529,26 @@ class OpticalPolarizerCoatingTYPE(Sample):
         a_eln=ELNAnnotation(
             component=ELNComponentEnum.StringEditQuantity,
         ),
+    )
+    thickness = Quantity(
+        type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXoptical_polarizer.html#nxoptical_polarizer-coatingtype-thickness-field"
+        ],
+        dimensionality="[length]",
+        unit="m",
+        description=("Thickness of the coating."),
+        a_nexus_field=NeXusField(
+            name="thickness",
+            type="NX_FLOAT",
+            name_type="specified",
+            optionality="optional",
+            units="NX_LENGTH",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "m"},
     )
     index_of_refraction_coating = Quantity(
         type=np.float64,

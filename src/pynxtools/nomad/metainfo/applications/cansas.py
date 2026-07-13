@@ -1676,6 +1676,77 @@ class CansasInstrumentDetector(Detector):
         ),
         a_display={"unit": "radian"},
     )
+    beam_center_x = Quantity(
+        type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXcanSAS.html#nxcansas-entry-instrument-detector-beam-center-x-field"
+        ],
+        dimensionality="[length]",
+        unit="m",
+        description=(
+            "Position of the beam center on the detector. This is the x position "
+            "where the direct beam would hit the detector plane. This is a "
+            "length and can be outside of the actual detector. The length can be "
+            "in physical units or pixels as documented by the units attribute. "
+            "The value can be any real number (positive, zero, or negative)."
+        ),
+        a_nexus_field=NeXusField(
+            name="beam_center_x",
+            type="NX_FLOAT",
+            name_type="specified",
+            optionality="optional",
+            units="NX_LENGTH",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "m"},
+    )
+    beam_center_y = Quantity(
+        type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXcanSAS.html#nxcansas-entry-instrument-detector-beam-center-y-field"
+        ],
+        dimensionality="[length]",
+        unit="m",
+        description=(
+            "Position of the beam center on the detector. This is the y position "
+            "where the direct beam would hit the detector plane. This is a "
+            "length and can be outside of the actual detector. The length can be "
+            "in physical units or pixels as documented by the units attribute. "
+            "The value can be any real number (positive, zero, or negative)."
+        ),
+        a_nexus_field=NeXusField(
+            name="beam_center_y",
+            type="NX_FLOAT",
+            name_type="specified",
+            optionality="optional",
+            units="NX_LENGTH",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "m"},
+    )
+    x_pixel_size = Quantity(
+        type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXcanSAS.html#nxcansas-entry-instrument-detector-x-pixel-size-field"
+        ],
+        dimensionality="[length]",
+        unit="m",
+        shape=["*", "*"],
+        description=(
+            "Size of each detector pixel. If it is scalar all pixels are the same size"
+        ),
+        a_nexus_field=NeXusField(
+            name="x_pixel_size",
+            type="NX_FLOAT",
+            name_type="specified",
+            optionality="optional",
+            units="NX_LENGTH",
+        ),
+    )
 
     def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
         super().normalize(archive, logger)
@@ -1996,6 +2067,26 @@ class CansasSample(Sample):
             component=ELNComponentEnum.StringEditQuantity,
         ),
     )
+    thickness = Quantity(
+        type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXcanSAS.html#nxcansas-entry-sample-thickness-field"
+        ],
+        dimensionality="[length]",
+        unit="m",
+        description=("Thickness of this sample"),
+        a_nexus_field=NeXusField(
+            name="thickness",
+            type="NX_FLOAT",
+            name_type="specified",
+            optionality="optional",
+            units="NX_LENGTH",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "m"},
+    )
     transmission_quantity = Quantity(
         type=np.float64,
         links=[
@@ -2231,6 +2322,29 @@ class CansasProcess(Process):
         ),
         a_eln=ELNAnnotation(
             component=ELNComponentEnum.StringEditQuantity,
+        ),
+    )
+    date = Quantity(
+        type=Datetime,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXcanSAS.html#nxcansas-entry-process-date-field"
+        ],
+        description=(
+            "Optional date for this data processing or analysis step. "
+            "[#iso8601]_ .. [#iso8601] ISO-8601 standard time representation. "
+            "NeXus dates and times are reported in ISO-8601 (e.g., "
+            "``yyyy-mm-ddThh:mm:ss``) or modified ISO-8601 (e.g., ``yyyy-mm-dd "
+            "hh:mm:ss``). See: http://www.w3.org/TR/NOTE-datetime or "
+            "http://en.wikipedia.org/wiki/ISO_8601 for more details."
+        ),
+        a_nexus_field=NeXusField(
+            name="date",
+            type="NX_DATE_TIME",
+            name_type="specified",
+            optionality="optional",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.DateTimeEditQuantity,
         ),
     )
     description = Quantity(

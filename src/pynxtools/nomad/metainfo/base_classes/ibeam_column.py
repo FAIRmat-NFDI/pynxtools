@@ -274,6 +274,22 @@ class IbeamColumnIonSource(Source):
         ),
     )
 
+    name = Quantity(
+        type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXibeam_column.html#nxibeam_column-ion-source-name-field"
+        ],
+        description=("Given name/alias for the ion gun."),
+        a_nexus_field=NeXusField(
+            name="name",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="optional",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
+    )
     emitter_type = Quantity(
         type=MEnum(["liquid_metal", "plasma", "gas_field", "other"]),
         links=[

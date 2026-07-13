@@ -44,6 +44,9 @@ from pynxtools.nomad.annotations import (
     NeXusGroup,
     NeXusLink,
 )
+from pynxtools.nomad.metainfo.base_classes.dispersion_repeated_parameter import (
+    DispersionRepeatedParameter,
+)
 from pynxtools.nomad.metainfo.base_classes.object import Object
 
 if TYPE_CHECKING:
@@ -83,15 +86,9 @@ class DispersionFunction(Object):
         ),
     )
     dispersion_repeated_parameter = SubSection(
-        section_def="pynxtools.nomad.metainfo.base_classes.dispersion_repeated_parameter.DispersionRepeatedParameter",
+        section_def="pynxtools.nomad.metainfo.base_classes.dispersion_function.DispersionFunctionDispersionRepeatedParameter",
         repeats=True,
         variable=True,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXdispersion_repeated_parameter",
-            name=None,
-            name_type="any",
-            optionality="optional",
-        ),
     )
 
     model_name = Quantity(
@@ -333,6 +330,62 @@ class DispersionFunction(Object):
         ),
         a_eln=ELNAnnotation(
             component=ELNComponentEnum.EnumEditQuantity,
+        ),
+    )
+
+    def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
+        super().normalize(archive, logger)
+
+
+# =============================================================================
+# Named NeXus concept groups — only when the group element defines own
+# quantities that differ from the generic class (changed optionality, extra
+# fields, different type/units/enumeration). These inherit from the specific
+# generic class so all # base quantities are available.
+# Resolved lazily by NOMAD at __init_metainfo__() time via string FQNs.
+# =============================================================================
+
+
+class DispersionFunctionDispersionRepeatedParameter(DispersionRepeatedParameter):
+    m_def = Section(
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXdispersion_function.html#nxdispersion_function-dispersion-repeated-parameter-group"
+        ],
+        variable=True,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXdispersion_repeated_parameter",
+            name=None,
+            name_type="any",
+            optionality="optional",
+        ),
+    )
+
+    parameter_units = Quantity(
+        type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXdispersion_function.html#nxdispersion_function-dispersion-repeated-parameter-parameter-units-field"
+        ],
+        shape=["*"],
+        a_nexus_field=NeXusField(
+            name="parameter_units",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="optional",
+        ),
+    )
+    values = Quantity(
+        type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXdispersion_function.html#nxdispersion_function-dispersion-repeated-parameter-values-field"
+        ],
+        flexible_unit=True,
+        shape=["*"],
+        a_nexus_field=NeXusField(
+            name="values",
+            type="NX_NUMBER",
+            name_type="specified",
+            optionality="optional",
+            units="NX_ANY",
         ),
     )
 

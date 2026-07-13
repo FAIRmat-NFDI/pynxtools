@@ -45,6 +45,7 @@ from pynxtools.nomad.annotations import (
     NeXusLink,
 )
 from pynxtools.nomad.metainfo.base_classes.object import Object
+from pynxtools.nomad.metainfo.base_classes.spm_scan_pattern import SpmScanPattern
 
 if TYPE_CHECKING:
     from nomad.datamodel import EntryArchive
@@ -124,16 +125,10 @@ class SpmScanControl(Object):
         ),
     )
     spiralSCAN = SubSection(
-        section_def="pynxtools.nomad.metainfo.base_classes.spm_scan_pattern.SpmScanPattern",
+        section_def="pynxtools.nomad.metainfo.base_classes.spm_scan_control.SpmScanControlSpiralSCAN",
         repeats=True,
         variable=True,
         description=("To define the spiral or circular scan, use this group."),
-        a_nexus_group=NeXusGroup(
-            nx_class="NXspm_scan_pattern",
-            name="spiralSCAN",
-            name_type="partial",
-            optionality="optional",
-        ),
     )
     snakeSCAN = SubSection(
         section_def="pynxtools.nomad.metainfo.base_classes.spm_scan_pattern.SpmScanPattern",
@@ -301,6 +296,76 @@ class SpmScanControl(Object):
         ),
         a_eln=ELNAnnotation(
             component=ELNComponentEnum.EnumEditQuantity,
+        ),
+    )
+
+    def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
+        super().normalize(archive, logger)
+
+
+# =============================================================================
+# Named NeXus concept groups — only when the group element defines own
+# quantities that differ from the generic class (changed optionality, extra
+# fields, different type/units/enumeration). These inherit from the specific
+# generic class so all # base quantities are available.
+# Resolved lazily by NOMAD at __init_metainfo__() time via string FQNs.
+# =============================================================================
+
+
+class SpmScanControlSpiralSCAN(SpmScanPattern):
+    """
+    To define the spiral or circular scan, use this group.
+    """
+
+    m_def = Section(
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXspm_scan_control.html#nxspm_scan_control-spiralscan-group"
+        ],
+        variable=True,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXspm_scan_pattern",
+            name="spiralSCAN",
+            name_type="partial",
+            optionality="optional",
+        ),
+    )
+
+    spiral_radiusN = Quantity(
+        type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXspm_scan_control.html#nxspm_scan_control-spiralscan-spiral-radiusn-field"
+        ],
+        variable=True,
+        flexible_unit=True,
+        description=(
+            "Define the radius of the spiral circle of scanning. Rename the "
+            "field, according to the circle order, the nearest circle to the "
+            "center is 0."
+        ),
+        a_nexus_field=NeXusField(
+            name="spiral_radiusN",
+            type="NX_NUMBER",
+            name_type="partial",
+            optionality="optional",
+            units="NX_ANY",
+        ),
+    )
+    scan_pointsN = Quantity(
+        type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXspm_scan_control.html#nxspm_scan_control-spiralscan-scan-pointsn-field"
+        ],
+        variable=True,
+        description=(
+            "Define the total number of points in a given circle scan to be "
+            "performed. Rename the field, according to the circle order, the "
+            "nearest circle to the center is 0 (e.g. scan_points_2)."
+        ),
+        a_nexus_field=NeXusField(
+            name="scan_pointsN",
+            type="NX_NUMBER",
+            name_type="partial",
+            optionality="optional",
         ),
     )
 

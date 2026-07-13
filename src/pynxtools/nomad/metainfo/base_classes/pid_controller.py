@@ -42,6 +42,8 @@ from pynxtools.nomad.annotations import (
     NeXusLink,
 )
 from pynxtools.nomad.metainfo.base_classes.component import Component
+from pynxtools.nomad.metainfo.base_classes.log import Log
+from pynxtools.nomad.metainfo.base_classes.sensor import Sensor
 
 if TYPE_CHECKING:
     from nomad.datamodel import EntryArchive
@@ -99,18 +101,12 @@ class PidController(Component):
     )
 
     pv_sensor = SubSection(
-        section_def="pynxtools.nomad.metainfo.base_classes.sensor.Sensor",
+        section_def="pynxtools.nomad.metainfo.base_classes.pid_controller.PidControllerPvSensor",
         repeats=False,
         description=(
             "The sensor representing the Process Value used in the feedback loop "
             "for the PID. In case multiple sensors were used, this NXsensor "
             "should contain the proper calculated/aggregated value."
-        ),
-        a_nexus_group=NeXusGroup(
-            nx_class="NXsensor",
-            name="pv_sensor",
-            name_type="specified",
-            optionality="optional",
         ),
     )
 
@@ -303,6 +299,87 @@ class PidController(Component):
         ),
         a_eln=ELNAnnotation(
             component=ELNComponentEnum.EnumEditQuantity,
+        ),
+    )
+
+    def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
+        super().normalize(archive, logger)
+
+
+# =============================================================================
+# Named NeXus concept groups — only when the group element defines own
+# quantities that differ from the generic class (changed optionality, extra
+# fields, different type/units/enumeration). These inherit from the specific
+# generic class so all # base quantities are available.
+# Resolved lazily by NOMAD at __init_metainfo__() time via string FQNs.
+# =============================================================================
+
+
+class PidControllerPvSensor(Sensor):
+    """
+    The sensor representing the Process Value used in the feedback loop for the
+    PID.
+
+    In case multiple sensors were used, this NXsensor should contain the proper
+    calculated/aggregated value.
+    """
+
+    m_def = Section(
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXpid_controller.html#nxpid_controller-pv-sensor-group"
+        ],
+        a_nexus_group=NeXusGroup(
+            nx_class="NXsensor",
+            name="pv_sensor",
+            name_type="specified",
+            optionality="optional",
+        ),
+    )
+
+    value_log = SubSection(
+        section_def="pynxtools.nomad.metainfo.base_classes.pid_controller.PidControllerPvSensorValueLog",
+        repeats=False,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXlog",
+            name="value_log",
+            name_type="specified",
+            optionality="optional",
+        ),
+    )
+
+    def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
+        super().normalize(archive, logger)
+
+
+class PidControllerPvSensorValueLog(Log):
+    m_def = Section(
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXpid_controller.html#nxpid_controller-pv-sensor-value-log-group"
+        ],
+        a_nexus_group=NeXusGroup(
+            nx_class="NXlog",
+            name="value_log",
+            name_type="specified",
+            optionality="optional",
+        ),
+    )
+
+    value = Quantity(
+        type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXpid_controller.html#nxpid_controller-pv-sensor-value-log-value-field"
+        ],
+        flexible_unit=True,
+        description=("The actual timeseries data fed back into the PID controller."),
+        a_nexus_field=NeXusField(
+            name="value",
+            type="NX_NUMBER",
+            name_type="specified",
+            optionality="optional",
+            units="NX_ANY",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
         ),
     )
 

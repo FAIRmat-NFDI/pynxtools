@@ -420,6 +420,25 @@ class CalibrationFitFormulaInputs(Parameters):
         ),
     )
 
+    PARAMETER = Quantity(
+        type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXcalibration.html#nxcalibration-fit-formula-inputs-parameter-field"
+        ],
+        variable=True,
+        description=(
+            "The name of each ``PARAMETER`` is used as the symbol to be used in "
+            "the ``fit_formula_description``, i.e., if the field name is "
+            "`my_field` you should refer to this axis by `my_field` in the "
+            "``fit_formula_description``."
+        ),
+        a_nexus_field=NeXusField(
+            name="PARAMETER",
+            type="NX_CHAR_OR_NUMBER",
+            name_type="any",
+            optionality="optional",
+        ),
+    )
     PARAMETER__input_path = Quantity(
         type=str,
         links=[

@@ -151,6 +151,46 @@ class ApmParaprobeToolProcessWindow(CsFilterBooleanMask):
         ),
         a_display={"unit": "dimensionless"},
     )
+    bitdepth = Quantity(
+        type=np.int64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_tool_process.html#nxapm_paraprobe_tool_process-window-bitdepth-field"
+        ],
+        dimensionality="dimensionless",
+        unit="dimensionless",
+        description=("Number of bits assumed matching on a default datatype."),
+        a_nexus_field=NeXusField(
+            name="bitdepth",
+            type="NX_UINT",
+            name_type="specified",
+            optionality="optional",
+            units="NX_UNITLESS",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "dimensionless"},
+    )
+    mask = Quantity(
+        type=np.int64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_tool_process.html#nxapm_paraprobe_tool_process-window-mask-field"
+        ],
+        dimensionality="dimensionless",
+        unit="dimensionless",
+        shape=["*"],
+        description=(
+            "The mask. The length of the mask is an integer multiple of "
+            "bitdepth. In such case, padded bits are set to 0."
+        ),
+        a_nexus_field=NeXusField(
+            name="mask",
+            type="NX_UINT",
+            name_type="specified",
+            optionality="optional",
+            units="NX_UNITLESS",
+        ),
+    )
 
     def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
         super().normalize(archive, logger)

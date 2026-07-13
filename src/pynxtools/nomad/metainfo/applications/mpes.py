@@ -752,6 +752,30 @@ class MpesInstrumentEnergyResolution(Resolution):
         ),
         a_display={"unit": "joule"},
     )
+    relative_resolution = Quantity(
+        type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXmpes.html#nxmpes-entry-instrument-energy-resolution-relative-resolution-field"
+        ],
+        flexible_unit=True,
+        description=(
+            "Ratio of the energy resolution of the photoemission spectrometer at "
+            "a specified energy value to that energy value. This concept is "
+            "related to term `10.7 ff.`_ of the ISO 18115-1:2023 standard. .. "
+            "_10.7 ff.: "
+            "https://www.iso.org/obp/ui/en/#iso:std:iso:18115:-1:ed-3:v1:en:term:10.7"
+        ),
+        a_nexus_field=NeXusField(
+            name="relative_resolution",
+            type="NX_FLOAT",
+            name_type="specified",
+            optionality="optional",
+            units="NX_ANY",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+    )
 
     def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
         super().normalize(archive, logger)
@@ -895,6 +919,44 @@ class MpesInstrumentSourceProbe(Source):
         ),
         a_eln=ELNAnnotation(
             component=ELNComponentEnum.StringEditQuantity,
+        ),
+    )
+    probe = Quantity(
+        type=MEnum(
+            [
+                "neutron",
+                "photon",
+                "x-ray",
+                "muon",
+                "electron",
+                "ultraviolet",
+                "visible light",
+                "positron",
+                "proton",
+            ]
+        ),
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXmpes.html#nxmpes-entry-instrument-source-probe-probe-field"
+        ],
+        a_nexus_field=NeXusField(
+            name="probe",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="optional",
+            enumeration=[
+                "neutron",
+                "photon",
+                "x-ray",
+                "muon",
+                "electron",
+                "ultraviolet",
+                "visible light",
+                "positron",
+                "proton",
+            ],
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.EnumEditQuantity,
         ),
     )
     associated_beam = Quantity(
@@ -1072,6 +1134,44 @@ class MpesInstrumentSourcePump(Source):
         ),
         a_eln=ELNAnnotation(
             component=ELNComponentEnum.StringEditQuantity,
+        ),
+    )
+    probe = Quantity(
+        type=MEnum(
+            [
+                "neutron",
+                "photon",
+                "x-ray",
+                "muon",
+                "electron",
+                "ultraviolet",
+                "visible light",
+                "positron",
+                "proton",
+            ]
+        ),
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXmpes.html#nxmpes-entry-instrument-source-pump-probe-field"
+        ],
+        a_nexus_field=NeXusField(
+            name="probe",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="optional",
+            enumeration=[
+                "neutron",
+                "photon",
+                "x-ray",
+                "muon",
+                "electron",
+                "ultraviolet",
+                "visible light",
+                "positron",
+                "proton",
+            ],
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.EnumEditQuantity,
         ),
     )
     associated_beam = Quantity(
@@ -1264,6 +1364,44 @@ class MpesInstrumentSourceTYPE(Source):
         ),
         a_eln=ELNAnnotation(
             component=ELNComponentEnum.StringEditQuantity,
+        ),
+    )
+    probe = Quantity(
+        type=MEnum(
+            [
+                "neutron",
+                "photon",
+                "x-ray",
+                "muon",
+                "electron",
+                "ultraviolet",
+                "visible light",
+                "positron",
+                "proton",
+            ]
+        ),
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXmpes.html#nxmpes-entry-instrument-source-type-probe-field"
+        ],
+        a_nexus_field=NeXusField(
+            name="probe",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="optional",
+            enumeration=[
+                "neutron",
+                "photon",
+                "x-ray",
+                "muon",
+                "electron",
+                "ultraviolet",
+                "visible light",
+                "positron",
+                "proton",
+            ],
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.EnumEditQuantity,
         ),
     )
     associated_beam = Quantity(
@@ -2156,6 +2294,44 @@ class MpesInstrumentElectronanalyzerCollectioncolumn(Collectioncolumn):
         a_eln=ELNAnnotation(
             component=ELNComponentEnum.EnumEditQuantity,
         ),
+    )
+    angular_acceptance = Quantity(
+        type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXmpes.html#nxmpes-entry-instrument-electronanalyzer-collectioncolumn-angular-acceptance-field"
+        ],
+        dimensionality="[angle]",
+        unit="radian",
+        a_nexus_field=NeXusField(
+            name="angular_acceptance",
+            type="NX_FLOAT",
+            name_type="specified",
+            optionality="optional",
+            units="NX_ANGLE",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "radian"},
+    )
+    spatial_acceptance = Quantity(
+        type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXmpes.html#nxmpes-entry-instrument-electronanalyzer-collectioncolumn-spatial-acceptance-field"
+        ],
+        dimensionality="[length]",
+        unit="m",
+        a_nexus_field=NeXusField(
+            name="spatial_acceptance",
+            type="NX_FLOAT",
+            name_type="specified",
+            optionality="optional",
+            units="NX_LENGTH",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "m"},
     )
 
     def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
@@ -3183,6 +3359,21 @@ class MpesInstrumentManipulatorTemperatureSensor(Sensor):
             default="temperature",
         ),
     )
+    type = Quantity(
+        type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXmpes.html#nxmpes-entry-instrument-manipulator-temperature-sensor-type-field"
+        ],
+        a_nexus_field=NeXusField(
+            name="type",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="optional",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
+    )
     value = Quantity(
         type=np.float64,
         links=[
@@ -3259,6 +3450,21 @@ class MpesInstrumentManipulatorSampleHeater(Actuator):
         a_eln=ELNAnnotation(
             component=ELNComponentEnum.EnumEditQuantity,
             default="temperature",
+        ),
+    )
+    type = Quantity(
+        type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXmpes.html#nxmpes-entry-instrument-manipulator-sample-heater-type-field"
+        ],
+        a_nexus_field=NeXusField(
+            name="type",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="optional",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
     output_heater_power = Quantity(
@@ -3380,6 +3586,21 @@ class MpesInstrumentManipulatorCryostat(Actuator):
             default="temperature",
         ),
     )
+    type = Quantity(
+        type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXmpes.html#nxmpes-entry-instrument-manipulator-cryostat-type-field"
+        ],
+        a_nexus_field=NeXusField(
+            name="type",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="optional",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
+    )
 
     def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
         super().normalize(archive, logger)
@@ -3468,6 +3689,21 @@ class MpesInstrumentManipulatorDrainCurrentAmmeter(Sensor):
             default="current",
         ),
     )
+    type = Quantity(
+        type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXmpes.html#nxmpes-entry-instrument-manipulator-drain-current-ammeter-type-field"
+        ],
+        a_nexus_field=NeXusField(
+            name="type",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="optional",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
+    )
     value = Quantity(
         type=np.float64,
         links=[
@@ -3532,6 +3768,21 @@ class MpesInstrumentManipulatorSampleBiasVoltmeter(Sensor):
         a_eln=ELNAnnotation(
             component=ELNComponentEnum.EnumEditQuantity,
             default="voltage",
+        ),
+    )
+    type = Quantity(
+        type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXmpes.html#nxmpes-entry-instrument-manipulator-sample-bias-voltmeter-type-field"
+        ],
+        a_nexus_field=NeXusField(
+            name="type",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="optional",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
     value = Quantity(
@@ -3610,6 +3861,21 @@ class MpesInstrumentManipulatorSampleBiasPotentiostat(Actuator):
         a_eln=ELNAnnotation(
             component=ELNComponentEnum.EnumEditQuantity,
             default="voltage",
+        ),
+    )
+    type = Quantity(
+        type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXmpes.html#nxmpes-entry-instrument-manipulator-sample-bias-potentiostat-type-field"
+        ],
+        a_nexus_field=NeXusField(
+            name="type",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="optional",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
 
@@ -3778,6 +4044,21 @@ class MpesInstrumentPressureGauge(Sensor):
             default="pressure",
         ),
     )
+    type = Quantity(
+        type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXmpes.html#nxmpes-entry-instrument-pressure-gauge-type-field"
+        ],
+        a_nexus_field=NeXusField(
+            name="type",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="optional",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
+    )
     value = Quantity(
         type=np.float64,
         links=[
@@ -3904,6 +4185,21 @@ class MpesInstrumentFloodGun(Actuator):
         a_eln=ELNAnnotation(
             component=ELNComponentEnum.EnumEditQuantity,
             default="current",
+        ),
+    )
+    type = Quantity(
+        type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXmpes.html#nxmpes-entry-instrument-flood-gun-type-field"
+        ],
+        a_nexus_field=NeXusField(
+            name="type",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="optional",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
     current = Quantity(

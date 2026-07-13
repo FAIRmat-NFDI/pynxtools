@@ -42,6 +42,7 @@ from pynxtools.nomad.annotations import (
     NeXusLink,
 )
 from pynxtools.nomad.metainfo.base_classes.data import Data
+from pynxtools.nomad.metainfo.base_classes.fit_function import FitFunction
 from pynxtools.nomad.metainfo.base_classes.peak import Peak
 from pynxtools.nomad.metainfo.base_classes.process import Process
 
@@ -105,29 +106,17 @@ class Fit(Process):
         ),
     )
     global_fit_function = SubSection(
-        section_def="pynxtools.nomad.metainfo.base_classes.fit_function.FitFunction",
+        section_def="pynxtools.nomad.metainfo.base_classes.fit.FitGlobalFitFunction",
         repeats=False,
         description=(
             "Function used to describe the overall fit to the data, taking into "
             "account the parameters of the individual :ref:`NXpeak` components."
         ),
-        a_nexus_group=NeXusGroup(
-            nx_class="NXfit_function",
-            name="global_fit_function",
-            name_type="specified",
-            optionality="optional",
-        ),
     )
     error_function = SubSection(
-        section_def="pynxtools.nomad.metainfo.base_classes.fit_function.FitFunction",
+        section_def="pynxtools.nomad.metainfo.base_classes.fit.FitErrorFunction",
         repeats=False,
         description=("Function used to optimize the parameters during peak fitting."),
-        a_nexus_group=NeXusGroup(
-            nx_class="NXfit_function",
-            name="error_function",
-            name_type="specified",
-            optionality="optional",
-        ),
     )
 
     label = Quantity(
@@ -332,6 +321,27 @@ class FitPeakPEAK(Peak):
         ),
     )
 
+    total_area = Quantity(
+        type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXfit.html#nxfit-peakpeak-total-area-field"
+        ],
+        flexible_unit=True,
+        description=(
+            "Total area under the curve (can also be used for the total area "
+            "minus any background values)."
+        ),
+        a_nexus_field=NeXusField(
+            name="total_area",
+            type="NX_NUMBER",
+            name_type="specified",
+            optionality="optional",
+            units="NX_ANY",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+    )
     relative_sensitivity_factor = Quantity(
         type=np.float64,
         links=[
@@ -379,6 +389,124 @@ class FitPeakPEAK(Peak):
         ),
         a_eln=ELNAnnotation(
             component=ELNComponentEnum.NumberEditQuantity,
+        ),
+    )
+
+    def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
+        super().normalize(archive, logger)
+
+
+class FitGlobalFitFunction(FitFunction):
+    """
+    Function used to describe the overall fit to the data, taking into account
+    the parameters of the individual :ref:`NXpeak` components.
+    """
+
+    m_def = Section(
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXfit.html#nxfit-global-fit-function-group"
+        ],
+        a_nexus_group=NeXusGroup(
+            nx_class="NXfit_function",
+            name="global_fit_function",
+            name_type="specified",
+            optionality="optional",
+        ),
+    )
+
+    formula_description = Quantity(
+        type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXfit.html#nxfit-global-fit-function-formula-description-field"
+        ],
+        description=(
+            "Often, if the peaks and fit backgrounds are defined independently "
+            "(i.e, with their own parameter sets), the resulting global fit is a "
+            "function of the form :math:`model = peak_1(p_1) + peak2(p_2) + "
+            "backgr(p_3).`, where each :math:`p_x` describes the set of "
+            "parameters for one peak/background."
+        ),
+        a_nexus_field=NeXusField(
+            name="formula_description",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="optional",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
+    )
+
+    def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
+        super().normalize(archive, logger)
+
+
+class FitErrorFunction(FitFunction):
+    """
+    Function used to optimize the parameters during peak fitting.
+    """
+
+    m_def = Section(
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXfit.html#nxfit-error-function-group"
+        ],
+        a_nexus_group=NeXusGroup(
+            nx_class="NXfit_function",
+            name="error_function",
+            name_type="specified",
+            optionality="optional",
+        ),
+    )
+
+    description = Quantity(
+        type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXfit.html#nxfit-error-function-description-field"
+        ],
+        description=(
+            "Description of the method used to optimize the parameters during "
+            "peak fitting. Examples: - least squares - nonlinear least squares - "
+            "Levenberg-Marquardt algorithm (damped least-squares) - linear "
+            "regression - Bayesian linear regression"
+        ),
+        a_nexus_field=NeXusField(
+            name="description",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="optional",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
+    )
+    formula_description = Quantity(
+        type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXfit.html#nxfit-error-function-formula-description-field"
+        ],
+        description=(
+            "For the optimization, the formula is any optimization process on "
+            "the ``global_fit_function`` given above. As an example, for a least "
+            "squares algorithm on independent components, the formula of the "
+            "``error_function`` would be :math:`LLS(peak_1(p_1) + peak_2(p_2) + "
+            "backgr(p_3))`, where each :math:`p_i` describes the set of "
+            "parameters for one peak/background. In this case, the "
+            "``formula_description`` can be expressed as :math:`min(\\chi^2)`, "
+            "where :math:`\\chi^2` is the sum of squared residuals between the "
+            "model and the observed data: :math:`min(\\chi^2) = \\sum_{i=1}^{N} "
+            "\\left( y_i - \\left( \\text{peak}_1(p_1, x_i) + "
+            "\\text{peak}_2(p_2, x_i) + \\text{backgr}(p_3, x_i) \\right) "
+            "\\right)^2` It is however also possible to supply more involved "
+            "formulas (e.g., in the case of constrained fits)."
+        ),
+        a_nexus_field=NeXusField(
+            name="formula_description",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="optional",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
 

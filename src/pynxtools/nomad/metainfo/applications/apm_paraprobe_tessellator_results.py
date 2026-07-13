@@ -453,6 +453,28 @@ class ApmParaprobeTessellatorResultsTessellationIDVoronoiCells(CgPolyhedron):
             units="NX_UNITLESS",
         ),
     )
+    number_of_faces = Quantity(
+        type=np.int64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_tessellator_results.html#nxapm_paraprobe_tessellator_results-entry-tessellationid-voronoi-cells-number-of-faces-field"
+        ],
+        dimensionality="dimensionless",
+        unit="dimensionless",
+        shape=["*"],
+        description=(
+            "The number of faces for each cell. Faces of adjoining polyhedra are "
+            "counted for each polyhedron. This field can be used to interpret "
+            "the concatenated vector with the individual values for the area of "
+            "each face."
+        ),
+        a_nexus_field=NeXusField(
+            name="number_of_faces",
+            type="NX_UINT",
+            name_type="specified",
+            optionality="optional",
+            units="NX_UNITLESS",
+        ),
+    )
     index_offset = Quantity(
         type=np.int64,
         links=[

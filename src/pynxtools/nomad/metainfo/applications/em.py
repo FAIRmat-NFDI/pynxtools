@@ -886,6 +886,114 @@ class EmUserID(User):
             component=ELNComponentEnum.StringEditQuantity,
         ),
     )
+    name = Quantity(
+        type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXem.html#nxem-entry-userid-name-field"
+        ],
+        description=("Given (first) name and surname."),
+        a_nexus_field=NeXusField(
+            name="name",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="optional",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
+    )
+    affiliation = Quantity(
+        type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXem.html#nxem-entry-userid-affiliation-field"
+        ],
+        description=(
+            "Name of the affiliation at the point in time when the experiment "
+            "was performed."
+        ),
+        a_nexus_field=NeXusField(
+            name="affiliation",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="optional",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
+    )
+    address = Quantity(
+        type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXem.html#nxem-entry-userid-address-field"
+        ],
+        description=("Postal address of the affiliation."),
+        a_nexus_field=NeXusField(
+            name="address",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="optional",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
+    )
+    email = Quantity(
+        type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXem.html#nxem-entry-userid-email-field"
+        ],
+        description=(
+            "Email address at the point in time when the experiment was "
+            "performed. Writing the most permanently used email is recommended."
+        ),
+        a_nexus_field=NeXusField(
+            name="email",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="optional",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
+    )
+    telephone_number = Quantity(
+        type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXem.html#nxem-entry-userid-telephone-number-field"
+        ],
+        description=(
+            "Telephone number at the point in time when the experiment was performed."
+        ),
+        a_nexus_field=NeXusField(
+            name="telephone_number",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="optional",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
+    )
+    role = Quantity(
+        type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXem.html#nxem-entry-userid-role-field"
+        ],
+        description=(
+            "User role at the point in time when the experiment was performed. "
+            "Examples are technician operating the microscope, student, postdoc, "
+            "principle investigator, or guest."
+        ),
+        a_nexus_field=NeXusField(
+            name="role",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="optional",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
+    )
 
     def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
         super().normalize(archive, logger)
@@ -1220,6 +1328,22 @@ class EmSampleID(Sample):
         ),
         a_eln=ELNAnnotation(
             component=ELNComponentEnum.NumberEditQuantity,
+        ),
+    )
+    description = Quantity(
+        type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXem.html#nxem-entry-sampleid-description-field"
+        ],
+        description=("Discouraged free-text field to provide further detail."),
+        a_nexus_field=NeXusField(
+            name="description",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="optional",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
 
@@ -1763,6 +1887,25 @@ class EmSampleReferenceFrame(CoordinateSystem):
         ),
     )
 
+    depends_on = Quantity(
+        type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXem.html#nxem-entry-sample-reference-frame-depends-on-field"
+        ],
+        description=(
+            "Reference to the specifically named :ref:`NXsample` instance(s) for "
+            "which these conventions apply (e.g. /entry1/sample1)."
+        ),
+        a_nexus_field=NeXusField(
+            name="depends_on",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="optional",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
+    )
     alias = Quantity(
         type=str,
         links=[
@@ -1965,6 +2108,25 @@ class EmDetectorReferenceFrameID(CoordinateSystem):
         ),
     )
 
+    depends_on = Quantity(
+        type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXem.html#nxem-entry-detector-reference-frameid-depends-on-field"
+        ],
+        description=(
+            "Reference to the specifically named :ref:`NXdetector` instance for "
+            "which these conventions apply (e.g. /entry1/instrument/detector1)."
+        ),
+        a_nexus_field=NeXusField(
+            name="depends_on",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="optional",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
+    )
     alias = Quantity(
         type=str,
         links=[
@@ -2354,6 +2516,22 @@ class EmMeasurementInstrument(EmInstrument):
         ),
         a_eln=ELNAnnotation(
             component=ELNComponentEnum.StringEditQuantity,
+        ),
+    )
+    type = Quantity(
+        type=MEnum(["sem", "fib", "tem"]),
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXem.html#nxem-entry-measurement-instrument-type-field"
+        ],
+        a_nexus_field=NeXusField(
+            name="type",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="recommended",
+            enumeration=["sem", "fib", "tem"],
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.EnumEditQuantity,
         ),
     )
 

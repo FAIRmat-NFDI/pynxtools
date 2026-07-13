@@ -807,6 +807,15 @@ def _qty_differs_from_base(
         and qty.node.unit != base_node.unit
     ):
         return True
+    # Description-only changes: include in the named concept so the more
+    # specific app doc reaches the user (e.g. NXspm_bias_spectroscopy's
+    # acquisition_time vs NXcircuit's generic one).
+    qty_doc = (next(iter(qty.node.get_docstring(depth=1).values()), None) or "").strip()
+    base_doc = (
+        next(iter(base_node.get_docstring(depth=1).values()), None) or ""
+    ).strip()
+    if qty_doc != base_doc:
+        return True
     return False
 
 

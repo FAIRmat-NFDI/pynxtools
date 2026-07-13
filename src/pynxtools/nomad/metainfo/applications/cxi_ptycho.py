@@ -427,6 +427,22 @@ class CxiPtychoInstrument1Beam1(Beam):
             component=ELNComponentEnum.StringEditQuantity,
         ),
     )
+    extent = Quantity(
+        type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXcxi_ptycho.html#nxcxi_ptycho-entry-1-instrument-1-beam-1-extent-field"
+        ],
+        dimensionality="[length]",
+        unit="m",
+        shape=["*", 2],
+        a_nexus_field=NeXusField(
+            name="extent",
+            type="NX_FLOAT",
+            name_type="specified",
+            optionality="optional",
+            units="NX_LENGTH",
+        ),
+    )
     extent__units = Quantity(
         type=str,
         links=[
@@ -441,6 +457,22 @@ class CxiPtychoInstrument1Beam1(Beam):
         ),
         a_eln=ELNAnnotation(
             component=ELNComponentEnum.StringEditQuantity,
+        ),
+    )
+    incident_beam_divergence = Quantity(
+        type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXcxi_ptycho.html#nxcxi_ptycho-entry-1-instrument-1-beam-1-incident-beam-divergence-field"
+        ],
+        dimensionality="[angle]",
+        unit="radian",
+        shape=["*", "*"],
+        a_nexus_field=NeXusField(
+            name="incident_beam_divergence",
+            type="NX_FLOAT",
+            name_type="specified",
+            optionality="optional",
+            units="NX_ANGLE",
         ),
     )
     incident_beam_divergence__units = Quantity(
@@ -774,6 +806,25 @@ class CxiPtychoInstrument1Detector1(Detector):
             component=ELNComponentEnum.StringEditQuantity,
         ),
     )
+    beam_center_x = Quantity(
+        type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXcxi_ptycho.html#nxcxi_ptycho-entry-1-instrument-1-detector-1-beam-center-x-field"
+        ],
+        dimensionality="[length]",
+        unit="m",
+        a_nexus_field=NeXusField(
+            name="beam_center_x",
+            type="NX_FLOAT",
+            name_type="specified",
+            optionality="optional",
+            units="NX_LENGTH",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "m"},
+    )
     beam_center_x__units = Quantity(
         type=str,
         links=[
@@ -789,6 +840,25 @@ class CxiPtychoInstrument1Detector1(Detector):
         a_eln=ELNAnnotation(
             component=ELNComponentEnum.StringEditQuantity,
         ),
+    )
+    beam_center_y = Quantity(
+        type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXcxi_ptycho.html#nxcxi_ptycho-entry-1-instrument-1-detector-1-beam-center-y-field"
+        ],
+        dimensionality="[length]",
+        unit="m",
+        a_nexus_field=NeXusField(
+            name="beam_center_y",
+            type="NX_FLOAT",
+            name_type="specified",
+            optionality="optional",
+            units="NX_LENGTH",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "m"},
     )
     beam_center_y__units = Quantity(
         type=str,

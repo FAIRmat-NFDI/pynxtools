@@ -1058,6 +1058,23 @@ class XpcsInstrumentIncidentBeam(Beam):
             component=ELNComponentEnum.StringEditQuantity,
         ),
     )
+    extent = Quantity(
+        type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXxpcs.html#nxxpcs-entry-instrument-incident-beam-extent-field"
+        ],
+        dimensionality="[length]",
+        unit="m",
+        shape=["*", 2],
+        description=("Size (2-D) of the beam at this position."),
+        a_nexus_field=NeXusField(
+            name="extent",
+            type="NX_FLOAT",
+            name_type="specified",
+            optionality="optional",
+            units="NX_LENGTH",
+        ),
+    )
 
     def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
         super().normalize(archive, logger)
@@ -1100,6 +1117,22 @@ class XpcsInstrumentDetector(Detector):
         ),
     )
 
+    description = Quantity(
+        type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXxpcs.html#nxxpcs-entry-instrument-detector-description-field"
+        ],
+        description=("Detector name."),
+        a_nexus_field=NeXusField(
+            name="description",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="optional",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
+    )
     distance = Quantity(
         type=np.float64,
         links=[

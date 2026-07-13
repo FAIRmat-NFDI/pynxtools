@@ -53,6 +53,7 @@ from pynxtools.nomad.metainfo.base_classes.process import Process
 from pynxtools.nomad.metainfo.base_classes.reflections import Reflections
 from pynxtools.nomad.metainfo.base_classes.sample import Sample
 from pynxtools.nomad.metainfo.base_classes.source import Source
+from pynxtools.nomad.metainfo.base_classes.user import User
 
 if TYPE_CHECKING:
     from nomad.datamodel import EntryArchive
@@ -141,17 +142,9 @@ class Stress(Entry):
     )
 
     experiment_responsible = SubSection(
-        section_def="pynxtools.nomad.metainfo.base_classes.user.User",
+        section_def="pynxtools.nomad.metainfo.applications.stress.StressExperimentResponsible",
         repeats=False,
         description=("Information about the person who performed the experiment."),
-        a_nexus_group=NeXusGroup(
-            nx_class="NXuser",
-            name="experiment_responsible",
-            name_type="specified",
-            optionality="optional",
-            min_occurs=0,
-            max_occurs=1,
-        ),
     )
     instrument = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.stress.StressInstrument",
@@ -423,6 +416,64 @@ class Stress(Entry):
 # =============================================================================
 
 
+class StressExperimentResponsible(User):
+    """
+    Information about the person who performed the experiment.
+    """
+
+    m_def = Section(
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXstress.html#nxstress-entry-experiment-responsible-group"
+        ],
+        a_nexus_group=NeXusGroup(
+            nx_class="NXuser",
+            name="experiment_responsible",
+            name_type="specified",
+            optionality="optional",
+            min_occurs=0,
+            max_occurs=1,
+        ),
+    )
+
+    name = Quantity(
+        type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXstress.html#nxstress-entry-experiment-responsible-name-field"
+        ],
+        a_nexus_field=NeXusField(
+            name="name",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="optional",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
+    )
+    role = Quantity(
+        type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXstress.html#nxstress-entry-experiment-responsible-role-field"
+        ],
+        description=(
+            "Role of user responsible for this entry. Suggested roes are, for "
+            "example, ``local contact``, ``beamline_scientist``, ``post_doc``,…"
+        ),
+        a_nexus_field=NeXusField(
+            name="role",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="optional",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
+    )
+
+    def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
+        super().normalize(archive, logger)
+
+
 class StressInstrument(Instrument):
     m_def = Section(
         links=[
@@ -569,6 +620,89 @@ class StressInstrumentCalibration(Note):
         ),
         a_eln=ELNAnnotation(
             component=ELNComponentEnum.StringEditQuantity,
+        ),
+    )
+    file_name = Quantity(
+        type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXstress.html#nxstress-entry-instrument-calibration-file-name-field"
+        ],
+        description=(
+            "File name(s) and/or path(s) (within file(s)) containing data from "
+            "the last calibration(s). This can be an array."
+        ),
+        a_nexus_field=NeXusField(
+            name="file_name",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="optional",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
+    )
+    data_quantity = Quantity(
+        type=Bytes,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXstress.html#nxstress-entry-instrument-calibration-data-field"
+        ],
+        description=("Calibration file content."),
+        a_nexus_field=NeXusField(
+            name="data",
+            type="NX_BINARY",
+            name_type="specified",
+            optionality="optional",
+        ),
+    )
+    type = Quantity(
+        type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXstress.html#nxstress-entry-instrument-calibration-type-field"
+        ],
+        description=(
+            "Mime content type of calibration *data* field e.g. text/plain, "
+            "application/json,..."
+        ),
+        a_nexus_field=NeXusField(
+            name="type",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="optional",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
+    )
+    author = Quantity(
+        type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXstress.html#nxstress-entry-instrument-calibration-author-field"
+        ],
+        description=("Author or creator of the calibration."),
+        a_nexus_field=NeXusField(
+            name="author",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="optional",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
+    )
+    date = Quantity(
+        type=Datetime,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXstress.html#nxstress-entry-instrument-calibration-date-field"
+        ],
+        description=("Date calibration was created/added"),
+        a_nexus_field=NeXusField(
+            name="date",
+            type="NX_DATE_TIME",
+            name_type="specified",
+            optionality="optional",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.DateTimeEditQuantity,
         ),
     )
 
@@ -766,6 +900,26 @@ class StressInstrumentDetector(Detector):
             name_type="specified",
             optionality="optional",
             units="NX_WAVELENGTH",
+        ),
+    )
+    depends_on = Quantity(
+        type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXstress.html#nxstress-entry-instrument-detector-depends-on-field"
+        ],
+        description=(
+            "The axis on which the detector position depends may be stored "
+            "anywhere, but is normally stored in the *NXtransformations group* "
+            "within the *NXdetector group*."
+        ),
+        a_nexus_field=NeXusField(
+            name="depends_on",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="optional",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
 
@@ -1114,6 +1268,43 @@ class StressInstrumentBeamIntensityProfile(Beam):
             component=ELNComponentEnum.StringEditQuantity,
         ),
     )
+    incident_energy = Quantity(
+        type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXstress.html#nxstress-entry-instrument-beam-intensity-profile-incident-energy-field"
+        ],
+        dimensionality="[mass] * [length] ** 2 / [time] ** 2",
+        unit="joule",
+        shape=["*"],
+        description=("Incident energy mostly useful for monochromatic beams."),
+        a_nexus_field=NeXusField(
+            name="incident_energy",
+            type="NX_FLOAT",
+            name_type="specified",
+            optionality="optional",
+            units="NX_ENERGY",
+        ),
+    )
+    incident_wavelength = Quantity(
+        type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXstress.html#nxstress-entry-instrument-beam-intensity-profile-incident-wavelength-field"
+        ],
+        dimensionality="[length]",
+        unit="m",
+        description=("Incident wavelength mostly useful for monochromatic beams."),
+        a_nexus_field=NeXusField(
+            name="incident_wavelength",
+            type="NX_FLOAT",
+            name_type="specified",
+            optionality="optional",
+            units="NX_WAVELENGTH",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "m"},
+    )
 
     def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
         super().normalize(archive, logger)
@@ -1177,6 +1368,39 @@ class StressSampleDescription(Sample):
             type="NX_CHAR",
             name_type="specified",
             optionality="required",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
+    )
+    chemical_formula = Quantity(
+        type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXstress.html#nxstress-entry-sample-description-chemical-formula-field"
+        ],
+        description=(
+            "The chemical formula specified using CIF conventions. Abbreviated "
+            "version of CIF standard: * Only recognized element symbols may be "
+            "used. * Each element symbol is followed by a 'count' number. A "
+            "count of '1' may be omitted. * A space or parenthesis must separate "
+            "each cluster of (element symbol + count). * Where a group of "
+            "elements is enclosed in parentheses, the multiplier for the group "
+            "must follow the closing parentheses. That is, all element and group "
+            "multipliers are assumed to be printed as subscripted numbers. * "
+            "Unless the elements are ordered in a manner that corresponds to "
+            "their chemical structure, the order of the elements within any "
+            "group or moiety depends on whether or not carbon is present. * If "
+            "carbon is present, the order should be: - C, then H, then the other "
+            "elements in alphabetical order of their symbol. - If carbon is not "
+            "present, the elements are listed purely in alphabetic order of "
+            "their symbol. * This is the *Hill* system used by Chemical "
+            "Abstracts."
+        ),
+        a_nexus_field=NeXusField(
+            name="chemical_formula",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="optional",
         ),
         a_eln=ELNAnnotation(
             component=ELNComponentEnum.StringEditQuantity,
@@ -1370,7 +1594,7 @@ class StressFit(Process):
     )
 
     data_reduction_responsible = SubSection(
-        section_def="pynxtools.nomad.metainfo.base_classes.user.User",
+        section_def="pynxtools.nomad.metainfo.applications.stress.StressFitDataReductionResponsible",
         repeats=False,
         a_nexus_group=NeXusGroup(
             nx_class="NXuser",
@@ -1584,6 +1808,64 @@ class StressFit(Process):
         ),
         a_nexus_field=NeXusField(
             name="normalization",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="optional",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
+    )
+
+    def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
+        super().normalize(archive, logger)
+
+
+class StressFitDataReductionResponsible(User):
+    """
+    Information about the person who performed the data reduction.
+    """
+
+    m_def = Section(
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXstress.html#nxstress-entry-fit-data-reduction-responsible-group"
+        ],
+        a_nexus_group=NeXusGroup(
+            nx_class="NXuser",
+            name="data_reduction_responsible",
+            name_type="specified",
+            optionality="optional",
+            min_occurs=0,
+            max_occurs=1,
+        ),
+    )
+
+    name = Quantity(
+        type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXstress.html#nxstress-entry-fit-data-reduction-responsible-name-field"
+        ],
+        a_nexus_field=NeXusField(
+            name="name",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="optional",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
+    )
+    role = Quantity(
+        type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXstress.html#nxstress-entry-fit-data-reduction-responsible-role-field"
+        ],
+        description=(
+            "Role of user responsible for this entry. Suggested roles are, for "
+            "example, ``local contact``, ``beamline_scientist``, ``post_doc``,…"
+        ),
+        a_nexus_field=NeXusField(
+            name="role",
             type="NX_CHAR",
             name_type="specified",
             optionality="optional",

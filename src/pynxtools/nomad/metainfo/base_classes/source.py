@@ -42,6 +42,7 @@ from pynxtools.nomad.annotations import (
     NeXusLink,
 )
 from pynxtools.nomad.metainfo.base_classes.component import Component
+from pynxtools.nomad.metainfo.base_classes.data import Data
 
 if TYPE_CHECKING:
     from nomad.datamodel import EntryArchive
@@ -84,17 +85,11 @@ class Source(Component):
         ),
     )
     bunch_pattern = SubSection(
-        section_def="pynxtools.nomad.metainfo.base_classes.data.Data",
+        section_def="pynxtools.nomad.metainfo.base_classes.source.SourceBunchPattern",
         repeats=False,
         description=(
             "For storage rings, description of the bunch pattern. This is useful "
             "to describe irregular bunch patterns."
-        ),
-        a_nexus_group=NeXusGroup(
-            nx_class="NXdata",
-            name="bunch_pattern",
-            name_type="specified",
-            optionality="optional",
         ),
     )
     pulse_shape = SubSection(
@@ -904,6 +899,54 @@ class Source(Component):
         ),
         a_eln=ELNAnnotation(
             component=ELNComponentEnum.StringEditQuantity,
+        ),
+    )
+
+    def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
+        super().normalize(archive, logger)
+
+
+# =============================================================================
+# Named NeXus concept groups — only when the group element defines own
+# quantities that differ from the generic class (changed optionality, extra
+# fields, different type/units/enumeration). These inherit from the specific
+# generic class so all # base quantities are available.
+# Resolved lazily by NOMAD at __init_metainfo__() time via string FQNs.
+# =============================================================================
+
+
+class SourceBunchPattern(Data):
+    """
+    For storage rings, description of the bunch pattern. This is useful to
+    describe irregular bunch patterns.
+    """
+
+    m_def = Section(
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXsource.html#nxsource-bunch-pattern-group"
+        ],
+        a_nexus_group=NeXusGroup(
+            nx_class="NXdata",
+            name="bunch_pattern",
+            name_type="specified",
+            optionality="optional",
+        ),
+    )
+
+    title = Quantity(
+        type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXsource.html#nxsource-bunch-pattern-title-field"
+        ],
+        description=("name of the bunch pattern"),
+        a_nexus_field=NeXusField(
+            name="title",
+            type="NX_CHAR_OR_NUMBER",
+            name_type="specified",
+            optionality="optional",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
         ),
     )
 

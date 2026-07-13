@@ -358,6 +358,22 @@ class ApmInstrumentReflectron(Component):
         ),
     )
 
+    applied = Quantity(
+        type=bool,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXapm_instrument.html#nxapm_instrument-reflectron-applied-field"
+        ],
+        description=("Was the reflectron used?"),
+        a_nexus_field=NeXusField(
+            name="applied",
+            type="NX_BOOLEAN",
+            name_type="specified",
+            optionality="optional",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.BoolEditQuantity,
+        ),
+    )
     voltage = Quantity(
         type=np.float64,
         links=[
@@ -775,6 +791,48 @@ class ApmInstrumentPulserSourceID(Source):
         ),
     )
 
+    power = Quantity(
+        type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXapm_instrument.html#nxapm_instrument-pulser-sourceid-power-field"
+        ],
+        dimensionality="[mass] * [length] ** 2 / [time] ** 3",
+        unit="watt",
+        description=(
+            "Nominal power of the laser source while illuminating the specimen."
+        ),
+        a_nexus_field=NeXusField(
+            name="power",
+            type="NX_FLOAT",
+            name_type="specified",
+            optionality="optional",
+            units="NX_POWER",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "watt"},
+    )
+    pulse_energy = Quantity(
+        type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXapm_instrument.html#nxapm_instrument-pulser-sourceid-pulse-energy-field"
+        ],
+        dimensionality="[mass] * [length] ** 2 / [time] ** 2",
+        unit="joule",
+        description=("Average energy of the laser at peak of each pulse."),
+        a_nexus_field=NeXusField(
+            name="pulse_energy",
+            type="NX_FLOAT",
+            name_type="specified",
+            optionality="optional",
+            units="NX_ENERGY",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "joule"},
+    )
     pulse_energy__logged_against = Quantity(
         type=str,
         links=[

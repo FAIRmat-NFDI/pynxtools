@@ -411,6 +411,23 @@ class ApmParaprobeClustererResultsClusterAnalysisIDDbscanID(SimilarityGrouping):
             units="NX_UNITLESS",
         ),
     )
+    categorical_label = Quantity(
+        type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_clusterer_results.html#nxapm_paraprobe_clusterer_results-entry-cluster-analysisid-dbscanid-categorical-label-field"
+        ],
+        shape=["*"],
+        description=(
+            "Categorical label(s) for each target (member in the set) aka "
+            "cluster name(s)."
+        ),
+        a_nexus_field=NeXusField(
+            name="categorical_label",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="optional",
+        ),
+    )
     weight = Quantity(
         type=np.float64,
         links=[

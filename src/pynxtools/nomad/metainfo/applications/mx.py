@@ -739,6 +739,26 @@ class MxInstrumentDetector(Detector):
         ),
     )
 
+    depends_on = Quantity(
+        type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXmx.html#nxmx-entry-instrument-detector-depends-on-field"
+        ],
+        description=(
+            "NeXus path to the detector positioner axis that most directly "
+            "supports the detector. In the case of a single-module detector, the "
+            "detector axis chain may start here."
+        ),
+        a_nexus_field=NeXusField(
+            name="depends_on",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="optional",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
+    )
     data_quantity = Quantity(
         type=np.float64,
         links=[
@@ -842,6 +862,23 @@ class MxInstrumentDetector(Detector):
             component=ELNComponentEnum.BoolEditQuantity,
         ),
     )
+    dead_time = Quantity(
+        type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXmx.html#nxmx-entry-instrument-detector-dead-time-field"
+        ],
+        dimensionality="[time]",
+        unit="second",
+        shape=["*", "*", "*"],
+        description=("Detector dead time."),
+        a_nexus_field=NeXusField(
+            name="dead_time",
+            type="NX_FLOAT",
+            name_type="specified",
+            optionality="optional",
+            units="NX_TIME",
+        ),
+    )
     count_time = Quantity(
         type=np.float64,
         links=[
@@ -933,6 +970,44 @@ class MxInstrumentDetector(Detector):
         ),
         a_display={"unit": "m"},
     )
+    angular_calibration_applied = Quantity(
+        type=bool,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXmx.html#nxmx-entry-instrument-detector-angular-calibration-applied-field"
+        ],
+        description=(
+            "True when the angular calibration has been applied in the "
+            "electronics, false otherwise."
+        ),
+        a_nexus_field=NeXusField(
+            name="angular_calibration_applied",
+            type="NX_BOOLEAN",
+            name_type="specified",
+            optionality="optional",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.BoolEditQuantity,
+        ),
+    )
+    flatfield_applied = Quantity(
+        type=bool,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXmx.html#nxmx-entry-instrument-detector-flatfield-applied-field"
+        ],
+        description=(
+            "True when the flat field correction has been applied in the "
+            "electronics, false otherwise."
+        ),
+        a_nexus_field=NeXusField(
+            name="flatfield_applied",
+            type="NX_BOOLEAN",
+            name_type="specified",
+            optionality="optional",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.BoolEditQuantity,
+        ),
+    )
     flatfield = Quantity(
         type=np.float64,
         links=[
@@ -985,6 +1060,25 @@ class MxInstrumentDetector(Detector):
             optionality="optional",
         ),
     )
+    pixel_mask_applied = Quantity(
+        type=bool,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXmx.html#nxmx-entry-instrument-detector-pixel-mask-applied-field"
+        ],
+        description=(
+            "True when the pixel mask correction has been applied in the "
+            "electronics, false otherwise."
+        ),
+        a_nexus_field=NeXusField(
+            name="pixel_mask_applied",
+            type="NX_BOOLEAN",
+            name_type="specified",
+            optionality="optional",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.BoolEditQuantity,
+        ),
+    )
     pixel_mask = Quantity(
         type=np.int64,
         links=[
@@ -1025,6 +1119,69 @@ class MxInstrumentDetector(Detector):
             optionality="recommended",
         ),
     )
+    countrate_correction_applied = Quantity(
+        type=bool,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXmx.html#nxmx-entry-instrument-detector-countrate-correction-applied-field"
+        ],
+        description=(
+            "Counting detectors usually are not able to measure all incoming "
+            "particles, especially at higher count-rates. Count-rate correction "
+            "is applied to account for these errors. True when count-rate "
+            "correction has been applied, false otherwise."
+        ),
+        a_nexus_field=NeXusField(
+            name="countrate_correction_applied",
+            type="NX_BOOLEAN",
+            name_type="specified",
+            optionality="optional",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.BoolEditQuantity,
+        ),
+    )
+    countrate_correction_lookup_table = Quantity(
+        type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXmx.html#nxmx-entry-instrument-detector-countrate-correction-lookup-table-field"
+        ],
+        shape=["*"],
+        description=(
+            "The countrate_correction_lookup_table defines the LUT used for "
+            "count-rate correction. It maps a measured count :math:`c` to its "
+            "corrected value :math:`countrate\\_correction\\_lookup\\_table[c]`. "
+            ":math:`m` denotes the length of the table."
+        ),
+        a_nexus_field=NeXusField(
+            name="countrate_correction_lookup_table",
+            type="NX_NUMBER",
+            name_type="specified",
+            optionality="optional",
+        ),
+    )
+    virtual_pixel_interpolation_applied = Quantity(
+        type=bool,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXmx.html#nxmx-entry-instrument-detector-virtual-pixel-interpolation-applied-field"
+        ],
+        description=(
+            "True when virtual pixel interpolation has been applied, false "
+            "otherwise. When virtual pixel interpolation is applied, values of "
+            "some pixels may contain interpolated values. For example, to "
+            "account for space between readout chips on a module, physical "
+            "pixels on edges and corners between chips may have larger sensor "
+            "areas and counts may be distributed between their logical pixels."
+        ),
+        a_nexus_field=NeXusField(
+            name="virtual_pixel_interpolation_applied",
+            type="NX_BOOLEAN",
+            name_type="specified",
+            optionality="optional",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.BoolEditQuantity,
+        ),
+    )
     bit_depth_readout = Quantity(
         type=np.int64,
         links=[
@@ -1036,6 +1193,117 @@ class MxInstrumentDetector(Detector):
             type="NX_INT",
             name_type="specified",
             optionality="recommended",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+    )
+    detector_readout_time = Quantity(
+        type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXmx.html#nxmx-entry-instrument-detector-detector-readout-time-field"
+        ],
+        dimensionality="[time]",
+        unit="second",
+        description=(
+            "Time it takes to read the detector (typically milliseconds). This "
+            "is important to know for time resolved experiments."
+        ),
+        a_nexus_field=NeXusField(
+            name="detector_readout_time",
+            type="NX_FLOAT",
+            name_type="specified",
+            optionality="optional",
+            units="NX_TIME",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "second"},
+    )
+    frame_time = Quantity(
+        type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXmx.html#nxmx-entry-instrument-detector-frame-time-field"
+        ],
+        dimensionality="[time]",
+        unit="second",
+        shape=["*"],
+        description=(
+            "This is time for each frame. This is exposure_time + readout time."
+        ),
+        a_nexus_field=NeXusField(
+            name="frame_time",
+            type="NX_FLOAT",
+            name_type="specified",
+            optionality="optional",
+            units="NX_TIME",
+        ),
+    )
+    gain_setting = Quantity(
+        type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXmx.html#nxmx-entry-instrument-detector-gain-setting-field"
+        ],
+        description=(
+            "The gain setting of the detector. This influences background. This "
+            "is a detector-specific value meant to document the gain setting of "
+            "the detector during data collection, for detectors with multiple "
+            "available gain settings. Examples of gain settings include: * "
+            "``standard`` * ``fast`` * ``auto`` * ``high`` * ``medium`` * "
+            "``low`` * ``mixed high to medium`` * ``mixed medium to low`` "
+            "Developers are encouraged to use one of these terms, or to submit "
+            "additional terms to add to the list."
+        ),
+        a_nexus_field=NeXusField(
+            name="gain_setting",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="optional",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
+    )
+    saturation_value = Quantity(
+        type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXmx.html#nxmx-entry-instrument-detector-saturation-value-field"
+        ],
+        description=(
+            "The value at which the detector goes into saturation. Data above "
+            "this value is known to be invalid. For example, given a "
+            "saturation_value and an underload_value, the valid pixels are those "
+            "less than or equal to the saturation_value and greater than or "
+            "equal to the underload_value."
+        ),
+        a_nexus_field=NeXusField(
+            name="saturation_value",
+            type="NX_NUMBER",
+            name_type="specified",
+            optionality="optional",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+    )
+    underload_value = Quantity(
+        type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXmx.html#nxmx-entry-instrument-detector-underload-value-field"
+        ],
+        description=(
+            "The lowest value at which pixels for this detector would be "
+            "reasonably be measured. For example, given a saturation_value and "
+            "an underload_value, the valid pixels are those less than or equal "
+            "to the saturation_value and greater than or equal to the "
+            "underload_value."
+        ),
+        a_nexus_field=NeXusField(
+            name="underload_value",
+            type="NX_NUMBER",
+            name_type="specified",
+            optionality="optional",
         ),
         a_eln=ELNAnnotation(
             component=ELNComponentEnum.NumberEditQuantity,
@@ -1084,6 +1352,50 @@ class MxInstrumentDetector(Detector):
             component=ELNComponentEnum.NumberEditQuantity,
         ),
         a_display={"unit": "m"},
+    )
+    threshold_energy = Quantity(
+        type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXmx.html#nxmx-entry-instrument-detector-threshold-energy-field"
+        ],
+        dimensionality="[mass] * [length] ** 2 / [time] ** 2",
+        unit="joule",
+        description=(
+            "Single photon counter detectors can be adjusted for a certain "
+            "energy range in which they work optimally. This is the energy "
+            "setting for this. If the detector supports multiple thresholds, "
+            "this is an array."
+        ),
+        a_nexus_field=NeXusField(
+            name="threshold_energy",
+            type="NX_FLOAT",
+            name_type="specified",
+            optionality="optional",
+            units="NX_ENERGY",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "joule"},
+    )
+    type = Quantity(
+        type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXmx.html#nxmx-entry-instrument-detector-type-field"
+        ],
+        description=(
+            "Description of type such as scintillator, ccd, pixel, image plate, "
+            "CMOS, ..."
+        ),
+        a_nexus_field=NeXusField(
+            name="type",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="optional",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
 
     def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
@@ -1187,6 +1499,29 @@ class MxInstrumentDetectorDetectorModule(DetectorModule):
         a_eln=ELNAnnotation(
             component=ELNComponentEnum.NumberEditQuantity,
         ),
+    )
+    module_offset = Quantity(
+        type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXmx.html#nxmx-entry-instrument-detector-detector-module-module-offset-field"
+        ],
+        dimensionality="[length]",
+        unit="m",
+        description=(
+            "Offset of the module in regards to the origin of the detector in an "
+            "arbitrary direction."
+        ),
+        a_nexus_field=NeXusField(
+            name="module_offset",
+            type="NX_NUMBER",
+            name_type="specified",
+            optionality="optional",
+            units="NX_LENGTH",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "m"},
     )
     module_offset__transformation_type = Quantity(
         type=MEnum(["translation"]),
@@ -1549,6 +1884,52 @@ class MxInstrumentBeam(Beam):
         ),
         a_eln=ELNAnnotation(
             component=ELNComponentEnum.NumberEditQuantity,
+        ),
+    )
+    incident_wavelength_weights = Quantity(
+        type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXmx.html#nxmx-entry-instrument-beam-incident-wavelength-weights-field"
+        ],
+        description=(
+            "In the case of a polychromatic beam this is an array of length "
+            "**m** of the relative weights of the corresponding wavelengths in "
+            "``incident_wavelength``. In the case of a polychromatic beam that "
+            "varies shot-to- shot, this is a 2D array of dimensions **np** by "
+            "**m** (slow to fast) of the relative weights of the corresponding "
+            "wavelengths in ``incident_wavelength``."
+        ),
+        a_nexus_field=NeXusField(
+            name="incident_wavelength_weights",
+            type="NX_FLOAT",
+            name_type="specified",
+            optionality="optional",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+    )
+    incident_wavelength_spread = Quantity(
+        type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXmx.html#nxmx-entry-instrument-beam-incident-wavelength-spread-field"
+        ],
+        dimensionality="[length]",
+        unit="m",
+        shape=["*"],
+        description=(
+            "The wavelength spread FWHM for the corresponding wavelength(s) in "
+            "incident_wavelength. In the case of shot-to-shot variation in the "
+            "wavelength spread, this is a 2D array of dimension **nP** by **m** "
+            "(slow to fast) of the spreads of the corresponding wavelengths in "
+            "incident_wavelength."
+        ),
+        a_nexus_field=NeXusField(
+            name="incident_wavelength_spread",
+            type="NX_FLOAT",
+            name_type="specified",
+            optionality="optional",
+            units="NX_WAVELENGTH",
         ),
     )
     total_flux = Quantity(

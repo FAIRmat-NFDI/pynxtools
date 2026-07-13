@@ -214,6 +214,47 @@ class ApmParaprobeToolCommonProfiling(CsProfiling):
         ),
     )
 
+    start_time = Quantity(
+        type=Datetime,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_tool_common.html#nxapm_paraprobe_tool_common-profiling-start-time-field"
+        ],
+        description=(
+            "ISO 8601 formatted time code with local time zone offset to UTC "
+            "information included when the analysis in this results file was "
+            "started, i.e. when the respective executable/tool was started as a "
+            "process."
+        ),
+        a_nexus_field=NeXusField(
+            name="start_time",
+            type="NX_DATE_TIME",
+            name_type="specified",
+            optionality="optional",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.DateTimeEditQuantity,
+        ),
+    )
+    end_time = Quantity(
+        type=Datetime,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_tool_common.html#nxapm_paraprobe_tool_common-profiling-end-time-field"
+        ],
+        description=(
+            "ISO 8601 formatted time code with local time zone offset to UTC "
+            "information included when the analysis in this results file were "
+            "completed and the respective process of the tool exited."
+        ),
+        a_nexus_field=NeXusField(
+            name="end_time",
+            type="NX_DATE_TIME",
+            name_type="specified",
+            optionality="optional",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.DateTimeEditQuantity,
+        ),
+    )
     total_elapsed_time = Quantity(
         type=np.float64,
         links=[

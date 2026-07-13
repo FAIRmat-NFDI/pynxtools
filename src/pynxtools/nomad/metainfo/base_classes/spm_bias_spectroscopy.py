@@ -45,6 +45,7 @@ from pynxtools.nomad.annotations import (
     NeXusLink,
 )
 from pynxtools.nomad.metainfo.base_classes.circuit import Circuit
+from pynxtools.nomad.metainfo.base_classes.coordinate_system import CoordinateSystem
 from pynxtools.nomad.metainfo.base_classes.object import Object
 from pynxtools.nomad.metainfo.base_classes.spm_scan_control import SpmScanControl
 from pynxtools.nomad.metainfo.base_classes.spm_scan_pattern import SpmScanPattern
@@ -185,6 +186,29 @@ class SpmBiasSpectroscopyCircuit(Circuit):
         ),
     )
 
+    acquisition_time = Quantity(
+        type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXspm_bias_spectroscopy.html#nxspm_bias_spectroscopy-circuit-acquisition-time-field"
+        ],
+        dimensionality="[time]",
+        unit="second",
+        description=(
+            "The time or period (average) to acquire the data for a single bias "
+            "sweep point."
+        ),
+        a_nexus_field=NeXusField(
+            name="acquisition_time",
+            type="NX_NUMBER",
+            name_type="specified",
+            optionality="optional",
+            units="NX_TIME",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "second"},
+    )
     animation_time = Quantity(
         type=np.float64,
         links=[
@@ -253,7 +277,7 @@ class SpmBiasSpectroscopyBiasSweep(SpmScanControl):
     )
 
     spatial_location = SubSection(
-        section_def="pynxtools.nomad.metainfo.base_classes.coordinate_system.CoordinateSystem",
+        section_def="pynxtools.nomad.metainfo.base_classes.spm_bias_spectroscopy.SpmBiasSpectroscopyBiasSweepSpatialLocation",
         repeats=False,
         a_nexus_group=NeXusGroup(
             nx_class="NXcoordinate_system",
@@ -457,6 +481,77 @@ class SpmBiasSpectroscopyBiasSweep(SpmScanControl):
             component=ELNComponentEnum.NumberEditQuantity,
         ),
         a_display={"unit": "second"},
+    )
+
+    def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
+        super().normalize(archive, logger)
+
+
+class SpmBiasSpectroscopyBiasSweepSpatialLocation(CoordinateSystem):
+    """
+    The spatial location of the scan points. This would be recommended to use
+    if there are multiple bias sweep scans at different locations.
+    """
+
+    m_def = Section(
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXspm_bias_spectroscopy.html#nxspm_bias_spectroscopy-bias-sweep-spatial-location-group"
+        ],
+        a_nexus_group=NeXusGroup(
+            nx_class="NXcoordinate_system",
+            name="spatial_location",
+            name_type="specified",
+            optionality="optional",
+        ),
+    )
+
+    x = Quantity(
+        type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXspm_bias_spectroscopy.html#nxspm_bias_spectroscopy-bias-sweep-spatial-location-x-field"
+        ],
+        dimensionality="[length]",
+        unit="m",
+        shape=[3],
+        a_nexus_field=NeXusField(
+            name="x",
+            type="NX_NUMBER",
+            name_type="specified",
+            optionality="optional",
+            units="NX_LENGTH",
+        ),
+    )
+    y = Quantity(
+        type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXspm_bias_spectroscopy.html#nxspm_bias_spectroscopy-bias-sweep-spatial-location-y-field"
+        ],
+        dimensionality="[length]",
+        unit="m",
+        shape=[3],
+        a_nexus_field=NeXusField(
+            name="y",
+            type="NX_NUMBER",
+            name_type="specified",
+            optionality="optional",
+            units="NX_LENGTH",
+        ),
+    )
+    z = Quantity(
+        type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXspm_bias_spectroscopy.html#nxspm_bias_spectroscopy-bias-sweep-spatial-location-z-field"
+        ],
+        dimensionality="[length]",
+        unit="m",
+        shape=[3],
+        a_nexus_field=NeXusField(
+            name="z",
+            type="NX_NUMBER",
+            name_type="specified",
+            optionality="optional",
+            units="NX_LENGTH",
+        ),
     )
 
     def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:

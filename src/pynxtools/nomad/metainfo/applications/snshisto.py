@@ -465,6 +465,24 @@ class SnshistoDaslogsLog(Log):
             component=ELNComponentEnum.NumberEditQuantity,
         ),
     )
+    average_value_error = Quantity(
+        type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXsnshisto.html#nxsnshisto-entry-daslogs-log-average-value-error-field"
+        ],
+        flexible_unit=True,
+        a_nexus_field=NeXusField(
+            name="average_value_error",
+            type="NX_FLOAT",
+            name_type="specified",
+            optionality="optional",
+            units="NX_ANY",
+            deprecated="see https://github.com/nexusformat/definitions/issues/821",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+    )
     average_value_errors = Quantity(
         type=np.float64,
         links=[

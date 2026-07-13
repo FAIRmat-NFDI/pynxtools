@@ -491,6 +491,29 @@ class ElectronanalyzerEnergyResolution(Resolution):
         ),
         a_display={"unit": "joule"},
     )
+    relative_resolution = Quantity(
+        type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXelectronanalyzer.html#nxelectronanalyzer-energy-resolution-relative-resolution-field"
+        ],
+        flexible_unit=True,
+        description=(
+            "Ratio of the energy resolution of the electron analyzer at a "
+            "specified energy value to that energy value. This concept is "
+            "related to term `10.7`_ of the ISO 18115-1:2023 standard. .. _10.7: "
+            "https://www.iso.org/obp/ui/en/#iso:std:iso:18115:-1:ed-3:v1:en:term:10.7"
+        ),
+        a_nexus_field=NeXusField(
+            name="relative_resolution",
+            type="NX_FLOAT",
+            name_type="specified",
+            optionality="optional",
+            units="NX_ANY",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+    )
 
     def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
         super().normalize(archive, logger)

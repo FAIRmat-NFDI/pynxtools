@@ -325,6 +325,25 @@ class ApmParaprobeSurfacerResultsPointSetWrappingIDAlphaComplexID(CgAlphaComplex
             component=ELNComponentEnum.NumberEditQuantity,
         ),
     )
+    offset = Quantity(
+        type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_surfacer_results.html#nxapm_paraprobe_surfacer_results-entry-point-set-wrappingid-alpha-complexid-offset-field"
+        ],
+        dimensionality="[length]",
+        unit="m",
+        a_nexus_field=NeXusField(
+            name="offset",
+            type="NX_NUMBER",
+            name_type="specified",
+            optionality="optional",
+            units="NX_LENGTH",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "m"},
+    )
 
     def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
         super().normalize(archive, logger)

@@ -326,6 +326,22 @@ class SasInstrumentSource(Source):
             component=ELNComponentEnum.StringEditQuantity,
         ),
     )
+    name = Quantity(
+        type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXsas.html#nxsas-entry-instrument-source-name-field"
+        ],
+        description=("Name of the radiation source."),
+        a_nexus_field=NeXusField(
+            name="name",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="optional",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
+    )
     probe = Quantity(
         type=MEnum(["neutron", "x-ray"]),
         links=[
@@ -609,6 +625,38 @@ class SasInstrumentDetector(Detector):
             units="NX_LENGTH",
         ),
     )
+    polar_angle = Quantity(
+        type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXsas.html#nxsas-entry-instrument-detector-polar-angle-field"
+        ],
+        dimensionality="[angle]",
+        unit="radian",
+        shape=["*", "*", "*"],
+        a_nexus_field=NeXusField(
+            name="polar_angle",
+            type="NX_FLOAT",
+            name_type="specified",
+            optionality="optional",
+            units="NX_ANGLE",
+        ),
+    )
+    azimuthal_angle = Quantity(
+        type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXsas.html#nxsas-entry-instrument-detector-azimuthal-angle-field"
+        ],
+        dimensionality="[angle]",
+        unit="radian",
+        shape=["*", "*", "*"],
+        a_nexus_field=NeXusField(
+            name="azimuthal_angle",
+            type="NX_FLOAT",
+            name_type="specified",
+            optionality="optional",
+            units="NX_ANGLE",
+        ),
+    )
     rotation_angle = Quantity(
         type=np.float64,
         links=[
@@ -646,6 +694,60 @@ class SasInstrumentDetector(Detector):
             component=ELNComponentEnum.NumberEditQuantity,
         ),
         a_display={"unit": "radian"},
+    )
+    beam_center_x = Quantity(
+        type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXsas.html#nxsas-entry-instrument-detector-beam-center-x-field"
+        ],
+        dimensionality="[length]",
+        unit="m",
+        description=(
+            "This is the x position where the direct beam would hit the "
+            "detector. This is a length, not a pixel position, and can be "
+            "outside of the actual detector. It is expected that data reduction "
+            "will determine beam center from the raw data, thus it is not "
+            "required here. The instrument can provide an initial or nominal "
+            "value to advise data reduction."
+        ),
+        a_nexus_field=NeXusField(
+            name="beam_center_x",
+            type="NX_FLOAT",
+            name_type="specified",
+            optionality="optional",
+            units="NX_LENGTH",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "m"},
+    )
+    beam_center_y = Quantity(
+        type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXsas.html#nxsas-entry-instrument-detector-beam-center-y-field"
+        ],
+        dimensionality="[length]",
+        unit="m",
+        description=(
+            "This is the y position where the direct beam would hit the "
+            "detector. This is a length, not a pixel position, and can be "
+            "outside of the actual detector. It is expected that data reduction "
+            "will determine beam center from the raw data, thus it is not "
+            "required here. The instrument can provide an initial or nominal "
+            "value to advise data reduction."
+        ),
+        a_nexus_field=NeXusField(
+            name="beam_center_y",
+            type="NX_FLOAT",
+            name_type="specified",
+            optionality="optional",
+            units="NX_LENGTH",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "m"},
     )
 
     def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:

@@ -2094,6 +2094,21 @@ class OpticalSpectroscopyInstrumentTemperatureSensor(Sensor):
             default="temperature",
         ),
     )
+    type = Quantity(
+        type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXoptical_spectroscopy.html#nxoptical_spectroscopy-entry-instrument-temperature-sensor-type-field"
+        ],
+        a_nexus_field=NeXusField(
+            name="type",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="optional",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
+    )
     value = Quantity(
         type=np.float64,
         links=[
@@ -2201,6 +2216,24 @@ class OpticalSpectroscopyInstrumentTempControlTYPE(Actuator):
         ),
         a_eln=ELNAnnotation(
             component=ELNComponentEnum.EnumEditQuantity,
+        ),
+    )
+    type = Quantity(
+        type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXoptical_spectroscopy.html#nxoptical_spectroscopy-entry-instrument-temp-control-type-type-field"
+        ],
+        description=(
+            "Hardware used for actuation, i.e. laser, gas lamp, filament, resistive"
+        ),
+        a_nexus_field=NeXusField(
+            name="type",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="optional",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
 
@@ -2691,6 +2724,22 @@ class OpticalSpectroscopySample(Sample):
             type="NX_CHAR",
             name_type="specified",
             optionality="recommended",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
+    )
+    description = Quantity(
+        type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXoptical_spectroscopy.html#nxoptical_spectroscopy-entry-sample-description-field"
+        ],
+        description=("Free text description of the sample."),
+        a_nexus_field=NeXusField(
+            name="description",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="optional",
         ),
         a_eln=ELNAnnotation(
             component=ELNComponentEnum.StringEditQuantity,
