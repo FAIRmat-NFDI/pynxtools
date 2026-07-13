@@ -626,7 +626,14 @@ def _build_subsection_from_node(
     """
     nx_name_type = node.name_type or "specified"
 
-    repeats: bool = node.variadic
+    # Repeatability rules (mirrors the old schema's _if_repeats logic):
+    # - variadic (nameType any/partial): repeatable unless maxOccurs is explicitly 1
+    # - specified: not repeatable by default, but repeatable if maxOccurs > 1 explicitly
+    max_occurs = node.occurrence_limits[1]  # None means unbounded
+    if node.variadic:
+        repeats = max_occurs is None or max_occurs > 1
+    else:
+        repeats = max_occurs is not None and max_occurs > 1
     variable = nx_name_type in ("any", "partial")
 
     if nx_name_type == "any":

@@ -86,7 +86,7 @@ class ApmParaprobeIntersectorResults(ApmParaprobeToolResults):
 
     v_v_spatial_correlationID = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.apm_paraprobe_intersector_results.ApmParaprobeIntersectorResultsVVSpatialCorrelationID",
-        repeats=True,
+        repeats=False,
         variable=True,
         description=("The results of an overlap/intersection analysis."),
     )

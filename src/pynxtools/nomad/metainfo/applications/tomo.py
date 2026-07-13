@@ -192,7 +192,7 @@ class TomoInstrument(Instrument):
 
     source = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.tomo.TomoInstrumentSource",
-        repeats=True,
+        repeats=False,
         variable=True,
         a_nexus_group=NeXusGroup(
             nx_class="NXsource",

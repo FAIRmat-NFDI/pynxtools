@@ -95,7 +95,7 @@ class Stxm(Entry):
 
     instrument = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.stxm.StxmInstrument",
-        repeats=True,
+        repeats=False,
         variable=True,
     )
     sample = SubSection(
@@ -208,7 +208,7 @@ class StxmInstrument(Instrument):
 
     source = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.stxm.StxmInstrumentSource",
-        repeats=True,
+        repeats=False,
         variable=True,
         a_nexus_group=NeXusGroup(
             nx_class="NXsource",

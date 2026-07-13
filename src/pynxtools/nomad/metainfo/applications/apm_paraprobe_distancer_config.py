@@ -89,7 +89,7 @@ class ApmParaprobeDistancerConfig(ApmParaprobeToolConfig):
 
     point_to_triangleID = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.apm_paraprobe_distancer_config.ApmParaprobeDistancerConfigPointToTriangleID",
-        repeats=True,
+        repeats=False,
         variable=True,
     )
 

@@ -115,12 +115,12 @@ class ApmParaprobeNanochemResults(ApmParaprobeToolResults):
     )
     interface_meshingID = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.apm_paraprobe_nanochem_results.ApmParaprobeNanochemResultsInterfaceMeshingID",
-        repeats=True,
+        repeats=False,
         variable=True,
     )
     oned_profileID = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.apm_paraprobe_nanochem_results.ApmParaprobeNanochemResultsOnedProfileID",
-        repeats=True,
+        repeats=False,
         variable=True,
     )
 
@@ -1727,7 +1727,7 @@ class ApmParaprobeNanochemResultsDelocalizationIDGridIsoSurfaceIDTriangleSoupTri
 
     FEATURE = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.apm_paraprobe_nanochem_results.ApmParaprobeNanochemResultsDelocalizationIDGridIsoSurfaceIDTriangleSoupTrianglesVolumetricFeaturesFeature",
-        repeats=False,
+        repeats=True,
         a_nexus_group=NeXusGroup(
             nx_class="NXprocess",
             name="FEATURE",

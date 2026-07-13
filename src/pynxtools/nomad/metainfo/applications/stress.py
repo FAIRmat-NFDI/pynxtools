@@ -159,7 +159,7 @@ class Stress(Entry):
     )
     sample_description = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.stress.StressSampleDescription",
-        repeats=True,
+        repeats=False,
         variable=True,
         description=(
             "This is the recommended location for describing parameters "
@@ -177,7 +177,7 @@ class Stress(Entry):
     )
     notes = SubSection(
         section_def="pynxtools.nomad.metainfo.base_classes.note.Note",
-        repeats=True,
+        repeats=False,
         variable=True,
         description=(
             "User description of the data acquisitions. A description of data "
@@ -440,7 +440,7 @@ class StressInstrument(Instrument):
 
     calibration = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.stress.StressInstrumentCalibration",
-        repeats=True,
+        repeats=False,
         variable=True,
         a_nexus_group=NeXusGroup(
             nx_class="NXnote",
@@ -453,7 +453,7 @@ class StressInstrument(Instrument):
     )
     source = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.stress.StressInstrumentSource",
-        repeats=True,
+        repeats=False,
         variable=True,
         a_nexus_group=NeXusGroup(
             nx_class="NXsource",
@@ -670,7 +670,7 @@ class StressInstrumentDetector(Detector):
 
     transformations = SubSection(
         section_def="pynxtools.nomad.metainfo.base_classes.transformations.Transformations",
-        repeats=True,
+        repeats=False,
         variable=True,
         a_nexus_group=NeXusGroup(
             nx_class="NXtransformations",
@@ -1154,7 +1154,7 @@ class StressSampleDescription(Sample):
     )
     transformations = SubSection(
         section_def="pynxtools.nomad.metainfo.base_classes.transformations.Transformations",
-        repeats=True,
+        repeats=False,
         variable=True,
         a_nexus_group=NeXusGroup(
             nx_class="NXtransformations",
@@ -1249,7 +1249,7 @@ class StressSampleDescriptionGaugeVolume(Parameters):
 
     transformations = SubSection(
         section_def="pynxtools.nomad.metainfo.base_classes.transformations.Transformations",
-        repeats=True,
+        repeats=False,
         variable=True,
         a_nexus_group=NeXusGroup(
             nx_class="NXtransformations",

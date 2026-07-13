@@ -94,7 +94,7 @@ class ApmParaprobeTessellatorResults(ApmParaprobeToolResults):
 
     tessellationID = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.apm_paraprobe_tessellator_results.ApmParaprobeTessellatorResultsTessellationID",
-        repeats=True,
+        repeats=False,
         variable=True,
         description=(
             "The tool can be used to compute a Voronoi tessellation the entire "

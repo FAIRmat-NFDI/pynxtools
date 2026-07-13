@@ -91,7 +91,7 @@ class ApmParaprobeNanochemConfig(ApmParaprobeToolConfig):
 
     delocalizationID = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.apm_paraprobe_nanochem_config.ApmParaprobeNanochemConfigDelocalizationID",
-        repeats=True,
+        repeats=False,
         variable=True,
         description=(
             "Discretization and distributing of the ion point cloud on a 3D grid "
@@ -108,7 +108,7 @@ class ApmParaprobeNanochemConfig(ApmParaprobeToolConfig):
     )
     interface_meshingID = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.apm_paraprobe_nanochem_config.ApmParaprobeNanochemConfigInterfaceMeshingID",
-        repeats=True,
+        repeats=False,
         variable=True,
         description=(
             "Use a principle component analysis (PCA) to mesh a single "
@@ -137,7 +137,7 @@ class ApmParaprobeNanochemConfig(ApmParaprobeToolConfig):
     )
     oned_profileID = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.apm_paraprobe_nanochem_config.ApmParaprobeNanochemConfigOnedProfileID",
-        repeats=True,
+        repeats=False,
         variable=True,
         description=(
             "Analysis of one-dimensional profiles in ROIs placed in the dataset. "

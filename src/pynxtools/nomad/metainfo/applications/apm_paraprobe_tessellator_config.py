@@ -80,7 +80,7 @@ class ApmParaprobeTessellatorConfig(ApmParaprobeToolConfig):
 
     tessellateID = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.apm_paraprobe_tessellator_config.ApmParaprobeTessellatorConfigTessellateID",
-        repeats=True,
+        repeats=False,
         variable=True,
     )
 

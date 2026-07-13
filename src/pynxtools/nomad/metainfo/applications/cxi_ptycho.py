@@ -232,7 +232,7 @@ class CxiPtychoInstrument1(Instrument):
     )
     monitor = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.cxi_ptycho.CxiPtychoInstrument1Monitor",
-        repeats=True,
+        repeats=False,
         variable=True,
         a_nexus_group=NeXusGroup(
             nx_class="NXmonitor",

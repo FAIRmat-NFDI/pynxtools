@@ -81,7 +81,7 @@ class ApmParaprobeSurfacerConfig(ApmParaprobeToolConfig):
 
     surface_meshingID = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.apm_paraprobe_surfacer_config.ApmParaprobeSurfacerConfigSurfaceMeshingID",
-        repeats=True,
+        repeats=False,
         variable=True,
     )
 

@@ -75,7 +75,7 @@ class ApmParaprobeSelectorConfig(ApmParaprobeToolConfig):
 
     selectID = SubSection(
         section_def="pynxtools.nomad.metainfo.base_classes.apm_paraprobe_tool_parameters.ApmParaprobeToolParameters",
-        repeats=True,
+        repeats=False,
         variable=True,
         a_nexus_group=NeXusGroup(
             nx_class="NXapm_paraprobe_tool_parameters",
