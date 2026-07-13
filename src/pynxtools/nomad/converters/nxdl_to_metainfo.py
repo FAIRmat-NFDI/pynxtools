@@ -834,13 +834,13 @@ def _build_named_concept(
     whole recursion to avoid name collisions between nested concepts.
 
     ``naming_base`` is the prefix used to derive nested concept names from
-    (defaults to ``concept_class_name``). 
-    
+    (defaults to ``concept_class_name``).
+
     It differs from
     ``concept_class_name`` only when this concept itself was re-prefixed to
     avoid circular inheritance (e.g. ``EmEmMeasurement(EmMeasurement)``):
-    
-    
+
+
     Nested concepts are named from the un-doubled ``EmMeasurement`` (giving
     ``EmMeasurementInstrument``, not ``EmEmMeasurementInstrument``), since
     they have no analogous collision with their own base class.
@@ -1136,7 +1136,7 @@ def _all_ancestor_member_names(nx_class: str) -> tuple[frozenset[str], frozenset
                         sub_names.add(nxdl_to_subsection_name(c.name))
                 elif c.nx_type in ("field", "attribute"):
                     qty_names.add(nxdl_to_quantity_name(c.name))
-        except Exception:
+        except FileNotFoundError:
             pass
         parent = _nx_extends(current)
         if parent == current or not parent:
@@ -1215,7 +1215,7 @@ def _ensure_conflicts_precomputed() -> None:
                     group_names.add(nxdl_to_subsection_name(c.name.lower()))
                 else:
                     group_names.add(nxdl_to_subsection_name(c.name))
-        except Exception:
+        except FileNotFoundError:
             pass
         class_group_names[nx_class] = group_names
 
@@ -1236,7 +1236,7 @@ def _ensure_conflicts_precomputed() -> None:
                         py_name = nxdl_to_quantity_name(c.name)
                         if py_name in group_names:
                             pending.setdefault(current, set()).add(py_name)
-            except Exception:
+            except FileNotFoundError:
                 pass
             parent = _nx_extends(current)
             if parent == current or parent == "NXobject":
@@ -1250,7 +1250,7 @@ def _ensure_conflicts_precomputed() -> None:
                                 py_name = nxdl_to_quantity_name(c.name)
                                 if py_name in group_names:
                                     pending.setdefault("NXobject", set()).add(py_name)
-                    except Exception:
+                    except FileNotFoundError:
                         pass
                 break
             current = parent
