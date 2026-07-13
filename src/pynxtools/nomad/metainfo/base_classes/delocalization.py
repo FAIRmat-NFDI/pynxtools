@@ -93,10 +93,6 @@ class Delocalization(Object):
     weighting_model = SubSection(
         section_def="pynxtools.nomad.metainfo.base_classes.delocalization.DelocalizationWeightingModel",
         repeats=False,
-        description=(
-            "The weighting model specifies how mark data are mapped to a weight "
-            "per point/object."
-        ),
     )
 
     def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:

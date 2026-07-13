@@ -85,58 +85,22 @@ class ApmCompositionspaceConfig(Entry):
     reconstruction = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.apm_compositionspace_config.ApmCompositionspaceConfigReconstruction",
         repeats=False,
-        description=(
-            "Specification of the tomographic reconstruction used for this "
-            "analysis. Reconstructions in the field of atom probe tomography are "
-            "communicated via a file which stores the reconstructed position and "
-            "mass-to-charge-state-ratio value for each ion. Container file "
-            "formats like HDF5, such as NeXus/HDF5 files using :ref:`NXapm`, can "
-            "store multiple reconstructions. In this case, the position and "
-            "mass_to_charge concepts point to specific instances in the file "
-            "referred to by file_name for the analysis with CompositionSpace."
-        ),
     )
     ranging = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.apm_compositionspace_config.ApmCompositionspaceConfigRanging",
         repeats=False,
-        description=(
-            "Specification of the ranging definitions used for this analysis. "
-            "Ranging definitions in the field of atom probe tomography are "
-            "communicated via a file which stores the mass-to-charge-state-ratio "
-            "interval and the number of elements of which each (molecular) ion "
-            "is composed. These values are stored for each ion. Container file "
-            "formats like HDF5, such as NeXus/HDF5 files using :ref:`NXapm`, can "
-            "store multiple ranging definitions. Indices of ions start from 1. "
-            "The value 0 is reserved for the null model of unranged positions "
-            "whose iontype is referred to as the unknown_type. The value 0 is "
-            "also reserved for voxels that lie outside the dataset."
-        ),
     )
     voxelization = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.apm_compositionspace_config.ApmCompositionspaceConfigVoxelization",
         repeats=False,
-        description=(
-            "Step during which the point cloud is discretized to compute "
-            "element-specific composition fields. Iontypes are atomically "
-            "decomposed to correctly account for the multiplicity of each "
-            "element that was ranged for each ion."
-        ),
     )
     segmentation = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.apm_compositionspace_config.ApmCompositionspaceConfigSegmentation",
         repeats=False,
-        description=(
-            "Step during which the voxel set is segmented into voxel sets with "
-            "different chemical composition."
-        ),
     )
     clustering = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.apm_compositionspace_config.ApmCompositionspaceConfigClustering",
         repeats=False,
-        description=(
-            "Step during which the chemically segmented voxel sets are analyzed "
-            "for their spatial organization."
-        ),
     )
 
     definition = Quantity(
@@ -437,12 +401,6 @@ class ApmCompositionspaceConfigVoxelization(Process):
     autophase = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.apm_compositionspace_config.ApmCompositionspaceConfigVoxelizationAutophase",
         repeats=False,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXprocess",
-            name="autophase",
-            name_type="specified",
-            optionality="required",
-        ),
     )
 
     edge_length = Quantity(
@@ -500,6 +458,7 @@ class ApmCompositionspaceConfigVoxelizationAutophase(Process):
     random_forest_classifier = SubSection(
         section_def="pynxtools.nomad.metainfo.base_classes.process.Process",
         repeats=False,
+        description=("Configuration for the random forest classification model."),
         a_nexus_group=NeXusGroup(
             nx_class="NXprocess",
             name="random_forest_classifier",
@@ -596,6 +555,12 @@ class ApmCompositionspaceConfigSegmentation(Process):
     pca = SubSection(
         section_def="pynxtools.nomad.metainfo.base_classes.process.Process",
         repeats=False,
+        description=(
+            "A principal component analysis of the chemical space to guide a "
+            "decision into how many sets of voxels with different chemical "
+            "composition the machine learning algorithm suggests to split the "
+            "voxel set."
+        ),
         a_nexus_group=NeXusGroup(
             nx_class="NXprocess",
             name="pca",
@@ -606,12 +571,6 @@ class ApmCompositionspaceConfigSegmentation(Process):
     ic_opt = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.apm_compositionspace_config.ApmCompositionspaceConfigSegmentationIcOpt",
         repeats=False,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXprocess",
-            name="ic_opt",
-            name_type="specified",
-            optionality="required",
-        ),
     )
 
     def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
@@ -639,6 +598,10 @@ class ApmCompositionspaceConfigSegmentationIcOpt(Process):
     gaussian_mixture = SubSection(
         section_def="pynxtools.nomad.metainfo.base_classes.process.Process",
         repeats=False,
+        description=(
+            "Configuration for the Gaussian mixture model that is used in the "
+            "segmentation step."
+        ),
         a_nexus_group=NeXusGroup(
             nx_class="NXprocess",
             name="gaussian_mixture",
@@ -697,12 +660,6 @@ class ApmCompositionspaceConfigClustering(Process):
     dbscan = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.apm_compositionspace_config.ApmCompositionspaceConfigClusteringDbscan",
         repeats=False,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXparameters",
-            name="dbscan",
-            name_type="specified",
-            optionality="required",
-        ),
     )
 
     def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:

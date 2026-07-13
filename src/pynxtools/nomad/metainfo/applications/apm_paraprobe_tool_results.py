@@ -104,7 +104,6 @@ class ApmParaprobeToolResults(Entry):
         section_def="pynxtools.nomad.metainfo.applications.apm_paraprobe_tool_results.ApmParaprobeToolResultsTaskprocessed",
         repeats=True,
         variable=True,
-        description=("A specific processing result"),
     )
     common = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.apm_paraprobe_tool_results.ApmParaprobeToolResultsCommon",
@@ -178,12 +177,6 @@ class ApmParaprobeToolResultsTaskprocessed(ApmParaprobeToolProcess):
     window = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.apm_paraprobe_tool_results.ApmParaprobeToolResultsTaskprocessedWindow",
         repeats=False,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXcs_filter_boolean_mask",
-            name="window",
-            name_type="specified",
-            optionality="required",
-        ),
     )
 
     def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
@@ -278,56 +271,24 @@ class ApmParaprobeToolResultsCommon(ApmParaprobeToolCommon):
     config = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.apm_paraprobe_tool_results.ApmParaprobeToolResultsCommonConfig",
         repeats=False,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXnote",
-            name="config",
-            name_type="specified",
-            optionality="required",
-        ),
     )
     programID = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.apm_paraprobe_tool_results.ApmParaprobeToolResultsCommonProgramID",
         repeats=True,
         variable=True,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXprogram",
-            name="programID",
-            name_type="partial",
-            optionality="required",
-            min_occurs=1,
-        ),
     )
     profiling = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.apm_paraprobe_tool_results.ApmParaprobeToolResultsCommonProfiling",
         repeats=False,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXcs_profiling",
-            name="profiling",
-            name_type="specified",
-            optionality="recommended",
-        ),
     )
     userID = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.apm_paraprobe_tool_results.ApmParaprobeToolResultsCommonUserID",
         repeats=True,
         variable=True,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXuser",
-            name="userID",
-            name_type="partial",
-            optionality="optional",
-            min_occurs=0,
-        ),
     )
     paraprobe_reference_frame = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.apm_paraprobe_tool_results.ApmParaprobeToolResultsCommonParaprobeReferenceFrame",
         repeats=False,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXcoordinate_system",
-            name="paraprobe_reference_frame",
-            name_type="specified",
-            optionality="required",
-        ),
     )
 
     status = Quantity(

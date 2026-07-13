@@ -126,9 +126,6 @@ class MicrostructureKanapyResults(Entry):
     environment = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.microstructure_kanapy_results.MicrostructureKanapyResultsEnvironment",
         repeats=False,
-        description=(
-            "Programs and libraries representing the computational environment"
-        ),
     )
     microstructureID = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.microstructure_kanapy_results.MicrostructureKanapyResultsMicrostructureID",
@@ -366,13 +363,6 @@ class MicrostructureKanapyResultsEnvironment(Collection):
         section_def="pynxtools.nomad.metainfo.applications.microstructure_kanapy_results.MicrostructureKanapyResultsEnvironmentProgram",
         repeats=True,
         variable=True,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXprogram",
-            name=None,
-            name_type="any",
-            optionality="required",
-            min_occurs=1,
-        ),
     )
 
     def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
@@ -448,22 +438,10 @@ class MicrostructureKanapyResultsMicrostructureID(Microstructure):
     grid = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.microstructure_kanapy_results.MicrostructureKanapyResultsMicrostructureIDGrid",
         repeats=False,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXcg_grid",
-            name="grid",
-            name_type="specified",
-            optionality="required",
-        ),
     )
     crystals = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.microstructure_kanapy_results.MicrostructureKanapyResultsMicrostructureIDCrystals",
         repeats=False,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXmicrostructure_feature",
-            name="crystals",
-            name_type="specified",
-            optionality="required",
-        ),
     )
 
     def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
@@ -486,12 +464,6 @@ class MicrostructureKanapyResultsMicrostructureIDGrid(CgGrid):
     structure = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.microstructure_kanapy_results.MicrostructureKanapyResultsMicrostructureIDGridStructure",
         repeats=False,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXdata",
-            name="structure",
-            name_type="specified",
-            optionality="required",
-        ),
     )
 
     extent = Quantity(

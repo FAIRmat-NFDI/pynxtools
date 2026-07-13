@@ -81,18 +81,6 @@ class ApmParaprobeIntersectorConfig(ApmParaprobeToolConfig):
         section_def="pynxtools.nomad.metainfo.applications.apm_paraprobe_intersector_config.ApmParaprobeIntersectorConfigVVSpatialCorrelationID",
         repeats=True,
         variable=True,
-        description=(
-            "Tracking volume_volume_spatial_correlations (v_v) is the process of "
-            "building logical relations between objects, their proximity and "
-            "eventual volumetric intersections. Here, objects are assumed to be "
-            "represented as a set of triangulated surface meshes. Volumetric "
-            "overlap and proximity of volumetric features is identified for "
-            "members of sets of features to members of other sets of volumetric "
-            "features. Specifically, for each time step :math:`k` pairs of sets "
-            "are compared: Members of a so-called current_set to members of a "
-            "so-called next_set. Members can be different types of volumetric "
-            "features."
-        ),
     )
 
     definition = Quantity(
@@ -175,22 +163,10 @@ class ApmParaprobeIntersectorConfigVVSpatialCorrelationID(
     current_set = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.apm_paraprobe_intersector_config.ApmParaprobeIntersectorConfigVVSpatialCorrelationIDCurrentSet",
         repeats=False,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXparameters",
-            name="current_set",
-            name_type="specified",
-            optionality="required",
-        ),
     )
     next_set = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.apm_paraprobe_intersector_config.ApmParaprobeIntersectorConfigVVSpatialCorrelationIDNextSet",
         repeats=False,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXparameters",
-            name="next_set",
-            name_type="specified",
-            optionality="required",
-        ),
     )
 
     intersection_detection_method = Quantity(
@@ -385,14 +361,6 @@ class ApmParaprobeIntersectorConfigVVSpatialCorrelationIDCurrentSet(Parameters):
         section_def="pynxtools.nomad.metainfo.applications.apm_paraprobe_intersector_config.ApmParaprobeIntersectorConfigVVSpatialCorrelationIDCurrentSetObjectID",
         repeats=True,
         variable=True,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXnote",
-            name="objectID",
-            name_type="partial",
-            optionality="required",
-            min_occurs=1,
-            max_occurs=4,
-        ),
     )
 
     set_identifier = Quantity(
@@ -621,14 +589,6 @@ class ApmParaprobeIntersectorConfigVVSpatialCorrelationIDNextSet(Parameters):
         section_def="pynxtools.nomad.metainfo.applications.apm_paraprobe_intersector_config.ApmParaprobeIntersectorConfigVVSpatialCorrelationIDNextSetObjectID",
         repeats=True,
         variable=True,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXnote",
-            name="objectID",
-            name_type="partial",
-            optionality="required",
-            min_occurs=1,
-            max_occurs=4,
-        ),
     )
 
     set_identifier = Quantity(

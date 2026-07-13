@@ -71,11 +71,6 @@ class ChemicalComposition(Object):
         section_def="pynxtools.nomad.metainfo.base_classes.chemical_composition.ChemicalCompositionElement",
         repeats=True,
         variable=True,
-        description=(
-            "If this group is used to report the composition of elements from "
-            "the periodic table, the group should use the chemical symbol of "
-            "that element. For other case the group name is unconstrained."
-        ),
     )
 
     normalization = Quantity(

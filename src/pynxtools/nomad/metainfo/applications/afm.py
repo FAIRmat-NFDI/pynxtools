@@ -89,18 +89,10 @@ class Afm(Spm):
     reproducibility_indicators = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.afm.AfmReproducibilityIndicators",
         repeats=False,
-        description=(
-            "The group of indicators (links to the existing fields in different "
-            "groups) that measure the reproducibility of the experiment."
-        ),
     )
     resolution_indicators = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.afm.AfmResolutionIndicators",
         repeats=False,
-        description=(
-            "The group of indicators (links to the existing fields in different "
-            "groups) that"
-        ),
     )
 
     definition = Quantity(
@@ -355,27 +347,16 @@ class AfmInstrument(SpmInstrument):
     photo_detector = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.afm.AfmInstrumentPhotoDetector",
         repeats=False,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXdetector",
-            name="photo_detector",
-            name_type="specified",
-            optionality="optional",
-        ),
     )
     spm_cantilever = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.afm.AfmInstrumentSpmCantilever",
         repeats=True,
         variable=True,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXspm_cantilever",
-            name=None,
-            name_type="any",
-            optionality="recommended",
-        ),
     )
     phase_lock_loop = SubSection(
         section_def="pynxtools.nomad.metainfo.base_classes.phase_lock_loop.PhaseLockLoop",
         repeats=False,
+        description=("Phase locked loop for cantilever lock-in device."),
         a_nexus_group=NeXusGroup(
             nx_class="NXphase_lock_loop",
             name="phase_lock_loop",
@@ -387,16 +368,13 @@ class AfmInstrument(SpmInstrument):
         section_def="pynxtools.nomad.metainfo.applications.afm.AfmInstrumentScanEnvironment",
         repeats=True,
         variable=True,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXenvironment",
-            name="SCAN_ENVIRONMENT",
-            name_type="any",
-            optionality="required",
-        ),
     )
     head_temperature_sensor = SubSection(
         section_def="pynxtools.nomad.metainfo.base_classes.sensor.Sensor",
         repeats=False,
+        description=(
+            "The temperature of the scan environment or head of the cantilever."
+        ),
         a_nexus_group=NeXusGroup(
             nx_class="NXsensor",
             name="head_temperature_sensor",
@@ -431,6 +409,7 @@ class AfmInstrumentPhotoDetector(Detector):
         section_def="pynxtools.nomad.metainfo.base_classes.sensor.Sensor",
         repeats=True,
         variable=True,
+        description=("The sensor information for the photodiode or interferometer."),
         a_nexus_group=NeXusGroup(
             nx_class="NXsensor",
             name=None,
@@ -464,12 +443,6 @@ class AfmInstrumentSpmCantilever(SpmCantilever):
     cantilever_oscillator = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.afm.AfmInstrumentSpmCantileverCantileverOscillator",
         repeats=False,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXspm_cantilever_oscillator",
-            name="cantilever_oscillator",
-            name_type="specified",
-            optionality="recommended",
-        ),
     )
 
     def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
@@ -585,6 +558,9 @@ class AfmInstrumentScanEnvironment(Environment):
         section_def="pynxtools.nomad.metainfo.base_classes.spm_piezo_sensor.SpmPiezoSensor",
         repeats=True,
         variable=True,
+        description=(
+            "This should be a link to the concept entry/instrument/xy_piezo_sensor."
+        ),
         a_nexus_group=NeXusGroup(
             nx_class="NXspm_piezo_sensor",
             name="XYpiezo_sensor",
@@ -595,6 +571,10 @@ class AfmInstrumentScanEnvironment(Environment):
     head_temperature_sensor = SubSection(
         section_def="pynxtools.nomad.metainfo.base_classes.sensor.Sensor",
         repeats=False,
+        description=(
+            "This should be a link to the concept "
+            "entry/instrument/head_temperature_sensor."
+        ),
         a_nexus_group=NeXusGroup(
             nx_class="NXsensor",
             name="head_temperature_sensor",
@@ -628,6 +608,10 @@ class AfmReproducibilityIndicators(SpmReproducibilityIndicators):
     cantilever_oscillator = SubSection(
         section_def="pynxtools.nomad.metainfo.base_classes.spm_cantilever_oscillator.SpmCantileverOscillator",
         repeats=False,
+        description=(
+            "This should be a link to "
+            "/entry/instrument/cantilever_spm/cantilever_oscillator"
+        ),
         a_nexus_group=NeXusGroup(
             nx_class="NXspm_cantilever_oscillator",
             name="cantilever_oscillator",

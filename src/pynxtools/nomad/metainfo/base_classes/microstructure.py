@@ -202,11 +202,6 @@ class Microstructure(Object):
     configuration = SubSection(
         section_def="pynxtools.nomad.metainfo.base_classes.microstructure.MicrostructureConfiguration",
         repeats=False,
-        description=(
-            "Group where to store details about the configuration and "
-            "parameterization of algorithms used whereby microstructural "
-            "features were identified."
-        ),
     )
     cg_grid = SubSection(
         section_def="pynxtools.nomad.metainfo.base_classes.cg_grid.CgGrid",
@@ -288,73 +283,22 @@ class Microstructure(Object):
     phases = SubSection(
         section_def="pynxtools.nomad.metainfo.base_classes.microstructure.MicrostructurePhases",
         repeats=False,
-        description=(
-            "Different (thermodynamic) phases can be distinguished for the "
-            "region-of- interest."
-        ),
     )
     crystals = SubSection(
         section_def="pynxtools.nomad.metainfo.base_classes.microstructure.MicrostructureCrystals",
         repeats=False,
-        description=(
-            "One- or two-dimensional projections, or three-dimensional "
-            "representations of crystals. An example for a volume bounded by "
-            "other crystal defects. Crystals can be grains of different phases, "
-            "precipitates, dispersoids; there are many terms used specifically "
-            "in the materials engineering community. Typically, crystals are "
-            "measured on the surface of a sample via optical or electron "
-            "microscopy. Using X-ray diffraction methods crystals can be "
-            "observed in bulk specimens. Crystals are represented by a set of "
-            "pixel, voxel, or polygons and their polyline boundaries. In rare "
-            "cases the volume bounded gets represented using constructive solid "
-            "geometry approaches."
-        ),
     )
     interfaces = SubSection(
         section_def="pynxtools.nomad.metainfo.base_classes.microstructure.MicrostructureInterfaces",
         repeats=False,
-        description=(
-            "One- or two-dimensional projections or three-dimensional "
-            "representation of interfaces between crystals as topological "
-            "entities equivalent to dual_junctions. An example for a surface "
-            "defect. Most important are interfaces such as grain and phase "
-            "boundaries but factually interfaces also exist between the "
-            "environment and crystals exposed at the surface of the specimen or "
-            "internal surfaces like between crystals, cracks, or pores. "
-            "Interfaces are typically reported as discretized features. For "
-            "interface projections on the 2D plane these are most frequently "
-            "polyline segments. For interface patches in 3D these are most "
-            "frequently triangulations. Descriptions with continuous functions "
-            "are seldom used unless simplified configurations are studied in "
-            "modeling and theoretical studies. When using discretizations the "
-            "individual interface segments need to be distinguished from the "
-            "interfaces themselves. Consequently, there are two sets of indices."
-        ),
     )
     triple_junctions = SubSection(
         section_def="pynxtools.nomad.metainfo.base_classes.microstructure.MicrostructureTripleJunctions",
         repeats=False,
-        description=(
-            "Projections or representations of junctions at which three "
-            "interfaces meet. An example for a line defect. Triple junctions are "
-            "characterized as triple lines or triple points as their "
-            "projections, or junctions observed between crystals (at the "
-            "specimen surface exposed to an environment) (including wetting "
-            "phenomena) or inside the specimen (crack, pores)."
-        ),
     )
     quadruple_junctions = SubSection(
         section_def="pynxtools.nomad.metainfo.base_classes.microstructure.MicrostructureQuadrupleJunctions",
         repeats=False,
-        description=(
-            "Quadruple junctions as a region where four crystals meet. An "
-            "example for a point (like) defect. Thermodynamically such junctions "
-            "can be unstable. Specifically when discretizations are used in "
-            "simulations that do not address the thermodynamics of and splitting "
-            "characteristics of junctions in cases when more than four crystals "
-            "meet, it is possible that so-called higher-order junctions are "
-            "observed."
-        ),
     )
 
     comment = Quantity(
@@ -648,6 +592,7 @@ class MicrostructureCrystals(MicrostructureFeature):
     orientation = SubSection(
         section_def="pynxtools.nomad.metainfo.base_classes.rotations.Rotations",
         repeats=False,
+        description=("Possibility to store the mean orientation of the grain."),
         a_nexus_group=NeXusGroup(
             nx_class="NXrotations",
             name="orientation",

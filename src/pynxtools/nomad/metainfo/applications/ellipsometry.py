@@ -118,7 +118,6 @@ class Ellipsometry(OpticalSpectroscopy):
         section_def="pynxtools.nomad.metainfo.applications.ellipsometry.EllipsometryInstrument",
         repeats=True,
         variable=True,
-        description=("Properties of the ellipsometry equipment."),
     )
     sample = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.ellipsometry.EllipsometrySample",
@@ -128,16 +127,6 @@ class Ellipsometry(OpticalSpectroscopy):
     data_collection = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.ellipsometry.EllipsometryDataCollection",
         repeats=False,
-        description=(
-            "Measured data, data errors, and varied parameters. This may be used "
-            "to describe indirectly derived data or data transformed between "
-            "different descriptions, such as: Raw Data --> Psi Delta Psi, Delta "
-            "--> N,C,S Mueller matrix --> N,C,S Mueller matrix --> Psi, Delta "
-            "etc. Other types of data, such as temperature or sample location, "
-            "may be saved in a generic (NXdata) concept from "
-            ":ref:`NXoptical_spectroscopy`, or better directly in the location "
-            "of the sample positioner or temperature sensor."
-        ),
     )
 
     definition = Quantity(
@@ -399,22 +388,10 @@ class EllipsometryInstrument(OpticalSpectroscopyInstrument):
     focusing_probes = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.ellipsometry.EllipsometryInstrumentFocusingProbes",
         repeats=False,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXoptical_lens",
-            name="focusing_probes",
-            name_type="specified",
-            optionality="optional",
-        ),
     )
     rotating_element = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.ellipsometry.EllipsometryInstrumentRotatingElement",
         repeats=False,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXwaveplate",
-            name="rotating_element",
-            name_type="specified",
-            optionality="required",
-        ),
     )
 
     ellipsometer_type = Quantity(
@@ -731,12 +708,6 @@ class EllipsometryDataCollection(OpticalSpectroscopyData):
     data_software = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.ellipsometry.EllipsometryDataCollectionDataSoftware",
         repeats=False,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXprogram",
-            name="data_software",
-            name_type="specified",
-            optionality="optional",
-        ),
     )
 
     data_identifier = Quantity(

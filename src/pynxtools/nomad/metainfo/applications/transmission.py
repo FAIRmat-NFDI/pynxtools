@@ -94,11 +94,6 @@ class Transmission(Entry):
         section_def="pynxtools.nomad.metainfo.applications.transmission.TransmissionUser",
         repeats=True,
         variable=True,
-        description=(
-            "Contact information of at least the user of the instrument or the "
-            "investigator who performed this experiment. Adding multiple users "
-            "if relevant is recommended."
-        ),
     )
     instrument = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.transmission.TransmissionInstrument",
@@ -108,15 +103,10 @@ class Transmission(Entry):
         section_def="pynxtools.nomad.metainfo.applications.transmission.TransmissionSample",
         repeats=True,
         variable=True,
-        description=("Properties of the sample measured"),
     )
     data = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.transmission.TransmissionData",
         repeats=False,
-        description=(
-            "A default view of the data emitted intensity vs. wavelength. From "
-            "measured_data plot intensity and wavelength."
-        ),
     )
 
     definition = Quantity(
@@ -397,6 +387,7 @@ class TransmissionInstrument(Instrument):
     manufacturer = SubSection(
         section_def="pynxtools.nomad.metainfo.base_classes.fabrication.Fabrication",
         repeats=False,
+        description=("Manufacturer of the instrument."),
         a_nexus_group=NeXusGroup(
             nx_class="NXfabrication",
             name="manufacturer",
@@ -407,64 +398,28 @@ class TransmissionInstrument(Instrument):
     common_beam_mask = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.transmission.TransmissionInstrumentCommonBeamMask",
         repeats=False,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXslit",
-            name="common_beam_mask",
-            name_type="specified",
-            optionality="required",
-        ),
     )
     ref_attenuator = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.transmission.TransmissionInstrumentRefAttenuator",
         repeats=False,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXattenuator",
-            name="ref_attenuator",
-            name_type="specified",
-            optionality="required",
-        ),
     )
     sample_attenuator = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.transmission.TransmissionInstrumentSampleAttenuator",
         repeats=False,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXattenuator",
-            name="sample_attenuator",
-            name_type="specified",
-            optionality="required",
-        ),
     )
     spectrometer = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.transmission.TransmissionInstrumentSpectrometer",
         repeats=False,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXmonochromator",
-            name="spectrometer",
-            name_type="specified",
-            optionality="required",
-        ),
     )
     detector = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.transmission.TransmissionInstrumentDetector",
         repeats=True,
         variable=True,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXdetector",
-            name=None,
-            name_type="any",
-            optionality="required",
-        ),
     )
     source = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.transmission.TransmissionInstrumentSource",
         repeats=True,
         variable=True,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXsource",
-            name=None,
-            name_type="any",
-            optionality="required",
-        ),
     )
 
     common_beam_depolarizer = Quantity(
@@ -683,23 +638,11 @@ class TransmissionInstrumentSpectrometer(Monochromator):
     spectral_resolution = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.transmission.TransmissionInstrumentSpectrometerSpectralResolution",
         repeats=False,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXresolution",
-            name="spectral_resolution",
-            name_type="specified",
-            optionality="optional",
-        ),
     )
     grating = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.transmission.TransmissionInstrumentSpectrometerGrating",
         repeats=True,
         variable=True,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXgrating",
-            name=None,
-            name_type="any",
-            optionality="optional",
-        ),
     )
 
     wavelength = Quantity(
@@ -795,12 +738,6 @@ class TransmissionInstrumentSpectrometerGrating(Grating):
     spectral_resolution = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.transmission.TransmissionInstrumentSpectrometerGratingSpectralResolution",
         repeats=False,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXresolution",
-            name="spectral_resolution",
-            name_type="specified",
-            optionality="optional",
-        ),
     )
 
     angular_dispersion = Quantity(
@@ -923,12 +860,6 @@ class TransmissionInstrumentDetector(Detector):
     slit = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.transmission.TransmissionInstrumentDetectorSlit",
         repeats=False,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXslit",
-            name="slit",
-            name_type="specified",
-            optionality="required",
-        ),
     )
 
     wavelength_range = Quantity(

@@ -96,16 +96,6 @@ class ApmParaprobeTessellatorResults(ApmParaprobeToolResults):
         section_def="pynxtools.nomad.metainfo.applications.apm_paraprobe_tessellator_results.ApmParaprobeTessellatorResultsTessellationID",
         repeats=False,
         variable=True,
-        description=(
-            "The tool can be used to compute a Voronoi tessellation the entire "
-            "or of a sub-set of the reconstructed volume. Each point (ion) is "
-            "wrapped in one (Voronoi) cell. The point cloud in the ROI is "
-            "wrapped into an axis-aligned bounding box (AABB) that is tight. "
-            "This means points at the edge of the point cloud can lay on the "
-            "surface of the bounding box. The tool detects if cells make contact "
-            "with the walls of this bounding box. The tessellation is computed "
-            "without periodic boundary conditions."
-        ),
     )
 
     definition = Quantity(
@@ -184,92 +174,38 @@ class ApmParaprobeTessellatorResultsTessellationID(ApmParaprobeToolProcess):
     wall = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.apm_paraprobe_tessellator_results.ApmParaprobeTessellatorResultsTessellationIDWall",
         repeats=False,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXcg_hexahedron",
-            name="wall",
-            name_type="specified",
-            optionality="recommended",
-        ),
     )
     voronoi_cells = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.apm_paraprobe_tessellator_results.ApmParaprobeTessellatorResultsTessellationIDVoronoiCells",
         repeats=False,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXcg_polyhedron",
-            name="voronoi_cells",
-            name_type="specified",
-            optionality="optional",
-        ),
     )
     wall_contact_global = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.apm_paraprobe_tessellator_results.ApmParaprobeTessellatorResultsTessellationIDWallContactGlobal",
         repeats=False,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXcs_filter_boolean_mask",
-            name="wall_contact_global",
-            name_type="specified",
-            optionality="recommended",
-        ),
     )
     wall_contact_left = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.apm_paraprobe_tessellator_results.ApmParaprobeTessellatorResultsTessellationIDWallContactLeft",
         repeats=False,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXcs_filter_boolean_mask",
-            name="wall_contact_left",
-            name_type="specified",
-            optionality="recommended",
-        ),
     )
     wall_contact_right = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.apm_paraprobe_tessellator_results.ApmParaprobeTessellatorResultsTessellationIDWallContactRight",
         repeats=False,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXcs_filter_boolean_mask",
-            name="wall_contact_right",
-            name_type="specified",
-            optionality="recommended",
-        ),
     )
     wall_contact_front = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.apm_paraprobe_tessellator_results.ApmParaprobeTessellatorResultsTessellationIDWallContactFront",
         repeats=False,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXcs_filter_boolean_mask",
-            name="wall_contact_front",
-            name_type="specified",
-            optionality="recommended",
-        ),
     )
     wall_contact_rear = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.apm_paraprobe_tessellator_results.ApmParaprobeTessellatorResultsTessellationIDWallContactRear",
         repeats=False,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXcs_filter_boolean_mask",
-            name="wall_contact_rear",
-            name_type="specified",
-            optionality="recommended",
-        ),
     )
     wall_contact_bottom = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.apm_paraprobe_tessellator_results.ApmParaprobeTessellatorResultsTessellationIDWallContactBottom",
         repeats=False,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXcs_filter_boolean_mask",
-            name="wall_contact_bottom",
-            name_type="specified",
-            optionality="recommended",
-        ),
     )
     wall_contact_top = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.apm_paraprobe_tessellator_results.ApmParaprobeTessellatorResultsTessellationIDWallContactTop",
         repeats=False,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXcs_filter_boolean_mask",
-            name="wall_contact_top",
-            name_type="specified",
-            optionality="recommended",
-        ),
     )
 
     def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
@@ -354,12 +290,6 @@ class ApmParaprobeTessellatorResultsTessellationIDVoronoiCells(CgPolyhedron):
     polyhedra = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.apm_paraprobe_tessellator_results.ApmParaprobeTessellatorResultsTessellationIDVoronoiCellsPolyhedra",
         repeats=False,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXcg_face_list_data_structure",
-            name="polyhedra",
-            name_type="specified",
-            optionality="optional",
-        ),
     )
 
     dimensionality = Quantity(

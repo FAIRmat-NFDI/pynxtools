@@ -83,13 +83,6 @@ class ApmParaprobeRangerResults(ApmParaprobeToolResults):
         section_def="pynxtools.nomad.metainfo.applications.apm_paraprobe_ranger_results.ApmParaprobeRangerResultsIontypesID",
         repeats=True,
         variable=True,
-        description=(
-            "The tool loads ranging definitions from the configuration file and "
-            "evaluates for each ion to which iontype it matches. If an ion "
-            "matches on no type, the ion is assume of the default "
-            "*unknown_type*. In this case, the value *iontypes* is 0. In other "
-            "cases the value is larger than 0."
-        ),
     )
 
     definition = Quantity(

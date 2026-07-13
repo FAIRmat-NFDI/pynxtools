@@ -166,22 +166,10 @@ class XrotInstrument(Instrument):
     detector = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.xrot.XrotInstrumentDetector",
         repeats=False,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXdetector",
-            name="detector",
-            name_type="specified",
-            optionality="required",
-        ),
     )
     attenuator = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.xrot.XrotInstrumentAttenuator",
         repeats=False,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXattenuator",
-            name="attenuator",
-            name_type="specified",
-            optionality="required",
-        ),
     )
 
     def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:

@@ -173,125 +173,26 @@ class EmEbsd(Process):
     gnomonic_reference_frame = SubSection(
         section_def="pynxtools.nomad.metainfo.base_classes.em_ebsd.EmEbsdGnomonicReferenceFrame",
         repeats=False,
-        description=(
-            "Details about the gnomonic (projection) reference frame. It is "
-            "assumed that the configuration is inspected by looking towards the "
-            "sample surface. If a detector is involved, it is assumed that the "
-            "configuration is inspected from a position that is located behind "
-            "this detector. If any of these assumptions are not met, the user is "
-            "required to explicitly state this. Reference "
-            "`<https://doi.org/10.1016/j.matchar.2016.04.008>`_ suggests to "
-            "label the base vectors of this coordinate system as :math:`X_g, "
-            "Y_g, Z_g`."
-        ),
     )
     pattern_center = SubSection(
         section_def="pynxtools.nomad.metainfo.base_classes.em_ebsd.EmEbsdPatternCenter",
         repeats=False,
-        description=(
-            "Details about the definition of the pattern center as a special "
-            "point in the gnomonic_reference_frame. Typically the gnomonic space "
-            "is embedded in the detector space. Specifically, the XgYg plane is "
-            "defined such that it is laying inside the XdYd plane (of the "
-            "detector reference frame). When the normalization direction is the "
-            "same as e.g. the detector x-axis direction one effectively "
-            "normalizes in fractions of the width of the detector. The issue "
-            "with terms like width and height, though, is that these become "
-            "degenerated if the detector region-of-interest is square-shaped. "
-            "This is why instead of referring to width and height it is better "
-            "to state explicitly which direction is considered positive when "
-            "measuring distances. For the concepts used to specify the "
-            "boundary_convention it is assumed that the region-of-interest is "
-            "defined by a rectangle, referring to the direction of outer-unit "
-            "normals to the respective edges of this rectangle."
-        ),
     )
     measurement = SubSection(
         section_def="pynxtools.nomad.metainfo.base_classes.em_ebsd.EmEbsdMeasurement",
         repeats=False,
-        description=(
-            "This group documents relevant details about the conditions and the "
-            "tools for measuring diffraction patterns with an electron "
-            "microscope. The most frequently collected EBSD data are captured "
-            "for rectangular regions-of-interest using a discretization into "
-            "square or hexagon tiles."
-        ),
     )
     simulation = SubSection(
         section_def="pynxtools.nomad.metainfo.base_classes.em_ebsd.EmEbsdSimulation",
         repeats=False,
-        description=(
-            "This group documents relevant details about the conditions and the "
-            "tools used for simulating diffraction patterns with some physical "
-            "model. This group should be used if (e.g. instead of a measurement) "
-            "the patterns were simulated (possibly awaiting indexing). In many "
-            "practical cases where patterns are analyzed on-the-fly and "
-            "dictionary indexing strategies used, so-called master pattern(s) "
-            "are used to compare measured or simulated patterns with the master "
-            "patterns."
-        ),
     )
     calibration = SubSection(
         section_def="pynxtools.nomad.metainfo.base_classes.em_ebsd.EmEbsdCalibration",
         repeats=False,
-        description=(
-            "The EBSD system, including components like the electron gun, "
-            "pole-piece, stage tilt, EBSD detector, and the gnomonic projection "
-            "have to be calibrated to achieve reliable, precise, and accurate "
-            "scientific results. Specifically, the gnomonic projection has to be "
-            "calibrated. Typically, standard specimens made from silicon or "
-            "quartz crystals in specific orientations are used for this purpose. "
-            "Considering that a system used is already calibrated well-enough is "
-            "much more frequently the case in practice than that users perform "
-            "the calibration themselves (with above-mentioned standard "
-            "specimens). In the first case, the user assumes that the principle "
-            "geometry of the hardware components and the settings in the control "
-            "and EBSD pattern acquisition software has been calibrated already. "
-            "Consequently, users pick from an existent library of phase "
-            "candidates, i.e. :ref:`NXunit_cell` instances. Examples are "
-            "reflector models as stored in CRY files (HKL/Channel 5/Flamenco). "
-            "In the second case, users calibrate the system during the session "
-            "using standards (silicon, quartz, or other common specimens). There "
-            "is usually one person in each lab responsible for doing such "
-            "calibrations. Often this person or technician is also in charge of "
-            "configuring the graphical user interface and software with which "
-            "most users control and perform their analyses. For EBSD this has "
-            "key implications: Taking TSL OIM/EDAX as an example, the "
-            "conventions how orientations are stored is affected by how the "
-            "reference frames are configured and how this setup in the GUI. "
-            "Unfortunately, these pieces of information are not necessarily "
-            "stored in the results files. In effect, key conventions become "
-            "disconnected from the data so it remains the users' obligation to "
-            "remember these settings or write these down in a lab notebook. "
-            "Otherwise, these metadata get lost. All these issues are a "
-            "motivation and problem which :ref:`NXem_ebsd` solves in that all "
-            "conventions can be specified explicitly."
-        ),
     )
     indexing = SubSection(
         section_def="pynxtools.nomad.metainfo.base_classes.em_ebsd.EmEbsdIndexing",
         repeats=False,
-        description=(
-            "Indexing is a data processing step performed either after or while "
-            "(aka on-the-fly) the beam scans the specimen. The resulting method "
-            "is also known as orientation imaging microscopy (OIM). Different "
-            "algorithms can be used to index EBSP. Common to them is the "
-            "computational step where simulated or theoretically assumed "
-            "patterns are compared with the measured ones. These latter patterns "
-            "are referred to via the measurement or simulation groups of this "
-            "base class respectively. Quality descriptors are defined based on "
-            "which an indexing algorithm yields a quantitative measure of how "
-            "similar measured and reference patterns are, and thus if no, one, "
-            "or multiple so-called solutions were found. Assumed or simulated "
-            "patterns are simulated using kinematical or dynamical theory of "
-            "electron diffraction delivering master patterns. The Hough "
-            "transform, one of the most frequently used traditional method for "
-            "indexing EBSP is essentially a discretized Radon transform (for "
-            "details see `M. van Ginkel et al. "
-            "<https://www.semanticscholar.org/paper/A-short-introduction-to-the-Radon-and-Hough-and-how-Ginkel/fb6226f606cad489a15e38ed961c419037ccc858>`_). "
-            "Recently, dictionary-based and artificial intelligence-based "
-            "methods find more widespread usage for indexing."
-        ),
     )
 
     def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
@@ -566,6 +467,11 @@ class EmEbsdMeasurement(Process):
     source = SubSection(
         section_def="pynxtools.nomad.metainfo.base_classes.note.Note",
         repeats=False,
+        description=(
+            "Reference (e.g. path and filename) to an existent data artifact "
+            "which stores either the measured patterns or input (already "
+            "processed EBSD data)."
+        ),
         a_nexus_group=NeXusGroup(
             nx_class="NXnote",
             name="source",
@@ -674,6 +580,12 @@ class EmEbsdSimulation(Process):
     source = SubSection(
         section_def="pynxtools.nomad.metainfo.base_classes.note.Note",
         repeats=False,
+        description=(
+            "Reference (e.g. path and filename) to an existent digital resource "
+            "which stores either the patterns or input (already processed EBSD "
+            "data) that are about to become processed further as described by "
+            "this NXem_ebsd instance."
+        ),
         a_nexus_group=NeXusGroup(
             nx_class="NXnote",
             name="source",
@@ -761,6 +673,9 @@ class EmEbsdCalibration(Process):
     source = SubSection(
         section_def="pynxtools.nomad.metainfo.base_classes.note.Note",
         repeats=False,
+        description=(
+            "Reference to a digital resource where the calibration is stored."
+        ),
         a_nexus_group=NeXusGroup(
             nx_class="NXnote",
             name="source",
@@ -833,6 +748,16 @@ class EmEbsdIndexing(Process):
     source = SubSection(
         section_def="pynxtools.nomad.metainfo.base_classes.note.Note",
         repeats=False,
+        description=(
+            "This group enables to establish a logical connection between "
+            "previous processing steps or on-the-fly-performed indexing of the "
+            "EBSD map. Typically these processing steps are performed with "
+            "commercial software. Therefore, in many cases a results file from "
+            "this indexing is often all that is communicated and saved. These "
+            "are typically files in a format specific to the instrument and its "
+            "configuration. Typical file formats are CPR/CRC, ANG, OSC, HDF5, "
+            "H5EBSD, EDAXH5."
+        ),
         a_nexus_group=NeXusGroup(
             nx_class="NXnote",
             name="source",
@@ -843,6 +768,9 @@ class EmEbsdIndexing(Process):
     background_correction = SubSection(
         section_def="pynxtools.nomad.metainfo.base_classes.process.Process",
         repeats=False,
+        description=(
+            "Details about the background correction applied to each Kikuchi pattern."
+        ),
         a_nexus_group=NeXusGroup(
             nx_class="NXprocess",
             name="background_correction",
@@ -853,6 +781,7 @@ class EmEbsdIndexing(Process):
     binning = SubSection(
         section_def="pynxtools.nomad.metainfo.base_classes.process.Process",
         repeats=False,
+        description=("Binning i.e. downsampling to each pattern."),
         a_nexus_group=NeXusGroup(
             nx_class="NXprocess",
             name="binning",
@@ -863,6 +792,7 @@ class EmEbsdIndexing(Process):
     parameter = SubSection(
         section_def="pynxtools.nomad.metainfo.base_classes.collection.Collection",
         repeats=False,
+        description=("Specific parameter relevant only for certain algorithms used."),
         a_nexus_group=NeXusGroup(
             nx_class="NXcollection",
             name="parameter",
@@ -874,12 +804,6 @@ class EmEbsdIndexing(Process):
         section_def="pynxtools.nomad.metainfo.base_classes.em_ebsd.EmEbsdIndexingPhaseID",
         repeats=True,
         variable=True,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXphase",
-            name="phaseID",
-            name_type="partial",
-            optionality="optional",
-        ),
     )
     rotation = SubSection(
         section_def="pynxtools.nomad.metainfo.base_classes.rotations.Rotations",
@@ -905,12 +829,6 @@ class EmEbsdIndexing(Process):
     roi = SubSection(
         section_def="pynxtools.nomad.metainfo.base_classes.em_ebsd.EmEbsdIndexingRoi",
         repeats=False,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXdata",
-            name="roi",
-            name_type="specified",
-            optionality="optional",
-        ),
     )
 
     method = Quantity(

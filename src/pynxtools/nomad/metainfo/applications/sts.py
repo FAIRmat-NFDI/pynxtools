@@ -87,18 +87,10 @@ class Sts(Spm):
     reproducibility_indicators = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.sts.StsReproducibilityIndicators",
         repeats=False,
-        description=(
-            "The group's concepts hold the link to the related concepts that "
-            "define the reproducibility of the STM experiment."
-        ),
     )
     resolution_indicators = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.sts.StsResolutionIndicators",
         repeats=False,
-        description=(
-            "The group's concepts hold the link to the related concepts that "
-            "define the resolution of the STM experiment."
-        ),
     )
 
     definition = Quantity(
@@ -333,6 +325,7 @@ class StsInstrument(SpmInstrument):
     lockin_amplifier = SubSection(
         section_def="pynxtools.nomad.metainfo.base_classes.lockin.Lockin",
         repeats=False,
+        description=("The lock-in amplifier information."),
         a_nexus_group=NeXusGroup(
             nx_class="NXlockin",
             name="lockin_amplifier",
@@ -344,6 +337,7 @@ class StsInstrument(SpmInstrument):
         section_def="pynxtools.nomad.metainfo.base_classes.sensor.Sensor",
         repeats=True,
         variable=True,
+        description=("Information for current sensor."),
         a_nexus_group=NeXusGroup(
             nx_class="NXsensor",
             name="current_sensorTAG",
@@ -354,12 +348,6 @@ class StsInstrument(SpmInstrument):
     bias_spectroscopy_environment = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.sts.StsInstrumentBiasSpectroscopyEnvironment",
         repeats=False,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXenvironment",
-            name="bias_spectroscopy_environment",
-            name_type="specified",
-            optionality="required",
-        ),
     )
 
     def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
@@ -387,6 +375,10 @@ class StsInstrumentBiasSpectroscopyEnvironment(Environment):
         section_def="pynxtools.nomad.metainfo.base_classes.spm_bias_spectroscopy.SpmBiasSpectroscopy",
         repeats=True,
         variable=True,
+        description=(
+            "Setup and scan data for continuous measurement of bias-voltage on "
+            "the subject of experiment vs tunneling current from probe."
+        ),
         a_nexus_group=NeXusGroup(
             nx_class="NXspm_bias_spectroscopy",
             name=None,
@@ -421,6 +413,14 @@ class StsReproducibilityIndicators(SpmReproducibilityIndicators):
         section_def="pynxtools.nomad.metainfo.base_classes.spm_scan_control.SpmScanControl",
         repeats=True,
         variable=True,
+        description=(
+            "Bias sweep measurement in bias spectroscopy. This should be a link "
+            "to "
+            "/ENTRY[*]/INSTRUMENT[*]/bias_spectroscopy_environment/BIAS_SPECTROSCOPY[bias_spectroscopy]/bias_sweep "
+            "Note: group name (could be any meaningful and relevant name e.g. "
+            "entry in ENTRY[entry]) inside the square bracket would be the "
+            "`exact` name of the NXentry group."
+        ),
         a_nexus_group=NeXusGroup(
             nx_class="NXspm_scan_control",
             name="BIAS_SWEEP",
@@ -572,6 +572,13 @@ class StsResolutionIndicators(SpmResolutionIndicators):
         section_def="pynxtools.nomad.metainfo.base_classes.spm_scan_control.SpmScanControl",
         repeats=True,
         variable=True,
+        description=(
+            "This should be a link to "
+            "/ENTRY[*]/INSTRUMENT[*]/bias_spectroscopy_environment/SPM_BIAS_SPECTROSCOPY[bias_spectroscopy]/bias_sweep "
+            "Note: group name (could be any meaningful and relevant name e.g. "
+            "entry in ENTRY[entry]) inside the square bracket would be the "
+            "`exact` name of the NXentry group."
+        ),
         a_nexus_group=NeXusGroup(
             nx_class="NXspm_scan_control",
             name="BIAS_SWEEP",

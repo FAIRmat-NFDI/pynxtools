@@ -71,7 +71,6 @@ class CsMemory(Component):
         section_def="pynxtools.nomad.metainfo.base_classes.cs_memory.CsMemoryCircuit",
         repeats=True,
         variable=True,
-        description=("Typically, computers have multiple instances of memory."),
     )
 
     def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:

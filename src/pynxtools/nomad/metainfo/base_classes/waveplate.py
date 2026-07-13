@@ -84,20 +84,10 @@ class Waveplate(Component):
     substrate = SubSection(
         section_def="pynxtools.nomad.metainfo.base_classes.waveplate.WaveplateSubstrate",
         repeats=False,
-        description=(
-            "Describe the material of the substrate of the waveplate in "
-            "substrate/substrate_material and provide its index of refraction in "
-            "substrate/index_of_refraction_substrate, if known."
-        ),
     )
     coating = SubSection(
         section_def="pynxtools.nomad.metainfo.base_classes.waveplate.WaveplateCoating",
         repeats=False,
-        description=(
-            "Is the waveplate coated? If yes, specify the type and material of "
-            "the coating and the wavelength range for which it is designed. If "
-            "known, you may also provide its index of refraction."
-        ),
     )
 
     type = Quantity(

@@ -72,22 +72,18 @@ class Separator(Component):
     read_Bfield_current = SubSection(
         section_def="pynxtools.nomad.metainfo.base_classes.separator.SeparatorReadBfieldCurrent",
         repeats=False,
-        description=("current read from magnet supply."),
     )
     read_Bfield_voltage = SubSection(
         section_def="pynxtools.nomad.metainfo.base_classes.separator.SeparatorReadBfieldVoltage",
         repeats=False,
-        description=("voltage read from magnet supply."),
     )
     read_Efield_current = SubSection(
         section_def="pynxtools.nomad.metainfo.base_classes.separator.SeparatorReadEfieldCurrent",
         repeats=False,
-        description=("current read from HT supply."),
     )
     read_Efield_voltage = SubSection(
         section_def="pynxtools.nomad.metainfo.base_classes.separator.SeparatorReadEfieldVoltage",
         repeats=False,
-        description=("voltage read from HT supply."),
     )
 
     description = Quantity(

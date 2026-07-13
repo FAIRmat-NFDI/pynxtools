@@ -163,12 +163,6 @@ class TomoprocInstrument(Instrument):
         section_def="pynxtools.nomad.metainfo.applications.tomoproc.TomoprocInstrumentSource",
         repeats=True,
         variable=True,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXsource",
-            name=None,
-            name_type="any",
-            optionality="required",
-        ),
     )
 
     def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
@@ -316,12 +310,6 @@ class TomoprocReconstruction(Process):
     parameters = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.tomoproc.TomoprocReconstructionParameters",
         repeats=False,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXparameters",
-            name="parameters",
-            name_type="specified",
-            optionality="required",
-        ),
     )
 
     program_quantity = Quantity(

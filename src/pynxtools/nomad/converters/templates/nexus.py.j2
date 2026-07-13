@@ -107,7 +107,7 @@ class {{ class_name }}({{ base_class }}{% if base_is_generated %}{% for mod, cls
         {% if sub_sec.variable %}
         variable=True,
         {% endif %}
-        {% if sub_sec.description %}
+        {% if sub_sec.description and not sub_sec.is_named_concept %}
         description=(
             {{ sub_sec.description }}
         ),
@@ -316,6 +316,12 @@ class {{ concept.class_name }}({{ concept.base_class_name }}):
         {% if ss.variable %}
         variable=True,
         {% endif %}
+        {% if ss.description and not ss.is_named_concept %}
+        description=(
+            {{ ss.description }}
+        ),
+        {% endif %}
+        {% if not ss.is_named_concept %}
         a_nexus_group=NeXusGroup(
             nx_class="{{ ss.node.nx_class }}",
             name={{ ss.nx_name_literal }},
@@ -328,6 +334,7 @@ class {{ concept.class_name }}({{ concept.base_class_name }}):
             max_occurs={{ ss.node.occurrence_limits[1] }},
             {% endif %}
         ),
+        {% endif %}
     )
     {% endfor %}
 

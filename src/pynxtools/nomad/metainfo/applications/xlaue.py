@@ -157,12 +157,6 @@ class XlaueInstrument(Instrument):
     source = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.xlaue.XlaueInstrumentSource",
         repeats=False,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXsource",
-            name="source",
-            name_type="specified",
-            optionality="required",
-        ),
     )
 
     def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
@@ -185,12 +179,6 @@ class XlaueInstrumentSource(Source):
     distribution = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.xlaue.XlaueInstrumentSourceDistribution",
         repeats=False,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXdata",
-            name="distribution",
-            name_type="specified",
-            optionality="required",
-        ),
     )
 
     def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:

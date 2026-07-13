@@ -119,73 +119,28 @@ class Mpes(Entry):
         section_def="pynxtools.nomad.metainfo.applications.mpes.MpesUser",
         repeats=True,
         variable=True,
-        description=(
-            "Contact information of at least the user of the instrument or the "
-            "investigator who performed this experiment. Adding multiple users "
-            "if relevant is recommended."
-        ),
     )
     instrument = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.mpes.MpesInstrument",
         repeats=True,
         variable=True,
-        description=(
-            "Description of the photoemission spectrometer and its individual "
-            "parts. This concept is related to term `12.58`_ of the ISO "
-            "18115-1:2023 standard. .. _12.58: "
-            "https://www.iso.org/obp/ui/en/#iso:std:iso:18115:-1:ed-3:v1:en:term:12.58"
-        ),
     )
     energy_axis_calibration = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.mpes.MpesEnergyAxisCalibration",
         repeats=False,
-        description=(
-            "Calibration event on the energy axis. For XPS, the calibration "
-            "should ideally be performed according to `ISO 15472:2010`_ "
-            "specification. .. _ISO 15472:2010: "
-            "https://www.iso.org/standard/74811.html"
-        ),
     )
     AXIS_axis_calibration = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.mpes.MpesAXIS_axis_calibration",
         repeats=True,
         variable=True,
-        description=(
-            "Calibration event for one of the axes in the :ref:`NXdata "
-            "</NXmpes/ENTRY/data-group>`. The naming of these calibrations "
-            "should follow those in the :ref:`NXdata "
-            "</NXmpes/ENTRY/data-group>`. For example, for the momentum axis "
-            "``kx``, the corresponding calibration should be called "
-            "``kx_axis_calibration``."
-        ),
     )
     energy_referencing = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.mpes.MpesEnergyReferencing",
         repeats=False,
-        description=(
-            "For energy referencing, the measured energies are corrected for the "
-            "charging potential (i.e., the electrical potential of the surface "
-            "region of an insulating sample, caused by irradiation) such that "
-            "those energies correspond to a sample with no surface charge. "
-            "Usually, the energy axis is adjusted by shifting all energies "
-            "uniformly until one well-defined emission line peak (or the Fermi "
-            "edge) is located at a known _correct_ energy. This concept is "
-            "related to term `12.74 ff.`_ of the ISO 18115-1:2023 standard. .. "
-            "_12.74 ff.: "
-            "https://www.iso.org/obp/ui/en/#iso:std:iso:18115:-1:ed-3:v1:en:term:12.74"
-        ),
     )
     transmission_correction = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.mpes.MpesTransmissionCorrection",
         repeats=False,
-        description=(
-            "In the transmission correction, each intensity measurement for "
-            "electrons of a given kinetic energy is multiplied by the "
-            "corresponding value in the relative_intensity field of the "
-            "transmission_function. This calibration procedure is used to "
-            "account for energy-dependent transmission efficiencies in certain "
-            "lens modes."
-        ),
     )
     registration = SubSection(
         section_def="pynxtools.nomad.metainfo.base_classes.registration.Registration",
@@ -251,16 +206,6 @@ class Mpes(Entry):
         section_def="pynxtools.nomad.metainfo.applications.mpes.MpesData",
         repeats=True,
         variable=True,
-        description=(
-            "The NXdata group containing a view on the measured data. This "
-            "NXdata group contains a collection of the main relevant fields "
-            "(axes). Axes should be named according to the conventions defined "
-            "below. Note that this list is a glossary with explicitly named axis "
-            "names, which is only intended to cover the most common measurement "
-            "axes and is therefore not complete. It is possible to add axes with "
-            "other names at any time. In NXmpes, it is recommended to provide an "
-            "energy axis."
-        ),
     )
 
     definition = Quantity(
@@ -529,17 +474,16 @@ class MpesInstrument(Instrument):
     energy_resolution = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.mpes.MpesInstrumentEnergyResolution",
         repeats=False,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXresolution",
-            name="energy_resolution",
-            name_type="specified",
-            optionality="optional",
-        ),
     )
     resolution = SubSection(
         section_def="pynxtools.nomad.metainfo.base_classes.resolution.Resolution",
         repeats=True,
         variable=True,
+        description=(
+            "Any further resolution information about the instrument. For "
+            "example, the angular resolution of the instrument if the "
+            "spectrometer is angle-resolving."
+        ),
         a_nexus_group=NeXusGroup(
             nx_class="NXresolution",
             name=None,
@@ -550,127 +494,55 @@ class MpesInstrument(Instrument):
     device_information = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.mpes.MpesInstrumentDeviceInformation",
         repeats=False,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXfabrication",
-            name="device_information",
-            name_type="specified",
-            optionality="recommended",
-        ),
     )
     source_probe = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.mpes.MpesInstrumentSourceProbe",
         repeats=False,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXsource",
-            name="source_probe",
-            name_type="specified",
-            optionality="recommended",
-        ),
     )
     source_pump = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.mpes.MpesInstrumentSourcePump",
         repeats=False,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXsource",
-            name="source_pump",
-            name_type="specified",
-            optionality="optional",
-        ),
     )
     source_TYPE = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.mpes.MpesInstrumentSourceTYPE",
         repeats=True,
         variable=True,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXsource",
-            name="source_TYPE",
-            name_type="partial",
-            optionality="optional",
-        ),
     )
     beam_probe = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.mpes.MpesInstrumentBeamProbe",
         repeats=False,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXbeam",
-            name="beam_probe",
-            name_type="specified",
-            optionality="required",
-        ),
     )
     beam_pump = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.mpes.MpesInstrumentBeamPump",
         repeats=False,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXbeam",
-            name="beam_pump",
-            name_type="specified",
-            optionality="optional",
-        ),
     )
     beam_TYPE = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.mpes.MpesInstrumentBeamTYPE",
         repeats=True,
         variable=True,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXbeam",
-            name="beam_TYPE",
-            name_type="partial",
-            optionality="optional",
-        ),
     )
     electronanalyzer = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.mpes.MpesInstrumentElectronanalyzer",
         repeats=True,
         variable=True,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXelectronanalyzer",
-            name=None,
-            name_type="any",
-            optionality="required",
-        ),
     )
     manipulator = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.mpes.MpesInstrumentManipulator",
         repeats=True,
         variable=True,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXmanipulator",
-            name=None,
-            name_type="any",
-            optionality="optional",
-        ),
     )
     pressure_gauge = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.mpes.MpesInstrumentPressureGauge",
         repeats=False,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXsensor",
-            name="pressure_gauge",
-            name_type="specified",
-            optionality="recommended",
-        ),
     )
     flood_gun = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.mpes.MpesInstrumentFloodGun",
         repeats=False,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXactuator",
-            name="flood_gun",
-            name_type="specified",
-            optionality="optional",
-        ),
     )
     monochromator_TYPE = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.mpes.MpesInstrumentMonochromatorTYPE",
         repeats=True,
         variable=True,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXmonochromator",
-            name="monochromator_TYPE",
-            name_type="partial",
-            optionality="optional",
-        ),
     )
 
     def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
@@ -869,12 +741,6 @@ class MpesInstrumentSourceProbe(Source):
     device_information = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.mpes.MpesInstrumentSourceProbeDeviceInformation",
         repeats=False,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXfabrication",
-            name="device_information",
-            name_type="specified",
-            optionality="recommended",
-        ),
     )
 
     type = Quantity(
@@ -1073,12 +939,6 @@ class MpesInstrumentSourcePump(Source):
     device_information = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.mpes.MpesInstrumentSourcePumpDeviceInformation",
         repeats=False,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXfabrication",
-            name="device_information",
-            name_type="specified",
-            optionality="recommended",
-        ),
     )
 
     type = Quantity(
@@ -1303,12 +1163,6 @@ class MpesInstrumentSourceTYPE(Source):
     device_information = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.mpes.MpesInstrumentSourceTYPEDeviceInformation",
         repeats=False,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXfabrication",
-            name="device_information",
-            name_type="specified",
-            optionality="recommended",
-        ),
     )
 
     type = Quantity(
@@ -1931,55 +1785,25 @@ class MpesInstrumentElectronanalyzer(Electronanalyzer):
     device_information = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.mpes.MpesInstrumentElectronanalyzerDeviceInformation",
         repeats=False,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXfabrication",
-            name="device_information",
-            name_type="specified",
-            optionality="recommended",
-        ),
     )
     energy_resolution = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.mpes.MpesInstrumentElectronanalyzerEnergyResolution",
         repeats=False,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXresolution",
-            name="energy_resolution",
-            name_type="specified",
-            optionality="optional",
-        ),
     )
     collectioncolumn = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.mpes.MpesInstrumentElectronanalyzerCollectioncolumn",
         repeats=True,
         variable=True,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXcollectioncolumn",
-            name=None,
-            name_type="any",
-            optionality="required",
-        ),
     )
     energydispersion = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.mpes.MpesInstrumentElectronanalyzerEnergydispersion",
         repeats=True,
         variable=True,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXenergydispersion",
-            name=None,
-            name_type="any",
-            optionality="required",
-        ),
     )
     electron_detector = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.mpes.MpesInstrumentElectronanalyzerElectronDetector",
         repeats=True,
         variable=True,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXelectron_detector",
-            name=None,
-            name_type="any",
-            optionality="required",
-        ),
     )
 
     description = Quantity(
@@ -2197,6 +2021,11 @@ class MpesInstrumentElectronanalyzerCollectioncolumn(Collectioncolumn):
     field_aperture = SubSection(
         section_def="pynxtools.nomad.metainfo.base_classes.aperture.Aperture",
         repeats=False,
+        description=(
+            "The size and position of the field aperture inserted in the column. "
+            "To add additional or other apertures use the APERTURE group of "
+            "NXcollectioncolumn."
+        ),
         a_nexus_group=NeXusGroup(
             nx_class="NXaperture",
             name="field_aperture",
@@ -2207,6 +2036,11 @@ class MpesInstrumentElectronanalyzerCollectioncolumn(Collectioncolumn):
     contrast_aperture = SubSection(
         section_def="pynxtools.nomad.metainfo.base_classes.aperture.Aperture",
         repeats=False,
+        description=(
+            "The size and position of the contrast aperture inserted in the "
+            "column. To add additional or other apertures use the APERTURE group "
+            "of NXcollectioncolumn."
+        ),
         a_nexus_group=NeXusGroup(
             nx_class="NXaperture",
             name="contrast_aperture",
@@ -2217,6 +2051,13 @@ class MpesInstrumentElectronanalyzerCollectioncolumn(Collectioncolumn):
     iris = SubSection(
         section_def="pynxtools.nomad.metainfo.base_classes.aperture.Aperture",
         repeats=False,
+        description=(
+            "Size, position and shape of the iris inserted in the column. The "
+            "iris is an aperture in the lens with a variable diameter which can "
+            "reduce the number of electrons entering the analyzer. To add "
+            "additional or other slits use the APERTURE group of "
+            "NXcollectioncolumn."
+        ),
         a_nexus_group=NeXusGroup(
             nx_class="NXaperture",
             name="iris",
@@ -2227,12 +2068,6 @@ class MpesInstrumentElectronanalyzerCollectioncolumn(Collectioncolumn):
     device_information = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.mpes.MpesInstrumentElectronanalyzerCollectioncolumnDeviceInformation",
         repeats=False,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXfabrication",
-            name="device_information",
-            name_type="specified",
-            optionality="recommended",
-        ),
     )
 
     scheme = Quantity(
@@ -2418,6 +2253,11 @@ class MpesInstrumentElectronanalyzerEnergydispersion(Energydispersion):
     entrance_slit = SubSection(
         section_def="pynxtools.nomad.metainfo.base_classes.aperture.Aperture",
         repeats=False,
+        description=(
+            "Size, position and shape of the entrance slit in dispersive "
+            "analyzers. To add additional or other slits use the APERTURE group "
+            "of NXenergydispersion."
+        ),
         a_nexus_group=NeXusGroup(
             nx_class="NXaperture",
             name="entrance_slit",
@@ -2428,6 +2268,11 @@ class MpesInstrumentElectronanalyzerEnergydispersion(Energydispersion):
     exit_slit = SubSection(
         section_def="pynxtools.nomad.metainfo.base_classes.aperture.Aperture",
         repeats=False,
+        description=(
+            "Size, position and shape of the exit slit in dispersive analyzers. "
+            "To add additional or other slits use the APERTURE group of "
+            "NXenergydispersion."
+        ),
         a_nexus_group=NeXusGroup(
             nx_class="NXaperture",
             name="exit_slit",
@@ -2438,12 +2283,6 @@ class MpesInstrumentElectronanalyzerEnergydispersion(Energydispersion):
     device_information = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.mpes.MpesInstrumentElectronanalyzerEnergydispersionDeviceInformation",
         repeats=False,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXfabrication",
-            name="device_information",
-            name_type="specified",
-            optionality="recommended",
-        ),
     )
 
     scheme = Quantity(
@@ -2634,22 +2473,10 @@ class MpesInstrumentElectronanalyzerElectronDetector(ElectronDetector):
     device_information = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.mpes.MpesInstrumentElectronanalyzerElectronDetectorDeviceInformation",
         repeats=False,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXfabrication",
-            name="device_information",
-            name_type="specified",
-            optionality="recommended",
-        ),
     )
     raw_data = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.mpes.MpesInstrumentElectronanalyzerElectronDetectorRawData",
         repeats=False,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXdata",
-            name="raw_data",
-            name_type="specified",
-            optionality="recommended",
-        ),
     )
 
     amplifier_type = Quantity(
@@ -3242,72 +3069,30 @@ class MpesInstrumentManipulator(Manipulator):
     temperature_sensor = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.mpes.MpesInstrumentManipulatorTemperatureSensor",
         repeats=False,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXsensor",
-            name="temperature_sensor",
-            name_type="specified",
-            optionality="recommended",
-        ),
     )
     sample_heater = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.mpes.MpesInstrumentManipulatorSampleHeater",
         repeats=False,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXactuator",
-            name="sample_heater",
-            name_type="specified",
-            optionality="optional",
-        ),
     )
     cryostat = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.mpes.MpesInstrumentManipulatorCryostat",
         repeats=False,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXactuator",
-            name="cryostat",
-            name_type="specified",
-            optionality="optional",
-        ),
     )
     drain_current_ammeter = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.mpes.MpesInstrumentManipulatorDrainCurrentAmmeter",
         repeats=False,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXsensor",
-            name="drain_current_ammeter",
-            name_type="specified",
-            optionality="optional",
-        ),
     )
     sample_bias_voltmeter = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.mpes.MpesInstrumentManipulatorSampleBiasVoltmeter",
         repeats=False,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXsensor",
-            name="sample_bias_voltmeter",
-            name_type="specified",
-            optionality="recommended",
-        ),
     )
     sample_bias_potentiostat = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.mpes.MpesInstrumentManipulatorSampleBiasPotentiostat",
         repeats=False,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXactuator",
-            name="sample_bias_potentiostat",
-            name_type="specified",
-            optionality="recommended",
-        ),
     )
     device_information = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.mpes.MpesInstrumentManipulatorDeviceInformation",
         repeats=False,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXfabrication",
-            name="device_information",
-            name_type="specified",
-            optionality="recommended",
-        ),
     )
 
     def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
@@ -3412,12 +3197,6 @@ class MpesInstrumentManipulatorSampleHeater(Actuator):
         section_def="pynxtools.nomad.metainfo.applications.mpes.MpesInstrumentManipulatorSampleHeaterPidController",
         repeats=True,
         variable=True,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXpid_controller",
-            name=None,
-            name_type="any",
-            optionality="recommended",
-        ),
     )
 
     name = Quantity(
@@ -3546,12 +3325,6 @@ class MpesInstrumentManipulatorCryostat(Actuator):
         section_def="pynxtools.nomad.metainfo.applications.mpes.MpesInstrumentManipulatorCryostatPidController",
         repeats=True,
         variable=True,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXpid_controller",
-            name=None,
-            name_type="any",
-            optionality="required",
-        ),
     )
 
     name = Quantity(
@@ -3823,12 +3596,6 @@ class MpesInstrumentManipulatorSampleBiasPotentiostat(Actuator):
         section_def="pynxtools.nomad.metainfo.applications.mpes.MpesInstrumentManipulatorSampleBiasPotentiostatPidController",
         repeats=True,
         variable=True,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXpid_controller",
-            name=None,
-            name_type="any",
-            optionality="recommended",
-        ),
     )
 
     name = Quantity(
@@ -4004,12 +3771,6 @@ class MpesInstrumentPressureGauge(Sensor):
     value_log = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.mpes.MpesInstrumentPressureGaugeValueLog",
         repeats=False,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXlog",
-            name="value_log",
-            name_type="specified",
-            optionality="optional",
-        ),
     )
 
     name = Quantity(
@@ -4147,12 +3908,6 @@ class MpesInstrumentFloodGun(Actuator):
     current_log = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.mpes.MpesInstrumentFloodGunCurrentLog",
         repeats=False,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXlog",
-            name="current_log",
-            name_type="specified",
-            optionality="optional",
-        ),
     )
 
     name = Quantity(
@@ -4629,12 +4384,6 @@ class MpesTransmissionCorrection(Calibration):
     transmission_function = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.mpes.MpesTransmissionCorrectionTransmissionFunction",
         repeats=False,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXdata",
-            name="transmission_function",
-            name_type="specified",
-            optionality="recommended",
-        ),
     )
 
     def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
@@ -4751,62 +4500,26 @@ class MpesSample(Sample):
     history = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.mpes.MpesSampleHistory",
         repeats=False,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXhistory",
-            name="history",
-            name_type="specified",
-            optionality="recommended",
-        ),
     )
     temperature_env = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.mpes.MpesSampleTemperatureEnv",
         repeats=False,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXenvironment",
-            name="temperature_env",
-            name_type="specified",
-            optionality="recommended",
-        ),
     )
     gas_pressure_env = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.mpes.MpesSampleGasPressureEnv",
         repeats=False,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXenvironment",
-            name="gas_pressure_env",
-            name_type="specified",
-            optionality="recommended",
-        ),
     )
     bias_env = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.mpes.MpesSampleBiasEnv",
         repeats=False,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXenvironment",
-            name="bias_env",
-            name_type="specified",
-            optionality="recommended",
-        ),
     )
     drain_current_env = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.mpes.MpesSampleDrainCurrentEnv",
         repeats=False,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXenvironment",
-            name="drain_current_env",
-            name_type="specified",
-            optionality="optional",
-        ),
     )
     flood_gun_current_env = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.mpes.MpesSampleFloodGunCurrentEnv",
         repeats=False,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXenvironment",
-            name="flood_gun_current_env",
-            name_type="specified",
-            optionality="optional",
-        ),
     )
 
     name = Quantity(
@@ -4944,12 +4657,6 @@ class MpesSampleHistory(History):
     sample_preparation = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.mpes.MpesSampleHistorySamplePreparation",
         repeats=False,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXactivity",
-            name="sample_preparation",
-            name_type="specified",
-            optionality="recommended",
-        ),
     )
 
     def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
@@ -5049,6 +4756,12 @@ class MpesSampleTemperatureEnv(Environment):
     temperature_sensor = SubSection(
         section_def="pynxtools.nomad.metainfo.base_classes.sensor.Sensor",
         repeats=False,
+        description=(
+            "Temperature sensor measuring the sample temperature. In most cases, "
+            "this can be a link to "
+            "/entry/instrument/manipulator/temperature_sensor if a manipulator "
+            "is present in the instrument."
+        ),
         a_nexus_group=NeXusGroup(
             nx_class="NXsensor",
             name="temperature_sensor",
@@ -5059,6 +4772,11 @@ class MpesSampleTemperatureEnv(Environment):
     sample_heater = SubSection(
         section_def="pynxtools.nomad.metainfo.base_classes.actuator.Actuator",
         repeats=False,
+        description=(
+            "Device to heat the sample. In most cases, this can be a link to "
+            "/entry/instrument/manipulator/sample_heater if a manipulator is "
+            "present in the instrument."
+        ),
         a_nexus_group=NeXusGroup(
             nx_class="NXactuator",
             name="sample_heater",
@@ -5069,6 +4787,11 @@ class MpesSampleTemperatureEnv(Environment):
     cryostat = SubSection(
         section_def="pynxtools.nomad.metainfo.base_classes.actuator.Actuator",
         repeats=False,
+        description=(
+            "Cryostat for cooling the sample. In most cases, this can be a link "
+            "to /entry/instrument/manipulator/cryostat if a manipulator is "
+            "present in the instrument."
+        ),
         a_nexus_group=NeXusGroup(
             nx_class="NXactuator",
             name="cryostat",
@@ -5130,6 +4853,13 @@ class MpesSampleGasPressureEnv(Environment):
     pressure_gauge = SubSection(
         section_def="pynxtools.nomad.metainfo.base_classes.sensor.Sensor",
         repeats=False,
+        description=(
+            "Gauge measuring the gas pressure. In most cases, this can be a link "
+            "to /entry/instrument/pressure_gauge or to another NXsensor "
+            "measuring gas pressure (typically, the gauge in closest proximity "
+            "to the sample) if such a pressure gauge is present in the "
+            "instrument."
+        ),
         a_nexus_group=NeXusGroup(
             nx_class="NXsensor",
             name="pressure_gauge",
@@ -5196,6 +4926,11 @@ class MpesSampleBiasEnv(Environment):
     voltmeter = SubSection(
         section_def="pynxtools.nomad.metainfo.base_classes.sensor.Sensor",
         repeats=False,
+        description=(
+            "Sensor measuring the applied voltage. In most cases, this can be a "
+            "link to /entry/instrument/manipulator/sample_bias_voltmeter if a "
+            "manipulator is present in the instrument."
+        ),
         a_nexus_group=NeXusGroup(
             nx_class="NXsensor",
             name="voltmeter",
@@ -5206,6 +4941,12 @@ class MpesSampleBiasEnv(Environment):
     potentiostat = SubSection(
         section_def="pynxtools.nomad.metainfo.base_classes.actuator.Actuator",
         repeats=False,
+        description=(
+            "Actuator applying a voltage to sample and sample holder. In most "
+            "cases, this can be a link to "
+            "/entry/instrument/manipulator/sample_bias_potentiostat if a "
+            "manipulator is present in the instrument."
+        ),
         a_nexus_group=NeXusGroup(
             nx_class="NXactuator",
             name="potentiostat",
@@ -5264,6 +5005,12 @@ class MpesSampleDrainCurrentEnv(Environment):
     ammeter = SubSection(
         section_def="pynxtools.nomad.metainfo.base_classes.sensor.Sensor",
         repeats=False,
+        description=(
+            "Ammeter measuring the drain current of the sample and sample "
+            "holder. In most cases, this can be a link to "
+            "/entry/instrument/manipulator/drain_current_ammeter if a "
+            "manipulator is present in the instrument."
+        ),
         a_nexus_group=NeXusGroup(
             nx_class="NXsensor",
             name="ammeter",
@@ -5323,6 +5070,11 @@ class MpesSampleFloodGunCurrentEnv(Environment):
     flood_gun = SubSection(
         section_def="pynxtools.nomad.metainfo.base_classes.actuator.Actuator",
         repeats=False,
+        description=(
+            "Flood gun creating a current of low-energy electrons. In most cases "
+            "this can be a link to /entry/instrument/flood_gun if a flood_gun is "
+            "present in the instrument."
+        ),
         a_nexus_group=NeXusGroup(
             nx_class="NXactuator",
             name="flood_gun",

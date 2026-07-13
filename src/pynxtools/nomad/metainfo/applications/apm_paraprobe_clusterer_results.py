@@ -165,13 +165,6 @@ class ApmParaprobeClustererResultsClusterAnalysisID(ApmParaprobeToolProcess):
         section_def="pynxtools.nomad.metainfo.applications.apm_paraprobe_clusterer_results.ApmParaprobeClustererResultsClusterAnalysisIDDbscanID",
         repeats=True,
         variable=True,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXsimilarity_grouping",
-            name="dbscanID",
-            name_type="partial",
-            optionality="optional",
-            min_occurs=0,
-        ),
     )
 
     def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
@@ -200,12 +193,6 @@ class ApmParaprobeClustererResultsClusterAnalysisIDDbscanID(SimilarityGrouping):
     statistics = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.apm_paraprobe_clusterer_results.ApmParaprobeClustererResultsClusterAnalysisIDDbscanIDStatistics",
         repeats=False,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXprocess",
-            name="statistics",
-            name_type="specified",
-            optionality="recommended",
-        ),
     )
 
     eps = Quantity(

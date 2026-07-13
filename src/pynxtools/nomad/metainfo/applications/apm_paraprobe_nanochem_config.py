@@ -93,80 +93,16 @@ class ApmParaprobeNanochemConfig(ApmParaprobeToolConfig):
         section_def="pynxtools.nomad.metainfo.applications.apm_paraprobe_nanochem_config.ApmParaprobeNanochemConfigDelocalizationID",
         repeats=False,
         variable=True,
-        description=(
-            "Discretization and distributing of the ion point cloud on a 3D grid "
-            "to enable analyses at the continuum scale. By default, the tool "
-            "computes a full kernel density estimation of decomposed ions to "
-            "create one discretized field for each element. One delocalization "
-            "task configures a parameter sweep with at least one delocalization. "
-            "The total number of runs depends on the number of grid_resolution "
-            "and kernel_variance values. For example, setting two "
-            "grid_resolutions and three kernel_variance will compute six runs. "
-            "Two sets of three with the first set using the first "
-            "grid_resolutions and in sequence the kernel_variance respectively."
-        ),
     )
     interface_meshingID = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.apm_paraprobe_nanochem_config.ApmParaprobeNanochemConfigInterfaceMeshingID",
         repeats=False,
         variable=True,
-        description=(
-            "Use a principle component analysis (PCA) to mesh a single "
-            "free-standing interface patch within the reconstructed volume that "
-            "is decorated by ions of specific iontypes (e.g. solute atoms). "
-            "Interface_meshing is a typical starting point for the "
-            "quantification of Gibbsian interfacial excess in cases when closed "
-            "objects constructed from patches e.g. iso-surfaces are not "
-            "available or when there is no substantial or consistently oriented "
-            "concentration gradients across an interface patch. The "
-            "functionality can also be useful when the amount of latent "
-            "crystallographic information within the point cloud is insufficient "
-            "or when combined with interface_meshing based on ion density traces "
-            "in field-desorption maps (see `Y. Wei et al. "
-            "<https://doi.org/10.1371/journal.pone.0225041>`_ and `A. Breen et "
-            "al. <https://github.com/breen-aj/detector>`_ for details). "
-            "Noteworthy to mention is that the method used is conceptually "
-            "similar to the work of `Z. Peng et al. "
-            "<https://doi.org/10.1017/S1431927618016112>`_ and related work "
-            "(DCOM algorithm) by `P. Felfer et al. "
-            "<https://doi.org/10.1016/j.ultramic.2015.06.002>`_. Compared to "
-            "these implementations paraprobe-nanochem uses inspection "
-            "functionalities which detect potential geometric inconsistencies or "
-            "self-interactions of the evolved DCOM mesh."
-        ),
     )
     oned_profileID = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.apm_paraprobe_nanochem_config.ApmParaprobeNanochemConfigOnedProfileID",
         repeats=False,
         variable=True,
-        description=(
-            "Analysis of one-dimensional profiles in ROIs placed in the dataset. "
-            "Such analyses are useful for quantifying interfacial excess or for "
-            "performing classical composition analyses. The tool will test for "
-            "each ROIs if it is completely embedded in the dataset. "
-            "Specifically, each such test evaluates if the ROI cuts at least one "
-            "triangle of the triangulated surface mesh that is referred to by "
-            "surface. If this is the case the ROI is marked as one close to the "
-            "surface and not analyzed further. Otherwise, the ROI is marked as "
-            "one far from the surface and processed further. For each ROI the "
-            "tool computes atomically decomposed profiles. This means, molecular "
-            "ions are split into nuclides as many times as their respective "
-            "multiplicity. For each processed ROI the tool stores a sorted list "
-            "of signed distance values to enable post-processing with other "
-            "software like e.g. reporter to perform classical "
-            "Krakauer/Seidman-style interfacial excess analyses. Users should be "
-            "aware that the latter intersection analysis is not a volumetric "
-            "intersection analysis. Given that the triangulated mesh referred to "
-            "in surface is not required to mesh neither a watertight nor convex "
-            "polyhedron a rigorous testing of volumetric intersection is much "
-            "more involved. If the mesh is watertight one could use split the "
-            "task in first tessellating the mesh into convex polyhedra (e.g. "
-            "tetrahedra and apply a volumetric intersection method like the "
-            "Gilbert-Johnson-Keerthi algorithm (GJK). In cases when the mesh is "
-            "not even watertight distance-based segmentation in combination with "
-            "again intersection of triangles and convex polyhedra is a robust "
-            "but currently not implemented method to quantify intersections."
-        ),
     )
 
     definition = Quantity(
@@ -250,54 +186,22 @@ class ApmParaprobeNanochemConfigDelocalizationID(ApmParaprobeToolConfigTaskconfi
     surface = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.apm_paraprobe_nanochem_config.ApmParaprobeNanochemConfigDelocalizationIDSurface",
         repeats=False,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXnote",
-            name="surface",
-            name_type="specified",
-            optionality="required",
-        ),
     )
     surface_distance = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.apm_paraprobe_nanochem_config.ApmParaprobeNanochemConfigDelocalizationIDSurfaceDistance",
         repeats=False,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXnote",
-            name="surface_distance",
-            name_type="specified",
-            optionality="recommended",
-        ),
     )
     decomposition = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.apm_paraprobe_nanochem_config.ApmParaprobeNanochemConfigDelocalizationIDDecomposition",
         repeats=False,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXmatch_filter",
-            name="decomposition",
-            name_type="specified",
-            optionality="required",
-        ),
     )
     input = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.apm_paraprobe_nanochem_config.ApmParaprobeNanochemConfigDelocalizationIDInput",
         repeats=False,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXnote",
-            name="input",
-            name_type="specified",
-            optionality="required",
-        ),
     )
     isosurfacing = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.apm_paraprobe_nanochem_config.ApmParaprobeNanochemConfigDelocalizationIDIsosurfacing",
         repeats=False,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXprocess",
-            name="isosurfacing",
-            name_type="specified",
-            optionality="optional",
-            min_occurs=0,
-            max_occurs=1,
-        ),
     )
 
     method = Quantity(
@@ -1423,32 +1327,14 @@ class ApmParaprobeNanochemConfigInterfaceMeshingID(ApmParaprobeToolConfigTaskcon
     surface = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.apm_paraprobe_nanochem_config.ApmParaprobeNanochemConfigInterfaceMeshingIDSurface",
         repeats=False,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXnote",
-            name="surface",
-            name_type="specified",
-            optionality="optional",
-        ),
     )
     control_point = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.apm_paraprobe_nanochem_config.ApmParaprobeNanochemConfigInterfaceMeshingIDControlPoint",
         repeats=False,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXnote",
-            name="control_point",
-            name_type="specified",
-            optionality="required",
-        ),
     )
     decoration_filter = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.apm_paraprobe_nanochem_config.ApmParaprobeNanochemConfigInterfaceMeshingIDDecorationFilter",
         repeats=False,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXmatch_filter",
-            name="decoration_filter",
-            name_type="specified",
-            optionality="required",
-        ),
     )
 
     initialization = Quantity(
@@ -1903,52 +1789,22 @@ class ApmParaprobeNanochemConfigOnedProfileID(ApmParaprobeToolConfigTaskconfig):
     surface = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.apm_paraprobe_nanochem_config.ApmParaprobeNanochemConfigOnedProfileIDSurface",
         repeats=False,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXnote",
-            name="surface",
-            name_type="specified",
-            optionality="optional",
-        ),
     )
     surface_distance = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.apm_paraprobe_nanochem_config.ApmParaprobeNanochemConfigOnedProfileIDSurfaceDistance",
         repeats=False,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXnote",
-            name="surface_distance",
-            name_type="specified",
-            optionality="recommended",
-        ),
     )
     feature = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.apm_paraprobe_nanochem_config.ApmParaprobeNanochemConfigOnedProfileIDFeature",
         repeats=False,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXnote",
-            name="feature",
-            name_type="specified",
-            optionality="optional",
-        ),
     )
     feature_distance = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.apm_paraprobe_nanochem_config.ApmParaprobeNanochemConfigOnedProfileIDFeatureDistance",
         repeats=False,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXnote",
-            name="feature_distance",
-            name_type="specified",
-            optionality="optional",
-        ),
     )
     user_defined_roi = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.apm_paraprobe_nanochem_config.ApmParaprobeNanochemConfigOnedProfileIDUserDefinedRoi",
         repeats=False,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXroi_process",
-            name="user_defined_roi",
-            name_type="specified",
-            optionality="optional",
-        ),
     )
 
     distancing_model = Quantity(
@@ -2259,12 +2115,6 @@ class ApmParaprobeNanochemConfigOnedProfileIDFeature(Note):
     patch_filter = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.apm_paraprobe_nanochem_config.ApmParaprobeNanochemConfigOnedProfileIDFeaturePatchFilter",
         repeats=False,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXmatch_filter",
-            name="patch_filter",
-            name_type="specified",
-            optionality="optional",
-        ),
     )
 
     file_name = Quantity(
@@ -2561,12 +2411,6 @@ class ApmParaprobeNanochemConfigOnedProfileIDUserDefinedRoi(RoiProcess):
     cylinder_set = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.apm_paraprobe_nanochem_config.ApmParaprobeNanochemConfigOnedProfileIDUserDefinedRoiCylinderSet",
         repeats=False,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXcg_cylinder",
-            name="cylinder_set",
-            name_type="specified",
-            optionality="required",
-        ),
     )
 
     def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:

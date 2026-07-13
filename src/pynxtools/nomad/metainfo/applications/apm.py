@@ -340,10 +340,6 @@ class Apm(Entry):
     profiling = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.apm.ApmProfiling",
         repeats=False,
-        description=(
-            "The configuration of the software that was used to generate this "
-            "NeXus file."
-        ),
     )
     citeID = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.apm.ApmCiteID",
@@ -367,78 +363,19 @@ class Apm(Entry):
     sample = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.apm.ApmSample",
         repeats=False,
-        description=(
-            "Description of the sample from which the specimen was prepared or "
-            "site-specifically cut out using e.g. a focused-ion beam instrument. "
-            "In NXapm, a measurement is performed on a specimen. Since APM "
-            "specimens are very small, they are typically cut from a larger "
-            "object with some scientific significance, which NXapm refers to as "
-            "a sample."
-        ),
     )
     specimen = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.apm.ApmSpecimen",
         repeats=False,
-        description=(
-            "Description of the specimen that was cut off from the sample. In "
-            "atom probe jargon this is typically referred to as the tip."
-        ),
     )
     consistent_rotations = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.apm.ApmConsistentRotations",
         repeats=False,
-        description=(
-            "The conventions used when reporting crystal orientations. We follow "
-            "the best practices of the Material Science community that are "
-            "defined in reference "
-            "`<https://doi.org/10.1088/0965-0393/23/8/083501>`_."
-        ),
     )
     NAMED_reference_frameID = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.apm.ApmNAMED_reference_frameID",
         repeats=True,
         variable=True,
-        description=(
-            "A coordinate system. Multiple instances require unique names. "
-            "Several Euclidean coordinate systems (CS) are used in the field of "
-            "atom probe: * World space; a CS specifying a local coordinate "
-            "system of the planet earth which identifies into which direction "
-            "gravity is pointing such that the laboratory space CS can be "
-            "rotated into this world CS. * The laboratory space; a CS specifying "
-            "the room where the instrument is located in or a physical landmark "
-            "on the instrument, e.g. the direction of the transfer rod where "
-            "positive is the direction how the rod has to be pushed during "
-            "loading a specimen into the instrument. In summary, this CS is "
-            "defined by the chassis of the instrument. Suggested name of the "
-            "group ``laboratory_reference_frame``. * The specimen space; a CS "
-            "affixed to either the base or the initial apex of the specimen, "
-            "whose z axis points towards the detector. Suggested name of the "
-            "group ``specimen_reference_frame``. * The detector space; a CS "
-            "affixed to the detector plane whose xy plane is usually in the "
-            "detector and whose z axis points towards the specimen. This is a "
-            "distorted space with respect to the reconstructed ion positions. "
-            "Suggested name of the group ``detector_reference_frame``. * The "
-            "reconstruction space; a CS in which the reconstructed ion positions "
-            "are defined. The orientation depends on the analysis software used. "
-            "* Eventually further coordinate systems attached to the flight path "
-            "of individual ions might be defined. Suggested name of the group "
-            "``reconstruction_reference_frame``. To achieve unique names, the "
-            'prefix "NAMED" should be replaced to with something derived from '
-            'an alias for the coordinate system, or the value of the "alias" '
-            "field. Use the suffix _reference_frame when creating specific "
-            "instances of NXcoordinate_system e.g. laboratory_reference_frame, "
-            "reconstruction_reference_frame and so on and so forth. In atom "
-            "probe microscopy a frequently used choice for the detector space "
-            "(CS) is discussed with the so-called detector space image stack. "
-            "This is a stack of two-dimensional histograms of detected ions "
-            "within a predefined evaporation identifier interval. Typically, the "
-            "set of ion evaporation sequence identifiers is grouped into chunks. "
-            "For each chunk a histogram of the ion hit positions on the detector "
-            "is computed. This leaves the possibility for inconsistency between "
-            "the so-called detector space and the e.g. specimen space. To avoid "
-            "these ambiguities, instances of :ref:`NXtransformations` should be "
-            "used."
-        ),
     )
     measurement = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.apm.ApmApmMeasurement",
@@ -458,13 +395,6 @@ class Apm(Entry):
         section_def="pynxtools.nomad.metainfo.applications.apm.ApmAtomProbeID",
         repeats=True,
         variable=True,
-        description=(
-            "A region-of-interest analyzed either during or after the session "
-            "for which specific processed data of the measured or simulated data "
-            "are available. If a single instance is required the group should be "
-            "named atom_probe. If multiple groups are required these should be "
-            "named atom_probe1, atom_probe2, and so on and so forth."
-        ),
     )
 
     definition = Quantity(
@@ -729,23 +659,10 @@ class ApmProfiling(CsProfiling):
         section_def="pynxtools.nomad.metainfo.applications.apm.ApmProfilingProgramID",
         repeats=True,
         variable=True,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXprogram",
-            name="programID",
-            name_type="partial",
-            optionality="optional",
-            min_occurs=0,
-        ),
     )
     environment = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.apm.ApmProfilingEnvironment",
         repeats=False,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXcollection",
-            name="environment",
-            name_type="specified",
-            optionality="recommended",
-        ),
     )
 
     def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
@@ -841,13 +758,6 @@ class ApmProfilingEnvironment(Collection):
         section_def="pynxtools.nomad.metainfo.applications.apm.ApmProfilingEnvironmentProgram",
         repeats=True,
         variable=True,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXprogram",
-            name=None,
-            name_type="any",
-            optionality="required",
-            min_occurs=1,
-        ),
     )
 
     def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
@@ -1172,12 +1082,6 @@ class ApmSample(Sample):
     chemical_composition = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.apm.ApmSampleChemicalComposition",
         repeats=False,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXchemical_composition",
-            name="chemical_composition",
-            name_type="specified",
-            optionality="recommended",
-        ),
     )
 
     identifierNAME = Quantity(
@@ -1454,14 +1358,6 @@ class ApmSampleChemicalComposition(ChemicalComposition):
         section_def="pynxtools.nomad.metainfo.applications.apm.ApmSampleChemicalCompositionElement",
         repeats=True,
         variable=True,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXatom",
-            name="ELEMENT",
-            name_type="any",
-            optionality="required",
-            min_occurs=1,
-            max_occurs=118,
-        ),
     )
 
     normalization = Quantity(
@@ -2201,264 +2097,107 @@ class ApmApmMeasurement(ApmMeasurement):
     instrument = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.apm.ApmMeasurementInstrument",
         repeats=False,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXapm_instrument",
-            name="instrument",
-            name_type="specified",
-            optionality="required",
-        ),
     )
     eventID = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.apm.ApmMeasurementEventID",
         repeats=True,
         variable=True,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXapm_event_data",
-            name="eventID",
-            name_type="partial",
-            optionality="optional",
-            min_occurs=0,
-        ),
     )
     standing_voltage_time = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.apm.ApmMeasurementStandingVoltageTime",
         repeats=False,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXdata",
-            name="standing_voltage_time",
-            name_type="specified",
-            optionality="optional",
-        ),
     )
     pulse_frequency_time = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.apm.ApmMeasurementPulseFrequencyTime",
         repeats=False,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXdata",
-            name="pulse_frequency_time",
-            name_type="specified",
-            optionality="optional",
-        ),
     )
     detection_rate_time = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.apm.ApmMeasurementDetectionRateTime",
         repeats=False,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXdata",
-            name="detection_rate_time",
-            name_type="specified",
-            optionality="optional",
-        ),
     )
     detection_rate_set_time = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.apm.ApmMeasurementDetectionRateSetTime",
         repeats=False,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXdata",
-            name="detection_rate_set_time",
-            name_type="specified",
-            optionality="optional",
-        ),
     )
     pressure_time = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.apm.ApmMeasurementPressureTime",
         repeats=False,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXdata",
-            name="pressure_time",
-            name_type="specified",
-            optionality="optional",
-        ),
     )
     specimen_voltage_time = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.apm.ApmMeasurementSpecimenVoltageTime",
         repeats=False,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXdata",
-            name="specimen_voltage_time",
-            name_type="specified",
-            optionality="optional",
-        ),
     )
     specimen_temperature_time = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.apm.ApmMeasurementSpecimenTemperatureTime",
         repeats=False,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXdata",
-            name="specimen_temperature_time",
-            name_type="specified",
-            optionality="optional",
-        ),
     )
     ambient_temperature_time = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.apm.ApmMeasurementAmbientTemperatureTime",
         repeats=False,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXdata",
-            name="ambient_temperature_time",
-            name_type="specified",
-            optionality="optional",
-        ),
     )
     reflectron_voltage_time = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.apm.ApmMeasurementReflectronVoltageTime",
         repeats=False,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXdata",
-            name="reflectron_voltage_time",
-            name_type="specified",
-            optionality="optional",
-        ),
     )
     xstage_position_time = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.apm.ApmMeasurementXstagePositionTime",
         repeats=False,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXdata",
-            name="xstage_position_time",
-            name_type="specified",
-            optionality="optional",
-        ),
     )
     ystage_position_time = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.apm.ApmMeasurementYstagePositionTime",
         repeats=False,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXdata",
-            name="ystage_position_time",
-            name_type="specified",
-            optionality="optional",
-        ),
     )
     zstage_position_time = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.apm.ApmMeasurementZstagePositionTime",
         repeats=False,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXdata",
-            name="zstage_position_time",
-            name_type="specified",
-            optionality="optional",
-        ),
     )
     standing_voltage_sequence = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.apm.ApmMeasurementStandingVoltageSequence",
         repeats=False,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXdata",
-            name="standing_voltage_sequence",
-            name_type="specified",
-            optionality="optional",
-        ),
     )
     pulse_frequency_sequence = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.apm.ApmMeasurementPulseFrequencySequence",
         repeats=False,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXdata",
-            name="pulse_frequency_sequence",
-            name_type="specified",
-            optionality="optional",
-        ),
     )
     detection_rate_sequence = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.apm.ApmMeasurementDetectionRateSequence",
         repeats=False,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXdata",
-            name="detection_rate_sequence",
-            name_type="specified",
-            optionality="optional",
-        ),
     )
     detection_rate_set_sequence = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.apm.ApmMeasurementDetectionRateSetSequence",
         repeats=False,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXdata",
-            name="detection_rate_set_sequence",
-            name_type="specified",
-            optionality="optional",
-        ),
     )
     pressure_sequence = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.apm.ApmMeasurementPressureSequence",
         repeats=False,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXdata",
-            name="pressure_sequence",
-            name_type="specified",
-            optionality="optional",
-        ),
     )
     specimen_voltage_sequence = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.apm.ApmMeasurementSpecimenVoltageSequence",
         repeats=False,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXdata",
-            name="specimen_voltage_sequence",
-            name_type="specified",
-            optionality="optional",
-        ),
     )
     specimen_temperature_sequence = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.apm.ApmMeasurementSpecimenTemperatureSequence",
         repeats=False,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXdata",
-            name="specimen_temperature_sequence",
-            name_type="specified",
-            optionality="optional",
-        ),
     )
     ambient_temperature_sequence = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.apm.ApmMeasurementAmbientTemperatureSequence",
         repeats=False,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXdata",
-            name="ambient_temperature_sequence",
-            name_type="specified",
-            optionality="optional",
-        ),
     )
     reflectron_voltage_sequence = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.apm.ApmMeasurementReflectronVoltageSequence",
         repeats=False,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXdata",
-            name="reflectron_voltage_sequence",
-            name_type="specified",
-            optionality="optional",
-        ),
     )
     xstage_position_sequence = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.apm.ApmMeasurementXstagePositionSequence",
         repeats=False,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXdata",
-            name="xstage_position_sequence",
-            name_type="specified",
-            optionality="optional",
-        ),
     )
     ystage_position_sequence = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.apm.ApmMeasurementYstagePositionSequence",
         repeats=False,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXdata",
-            name="ystage_position_sequence",
-            name_type="specified",
-            optionality="optional",
-        ),
     )
     zstage_position_sequence = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.apm.ApmMeasurementZstagePositionSequence",
         repeats=False,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXdata",
-            name="zstage_position_sequence",
-            name_type="specified",
-            optionality="optional",
-        ),
     )
 
     status = Quantity(
@@ -2513,122 +2252,50 @@ class ApmMeasurementInstrument(ApmInstrument):
     fabrication = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.apm.ApmMeasurementInstrumentFabrication",
         repeats=False,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXfabrication",
-            name="fabrication",
-            name_type="specified",
-            optionality="recommended",
-        ),
     )
     reflectron = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.apm.ApmMeasurementInstrumentReflectron",
         repeats=False,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXcomponent",
-            name="reflectron",
-            name_type="specified",
-            optionality="optional",
-        ),
     )
     local_electrode = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.apm.ApmMeasurementInstrumentLocalElectrode",
         repeats=False,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXelectromagnetic_lens",
-            name="local_electrode",
-            name_type="specified",
-            optionality="recommended",
-        ),
     )
     ion_detector = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.apm.ApmMeasurementInstrumentIonDetector",
         repeats=False,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXdetector",
-            name="ion_detector",
-            name_type="specified",
-            optionality="recommended",
-        ),
     )
     pulser = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.apm.ApmMeasurementInstrumentPulser",
         repeats=False,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXcomponent",
-            name="pulser",
-            name_type="specified",
-            optionality="recommended",
-        ),
     )
     stage = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.apm.ApmMeasurementInstrumentStage",
         repeats=False,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXmanipulator",
-            name="stage",
-            name_type="specified",
-            optionality="optional",
-        ),
     )
     analysis_chamber = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.apm.ApmMeasurementInstrumentAnalysisChamber",
         repeats=False,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXcomponent",
-            name="analysis_chamber",
-            name_type="specified",
-            optionality="optional",
-        ),
     )
     buffer_chamber = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.apm.ApmMeasurementInstrumentBufferChamber",
         repeats=False,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXcomponent",
-            name="buffer_chamber",
-            name_type="specified",
-            optionality="optional",
-        ),
     )
     load_lock_chamber = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.apm.ApmMeasurementInstrumentLoadLockChamber",
         repeats=False,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXcomponent",
-            name="load_lock_chamber",
-            name_type="specified",
-            optionality="optional",
-        ),
     )
     getter_pump = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.apm.ApmMeasurementInstrumentGetterPump",
         repeats=False,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXpump",
-            name="getter_pump",
-            name_type="specified",
-            optionality="optional",
-        ),
     )
     roughening_pump = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.apm.ApmMeasurementInstrumentRougheningPump",
         repeats=False,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXpump",
-            name="roughening_pump",
-            name_type="specified",
-            optionality="optional",
-        ),
     )
     turbomolecular_pump = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.apm.ApmMeasurementInstrumentTurbomolecularPump",
         repeats=False,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXpump",
-            name="turbomolecular_pump",
-            name_type="specified",
-            optionality="optional",
-        ),
     )
 
     type = Quantity(
@@ -2824,12 +2491,6 @@ class ApmMeasurementInstrumentLocalElectrode(ElectromagneticLens):
     fabrication = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.apm.ApmMeasurementInstrumentLocalElectrodeFabrication",
         repeats=False,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXfabrication",
-            name="fabrication",
-            name_type="specified",
-            optionality="optional",
-        ),
     )
 
     name = Quantity(
@@ -2946,12 +2607,6 @@ class ApmMeasurementInstrumentIonDetector(Detector):
     fabrication = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.apm.ApmMeasurementInstrumentIonDetectorFabrication",
         repeats=False,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXfabrication",
-            name="fabrication",
-            name_type="specified",
-            optionality="optional",
-        ),
     )
 
     def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
@@ -3037,25 +2692,11 @@ class ApmMeasurementInstrumentPulser(Component):
     fabrication = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.apm.ApmMeasurementInstrumentPulserFabrication",
         repeats=False,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXfabrication",
-            name="fabrication",
-            name_type="specified",
-            optionality="optional",
-        ),
     )
     sourceID = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.apm.ApmMeasurementInstrumentPulserSourceID",
         repeats=True,
         variable=True,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXsource",
-            name="sourceID",
-            name_type="partial",
-            optionality="optional",
-            min_occurs=0,
-            max_occurs=2,
-        ),
     )
 
     def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
@@ -3144,12 +2785,6 @@ class ApmMeasurementInstrumentPulserSourceID(Source):
     fabrication = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.apm.ApmMeasurementInstrumentPulserSourceIDFabrication",
         repeats=False,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXfabrication",
-            name="fabrication",
-            name_type="specified",
-            optionality="recommended",
-        ),
     )
 
     def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
@@ -3235,12 +2870,6 @@ class ApmMeasurementInstrumentStage(Manipulator):
     fabrication = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.apm.ApmMeasurementInstrumentStageFabrication",
         repeats=False,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXfabrication",
-            name="fabrication",
-            name_type="specified",
-            optionality="optional",
-        ),
     )
 
     def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
@@ -3326,12 +2955,6 @@ class ApmMeasurementInstrumentAnalysisChamber(Component):
     fabrication = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.apm.ApmMeasurementInstrumentAnalysisChamberFabrication",
         repeats=False,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXfabrication",
-            name="fabrication",
-            name_type="specified",
-            optionality="optional",
-        ),
     )
 
     def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
@@ -3417,12 +3040,6 @@ class ApmMeasurementInstrumentBufferChamber(Component):
     fabrication = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.apm.ApmMeasurementInstrumentBufferChamberFabrication",
         repeats=False,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXfabrication",
-            name="fabrication",
-            name_type="specified",
-            optionality="optional",
-        ),
     )
 
     def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
@@ -3508,12 +3125,6 @@ class ApmMeasurementInstrumentLoadLockChamber(Component):
     fabrication = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.apm.ApmMeasurementInstrumentLoadLockChamberFabrication",
         repeats=False,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXfabrication",
-            name="fabrication",
-            name_type="specified",
-            optionality="optional",
-        ),
     )
 
     def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
@@ -3599,12 +3210,6 @@ class ApmMeasurementInstrumentGetterPump(Pump):
     fabrication = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.apm.ApmMeasurementInstrumentGetterPumpFabrication",
         repeats=False,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXfabrication",
-            name="fabrication",
-            name_type="specified",
-            optionality="optional",
-        ),
     )
 
     def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
@@ -3690,12 +3295,6 @@ class ApmMeasurementInstrumentRougheningPump(Pump):
     fabrication = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.apm.ApmMeasurementInstrumentRougheningPumpFabrication",
         repeats=False,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXfabrication",
-            name="fabrication",
-            name_type="specified",
-            optionality="optional",
-        ),
     )
 
     def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
@@ -3781,12 +3380,6 @@ class ApmMeasurementInstrumentTurbomolecularPump(Pump):
     fabrication = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.apm.ApmMeasurementInstrumentTurbomolecularPumpFabrication",
         repeats=False,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXfabrication",
-            name="fabrication",
-            name_type="specified",
-            optionality="optional",
-        ),
     )
 
     def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
@@ -3874,12 +3467,6 @@ class ApmMeasurementEventID(ApmEventData):
     instrument = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.apm.ApmMeasurementEventIDInstrument",
         repeats=False,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXapm_instrument",
-            name="instrument",
-            name_type="specified",
-            optionality="recommended",
-        ),
     )
 
     start_time = Quantity(
@@ -3933,62 +3520,26 @@ class ApmMeasurementEventIDInstrument(ApmInstrument):
     reflectron = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.apm.ApmMeasurementEventIDInstrumentReflectron",
         repeats=False,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXcomponent",
-            name="reflectron",
-            name_type="specified",
-            optionality="recommended",
-        ),
     )
     local_electrode = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.apm.ApmMeasurementEventIDInstrumentLocalElectrode",
         repeats=False,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXelectromagnetic_lens",
-            name="local_electrode",
-            name_type="specified",
-            optionality="recommended",
-        ),
     )
     pulser = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.apm.ApmMeasurementEventIDInstrumentPulser",
         repeats=False,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXcomponent",
-            name="pulser",
-            name_type="specified",
-            optionality="recommended",
-        ),
     )
     stage = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.apm.ApmMeasurementEventIDInstrumentStage",
         repeats=False,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXmanipulator",
-            name="stage",
-            name_type="specified",
-            optionality="required",
-        ),
     )
     analysis_chamber = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.apm.ApmMeasurementEventIDInstrumentAnalysisChamber",
         repeats=False,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXcomponent",
-            name="analysis_chamber",
-            name_type="specified",
-            optionality="required",
-        ),
     )
     control = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.apm.ApmMeasurementEventIDInstrumentControl",
         repeats=False,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXparameters",
-            name="control",
-            name_type="specified",
-            optionality="recommended",
-        ),
     )
 
     def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
@@ -4086,14 +3637,6 @@ class ApmMeasurementEventIDInstrumentPulser(Component):
         section_def="pynxtools.nomad.metainfo.applications.apm.ApmMeasurementEventIDInstrumentPulserSourceID",
         repeats=True,
         variable=True,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXsource",
-            name="sourceID",
-            name_type="partial",
-            optionality="optional",
-            min_occurs=0,
-            max_occurs=2,
-        ),
     )
 
     pulse_mode = Quantity(
@@ -4295,12 +3838,6 @@ class ApmMeasurementEventIDInstrumentStage(Manipulator):
     temperature_sensor = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.apm.ApmMeasurementEventIDInstrumentStageTemperatureSensor",
         repeats=False,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXsensor",
-            name="temperature_sensor",
-            name_type="specified",
-            optionality="required",
-        ),
     )
 
     def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
@@ -4374,12 +3911,6 @@ class ApmMeasurementEventIDInstrumentAnalysisChamber(Component):
     pressure_sensor = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.apm.ApmMeasurementEventIDInstrumentAnalysisChamberPressureSensor",
         repeats=False,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXsensor",
-            name="pressure_sensor",
-            name_type="specified",
-            optionality="required",
-        ),
     )
 
     def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
@@ -8834,92 +8365,38 @@ class ApmAtomProbeID(RoiProcess):
     initial_specimen = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.apm.ApmAtomProbeIDInitialSpecimen",
         repeats=False,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXimage",
-            name="initial_specimen",
-            name_type="specified",
-            optionality="recommended",
-        ),
     )
     final_specimen = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.apm.ApmAtomProbeIDFinalSpecimen",
         repeats=False,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXimage",
-            name="final_specimen",
-            name_type="specified",
-            optionality="recommended",
-        ),
     )
     raw_data = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.apm.ApmAtomProbeIDRawData",
         repeats=False,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXprocess",
-            name="raw_data",
-            name_type="specified",
-            optionality="optional",
-        ),
     )
     hit_finding = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.apm.ApmAtomProbeIDHitFinding",
         repeats=False,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXprocess",
-            name="hit_finding",
-            name_type="specified",
-            optionality="recommended",
-        ),
     )
     hit_spatial_filtering = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.apm.ApmAtomProbeIDHitSpatialFiltering",
         repeats=False,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXprocess",
-            name="hit_spatial_filtering",
-            name_type="specified",
-            optionality="recommended",
-        ),
     )
     voltage_and_bowl = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.apm.ApmAtomProbeIDVoltageAndBowl",
         repeats=False,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXprocess",
-            name="voltage_and_bowl",
-            name_type="specified",
-            optionality="recommended",
-        ),
     )
     mass_to_charge_conversion = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.apm.ApmAtomProbeIDMassToChargeConversion",
         repeats=False,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXprocess",
-            name="mass_to_charge_conversion",
-            name_type="specified",
-            optionality="recommended",
-        ),
     )
     reconstruction = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.apm.ApmAtomProbeIDReconstruction",
         repeats=False,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXapm_reconstruction",
-            name="reconstruction",
-            name_type="specified",
-            optionality="recommended",
-        ),
     )
     ranging = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.apm.ApmAtomProbeIDRanging",
         repeats=False,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXapm_ranging",
-            name="ranging",
-            name_type="specified",
-            optionality="recommended",
-        ),
     )
 
     def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
@@ -8946,12 +8423,6 @@ class ApmAtomProbeIDInitialSpecimen(Image):
     image_2d = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.apm.ApmAtomProbeIDInitialSpecimenImage2d",
         repeats=False,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXdata",
-            name="image_2d",
-            name_type="specified",
-            optionality="required",
-        ),
     )
 
     def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
@@ -9148,12 +8619,6 @@ class ApmAtomProbeIDFinalSpecimen(Image):
     image_2d = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.apm.ApmAtomProbeIDFinalSpecimenImage2d",
         repeats=False,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXdata",
-            name="image_2d",
-            name_type="specified",
-            optionality="required",
-        ),
     )
 
     def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
@@ -9363,23 +8828,10 @@ class ApmAtomProbeIDRawData(Process):
         section_def="pynxtools.nomad.metainfo.applications.apm.ApmAtomProbeIDRawDataProgramID",
         repeats=True,
         variable=True,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXprogram",
-            name="programID",
-            name_type="partial",
-            optionality="optional",
-            min_occurs=0,
-        ),
     )
     source = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.apm.ApmAtomProbeIDRawDataSource",
         repeats=False,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXnote",
-            name="source",
-            name_type="specified",
-            optionality="recommended",
-        ),
     )
 
     sequence_index = Quantity(
@@ -9643,23 +9095,10 @@ class ApmAtomProbeIDHitFinding(Process):
         section_def="pynxtools.nomad.metainfo.applications.apm.ApmAtomProbeIDHitFindingProgramID",
         repeats=True,
         variable=True,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXprogram",
-            name="programID",
-            name_type="partial",
-            optionality="optional",
-            min_occurs=0,
-        ),
     )
     config = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.apm.ApmAtomProbeIDHitFindingConfig",
         repeats=False,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXnote",
-            name="config",
-            name_type="specified",
-            optionality="recommended",
-        ),
     )
 
     sequence_index = Quantity(
@@ -10063,33 +9502,14 @@ class ApmAtomProbeIDHitSpatialFiltering(Process):
         section_def="pynxtools.nomad.metainfo.applications.apm.ApmAtomProbeIDHitSpatialFilteringProgramID",
         repeats=True,
         variable=True,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXprogram",
-            name="programID",
-            name_type="partial",
-            optionality="required",
-            min_occurs=1,
-        ),
     )
     source = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.apm.ApmAtomProbeIDHitSpatialFilteringSource",
         repeats=False,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXnote",
-            name="source",
-            name_type="specified",
-            optionality="optional",
-        ),
     )
     hit_filter = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.apm.ApmAtomProbeIDHitSpatialFilteringHitFilter",
         repeats=False,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXcs_filter_boolean_mask",
-            name="hit_filter",
-            name_type="specified",
-            optionality="recommended",
-        ),
     )
 
     sequence_index = Quantity(
@@ -10390,33 +9810,14 @@ class ApmAtomProbeIDVoltageAndBowl(Process):
         section_def="pynxtools.nomad.metainfo.applications.apm.ApmAtomProbeIDVoltageAndBowlProgramID",
         repeats=True,
         variable=True,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXprogram",
-            name="programID",
-            name_type="partial",
-            optionality="required",
-            min_occurs=1,
-        ),
     )
     source = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.apm.ApmAtomProbeIDVoltageAndBowlSource",
         repeats=False,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXnote",
-            name="source",
-            name_type="specified",
-            optionality="optional",
-        ),
     )
     config = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.apm.ApmAtomProbeIDVoltageAndBowlConfig",
         repeats=False,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXparameters",
-            name="config",
-            name_type="specified",
-            optionality="required",
-        ),
     )
 
     sequence_index = Quantity(
@@ -10673,33 +10074,14 @@ class ApmAtomProbeIDMassToChargeConversion(Process):
         section_def="pynxtools.nomad.metainfo.applications.apm.ApmAtomProbeIDMassToChargeConversionProgramID",
         repeats=True,
         variable=True,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXprogram",
-            name="programID",
-            name_type="partial",
-            optionality="required",
-            min_occurs=1,
-        ),
     )
     source = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.apm.ApmAtomProbeIDMassToChargeConversionSource",
         repeats=False,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXnote",
-            name="source",
-            name_type="specified",
-            optionality="recommended",
-        ),
     )
     config = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.apm.ApmAtomProbeIDMassToChargeConversionConfig",
         repeats=False,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXparameters",
-            name="config",
-            name_type="specified",
-            optionality="recommended",
-        ),
     )
 
     sequence_index = Quantity(
@@ -10883,12 +10265,6 @@ class ApmAtomProbeIDMassToChargeConversionConfig(Parameters):
         section_def="pynxtools.nomad.metainfo.applications.apm.ApmAtomProbeIDMassToChargeConversionConfigMassResolutionION",
         repeats=True,
         variable=True,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXatom",
-            name="mass_resolutionION",
-            name_type="partial",
-            optionality="recommended",
-        ),
     )
 
     mass_calibration = Quantity(
@@ -11045,53 +10421,22 @@ class ApmAtomProbeIDReconstruction(ApmReconstruction):
         section_def="pynxtools.nomad.metainfo.applications.apm.ApmAtomProbeIDReconstructionProgramID",
         repeats=True,
         variable=True,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXprogram",
-            name="programID",
-            name_type="partial",
-            optionality="required",
-            min_occurs=1,
-        ),
     )
     source = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.apm.ApmAtomProbeIDReconstructionSource",
         repeats=False,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXnote",
-            name="source",
-            name_type="specified",
-            optionality="recommended",
-        ),
     )
     results = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.apm.ApmAtomProbeIDReconstructionResults",
         repeats=False,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXnote",
-            name="results",
-            name_type="specified",
-            optionality="recommended",
-        ),
     )
     config = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.apm.ApmAtomProbeIDReconstructionConfig",
         repeats=False,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXparameters",
-            name="config",
-            name_type="specified",
-            optionality="recommended",
-        ),
     )
     naive_discretization = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.apm.ApmAtomProbeIDReconstructionNaiveDiscretization",
         repeats=False,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXprocess",
-            name="naive_discretization",
-            name_type="specified",
-            optionality="required",
-        ),
     )
 
     sequence_index = Quantity(
@@ -11661,24 +11006,11 @@ class ApmAtomProbeIDReconstructionNaiveDiscretization(Process):
         section_def="pynxtools.nomad.metainfo.applications.apm.ApmAtomProbeIDReconstructionNaiveDiscretizationProgramID",
         repeats=True,
         variable=True,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXprogram",
-            name="programID",
-            name_type="partial",
-            optionality="required",
-            min_occurs=1,
-        ),
     )
     data = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.apm.ApmAtomProbeIDReconstructionNaiveDiscretizationData",
         repeats=True,
         variable=True,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXdata",
-            name=None,
-            name_type="any",
-            optionality="required",
-        ),
     )
 
     def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
@@ -11976,63 +11308,26 @@ class ApmAtomProbeIDRanging(ApmRanging):
         section_def="pynxtools.nomad.metainfo.applications.apm.ApmAtomProbeIDRangingProgramID",
         repeats=True,
         variable=True,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXprogram",
-            name="programID",
-            name_type="partial",
-            optionality="required",
-            min_occurs=1,
-        ),
     )
     source = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.apm.ApmAtomProbeIDRangingSource",
         repeats=False,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXnote",
-            name="source",
-            name_type="specified",
-            optionality="recommended",
-        ),
     )
     mass_to_charge_distribution = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.apm.ApmAtomProbeIDRangingMassToChargeDistribution",
         repeats=False,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXprocess",
-            name="mass_to_charge_distribution",
-            name_type="specified",
-            optionality="recommended",
-        ),
     )
     background_quantification = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.apm.ApmAtomProbeIDRangingBackgroundQuantification",
         repeats=False,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXprocess",
-            name="background_quantification",
-            name_type="specified",
-            optionality="recommended",
-        ),
     )
     peak_search = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.apm.ApmAtomProbeIDRangingPeakSearch",
         repeats=False,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXprocess",
-            name="peak_search",
-            name_type="specified",
-            optionality="recommended",
-        ),
     )
     peak_identification = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.apm.ApmAtomProbeIDRangingPeakIdentification",
         repeats=False,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXprocess",
-            name="peak_identification",
-            name_type="specified",
-            optionality="recommended",
-        ),
     )
 
     sequence_index = Quantity(
@@ -12205,23 +11500,10 @@ class ApmAtomProbeIDRangingMassToChargeDistribution(Process):
         section_def="pynxtools.nomad.metainfo.applications.apm.ApmAtomProbeIDRangingMassToChargeDistributionProgramID",
         repeats=True,
         variable=True,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXprogram",
-            name="programID",
-            name_type="partial",
-            optionality="required",
-            min_occurs=1,
-        ),
     )
     mass_spectrum = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.apm.ApmAtomProbeIDRangingMassToChargeDistributionMassSpectrum",
         repeats=False,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXdata",
-            name="mass_spectrum",
-            name_type="specified",
-            optionality="required",
-        ),
     )
 
     sequence_index = Quantity(
@@ -12513,13 +11795,6 @@ class ApmAtomProbeIDRangingBackgroundQuantification(Process):
         section_def="pynxtools.nomad.metainfo.applications.apm.ApmAtomProbeIDRangingBackgroundQuantificationProgramID",
         repeats=True,
         variable=True,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXprogram",
-            name="programID",
-            name_type="partial",
-            optionality="required",
-            min_occurs=1,
-        ),
     )
 
     sequence_index = Quantity(
@@ -12726,25 +12001,11 @@ class ApmAtomProbeIDRangingPeakSearch(Process):
         section_def="pynxtools.nomad.metainfo.applications.apm.ApmAtomProbeIDRangingPeakSearchProgramID",
         repeats=True,
         variable=True,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXprogram",
-            name="programID",
-            name_type="partial",
-            optionality="required",
-            min_occurs=1,
-        ),
     )
     peakID = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.apm.ApmAtomProbeIDRangingPeakSearchPeakID",
         repeats=True,
         variable=True,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXpeak",
-            name="peakID",
-            name_type="partial",
-            optionality="optional",
-            min_occurs=0,
-        ),
     )
 
     sequence_index = Quantity(
@@ -12934,26 +12195,11 @@ class ApmAtomProbeIDRangingPeakIdentification(Process):
         section_def="pynxtools.nomad.metainfo.applications.apm.ApmAtomProbeIDRangingPeakIdentificationProgramID",
         repeats=True,
         variable=True,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXprogram",
-            name="programID",
-            name_type="partial",
-            optionality="required",
-            min_occurs=1,
-        ),
     )
     ionID = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.apm.ApmAtomProbeIDRangingPeakIdentificationIonID",
         repeats=True,
         variable=True,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXatom",
-            name="ionID",
-            name_type="partial",
-            optionality="required",
-            min_occurs=1,
-            max_occurs=256,
-        ),
     )
 
     sequence_index = Quantity(
@@ -13113,12 +12359,6 @@ class ApmAtomProbeIDRangingPeakIdentificationIonID(Atom):
     charge_state_analysis = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.apm.ApmAtomProbeIDRangingPeakIdentificationIonIDChargeStateAnalysis",
         repeats=False,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXapm_charge_state_analysis",
-            name="charge_state_analysis",
-            name_type="specified",
-            optionality="optional",
-        ),
     )
 
     nuclide_hash = Quantity(
@@ -13225,12 +12465,6 @@ class ApmAtomProbeIDRangingPeakIdentificationIonIDChargeStateAnalysis(
     config = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.apm.ApmAtomProbeIDRangingPeakIdentificationIonIDChargeStateAnalysisConfig",
         repeats=False,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXparameters",
-            name="config",
-            name_type="specified",
-            optionality="required",
-        ),
     )
 
     charge_state = Quantity(

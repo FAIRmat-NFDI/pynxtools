@@ -83,10 +83,6 @@ class SpmPiezoConfig(Object):
     piezo_material = SubSection(
         section_def="pynxtools.nomad.metainfo.base_classes.spm_piezo_config.SpmPiezoConfigPiezoMaterial",
         repeats=False,
-        description=(
-            "The material description and properties of the piezoelectric "
-            "scanner materials."
-        ),
     )
     calibration = SubSection(
         section_def="pynxtools.nomad.metainfo.base_classes.spm_piezo_config.SpmPiezoConfigCalibration",
@@ -166,12 +162,6 @@ class SpmPiezoConfigCalibration(Calibration):
     calibration_parameters = SubSection(
         section_def="pynxtools.nomad.metainfo.base_classes.spm_piezo_config.SpmPiezoConfigCalibrationCalibrationParameters",
         repeats=False,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXparameters",
-            name="calibration_parameters",
-            name_type="specified",
-            optionality="optional",
-        ),
     )
 
     calibration_type = Quantity(

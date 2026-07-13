@@ -111,6 +111,10 @@ class EmImgImage(Image):
         section_def="pynxtools.nomad.metainfo.base_classes.microstructure.Microstructure",
         repeats=True,
         variable=True,
+        description=(
+            "A reconstruction of the microstructure or some of its features "
+            "based on image information in the parent class."
+        ),
         a_nexus_group=NeXusGroup(
             nx_class="NXmicrostructure",
             name=None,

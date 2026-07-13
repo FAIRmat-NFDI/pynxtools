@@ -100,14 +100,6 @@ class ApmInstrument(Instrument):
     reflectron = SubSection(
         section_def="pynxtools.nomad.metainfo.base_classes.apm_instrument.ApmInstrumentReflectron",
         repeats=False,
-        description=(
-            "Device which reduces ToF differences of ions in ToF experiments. "
-            "For atom probe the reflectron can be considered an energy "
-            "compensation device. Such a device can be realized technically e.g. "
-            "with a Poschenrieder lens. Consult the following U.S. patents for "
-            "further details: * 3863068 and 6740872 for the reflectron * 8134119 "
-            "for the curved reflectron"
-        ),
     )
     decelerate_electrode = SubSection(
         section_def="pynxtools.nomad.metainfo.base_classes.component.Component",
@@ -123,31 +115,14 @@ class ApmInstrument(Instrument):
     local_electrode = SubSection(
         section_def="pynxtools.nomad.metainfo.base_classes.apm_instrument.ApmInstrumentLocalElectrode",
         repeats=False,
-        description=(
-            "A local electrode guiding the ion flight path. Also called counter "
-            "or extraction electrode."
-        ),
     )
     ion_detector = SubSection(
         section_def="pynxtools.nomad.metainfo.base_classes.apm_instrument.ApmInstrumentIonDetector",
         repeats=False,
-        description=(
-            "Detector for taking raw time-of-flight and ion/hit impact positions data."
-        ),
     )
     pulser = SubSection(
         section_def="pynxtools.nomad.metainfo.base_classes.apm_instrument.ApmInstrumentPulser",
         repeats=False,
-        description=(
-            "Laser- and/or voltage-pulsing device to trigger ion removal. When "
-            "the base class NXapm_instrument is used in the NXapm application "
-            "definition, the values for the following fields: * pulse_frequency "
-            "* pulse_fraction * pulse_voltage * pulse_number * standing_voltage "
-            "* pulse_energy * incidence_vector * pinhole_position * "
-            "spot_position should be recorded in the order of, and assumed "
-            "associated, with the pulse_id in an instance of "
-            ":ref:`NXapm_event_data`."
-        ),
     )
     stage = SubSection(
         section_def="pynxtools.nomad.metainfo.base_classes.apm_instrument.ApmInstrumentStage",
@@ -210,11 +185,6 @@ class ApmInstrument(Instrument):
     control = SubSection(
         section_def="pynxtools.nomad.metainfo.base_classes.apm_instrument.ApmInstrumentControl",
         repeats=False,
-        description=(
-            "Relevant quantities during a measurement with a LEAP system as were "
-            "suggested by `T. Blum et al. "
-            "<https://doi.org/10.1002/9781119227250.ch18>`_."
-        ),
     )
 
     type = Quantity(
@@ -594,12 +564,6 @@ class ApmInstrumentPulser(Component):
         section_def="pynxtools.nomad.metainfo.base_classes.apm_instrument.ApmInstrumentPulserSourceID",
         repeats=True,
         variable=True,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXsource",
-            name="sourceID",
-            name_type="partial",
-            optionality="optional",
-        ),
     )
 
     pulse_mode = Quantity(
@@ -772,17 +736,17 @@ class ApmInstrumentPulserSourceID(Source):
         section_def="pynxtools.nomad.metainfo.base_classes.apm_instrument.ApmInstrumentPulserSourceIDBeamID",
         repeats=True,
         variable=True,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXbeam",
-            name="beamID",
-            name_type="partial",
-            optionality="optional",
-        ),
     )
     transformations = SubSection(
         section_def="pynxtools.nomad.metainfo.base_classes.transformations.Transformations",
         repeats=True,
         variable=True,
+        description=(
+            "Affine transformations which describe the geometry how the laser "
+            "focusing optics/pinhole-attached coordinate system is defined, how "
+            "it has to be transformed so that it aligns with the specimen "
+            "coordinate system."
+        ),
         a_nexus_group=NeXusGroup(
             nx_class="NXtransformations",
             name=None,
@@ -965,12 +929,6 @@ class ApmInstrumentStage(Manipulator):
     temperature_sensor = SubSection(
         section_def="pynxtools.nomad.metainfo.base_classes.apm_instrument.ApmInstrumentStageTemperatureSensor",
         repeats=False,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXsensor",
-            name="temperature_sensor",
-            name_type="specified",
-            optionality="optional",
-        ),
     )
 
     def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
@@ -1032,12 +990,6 @@ class ApmInstrumentAnalysisChamber(Component):
     pressure_sensor = SubSection(
         section_def="pynxtools.nomad.metainfo.base_classes.apm_instrument.ApmInstrumentAnalysisChamberPressureSensor",
         repeats=False,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXsensor",
-            name="pressure_sensor",
-            name_type="specified",
-            optionality="optional",
-        ),
     )
 
     flight_path = Quantity(

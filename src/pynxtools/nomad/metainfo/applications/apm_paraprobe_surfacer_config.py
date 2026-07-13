@@ -151,12 +151,6 @@ class ApmParaprobeSurfacerConfigSurfaceMeshingID(ApmParaprobeToolConfigTaskconfi
     preprocessing = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.apm_paraprobe_surfacer_config.ApmParaprobeSurfacerConfigSurfaceMeshingIDPreprocessing",
         repeats=False,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXparameters",
-            name="preprocessing",
-            name_type="specified",
-            optionality="required",
-        ),
     )
 
     alpha_value_choice = Quantity(

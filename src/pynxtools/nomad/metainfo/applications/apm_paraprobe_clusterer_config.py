@@ -86,24 +86,11 @@ class ApmParaprobeClustererConfig(ApmParaprobeToolConfig):
     cameca_to_nexus = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.apm_paraprobe_clusterer_config.ApmParaprobeClustererConfigCamecaToNexus",
         repeats=False,
-        description=(
-            "This process maps results from a cluster analysis made with IVAS / "
-            "AP Suite into an interoperable representation. IVAS / AP Suite "
-            "usually exports such results as a list of reconstructed ion "
-            "positions with one cluster label per position. These labels are "
-            "reported via the mass-to-charge-state-ratio column of what is "
-            "effectively a binary file that is formatted like a POS file but "
-            "cluster labels written out using floating point numbers."
-        ),
     )
     cluster_analysisID = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.apm_paraprobe_clusterer_config.ApmParaprobeClustererConfigClusterAnalysisID",
         repeats=True,
         variable=True,
-        description=(
-            "This process performs a cluster analysis on a reconstructed dataset "
-            "or a ROI within it."
-        ),
     )
 
     definition = Quantity(
@@ -180,22 +167,10 @@ class ApmParaprobeClustererConfigCamecaToNexus(ApmParaprobeToolConfigTaskconfig)
     reconstruction = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.apm_paraprobe_clusterer_config.ApmParaprobeClustererConfigCamecaToNexusReconstruction",
         repeats=False,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXnote",
-            name="reconstruction",
-            name_type="specified",
-            optionality="required",
-        ),
     )
     results = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.apm_paraprobe_clusterer_config.ApmParaprobeClustererConfigCamecaToNexusResults",
         repeats=False,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXnote",
-            name="results",
-            name_type="specified",
-            optionality="required",
-        ),
     )
 
     recover_evaporation_id = Quantity(
@@ -416,32 +391,14 @@ class ApmParaprobeClustererConfigClusterAnalysisID(ApmParaprobeToolConfigTaskcon
     surface_distance = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.apm_paraprobe_clusterer_config.ApmParaprobeClustererConfigClusterAnalysisIDSurfaceDistance",
         repeats=False,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXnote",
-            name="surface_distance",
-            name_type="specified",
-            optionality="optional",
-        ),
     )
     dbscan = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.apm_paraprobe_clusterer_config.ApmParaprobeClustererConfigClusterAnalysisIDDbscan",
         repeats=False,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXprocess",
-            name="dbscan",
-            name_type="specified",
-            optionality="required",
-        ),
     )
     hdbscan = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.apm_paraprobe_clusterer_config.ApmParaprobeClustererConfigClusterAnalysisIDHdbscan",
         repeats=False,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXprocess",
-            name="hdbscan",
-            name_type="specified",
-            optionality="required",
-        ),
     )
 
     ion_type_filter = Quantity(

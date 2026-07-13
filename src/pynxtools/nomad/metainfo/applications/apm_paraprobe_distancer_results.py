@@ -165,22 +165,10 @@ class ApmParaprobeDistancerResultsPointToTriangleID(ApmParaprobeToolProcess):
     sign_valid = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.apm_paraprobe_distancer_results.ApmParaprobeDistancerResultsPointToTriangleIDSignValid",
         repeats=False,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXcs_filter_boolean_mask",
-            name="sign_valid",
-            name_type="specified",
-            optionality="optional",
-        ),
     )
     window_triangles = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.apm_paraprobe_distancer_results.ApmParaprobeDistancerResultsPointToTriangleIDWindowTriangles",
         repeats=False,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXcs_filter_boolean_mask",
-            name="window_triangles",
-            name_type="specified",
-            optionality="optional",
-        ),
     )
 
     distance = Quantity(

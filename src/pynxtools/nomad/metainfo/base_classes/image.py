@@ -145,45 +145,34 @@ class Image(Object):
         section_def="pynxtools.nomad.metainfo.base_classes.image.ImageProcess",
         repeats=True,
         variable=True,
-        description=(
-            "Details how NXdata instance were processed from detector "
-            "readings/raw data."
-        ),
     )
     image_1d = SubSection(
         section_def="pynxtools.nomad.metainfo.base_classes.image.ImageImage1d",
         repeats=False,
-        description=("One-dimensional image."),
     )
     image_2d = SubSection(
         section_def="pynxtools.nomad.metainfo.base_classes.image.ImageImage2d",
         repeats=False,
-        description=("Two-dimensional image."),
     )
     image_3d = SubSection(
         section_def="pynxtools.nomad.metainfo.base_classes.image.ImageImage3d",
         repeats=False,
-        description=("Three-dimensional image."),
     )
     image_4d = SubSection(
         section_def="pynxtools.nomad.metainfo.base_classes.image.ImageImage4d",
         repeats=False,
-        description=("Four-dimensional image."),
     )
     stack_1d = SubSection(
         section_def="pynxtools.nomad.metainfo.base_classes.image.ImageStack1d",
         repeats=False,
-        description=("Collection of one-dimensional images."),
     )
     stack_2d = SubSection(
         section_def="pynxtools.nomad.metainfo.base_classes.image.ImageStack2d",
         repeats=False,
-        description=("Collection of two-dimensional images."),
     )
     stack_3d = SubSection(
         section_def="pynxtools.nomad.metainfo.base_classes.image.ImageStack3d",
         repeats=False,
-        description=("Collection of three-dimensional images."),
     )
 
     def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
@@ -220,12 +209,6 @@ class ImageProcess(Process):
     input = SubSection(
         section_def="pynxtools.nomad.metainfo.base_classes.image.ImageProcessInput",
         repeats=False,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXnote",
-            name="input",
-            name_type="specified",
-            optionality="optional",
-        ),
     )
 
     detector_identifier = Quantity(

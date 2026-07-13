@@ -96,13 +96,11 @@ class Azint1d(Entry):
         section_def="pynxtools.nomad.metainfo.applications.azint1d.Azint1dMonitor",
         repeats=True,
         variable=True,
-        description=("Monitor data for example `I_zero`."),
     )
     data = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.azint1d.Azint1dData",
         repeats=True,
         variable=True,
-        description=("Azimuthally integrated data with radial binning in q or 2theta."),
     )
 
     default = Quantity(
@@ -252,23 +250,11 @@ class Azint1dInstrument(Instrument):
         section_def="pynxtools.nomad.metainfo.applications.azint1d.Azint1dInstrumentMonochromator",
         repeats=True,
         variable=True,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXmonochromator",
-            name=None,
-            name_type="any",
-            optionality="required",
-        ),
     )
     source = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.azint1d.Azint1dInstrumentSource",
         repeats=True,
         variable=True,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXsource",
-            name=None,
-            name_type="any",
-            optionality="required",
-        ),
     )
 
     name = Quantity(
@@ -482,6 +468,11 @@ class Azint1dReduction(Process):
     input = SubSection(
         section_def="pynxtools.nomad.metainfo.base_classes.parameters.Parameters",
         repeats=False,
+        description=(
+            "Parameters should exactly match those required by the algorithm "
+            "used in the processing. For example, `azint` requires "
+            "`error_model`, `mask`, `n_splitting`, `poni`, etc."
+        ),
         a_nexus_group=NeXusGroup(
             nx_class="NXparameters",
             name="input",

@@ -76,7 +76,6 @@ class ApmParaprobeToolProcess(Process):
     window = SubSection(
         section_def="pynxtools.nomad.metainfo.base_classes.apm_paraprobe_tool_process.ApmParaprobeToolProcessWindow",
         repeats=False,
-        description=("A bitmask which identifies all ions considered in the analysis."),
     )
 
     description = Quantity(

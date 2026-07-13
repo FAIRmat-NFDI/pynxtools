@@ -86,20 +86,11 @@ class SensorScan(Entry):
         section_def="pynxtools.nomad.metainfo.applications.sensor_scan.SensorScanProcess",
         repeats=True,
         variable=True,
-        description=(
-            "Define the program that was used to generate the results file(s) "
-            "with measured data and metadata."
-        ),
     )
     user = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.sensor_scan.SensorScanUser",
         repeats=True,
         variable=True,
-        description=(
-            "Contact information of at least the user of the instrument or the "
-            "investigator who performed this experiment. Adding multiple users "
-            "if relevant is recommended."
-        ),
     )
     note = SubSection(
         section_def="pynxtools.nomad.metainfo.base_classes.note.Note",
@@ -530,12 +521,6 @@ class SensorScanInstrument(Instrument):
         section_def="pynxtools.nomad.metainfo.applications.sensor_scan.SensorScanInstrumentEnvironment",
         repeats=True,
         variable=True,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXenvironment",
-            name=None,
-            name_type="any",
-            optionality="recommended",
-        ),
     )
 
     def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
@@ -572,12 +557,6 @@ class SensorScanInstrumentEnvironment(Environment):
         section_def="pynxtools.nomad.metainfo.applications.sensor_scan.SensorScanInstrumentEnvironmentSensor",
         repeats=True,
         variable=True,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXsensor",
-            name=None,
-            name_type="any",
-            optionality="recommended",
-        ),
     )
     pid_controller = SubSection(
         section_def="pynxtools.nomad.metainfo.base_classes.pid_controller.PidController",
@@ -649,6 +628,10 @@ class SensorScanInstrumentEnvironmentSensor(Sensor):
         section_def="pynxtools.nomad.metainfo.base_classes.data.Data",
         repeats=True,
         variable=True,
+        description=(
+            "Plot of measured signal as a function of the timestamp of when they "
+            "have been acquired is also possible."
+        ),
         a_nexus_group=NeXusGroup(
             nx_class="NXdata",
             name=None,

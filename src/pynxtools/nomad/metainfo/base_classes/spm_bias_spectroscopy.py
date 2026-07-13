@@ -108,10 +108,6 @@ class SpmBiasSpectroscopy(Object):
         section_def="pynxtools.nomad.metainfo.base_classes.spm_bias_spectroscopy.SpmBiasSpectroscopyBiasSweep",
         repeats=True,
         variable=True,
-        description=(
-            "The bias sweep scan which is is performed in the scanning probe "
-            "microscopy experiments."
-        ),
     )
 
     measurement_type = Quantity(
@@ -279,32 +275,14 @@ class SpmBiasSpectroscopyBiasSweep(SpmScanControl):
     spatial_location = SubSection(
         section_def="pynxtools.nomad.metainfo.base_classes.spm_bias_spectroscopy.SpmBiasSpectroscopyBiasSweepSpatialLocation",
         repeats=False,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXcoordinate_system",
-            name="spatial_location",
-            name_type="specified",
-            optionality="optional",
-        ),
     )
     scan_region = SubSection(
         section_def="pynxtools.nomad.metainfo.base_classes.spm_bias_spectroscopy.SpmBiasSpectroscopyBiasSweepScanRegion",
         repeats=False,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXspm_scan_region",
-            name="scan_region",
-            name_type="specified",
-            optionality="optional",
-        ),
     )
     linear_sweep = SubSection(
         section_def="pynxtools.nomad.metainfo.base_classes.spm_bias_spectroscopy.SpmBiasSpectroscopyBiasSweepLinearSweep",
         repeats=False,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXspm_scan_pattern",
-            name="linear_sweep",
-            name_type="specified",
-            optionality="optional",
-        ),
     )
 
     scan_type = Quantity(

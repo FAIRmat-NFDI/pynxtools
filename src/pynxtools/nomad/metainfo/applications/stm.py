@@ -84,18 +84,10 @@ class Stm(Spm):
     reproducibility_indicators = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.stm.StmReproducibilityIndicators",
         repeats=False,
-        description=(
-            "The group's concepts hold the link to the related concepts that "
-            "define the reproducibility of the STM experiment."
-        ),
     )
     resolution_indicators = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.stm.StmResolutionIndicators",
         repeats=False,
-        description=(
-            "The group's concepts hold the link to the related concepts that "
-            "define the resolution of the STM experiment."
-        ),
     )
 
     definition = Quantity(
@@ -329,16 +321,14 @@ class StmInstrument(SpmInstrument):
     lockin_amplifier = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.stm.StmInstrumentLockinAmplifier",
         repeats=False,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXlockin",
-            name="lockin_amplifier",
-            name_type="specified",
-            optionality="required",
-        ),
     )
     bias_spectroscopy_environment = SubSection(
         section_def="pynxtools.nomad.metainfo.base_classes.environment.Environment",
         repeats=False,
+        description=(
+            "To explain bias and current behavior (sweep measurement) due to "
+            "voltage applied to the sample."
+        ),
         a_nexus_group=NeXusGroup(
             nx_class="NXenvironment",
             name="bias_spectroscopy_environment",
@@ -418,6 +408,11 @@ class StmReproducibilityIndicators(SpmReproducibilityIndicators):
     BIAS_SWEEP = SubSection(
         section_def="pynxtools.nomad.metainfo.base_classes.spm_scan_control.SpmScanControl",
         repeats=False,
+        description=(
+            "Bias sweep measurement in bias spectroscopy. This should be a link "
+            "to "
+            "/entry/instrument/bias_spectroscopy_environment/bias_spectroscopy/bias_sweep"
+        ),
         a_nexus_group=NeXusGroup(
             nx_class="NXspm_scan_control",
             name="BIAS_SWEEP",
@@ -533,6 +528,10 @@ class StmResolutionIndicators(SpmResolutionIndicators):
         section_def="pynxtools.nomad.metainfo.base_classes.spm_scan_control.SpmScanControl",
         repeats=True,
         variable=True,
+        description=(
+            "This should be a link to "
+            "/entry/instrument/bias_spectroscopy_environment/bias_spectroscopy/bias_sweep"
+        ),
         a_nexus_group=NeXusGroup(
             nx_class="NXspm_scan_control",
             name="BIAS_SWEEP",

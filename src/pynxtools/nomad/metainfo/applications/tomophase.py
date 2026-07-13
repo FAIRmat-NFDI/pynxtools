@@ -197,42 +197,18 @@ class TomophaseInstrument(Instrument):
         section_def="pynxtools.nomad.metainfo.applications.tomophase.TomophaseInstrumentSource",
         repeats=True,
         variable=True,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXsource",
-            name=None,
-            name_type="any",
-            optionality="required",
-        ),
     )
     bright_field = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.tomophase.TomophaseInstrumentBrightField",
         repeats=False,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXdetector",
-            name="bright_field",
-            name_type="specified",
-            optionality="required",
-        ),
     )
     dark_field = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.tomophase.TomophaseInstrumentDarkField",
         repeats=False,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXdetector",
-            name="dark_field",
-            name_type="specified",
-            optionality="required",
-        ),
     )
     sample = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.tomophase.TomophaseInstrumentSample",
         repeats=False,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXdetector",
-            name="sample",
-            name_type="specified",
-            optionality="required",
-        ),
     )
 
     def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:

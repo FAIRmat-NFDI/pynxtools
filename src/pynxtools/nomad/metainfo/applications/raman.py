@@ -130,10 +130,6 @@ class Raman(OpticalSpectroscopy):
         section_def="pynxtools.nomad.metainfo.applications.raman.RamanInstrument",
         repeats=True,
         variable=True,
-        description=(
-            "Metadata of the setup, its optical elements and physical properties "
-            "which defines the Raman measurement."
-        ),
     )
 
     definition = Quantity(
@@ -401,12 +397,6 @@ class RamanInstrument(OpticalSpectroscopyInstrument):
     beam_incident = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.raman.RamanInstrumentBeamIncident",
         repeats=False,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXbeam",
-            name="beam_incident",
-            name_type="specified",
-            optionality="required",
-        ),
     )
 
     scattering_configuration = Quantity(

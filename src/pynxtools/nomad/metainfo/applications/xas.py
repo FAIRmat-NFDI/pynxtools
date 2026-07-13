@@ -179,42 +179,18 @@ class XasInstrument(Instrument):
         section_def="pynxtools.nomad.metainfo.applications.xas.XasInstrumentSource",
         repeats=True,
         variable=True,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXsource",
-            name=None,
-            name_type="any",
-            optionality="required",
-        ),
     )
     monochromator = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.xas.XasInstrumentMonochromator",
         repeats=False,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXmonochromator",
-            name="monochromator",
-            name_type="specified",
-            optionality="required",
-        ),
     )
     incoming_beam = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.xas.XasInstrumentIncomingBeam",
         repeats=False,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXdetector",
-            name="incoming_beam",
-            name_type="specified",
-            optionality="required",
-        ),
     )
     absorbed_beam = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.xas.XasInstrumentAbsorbedBeam",
         repeats=False,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXdetector",
-            name="absorbed_beam",
-            name_type="specified",
-            optionality="required",
-        ),
     )
 
     def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:

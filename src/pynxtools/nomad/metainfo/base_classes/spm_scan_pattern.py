@@ -88,11 +88,6 @@ class SpmScanPattern(Object):
         section_def="pynxtools.nomad.metainfo.base_classes.spm_scan_pattern.SpmScanPatternData",
         repeats=True,
         variable=True,
-        description=(
-            "The scan data is the data collected during the scan. If the scan "
-            "has several channels or derivatives from the channel data, please "
-            "duplicate this NXdata group for each."
-        ),
     )
 
     scan_speedN = Quantity(

@@ -93,31 +93,14 @@ class DispersiveMaterial(Entry):
     dispersion_x = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.dispersive_material.DispersiveMaterialDispersionX",
         repeats=False,
-        description=(
-            "The dispersion along the optical axis of the material. This should "
-            "be the only dispersion available for isotropic materials. For "
-            "uniaxial materials this denotes the ordinary axis. For biaxial "
-            "materials this denotes the x axis or epsilon 11 tensor element of "
-            "the diagonalized permittivity tensor."
-        ),
     )
     dispersion_y = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.dispersive_material.DispersiveMaterialDispersionY",
         repeats=False,
-        description=(
-            "This should only be filled for biaxial materials. It denotes the "
-            "epsilon 22 direction of the diagonalized permittivity tensor."
-        ),
     )
     dispersion_z = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.dispersive_material.DispersiveMaterialDispersionZ",
         repeats=False,
-        description=(
-            "This should only be filled for uniaxial or biaxial materials. For "
-            "uniaxial materials this denotes the extraordinary axis. For biaxial "
-            "materials this denotes the epsilon 33 tensor element of the "
-            "diagonalized permittivity tensor."
-        ),
     )
 
     definition = Quantity(
@@ -416,23 +399,11 @@ class DispersiveMaterialDispersionX(Dispersion):
         section_def="pynxtools.nomad.metainfo.applications.dispersive_material.DispersiveMaterialDispersionXDispersionTable",
         repeats=True,
         variable=True,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXdispersion_table",
-            name=None,
-            name_type="any",
-            optionality="recommended",
-        ),
     )
     dispersion_function = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.dispersive_material.DispersiveMaterialDispersionXDispersionFunction",
         repeats=True,
         variable=True,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXdispersion_function",
-            name=None,
-            name_type="any",
-            optionality="recommended",
-        ),
     )
     plot = SubSection(
         section_def="pynxtools.nomad.metainfo.base_classes.data.Data",
@@ -582,23 +553,11 @@ class DispersiveMaterialDispersionXDispersionFunction(DispersionFunction):
         section_def="pynxtools.nomad.metainfo.applications.dispersive_material.DispersiveMaterialDispersionXDispersionFunctionDispersionSingleParameter",
         repeats=True,
         variable=True,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXdispersion_single_parameter",
-            name=None,
-            name_type="any",
-            optionality="required",
-        ),
     )
     dispersion_repeated_parameter = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.dispersive_material.DispersiveMaterialDispersionXDispersionFunctionDispersionRepeatedParameter",
         repeats=True,
         variable=True,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXdispersion_repeated_parameter",
-            name=None,
-            name_type="any",
-            optionality="required",
-        ),
     )
 
     model_name = Quantity(
@@ -862,23 +821,11 @@ class DispersiveMaterialDispersionY(Dispersion):
         section_def="pynxtools.nomad.metainfo.applications.dispersive_material.DispersiveMaterialDispersionYDispersionTable",
         repeats=True,
         variable=True,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXdispersion_table",
-            name=None,
-            name_type="any",
-            optionality="recommended",
-        ),
     )
     dispersion_function = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.dispersive_material.DispersiveMaterialDispersionYDispersionFunction",
         repeats=True,
         variable=True,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXdispersion_function",
-            name=None,
-            name_type="any",
-            optionality="recommended",
-        ),
     )
     plot = SubSection(
         section_def="pynxtools.nomad.metainfo.base_classes.data.Data",
@@ -1028,23 +975,11 @@ class DispersiveMaterialDispersionYDispersionFunction(DispersionFunction):
         section_def="pynxtools.nomad.metainfo.applications.dispersive_material.DispersiveMaterialDispersionYDispersionFunctionDispersionSingleParameter",
         repeats=True,
         variable=True,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXdispersion_single_parameter",
-            name=None,
-            name_type="any",
-            optionality="required",
-        ),
     )
     dispersion_repeated_parameter = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.dispersive_material.DispersiveMaterialDispersionYDispersionFunctionDispersionRepeatedParameter",
         repeats=True,
         variable=True,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXdispersion_repeated_parameter",
-            name=None,
-            name_type="any",
-            optionality="required",
-        ),
     )
 
     model_name = Quantity(
@@ -1310,23 +1245,11 @@ class DispersiveMaterialDispersionZ(Dispersion):
         section_def="pynxtools.nomad.metainfo.applications.dispersive_material.DispersiveMaterialDispersionZDispersionTable",
         repeats=True,
         variable=True,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXdispersion_table",
-            name=None,
-            name_type="any",
-            optionality="recommended",
-        ),
     )
     dispersion_function = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.dispersive_material.DispersiveMaterialDispersionZDispersionFunction",
         repeats=True,
         variable=True,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXdispersion_function",
-            name=None,
-            name_type="any",
-            optionality="recommended",
-        ),
     )
     plot = SubSection(
         section_def="pynxtools.nomad.metainfo.base_classes.data.Data",
@@ -1476,23 +1399,11 @@ class DispersiveMaterialDispersionZDispersionFunction(DispersionFunction):
         section_def="pynxtools.nomad.metainfo.applications.dispersive_material.DispersiveMaterialDispersionZDispersionFunctionDispersionSingleParameter",
         repeats=True,
         variable=True,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXdispersion_single_parameter",
-            name=None,
-            name_type="any",
-            optionality="required",
-        ),
     )
     dispersion_repeated_parameter = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.dispersive_material.DispersiveMaterialDispersionZDispersionFunctionDispersionRepeatedParameter",
         repeats=True,
         variable=True,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXdispersion_repeated_parameter",
-            name=None,
-            name_type="any",
-            optionality="required",
-        ),
     )
 
     model_name = Quantity(

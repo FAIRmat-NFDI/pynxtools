@@ -160,13 +160,6 @@ class ApmParaprobeDistancerConfigPointToTriangleID(ApmParaprobeToolConfigTaskcon
         section_def="pynxtools.nomad.metainfo.applications.apm_paraprobe_distancer_config.ApmParaprobeDistancerConfigPointToTriangleIDTriangleSetID",
         repeats=True,
         variable=True,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXnote",
-            name="triangle_setID",
-            name_type="partial",
-            optionality="required",
-            min_occurs=1,
-        ),
     )
 
     method = Quantity(
@@ -270,12 +263,6 @@ class ApmParaprobeDistancerConfigPointToTriangleIDTriangleSetID(Note):
     patch_filter = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.apm_paraprobe_distancer_config.ApmParaprobeDistancerConfigPointToTriangleIDTriangleSetIDPatchFilter",
         repeats=False,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXmatch_filter",
-            name="patch_filter",
-            name_type="specified",
-            optionality="optional",
-        ),
     )
 
     algorithm = Quantity(

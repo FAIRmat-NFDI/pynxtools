@@ -110,36 +110,10 @@ class MicrostructureIpf(Process):
     map = SubSection(
         section_def="pynxtools.nomad.metainfo.base_classes.microstructure_ipf.MicrostructureIpfMap",
         repeats=False,
-        description=(
-            "Inverse pole figure mapping. Instances named phase0 should by "
-            "definition refer to the null phase notIndexed. Inspect the "
-            "definition of :ref:`NXphase` and its field phase_id for further "
-            "details. Details about possible regridding and associated "
-            "interpolation during the computation of the IPF map visualization "
-            "can be stored using the input_grid, output_grid, and interpolation "
-            "fields. The main purpose of this map is to offer a normalized "
-            "default representation of the IPF map for consumption by a research "
-            "data management system (RDMS)."
-        ),
     )
     legend = SubSection(
         section_def="pynxtools.nomad.metainfo.base_classes.microstructure_ipf.MicrostructureIpfLegend",
         repeats=False,
-        description=(
-            "The color code which maps color to orientation in the fundamental "
-            "zone. For each stereographic standard triangle (SST), i.e. a "
-            "rendering of the fundamental zone of the crystal-symmetry-reduced "
-            "orientation space SO3, it is possible to define a color model which "
-            "assigns a color to each point in the fundamental zone. Different "
-            "mapping models are used. These implement (slightly) different "
-            "scaling relations. Differences exist across representations of tech "
-            "partners. Differences are which base colors of the RGB color model "
-            "are placed in which extremal position of the SST and where the "
-            "white point is located. For further details see: * [G. Nolze et "
-            "al.](https://doi.org/10.1107/S1600576716012942) * [S. Patala et "
-            "al.](https://doi.org/10.1016/j.pmatsci.2012.04.002). Details are "
-            "implementation-specific and not standardized yet."
-        ),
     )
 
     depends_on = Quantity(

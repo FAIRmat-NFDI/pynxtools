@@ -95,7 +95,6 @@ class IbeamColumn(Component):
     ion_source = SubSection(
         section_def="pynxtools.nomad.metainfo.base_classes.ibeam_column.IbeamColumnIonSource",
         repeats=False,
-        description=("The source which creates the ion beam."),
     )
     electromagnetic_lens = SubSection(
         section_def="pynxtools.nomad.metainfo.base_classes.electromagnetic_lens.ElectromagneticLens",

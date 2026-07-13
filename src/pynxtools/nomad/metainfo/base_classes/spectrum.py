@@ -84,44 +84,34 @@ class Spectrum(Object):
         section_def="pynxtools.nomad.metainfo.base_classes.spectrum.SpectrumProcess",
         repeats=True,
         variable=True,
-        description=("Details how spectra were processed from the detector readings."),
     )
     spectrum_0d = SubSection(
         section_def="pynxtools.nomad.metainfo.base_classes.spectrum.SpectrumSpectrum0d",
         repeats=False,
-        description=(
-            "One spectrum for a point of a 0d ROI. Also known as spot measurement."
-        ),
     )
     spectrum_1d = SubSection(
         section_def="pynxtools.nomad.metainfo.base_classes.spectrum.SpectrumSpectrum1d",
         repeats=False,
-        description=("One spectrum for each point of a 1d ROI."),
     )
     spectrum_2d = SubSection(
         section_def="pynxtools.nomad.metainfo.base_classes.spectrum.SpectrumSpectrum2d",
         repeats=False,
-        description=("One spectrum for each scan point of 2d ROI."),
     )
     spectrum_3d = SubSection(
         section_def="pynxtools.nomad.metainfo.base_classes.spectrum.SpectrumSpectrum3d",
         repeats=False,
-        description=("One spectrum for point of a 3d ROI."),
     )
     stack_0d = SubSection(
         section_def="pynxtools.nomad.metainfo.base_classes.spectrum.SpectrumStack0d",
         repeats=False,
-        description=("Multiple instances of spectrum_0d."),
     )
     stack_2d = SubSection(
         section_def="pynxtools.nomad.metainfo.base_classes.spectrum.SpectrumStack2d",
         repeats=False,
-        description=("Multiple instances of spectrum_2d."),
     )
     stack_3d = SubSection(
         section_def="pynxtools.nomad.metainfo.base_classes.spectrum.SpectrumStack3d",
         repeats=False,
-        description=("Multiple instances of spectrum_3d."),
     )
 
     def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
@@ -158,12 +148,6 @@ class SpectrumProcess(Process):
     input = SubSection(
         section_def="pynxtools.nomad.metainfo.base_classes.spectrum.SpectrumProcessInput",
         repeats=False,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXnote",
-            name="input",
-            name_type="specified",
-            optionality="optional",
-        ),
     )
 
     mode = Quantity(

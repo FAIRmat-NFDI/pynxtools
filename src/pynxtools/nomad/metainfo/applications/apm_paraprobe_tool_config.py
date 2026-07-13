@@ -111,7 +111,6 @@ class ApmParaprobeToolConfig(Entry):
         section_def="pynxtools.nomad.metainfo.applications.apm_paraprobe_tool_config.ApmParaprobeToolConfigTaskconfig",
         repeats=True,
         variable=True,
-        description=("A specific configuration to achieve a processing result"),
     )
     common = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.apm_paraprobe_tool_config.ApmParaprobeToolConfigCommon",
@@ -185,62 +184,26 @@ class ApmParaprobeToolConfigTaskconfig(ApmParaprobeToolParameters):
     reconstruction = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.apm_paraprobe_tool_config.ApmParaprobeToolConfigTaskconfigReconstruction",
         repeats=False,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXnote",
-            name="reconstruction",
-            name_type="specified",
-            optionality="required",
-        ),
     )
     ranging = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.apm_paraprobe_tool_config.ApmParaprobeToolConfigTaskconfigRanging",
         repeats=False,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXnote",
-            name="ranging",
-            name_type="specified",
-            optionality="required",
-        ),
     )
     spatial_filter = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.apm_paraprobe_tool_config.ApmParaprobeToolConfigTaskconfigSpatialFilter",
         repeats=False,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXspatial_filter",
-            name="spatial_filter",
-            name_type="specified",
-            optionality="required",
-        ),
     )
     evaporation_id_filter = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.apm_paraprobe_tool_config.ApmParaprobeToolConfigTaskconfigEvaporationIdFilter",
         repeats=False,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXsubsampling_filter",
-            name="evaporation_id_filter",
-            name_type="specified",
-            optionality="optional",
-        ),
     )
     iontype_filter = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.apm_paraprobe_tool_config.ApmParaprobeToolConfigTaskconfigIontypeFilter",
         repeats=False,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXmatch_filter",
-            name="iontype_filter",
-            name_type="specified",
-            optionality="optional",
-        ),
     )
     hit_multiplicity_filter = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.apm_paraprobe_tool_config.ApmParaprobeToolConfigTaskconfigHitMultiplicityFilter",
         repeats=False,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXmatch_filter",
-            name="hit_multiplicity_filter",
-            name_type="specified",
-            optionality="optional",
-        ),
     )
 
     identifier_analysis = Quantity(
@@ -454,32 +417,14 @@ class ApmParaprobeToolConfigTaskconfigSpatialFilter(SpatialFilter):
     hexahedron_set = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.apm_paraprobe_tool_config.ApmParaprobeToolConfigTaskconfigSpatialFilterHexahedronSet",
         repeats=False,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXcg_hexahedron",
-            name="hexahedron_set",
-            name_type="specified",
-            optionality="optional",
-        ),
     )
     cylinder_set = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.apm_paraprobe_tool_config.ApmParaprobeToolConfigTaskconfigSpatialFilterCylinderSet",
         repeats=False,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXcg_cylinder",
-            name="cylinder_set",
-            name_type="specified",
-            optionality="optional",
-        ),
     )
     ellipsoid_set = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.apm_paraprobe_tool_config.ApmParaprobeToolConfigTaskconfigSpatialFilterEllipsoidSet",
         repeats=False,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXcg_ellipsoid",
-            name="ellipsoid_set",
-            name_type="specified",
-            optionality="optional",
-        ),
     )
     polyhedron_set = SubSection(
         section_def="pynxtools.nomad.metainfo.base_classes.cg_polyhedron.CgPolyhedron",
@@ -494,12 +439,6 @@ class ApmParaprobeToolConfigTaskconfigSpatialFilter(SpatialFilter):
     bitmask = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.apm_paraprobe_tool_config.ApmParaprobeToolConfigTaskconfigSpatialFilterBitmask",
         repeats=False,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXcs_filter_boolean_mask",
-            name="bitmask",
-            name_type="specified",
-            optionality="optional",
-        ),
     )
 
     windowing_method = Quantity(
@@ -539,12 +478,6 @@ class ApmParaprobeToolConfigTaskconfigSpatialFilterHexahedronSet(CgHexahedron):
     hexahedra = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.apm_paraprobe_tool_config.ApmParaprobeToolConfigTaskconfigSpatialFilterHexahedronSetHexahedra",
         repeats=False,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXcg_face_list_data_structure",
-            name="hexahedra",
-            name_type="specified",
-            optionality="required",
-        ),
     )
 
     dimensionality = Quantity(
@@ -1151,23 +1084,10 @@ class ApmParaprobeToolConfigCommon(ApmParaprobeToolCommon):
         section_def="pynxtools.nomad.metainfo.applications.apm_paraprobe_tool_config.ApmParaprobeToolConfigCommonProgramID",
         repeats=True,
         variable=True,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXprogram",
-            name="programID",
-            name_type="partial",
-            optionality="required",
-            min_occurs=1,
-        ),
     )
     profiling = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.apm_paraprobe_tool_config.ApmParaprobeToolConfigCommonProfiling",
         repeats=False,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXcs_profiling",
-            name="profiling",
-            name_type="specified",
-            optionality="recommended",
-        ),
     )
 
     status = Quantity(

@@ -75,14 +75,6 @@ class EbeamColumn(Component):
     electron_source = SubSection(
         section_def="pynxtools.nomad.metainfo.base_classes.ebeam_column.EbeamColumnElectronSource",
         repeats=False,
-        description=(
-            "A physical part of an electron or ion microscope from which the "
-            "particles that form the beam are emitted. The hardware for an "
-            "electron source in an electron microscope may contain several "
-            "components which affect the beam path. This concept is related to "
-            "term `Source`_ of the EMglossary standard. .. _Source: "
-            "https://purls.helmholtz-metadaten.de/emg/EMG_00000045"
-        ),
     )
     electromagnetic_lens = SubSection(
         section_def="pynxtools.nomad.metainfo.base_classes.electromagnetic_lens.ElectromagneticLens",
@@ -138,12 +130,6 @@ class EbeamColumn(Component):
         section_def="pynxtools.nomad.metainfo.base_classes.ebeam_column.EbeamColumnMonochromator",
         repeats=True,
         variable=True,
-        description=(
-            "Device to improve energy resolution or chromatic aberration. "
-            "Examples are Wien, $\\textalpha$-, or $\\Omega$- energy filter or "
-            "`cc corrector like "
-            "<https://www.ceos-gmbh.de/en/basics/cc-corrector>`_"
-        ),
     )
     corrector_cs = SubSection(
         section_def="pynxtools.nomad.metainfo.base_classes.corrector_cs.CorrectorCs",
@@ -159,14 +145,6 @@ class EbeamColumn(Component):
     corrector_ax = SubSection(
         section_def="pynxtools.nomad.metainfo.base_classes.ebeam_column.EbeamColumnCorrectorAx",
         repeats=False,
-        description=(
-            "Component that reshapes an ellipse-shaped electron beam into a "
-            "circular one. * `L. Reimer 1998, Springer, 1998 "
-            "<https://dx.doi.org/10.1007/978-3-540-3896>`_ * `M. Tanaka et al., "
-            "Electron Microscopy Glossary, 2024 "
-            "<https://www.jeol.com/words/semterms/20201020.111014.php#gsc.tab=0>`_ "
-            "Stigmator is an exact synonym."
-        ),
     )
     biprismID = SubSection(
         section_def="pynxtools.nomad.metainfo.base_classes.component.Component",
@@ -184,11 +162,6 @@ class EbeamColumn(Component):
         section_def="pynxtools.nomad.metainfo.base_classes.ebeam_column.EbeamColumnPhaseplateID",
         repeats=True,
         variable=True,
-        description=(
-            "Device that causes a change in the phase of an electron wave. * `M. "
-            "Malac et al. <https://doi.org/10.1093/jmicro/dfaa070>`_ * `R. R. "
-            "Schröder et al. <https://www.lem.kit.edu/152.php>`_"
-        ),
     )
     sensor = SubSection(
         section_def="pynxtools.nomad.metainfo.base_classes.sensor.Sensor",

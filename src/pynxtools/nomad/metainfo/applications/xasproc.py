@@ -185,12 +185,6 @@ class XasprocXasDataReduction(Process):
     parameters = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.xasproc.XasprocXasDataReductionParameters",
         repeats=False,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXparameters",
-            name="parameters",
-            name_type="specified",
-            optionality="required",
-        ),
     )
 
     program_quantity = Quantity(

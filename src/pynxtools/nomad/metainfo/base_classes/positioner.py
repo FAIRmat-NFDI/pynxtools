@@ -69,10 +69,6 @@ class Positioner(Component):
     actuator = SubSection(
         section_def="pynxtools.nomad.metainfo.base_classes.positioner.PositionerActuator",
         repeats=False,
-        description=(
-            "The actuator of the positioner which is responsible for the "
-            "movement of the probe."
-        ),
     )
 
     name = Quantity(
@@ -316,6 +312,7 @@ class PositionerActuator(Actuator):
     feedback = SubSection(
         section_def="pynxtools.nomad.metainfo.base_classes.pid_controller.PidController",
         repeats=False,
+        description=("The feedback of the actual position of the positioner."),
         a_nexus_group=NeXusGroup(
             nx_class="NXpid_controller",
             name="feedback",

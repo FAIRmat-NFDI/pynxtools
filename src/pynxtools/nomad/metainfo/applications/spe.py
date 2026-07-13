@@ -408,12 +408,6 @@ class SpeInstrument(Instrument):
         section_def="pynxtools.nomad.metainfo.applications.spe.SpeInstrumentFermiChopper",
         repeats=True,
         variable=True,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXfermi_chopper",
-            name=None,
-            name_type="any",
-            optionality="required",
-        ),
     )
 
     name = Quantity(

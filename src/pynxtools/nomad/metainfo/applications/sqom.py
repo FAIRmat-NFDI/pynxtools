@@ -162,12 +162,6 @@ class SqomInstrument(Instrument):
         section_def="pynxtools.nomad.metainfo.applications.sqom.SqomInstrumentSource",
         repeats=True,
         variable=True,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXsource",
-            name=None,
-            name_type="any",
-            optionality="required",
-        ),
     )
 
     name = Quantity(
@@ -332,16 +326,11 @@ class SqomReduction(Process):
     input = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.sqom.SqomReductionInput",
         repeats=False,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXparameters",
-            name="input",
-            name_type="specified",
-            optionality="required",
-        ),
     )
     output = SubSection(
         section_def="pynxtools.nomad.metainfo.base_classes.parameters.Parameters",
         repeats=False,
+        description=("Eventual output parameters from the data reduction program used"),
         a_nexus_group=NeXusGroup(
             nx_class="NXparameters",
             name="output",

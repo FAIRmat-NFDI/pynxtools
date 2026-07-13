@@ -121,80 +121,34 @@ class MicrostructureScoreConfig(Entry):
     program1 = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.microstructure_score_config.MicrostructureScoreConfigProgram1",
         repeats=False,
-        description=("Name of the program whereby this config file was created."),
     )
     environment = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.microstructure_score_config.MicrostructureScoreConfigEnvironment",
         repeats=False,
-        description=(
-            "Programs and libraries representing the computational environment"
-        ),
     )
     material = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.microstructure_score_config.MicrostructureScoreConfigMaterial",
         repeats=False,
-        description=(
-            "(Mechanical) properties of the material which scale the amount of "
-            "stored (elastic) energy in the system and thus mainly affect "
-            "recrystallization kinetics. Temperature-dependent lattice softening "
-            "of the shear modulus :math:`G(T)` is modeled according to `Nadal "
-            "and Le Poac <https://dx.doi.org/10.1063/1.1539913>`_ i.e., "
-            ":math:`G(T) = \\frac{1}{\\mathfrak{J}(\\frac{T}{T_m})} G_0 (1 - a "
-            "\\frac{T}{T_m})` with :math:`G_0` shear_modulus_zero, :math:`a` "
-            "nadal_lepoac_a, :math:`\\zeta` nadal_lepoac_zeta, and "
-            ":math:`\\mathfrak{J}(\\frac{T}{T_m}) = 1 + "
-            "exp(\\frac{\\frac{T}{T_m} - 1}{\\zeta(1 - "
-            "\\frac{T}{T_m(1+\\zeta)})})`. The temperature-dependent Burgers "
-            "vector :math:`b(T)` is modeled with a second order approximation "
-            ":math:`b(T) = b_0 (1 + (a_2 T^2 + a_1 T + a_0))` with :math:`a_2` "
-            "lattice_expansion_second, :math:`a_1` lattice_expansion_first, and "
-            ":math:`a_0` lattice_expansion_null."
-        ),
     )
     deformation = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.microstructure_score_config.MicrostructureScoreConfigDeformation",
         repeats=False,
-        description=(
-            "Details about the geometry and properties of the polycrystal that "
-            "represents the starting configuration (typically a deformed "
-            "microstructure) for the simulation."
-        ),
     )
     nucleation = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.microstructure_score_config.MicrostructureScoreConfigNucleation",
         repeats=False,
-        description=(
-            "Phenomenological model according to which recrystallization nuclei "
-            "are placed into the domain. Studying the growth of these nuclei is "
-            "the main purpose of a SCORE simulation."
-        ),
     )
     grain_boundary_mobility = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.microstructure_score_config.MicrostructureScoreConfigGrainBoundaryMobility",
         repeats=False,
-        description=(
-            "Model for the assumed mobility of grain boundaries with different "
-            "disorientation implemented as a parameterized Turnbull's model for "
-            "thermally-activated grain boundary migration."
-        ),
     )
     stored_energy_recovery = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.microstructure_score_config.MicrostructureScoreConfigStoredEnergyRecovery",
         repeats=False,
-        description=(
-            "Time-dependent reduction of the stored energy to account for "
-            "recovery effects."
-        ),
     )
     dispersoid_drag = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.microstructure_score_config.MicrostructureScoreConfigDispersoidDrag",
         repeats=False,
-        description=(
-            "Reduction of the grain boundary migration speed due to the presence "
-            "of dispersoids through which the total grain boundary area of the "
-            "recrystallization front can be reduced while the boundary is "
-            "arrested at the dispersoids."
-        ),
     )
     component_analysis = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.microstructure_score_config.MicrostructureScoreConfigComponentAnalysis",
@@ -203,32 +157,14 @@ class MicrostructureScoreConfig(Entry):
     time_temperature = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.microstructure_score_config.MicrostructureScoreConfigTimeTemperature",
         repeats=False,
-        description=("Desired simulated time-temperature profile"),
     )
     discretization = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.microstructure_score_config.MicrostructureScoreConfigDiscretization",
         repeats=False,
-        description=(
-            "Relevant data to instantiate a starting configuration that is "
-            "typically a microstructure in deformed conditions where (elastic) "
-            "energy is stored in the form of crystal defects (mostly "
-            "dislocations). The SCORE model does not resolve individual "
-            "dislocations but works with one homogenized mean-field density per "
-            "grain. For simulations that are instantiated from EBSD datasets or "
-            "crystal plasticity simulations individual values are available for "
-            "each voxel that may be used as is for each voxel or may need a "
-            "pre-processing of the data to coarse-grain material point-specific "
-            "values to values averaged per deformed grain."
-        ),
     )
     numerics = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.microstructure_score_config.MicrostructureScoreConfigNumerics",
         repeats=False,
-        description=(
-            "Criteria which enable to stop the simulation in a controlled manner "
-            "and assure a stable numerical integration. Whichever criterion is "
-            "fulfilled first stops the simulation."
-        ),
     )
     solitary_unit = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.microstructure_score_config.MicrostructureScoreConfigSolitaryUnit",
@@ -468,13 +404,6 @@ class MicrostructureScoreConfigEnvironment(Collection):
         section_def="pynxtools.nomad.metainfo.applications.microstructure_score_config.MicrostructureScoreConfigEnvironmentProgramID",
         repeats=True,
         variable=True,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXprogram",
-            name="programID",
-            name_type="partial",
-            optionality="required",
-            min_occurs=1,
-        ),
     )
 
     def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
@@ -762,32 +691,14 @@ class MicrostructureScoreConfigDeformation(Parameters):
     ensemble = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.microstructure_score_config.MicrostructureScoreConfigDeformationEnsemble",
         repeats=False,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXparameters",
-            name="ensemble",
-            name_type="specified",
-            optionality="optional",
-        ),
     )
     ebsd = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.microstructure_score_config.MicrostructureScoreConfigDeformationEbsd",
         repeats=False,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXnote",
-            name="ebsd",
-            name_type="specified",
-            optionality="optional",
-        ),
     )
     damask = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.microstructure_score_config.MicrostructureScoreConfigDeformationDamask",
         repeats=False,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXnote",
-            name="damask",
-            name_type="specified",
-            optionality="optional",
-        ),
     )
 
     model = Quantity(
@@ -1106,12 +1017,6 @@ class MicrostructureScoreConfigNucleation(Parameters):
     ensemble = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.microstructure_score_config.MicrostructureScoreConfigNucleationEnsemble",
         repeats=False,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXparameters",
-            name="ensemble",
-            name_type="specified",
-            optionality="required",
-        ),
     )
 
     spatial_distribution = Quantity(
@@ -1269,22 +1174,10 @@ class MicrostructureScoreConfigGrainBoundaryMobility(Parameters):
     sebald_gottstein = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.microstructure_score_config.MicrostructureScoreConfigGrainBoundaryMobilitySebaldGottstein",
         repeats=False,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXparameters",
-            name="sebald_gottstein",
-            name_type="specified",
-            optionality="optional",
-        ),
     )
     rollett_holm = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.microstructure_score_config.MicrostructureScoreConfigGrainBoundaryMobilityRollettHolm",
         repeats=False,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXparameters",
-            name="rollett_holm",
-            name_type="specified",
-            optionality="required",
-        ),
     )
 
     model = Quantity(
@@ -1641,12 +1534,6 @@ class MicrostructureScoreConfigDispersoidDrag(Parameters):
     zener_smith = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.microstructure_score_config.MicrostructureScoreConfigDispersoidDragZenerSmith",
         repeats=False,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXparameters",
-            name="zener_smith",
-            name_type="specified",
-            optionality="optional",
-        ),
     )
 
     model = Quantity(
@@ -1691,12 +1578,6 @@ class MicrostructureScoreConfigDispersoidDragZenerSmith(Parameters):
     radius_evolution = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.microstructure_score_config.MicrostructureScoreConfigDispersoidDragZenerSmithRadiusEvolution",
         repeats=False,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXdata",
-            name="radius_evolution",
-            name_type="specified",
-            optionality="required",
-        ),
     )
 
     pre_factor = Quantity(
@@ -2180,12 +2061,6 @@ class MicrostructureScoreConfigDiscretization(Microstructure):
     grid = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.microstructure_score_config.MicrostructureScoreConfigDiscretizationGrid",
         repeats=False,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXcg_grid",
-            name="grid",
-            name_type="specified",
-            optionality="required",
-        ),
     )
 
     def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
@@ -2275,12 +2150,6 @@ class MicrostructureScoreConfigNumerics(Parameters):
     cell_cache = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.microstructure_score_config.MicrostructureScoreConfigNumericsCellCache",
         repeats=False,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXparameters",
-            name="cell_cache",
-            name_type="specified",
-            optionality="required",
-        ),
     )
 
     max_x = Quantity(

@@ -81,21 +81,14 @@ class OpticalFiber(Component):
     core = SubSection(
         section_def="pynxtools.nomad.metainfo.base_classes.optical_fiber.OpticalFiberCore",
         repeats=False,
-        description=(
-            "Core of the fiber, i.e. the part of the fiber which transmits the light."
-        ),
     )
     cladding = SubSection(
         section_def="pynxtools.nomad.metainfo.base_classes.optical_fiber.OpticalFiberCladding",
         repeats=False,
-        description=(
-            "Core of the fiber, i.e. the part of the fiber which transmits the light."
-        ),
     )
     coating = SubSection(
         section_def="pynxtools.nomad.metainfo.base_classes.optical_fiber.OpticalFiberCoating",
         repeats=False,
-        description=("Coating of the fiber."),
     )
 
     description = Quantity(

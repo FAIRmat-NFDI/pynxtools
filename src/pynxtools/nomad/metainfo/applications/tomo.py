@@ -194,24 +194,10 @@ class TomoInstrument(Instrument):
         section_def="pynxtools.nomad.metainfo.applications.tomo.TomoInstrumentSource",
         repeats=False,
         variable=True,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXsource",
-            name=None,
-            name_type="any",
-            optionality="optional",
-            min_occurs=0,
-            max_occurs=1,
-        ),
     )
     detector = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.tomo.TomoInstrumentDetector",
         repeats=False,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXdetector",
-            name="detector",
-            name_type="specified",
-            optionality="required",
-        ),
     )
 
     def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:

@@ -90,19 +90,14 @@ class EmCalorimetry(Entry):
     profiling = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.em_calorimetry.EmCalorimetryProfiling",
         repeats=False,
-        description=("Details about performance, profiling, etc."),
     )
     program1 = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.em_calorimetry.EmCalorimetryProgram1",
         repeats=False,
-        description=("Name of the program whereby this config file was created."),
     )
     environment = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.em_calorimetry.EmCalorimetryEnvironment",
         repeats=False,
-        description=(
-            "Programs and libraries representing the computational environment"
-        ),
     )
     userID = SubSection(
         section_def="pynxtools.nomad.metainfo.base_classes.user.User",
@@ -145,60 +140,30 @@ class EmCalorimetry(Entry):
     diffraction = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.em_calorimetry.EmCalorimetryDiffraction",
         repeats=False,
-        description=(
-            "Reference to the resource which stores acquired pattern from the "
-            "experiment or simulation that are analyzed in this workflow. Can "
-            "refer to the original EMD or MRC files or the parsed NXem in RDM "
-            "e.g. NOMAD OASIS."
-        ),
     )
     actuator = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.em_calorimetry.EmCalorimetryActuator",
         repeats=False,
-        description=(
-            "Reference to the resource which stores actuator log file from the "
-            "experiment."
-        ),
     )
     config = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.em_calorimetry.EmCalorimetryConfig",
         repeats=False,
-        description=(
-            "Configuration file that was used for parametrizing this analysis workflow."
-        ),
     )
     synchronization = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.em_calorimetry.EmCalorimetrySynchronization",
         repeats=False,
-        description=(
-            "Assumptions and computations whereby timestamping data from the "
-            "detector and actuator (e.g. heating chip) were synchronized."
-        ),
     )
     pattern_center = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.em_calorimetry.EmCalorimetryPatternCenter",
         repeats=False,
-        description=(
-            "Computation of the center for each pattern using e.g. a Circular "
-            "Hough Transformation."
-        ),
     )
     distortion_correction = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.em_calorimetry.EmCalorimetryDistortionCorrection",
         repeats=False,
-        description=(
-            "Elliptical distortion correction as a step when computing the "
-            "center for patterns."
-        ),
     )
     integration = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.em_calorimetry.EmCalorimetryIntegration",
         repeats=False,
-        description=(
-            "Integrated diffraction pattern intensity as a function of radial "
-            "distance from the center azimuthally integrated as a function of "
-            "time."
-        ),
     )
     background_subtraction = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.em_calorimetry.EmCalorimetryBackgroundSubtraction",
@@ -396,13 +361,6 @@ class EmCalorimetryEnvironment(Collection):
         section_def="pynxtools.nomad.metainfo.applications.em_calorimetry.EmCalorimetryEnvironmentProgramID",
         repeats=True,
         variable=True,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXprogram",
-            name="programID",
-            name_type="partial",
-            optionality="required",
-            min_occurs=1,
-        ),
     )
 
     def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
@@ -959,14 +917,6 @@ class EmCalorimetryIntegration(Process):
         section_def="pynxtools.nomad.metainfo.applications.em_calorimetry.EmCalorimetryIntegrationResultBACKGROUND",
         repeats=True,
         variable=True,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXdata",
-            name="resultBACKGROUND",
-            name_type="partial",
-            optionality="optional",
-            min_occurs=0,
-            max_occurs=2,
-        ),
     )
 
     sequence_index = Quantity(

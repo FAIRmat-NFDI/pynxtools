@@ -103,11 +103,6 @@ class PidController(Component):
     pv_sensor = SubSection(
         section_def="pynxtools.nomad.metainfo.base_classes.pid_controller.PidControllerPvSensor",
         repeats=False,
-        description=(
-            "The sensor representing the Process Value used in the feedback loop "
-            "for the PID. In case multiple sensors were used, this NXsensor "
-            "should contain the proper calculated/aggregated value."
-        ),
     )
 
     description = Quantity(
@@ -339,12 +334,6 @@ class PidControllerPvSensor(Sensor):
     value_log = SubSection(
         section_def="pynxtools.nomad.metainfo.base_classes.pid_controller.PidControllerPvSensorValueLog",
         repeats=False,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXlog",
-            name="value_log",
-            name_type="specified",
-            optionality="optional",
-        ),
     )
 
     def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:

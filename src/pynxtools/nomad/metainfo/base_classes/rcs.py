@@ -76,7 +76,6 @@ class Rcs(Object):
     fabrication = SubSection(
         section_def="pynxtools.nomad.metainfo.base_classes.rcs.RcsFabrication",
         repeats=False,
-        description=("The fabrication information."),
     )
 
     name = Quantity(

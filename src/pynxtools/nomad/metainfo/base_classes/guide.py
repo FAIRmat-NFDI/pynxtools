@@ -111,7 +111,6 @@ class Guide(Component):
     reflectivity = SubSection(
         section_def="pynxtools.nomad.metainfo.base_classes.guide.GuideReflectivity",
         repeats=False,
-        description=("Reflectivity as function of reflecting surface and wavelength"),
     )
     off_geometry = SubSection(
         section_def="pynxtools.nomad.metainfo.base_classes.off_geometry.OffGeometry",

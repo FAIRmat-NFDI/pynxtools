@@ -89,11 +89,6 @@ class ApmChargeStateAnalysis(Process):
     config = SubSection(
         section_def="pynxtools.nomad.metainfo.base_classes.apm_charge_state_analysis.ApmChargeStateAnalysisConfig",
         repeats=False,
-        description=(
-            "Parameters for the algorithm used to recover which combinations of "
-            "nuclides have a mass and charge that matches a set of constraints. "
-            "Each parameter in this group is defines one constraint."
-        ),
     )
 
     charge_state = Quantity(

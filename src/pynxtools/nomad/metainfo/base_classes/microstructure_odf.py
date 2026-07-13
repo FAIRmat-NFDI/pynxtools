@@ -85,39 +85,22 @@ class MicrostructureOdf(Process):
     configuration = SubSection(
         section_def="pynxtools.nomad.metainfo.base_classes.microstructure_odf.MicrostructureOdfConfiguration",
         repeats=False,
-        description=("Details about the algorithm used for computing the ODF."),
     )
     characteristics = SubSection(
         section_def="pynxtools.nomad.metainfo.base_classes.microstructure_odf.MicrostructureOdfCharacteristics",
         repeats=False,
-        description=(
-            "Group to store descriptors for a rough classification of an ODF."
-        ),
     )
     kth_extrema = SubSection(
         section_def="pynxtools.nomad.metainfo.base_classes.microstructure_odf.MicrostructureOdfKthExtrema",
         repeats=False,
-        description=(
-            "Group to store descriptors and summary statistics for extrema of the ODF."
-        ),
     )
     sampling = SubSection(
         section_def="pynxtools.nomad.metainfo.base_classes.microstructure_odf.MicrostructureOdfSampling",
         repeats=False,
-        description=("The ODF intensity values (weights) as sampled with a software."),
     )
     phi_two_plot = SubSection(
         section_def="pynxtools.nomad.metainfo.base_classes.microstructure_odf.MicrostructureOdfPhiTwoPlot",
         repeats=False,
-        description=(
-            "Visualization of the ODF intensity as discretized orthogonal "
-            "sections through orientation space parameterized using Bunge-Euler "
-            "angles. This is one example of typical default plots used in the "
-            "texture community in materials engineering. Mind that the "
-            "orientation space is a distorted space when it using an Euler angle "
-            "parameterization. Therefore, equivalent orientations show intensity "
-            "contributions in eventually multiple locations."
-        ),
     )
 
     def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:

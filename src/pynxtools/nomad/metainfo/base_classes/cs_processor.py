@@ -74,14 +74,6 @@ class CsProcessor(Component):
         section_def="pynxtools.nomad.metainfo.base_classes.cs_processor.CsProcessorCircuit",
         repeats=True,
         variable=True,
-        description=(
-            "Typical examples for the granularization of processing units are: * "
-            "A desktop computer with a single CPU; describe using one instance "
-            "of NXcircuit. * A dual-socket server; describe using two instances "
-            "of NXcircuit. * A server with two dual-socket server nodes; "
-            "describe with four instances of NXcircuit surplus a field that "
-            "defines their level in the hierarchy."
-        ),
     )
 
     def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:

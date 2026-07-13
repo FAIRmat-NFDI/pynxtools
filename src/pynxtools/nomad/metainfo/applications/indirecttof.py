@@ -213,12 +213,6 @@ class IndirecttofInstrument(Instrument):
     analyser = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.indirecttof.IndirecttofInstrumentAnalyser",
         repeats=False,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXmonochromator",
-            name="analyser",
-            name_type="specified",
-            optionality="required",
-        ),
     )
 
     def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:

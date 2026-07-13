@@ -95,10 +95,6 @@ class Snsevent(Entry):
     DASlogs = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.snsevent.SnseventDaslogs",
         repeats=False,
-        description=(
-            "Details of all logs, both from cvinfo file and from HistoTool "
-            "(frequency and proton_charge)."
-        ),
     )
     SNSHistoTool = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.snsevent.SnseventSnshistotool",
@@ -413,25 +409,11 @@ class SnseventDaslogs(Collection):
         section_def="pynxtools.nomad.metainfo.applications.snsevent.SnseventDaslogsLog",
         repeats=True,
         variable=True,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXlog",
-            name=None,
-            name_type="any",
-            optionality="required",
-            min_occurs=1,
-        ),
     )
     positioner = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.snsevent.SnseventDaslogsPositioner",
         repeats=True,
         variable=True,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXpositioner",
-            name=None,
-            name_type="any",
-            optionality="optional",
-            min_occurs=0,
-        ),
     )
 
     def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
@@ -1037,82 +1019,35 @@ class SnseventInstrument(Instrument):
     SNS = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.snsevent.SnseventInstrumentSns",
         repeats=False,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXsource",
-            name="SNS",
-            name_type="specified",
-            optionality="required",
-        ),
     )
     detector = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.snsevent.SnseventInstrumentDetector",
         repeats=True,
         variable=True,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXdetector",
-            name=None,
-            name_type="any",
-            optionality="required",
-            min_occurs=1,
-        ),
     )
     disk_chopper = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.snsevent.SnseventInstrumentDiskChopper",
         repeats=True,
         variable=True,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXdisk_chopper",
-            name=None,
-            name_type="any",
-            optionality="optional",
-            min_occurs=0,
-        ),
     )
     moderator = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.snsevent.SnseventInstrumentModerator",
         repeats=False,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXmoderator",
-            name="moderator",
-            name_type="specified",
-            optionality="required",
-        ),
     )
     aperture = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.snsevent.SnseventInstrumentAperture",
         repeats=True,
         variable=True,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXaperture",
-            name=None,
-            name_type="any",
-            optionality="optional",
-            min_occurs=0,
-        ),
     )
     attenuator = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.snsevent.SnseventInstrumentAttenuator",
         repeats=True,
         variable=True,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXattenuator",
-            name=None,
-            name_type="any",
-            optionality="optional",
-            min_occurs=0,
-        ),
     )
     crystal = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.snsevent.SnseventInstrumentCrystal",
         repeats=True,
         variable=True,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXcrystal",
-            name=None,
-            name_type="any",
-            optionality="optional",
-            min_occurs=0,
-        ),
     )
 
     SNSdetector_calibration_id = Quantity(
@@ -1344,12 +1279,6 @@ class SnseventInstrumentDetector(Detector):
     origin = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.snsevent.SnseventInstrumentDetectorOrigin",
         repeats=False,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXgeometry",
-            name="origin",
-            name_type="specified",
-            optionality="required",
-        ),
     )
 
     azimuthal_angle = Quantity(
@@ -1553,32 +1482,14 @@ class SnseventInstrumentDetectorOrigin(Geometry):
     orientation = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.snsevent.SnseventInstrumentDetectorOriginOrientation",
         repeats=False,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXorientation",
-            name="orientation",
-            name_type="specified",
-            optionality="required",
-        ),
     )
     shape = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.snsevent.SnseventInstrumentDetectorOriginShape",
         repeats=False,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXshape",
-            name="shape",
-            name_type="specified",
-            optionality="required",
-        ),
     )
     translation = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.snsevent.SnseventInstrumentDetectorOriginTranslation",
         repeats=False,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXtranslation",
-            name="translation",
-            name_type="specified",
-            optionality="required",
-        ),
     )
 
     def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
@@ -1907,12 +1818,6 @@ class SnseventInstrumentAperture(Aperture):
     origin = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.snsevent.SnseventInstrumentApertureOrigin",
         repeats=False,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXgeometry",
-            name="origin",
-            name_type="specified",
-            optionality="required",
-        ),
     )
 
     x_pixel_offset = Quantity(
@@ -1955,32 +1860,14 @@ class SnseventInstrumentApertureOrigin(Geometry):
     orientation = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.snsevent.SnseventInstrumentApertureOriginOrientation",
         repeats=False,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXorientation",
-            name="orientation",
-            name_type="specified",
-            optionality="required",
-        ),
     )
     shape = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.snsevent.SnseventInstrumentApertureOriginShape",
         repeats=False,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXshape",
-            name="shape",
-            name_type="specified",
-            optionality="required",
-        ),
     )
     translation = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.snsevent.SnseventInstrumentApertureOriginTranslation",
         repeats=False,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXtranslation",
-            name="translation",
-            name_type="specified",
-            optionality="required",
-        ),
     )
 
     def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
@@ -2200,12 +2087,6 @@ class SnseventInstrumentCrystal(Crystal):
     origin = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.snsevent.SnseventInstrumentCrystalOrigin",
         repeats=False,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXgeometry",
-            name="origin",
-            name_type="specified",
-            optionality="required",
-        ),
     )
 
     type = Quantity(
@@ -2260,32 +2141,14 @@ class SnseventInstrumentCrystalOrigin(Geometry):
     orientation = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.snsevent.SnseventInstrumentCrystalOriginOrientation",
         repeats=False,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXorientation",
-            name="orientation",
-            name_type="specified",
-            optionality="required",
-        ),
     )
     shape = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.snsevent.SnseventInstrumentCrystalOriginShape",
         repeats=False,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXshape",
-            name="shape",
-            name_type="specified",
-            optionality="required",
-        ),
     )
     translation = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.snsevent.SnseventInstrumentCrystalOriginTranslation",
         repeats=False,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXtranslation",
-            name="translation",
-            name_type="specified",
-            optionality="required",
-        ),
     )
 
     description = Quantity(

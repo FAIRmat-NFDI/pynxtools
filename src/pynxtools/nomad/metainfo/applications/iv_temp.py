@@ -101,15 +101,6 @@ class IvTemp(SensorScan):
         section_def="pynxtools.nomad.metainfo.applications.iv_temp.IvTempData",
         repeats=True,
         variable=True,
-        description=(
-            "This NXdata should contain separate fields for the current values "
-            "at different temperature setpoints, for example current_at_100C. "
-            "There should also be two more fields called temperature and voltage "
-            "containing the setpoint values. There should also be a field with "
-            "an array of rank equal to the number of different temperature "
-            "setpoints and each child's dimension equal to the number of voltage "
-            "setpoints."
-        ),
     )
 
     definition = Quantity(
@@ -349,12 +340,6 @@ class IvTempInstrument(Instrument):
         section_def="pynxtools.nomad.metainfo.applications.iv_temp.IvTempInstrumentEnvironment",
         repeats=True,
         variable=True,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXenvironment",
-            name=None,
-            name_type="any",
-            optionality="required",
-        ),
     )
 
     def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:

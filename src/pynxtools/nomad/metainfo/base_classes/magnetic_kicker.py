@@ -72,12 +72,10 @@ class MagneticKicker(Component):
     read_current = SubSection(
         section_def="pynxtools.nomad.metainfo.base_classes.magnetic_kicker.MagneticKickerReadCurrent",
         repeats=False,
-        description=("Current read from supply."),
     )
     read_voltage = SubSection(
         section_def="pynxtools.nomad.metainfo.base_classes.magnetic_kicker.MagneticKickerReadVoltage",
         repeats=False,
-        description=("Voltage read from supply."),
     )
 
     description = Quantity(

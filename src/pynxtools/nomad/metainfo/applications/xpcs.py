@@ -90,30 +90,14 @@ class Xpcs(Entry):
     data = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.xpcs.XpcsData",
         repeats=False,
-        description=(
-            "The results data captured here are most commonly required for high "
-            "throughput, equilibrium dynamics experiments. Data (results) "
-            "describing on-equilibrium dynamics consume more memory resources so "
-            "these data are separated."
-        ),
     )
     twotime = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.xpcs.XpcsTwotime",
         repeats=False,
-        description=(
-            "The data (results) in this section are based on the two-time "
-            "intensity correlation function derived from a time series of "
-            "scattering images."
-        ),
     )
     instrument = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.xpcs.XpcsInstrument",
         repeats=False,
-        description=(
-            "XPCS instrument Metadata. Objects can be entered here directly or "
-            "linked from other objects in the NeXus file (such as within "
-            "``/entry/instrument``)."
-        ),
     )
     sample = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.xpcs.XpcsSample",
@@ -950,35 +934,15 @@ class XpcsInstrument(Instrument):
     incident_beam = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.xpcs.XpcsInstrumentIncidentBeam",
         repeats=False,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXbeam",
-            name="incident_beam",
-            name_type="specified",
-            optionality="required",
-        ),
     )
     detector = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.xpcs.XpcsInstrumentDetector",
         repeats=True,
         variable=True,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXdetector",
-            name=None,
-            name_type="any",
-            optionality="required",
-        ),
     )
     masks = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.xpcs.XpcsInstrumentMasks",
         repeats=False,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXnote",
-            name="masks",
-            name_type="specified",
-            optionality="optional",
-            min_occurs=0,
-            max_occurs=1,
-        ),
     )
 
     def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:

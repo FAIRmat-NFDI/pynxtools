@@ -287,10 +287,6 @@ class Em(Entry):
     profiling = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.em.EmProfiling",
         repeats=False,
-        description=(
-            "The configuration of the software that was used to generate this "
-            "NeXus file."
-        ),
     )
     citeID = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.em.EmCiteID",
@@ -301,13 +297,6 @@ class Em(Entry):
         section_def="pynxtools.nomad.metainfo.applications.em.EmNoteID",
         repeats=True,
         variable=True,
-        description=(
-            "Collection of serialized resources associated with the experiment. "
-            "Examples of such resources are files which are formatted using "
-            "proprietary data models of technology partners as those generated "
-            "by the control software of the microscope during the instrument "
-            "session."
-        ),
     )
     project = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.em.EmProject",
@@ -317,52 +306,15 @@ class Em(Entry):
         section_def="pynxtools.nomad.metainfo.applications.em.EmUserID",
         repeats=True,
         variable=True,
-        description=(
-            "Information about persons who performed or were involved in the "
-            "microscope session or simulation run."
-        ),
     )
     sampleID = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.em.EmSampleID",
         repeats=True,
         variable=True,
-        description=(
-            "A physical entity which contains material intended to be "
-            "investigated. Sample and specimen are treated as de facto synonyms. "
-            "Samples can be real or virtual ones as annotated via is_simulation. "
-            "The suggested best practice is to call this group sample. In those "
-            "cases when multiple samples need to be grouped inside one entry, "
-            "these SAMPLE groups should be named using the prefix sample "
-            "followed an index starting from 1, i.e. (sample1, sample2). There "
-            "are at least two strategies how to store (meta)data when one "
-            "analyzes multiple samples - not different ROIs on a single sample "
-            "though - in one session. One strategy is to store each sample and "
-            "its results under an own NXem/ENTRY. This is one of the most "
-            "frequent use cases as during most sessions typically only a single "
-            "sample is investigated. In this case the name of this group should "
-            "be sample. If multiple samples are investigated storing each of "
-            "them in their own ENTRY group eventually will demand unnecessary "
-            "duplication of instrument details. This can be avoided by using "
-            "another strategy for storing samples and their results. Namely, by "
-            "using only one instance of NXem/ENTRY. That NXem/ENTRY should then "
-            "be named, like in the previous case, NXem/entry1 and the samples "
-            "should be named sample1, sample2, etc., i.e. instances should use "
-            "sample as a name prefix. In this case the collection of events "
-            "should use identifier_sample to state clearly for which of the "
-            "samples loaded the (characterization) event was detected. This "
-            "concept is related to term `Specimen`_ of the EMglossary standard. "
-            ".. _Specimen: https://purls.helmholtz-metadaten.de/emg/EMG_00000046"
-        ),
     )
     consistent_rotations = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.em.EmConsistentRotations",
         repeats=False,
-        description=(
-            "The conventions used when reporting crystal orientations. We follow "
-            "the best practices of the Material Science community that are "
-            "defined in reference "
-            "`<https://doi.org/10.1088/0965-0393/23/8/083501>`_."
-        ),
     )
     NAMED_reference_frameID = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.em.EmNAMED_reference_frameID",
@@ -381,7 +333,6 @@ class Em(Entry):
         section_def="pynxtools.nomad.metainfo.applications.em.EmDetectorReferenceFrameID",
         repeats=True,
         variable=True,
-        description=("The reference frame that is defined by a specific detector."),
     )
     measurement = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.em.EmEmMeasurement",
@@ -390,19 +341,11 @@ class Em(Entry):
     simulation = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.em.EmEmSimulation",
         repeats=False,
-        description=(
-            "Documentation for a simulation of electron beam-matter interaction."
-        ),
     )
     roiID = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.em.EmRoiID",
         repeats=True,
         variable=True,
-        description=(
-            "This concept is related to term `Region Of Interest`_ of the "
-            "EMglossary standard. .. _Region Of Interest: "
-            "https://purls.helmholtz-metadaten.de/emg/EMG_00000042"
-        ),
     )
 
     definition = Quantity(
@@ -567,13 +510,6 @@ class EmProfiling(CsProfiling):
         section_def="pynxtools.nomad.metainfo.applications.em.EmProfilingProgramID",
         repeats=True,
         variable=True,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXprogram",
-            name="programID",
-            name_type="partial",
-            optionality="optional",
-            min_occurs=0,
-        ),
     )
 
     def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
@@ -2326,24 +2262,11 @@ class EmEmMeasurement(EmMeasurement):
     instrument = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.em.EmMeasurementInstrument",
         repeats=False,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXem_instrument",
-            name="instrument",
-            name_type="specified",
-            optionality="required",
-        ),
     )
     eventID = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.em.EmMeasurementEventID",
         repeats=True,
         variable=True,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXem_event_data",
-            name="eventID",
-            name_type="partial",
-            optionality="optional",
-            min_occurs=0,
-        ),
     )
 
     def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
@@ -2366,102 +2289,43 @@ class EmMeasurementInstrument(EmInstrument):
     fabrication = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.em.EmMeasurementInstrumentFabrication",
         repeats=False,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXfabrication",
-            name="fabrication",
-            name_type="specified",
-            optionality="required",
-        ),
     )
     programID = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.em.EmMeasurementInstrumentProgramID",
         repeats=True,
         variable=True,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXprogram",
-            name="programID",
-            name_type="partial",
-            optionality="recommended",
-        ),
     )
     ebeam_column = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.em.EmMeasurementInstrumentEbeamColumn",
         repeats=False,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXebeam_column",
-            name="ebeam_column",
-            name_type="specified",
-            optionality="required",
-        ),
     )
     ibeam_column = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.em.EmMeasurementInstrumentIbeamColumn",
         repeats=False,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXibeam_column",
-            name="ibeam_column",
-            name_type="specified",
-            optionality="optional",
-            min_occurs=0,
-            max_occurs=1,
-        ),
     )
     detectorID = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.em.EmMeasurementInstrumentDetectorID",
         repeats=True,
         variable=True,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXdetector",
-            name="detectorID",
-            name_type="partial",
-            optionality="optional",
-            min_occurs=0,
-        ),
     )
     gas_injector = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.em.EmMeasurementInstrumentGasInjector",
         repeats=False,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXcomponent",
-            name="gas_injector",
-            name_type="specified",
-            optionality="optional",
-        ),
     )
     stageID = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.em.EmMeasurementInstrumentStageID",
         repeats=True,
         variable=True,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXmanipulator",
-            name="stageID",
-            name_type="partial",
-            optionality="optional",
-            min_occurs=0,
-        ),
     )
     nanoprobeID = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.em.EmMeasurementInstrumentNanoprobeID",
         repeats=True,
         variable=True,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXmanipulator",
-            name="nanoprobeID",
-            name_type="partial",
-            optionality="optional",
-        ),
     )
     pumpID = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.em.EmMeasurementInstrumentPumpID",
         repeats=True,
         variable=True,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXpump",
-            name="pumpID",
-            name_type="partial",
-            optionality="optional",
-            min_occurs=0,
-        ),
     )
     sensorID = SubSection(
         section_def="pynxtools.nomad.metainfo.base_classes.sensor.Sensor",
@@ -2672,130 +2536,54 @@ class EmMeasurementInstrumentEbeamColumn(EbeamColumn):
     fabrication = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.em.EmMeasurementInstrumentEbeamColumnFabrication",
         repeats=False,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXfabrication",
-            name="fabrication",
-            name_type="specified",
-            optionality="optional",
-        ),
     )
     electron_source = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.em.EmMeasurementInstrumentEbeamColumnElectronSource",
         repeats=False,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXsource",
-            name="electron_source",
-            name_type="specified",
-            optionality="recommended",
-        ),
     )
     lensID = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.em.EmMeasurementInstrumentEbeamColumnLensID",
         repeats=True,
         variable=True,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXelectromagnetic_lens",
-            name="lensID",
-            name_type="partial",
-            optionality="optional",
-            min_occurs=0,
-        ),
     )
     apertureID = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.em.EmMeasurementInstrumentEbeamColumnApertureID",
         repeats=True,
         variable=True,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXaperture",
-            name="apertureID",
-            name_type="partial",
-            optionality="optional",
-            min_occurs=0,
-        ),
     )
     deflectorID = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.em.EmMeasurementInstrumentEbeamColumnDeflectorID",
         repeats=True,
         variable=True,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXdeflector",
-            name="deflectorID",
-            name_type="partial",
-            optionality="optional",
-            min_occurs=0,
-        ),
     )
     blankerID = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.em.EmMeasurementInstrumentEbeamColumnBlankerID",
         repeats=True,
         variable=True,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXdeflector",
-            name="blankerID",
-            name_type="partial",
-            optionality="optional",
-            min_occurs=0,
-        ),
     )
     monochromatorID = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.em.EmMeasurementInstrumentEbeamColumnMonochromatorID",
         repeats=True,
         variable=True,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXmonochromator",
-            name="monochromatorID",
-            name_type="partial",
-            optionality="optional",
-            min_occurs=0,
-        ),
     )
     corrector_csID = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.em.EmMeasurementInstrumentEbeamColumnCorrectorCsID",
         repeats=True,
         variable=True,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXcorrector_cs",
-            name="corrector_csID",
-            name_type="partial",
-            optionality="optional",
-            min_occurs=0,
-        ),
     )
     corrector_ax = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.em.EmMeasurementInstrumentEbeamColumnCorrectorAx",
         repeats=False,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXcomponent",
-            name="corrector_ax",
-            name_type="specified",
-            optionality="optional",
-            min_occurs=0,
-            max_occurs=1,
-        ),
     )
     biprismID = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.em.EmMeasurementInstrumentEbeamColumnBiprismID",
         repeats=True,
         variable=True,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXcomponent",
-            name="biprismID",
-            name_type="partial",
-            optionality="optional",
-            min_occurs=0,
-        ),
     )
     phaseplateID = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.em.EmMeasurementInstrumentEbeamColumnPhaseplateID",
         repeats=True,
         variable=True,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXcomponent",
-            name="phaseplateID",
-            name_type="partial",
-            optionality="optional",
-            min_occurs=0,
-        ),
     )
     sensorID = SubSection(
         section_def="pynxtools.nomad.metainfo.base_classes.sensor.Sensor",
@@ -2836,12 +2624,6 @@ class EmMeasurementInstrumentEbeamColumn(EbeamColumn):
     scan_controller = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.em.EmMeasurementInstrumentEbeamColumnScanController",
         repeats=False,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXscan_controller",
-            name="scan_controller",
-            name_type="specified",
-            optionality="optional",
-        ),
     )
 
     def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
@@ -2927,12 +2709,6 @@ class EmMeasurementInstrumentEbeamColumnElectronSource(Source):
     fabrication = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.em.EmMeasurementInstrumentEbeamColumnElectronSourceFabrication",
         repeats=False,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXfabrication",
-            name="fabrication",
-            name_type="specified",
-            optionality="optional",
-        ),
     )
 
     emitter_type = Quantity(
@@ -3053,12 +2829,6 @@ class EmMeasurementInstrumentEbeamColumnLensID(ElectromagneticLens):
     fabrication = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.em.EmMeasurementInstrumentEbeamColumnLensIDFabrication",
         repeats=False,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXfabrication",
-            name="fabrication",
-            name_type="specified",
-            optionality="optional",
-        ),
     )
 
     name = Quantity(
@@ -3162,12 +2932,6 @@ class EmMeasurementInstrumentEbeamColumnApertureID(Aperture):
     fabrication = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.em.EmMeasurementInstrumentEbeamColumnApertureIDFabrication",
         repeats=False,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXfabrication",
-            name="fabrication",
-            name_type="specified",
-            optionality="optional",
-        ),
     )
 
     name = Quantity(
@@ -3271,12 +3035,6 @@ class EmMeasurementInstrumentEbeamColumnDeflectorID(Deflector):
     fabrication = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.em.EmMeasurementInstrumentEbeamColumnDeflectorIDFabrication",
         repeats=False,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXfabrication",
-            name="fabrication",
-            name_type="specified",
-            optionality="optional",
-        ),
     )
 
     name = Quantity(
@@ -3380,12 +3138,6 @@ class EmMeasurementInstrumentEbeamColumnBlankerID(Deflector):
     fabrication = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.em.EmMeasurementInstrumentEbeamColumnBlankerIDFabrication",
         repeats=False,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXfabrication",
-            name="fabrication",
-            name_type="specified",
-            optionality="optional",
-        ),
     )
 
     name = Quantity(
@@ -3489,12 +3241,6 @@ class EmMeasurementInstrumentEbeamColumnMonochromatorID(Monochromator):
     fabrication = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.em.EmMeasurementInstrumentEbeamColumnMonochromatorIDFabrication",
         repeats=False,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXfabrication",
-            name="fabrication",
-            name_type="specified",
-            optionality="optional",
-        ),
     )
 
     type = Quantity(
@@ -3622,12 +3368,6 @@ class EmMeasurementInstrumentEbeamColumnCorrectorCsID(CorrectorCs):
     fabrication = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.em.EmMeasurementInstrumentEbeamColumnCorrectorCsIDFabrication",
         repeats=False,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXfabrication",
-            name="fabrication",
-            name_type="specified",
-            optionality="recommended",
-        ),
     )
 
     name = Quantity(
@@ -3732,12 +3472,6 @@ class EmMeasurementInstrumentEbeamColumnCorrectorAx(Component):
     fabrication = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.em.EmMeasurementInstrumentEbeamColumnCorrectorAxFabrication",
         repeats=False,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXfabrication",
-            name="fabrication",
-            name_type="specified",
-            optionality="optional",
-        ),
     )
 
     def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
@@ -3825,12 +3559,6 @@ class EmMeasurementInstrumentEbeamColumnBiprismID(Component):
     fabrication = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.em.EmMeasurementInstrumentEbeamColumnBiprismIDFabrication",
         repeats=False,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXfabrication",
-            name="fabrication",
-            name_type="specified",
-            optionality="recommended",
-        ),
     )
 
     def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
@@ -3918,12 +3646,6 @@ class EmMeasurementInstrumentEbeamColumnPhaseplateID(Component):
     fabrication = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.em.EmMeasurementInstrumentEbeamColumnPhaseplateIDFabrication",
         repeats=False,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXfabrication",
-            name="fabrication",
-            name_type="specified",
-            optionality="recommended",
-        ),
     )
 
     type = Quantity(
@@ -4027,12 +3749,6 @@ class EmMeasurementInstrumentEbeamColumnScanController(ScanController):
     fabrication = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.em.EmMeasurementInstrumentEbeamColumnScanControllerFabrication",
         repeats=False,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXfabrication",
-            name="fabrication",
-            name_type="specified",
-            optionality="recommended",
-        ),
     )
 
     def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
@@ -4120,82 +3836,35 @@ class EmMeasurementInstrumentIbeamColumn(IbeamColumn):
     fabrication = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.em.EmMeasurementInstrumentIbeamColumnFabrication",
         repeats=False,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXfabrication",
-            name="fabrication",
-            name_type="specified",
-            optionality="optional",
-        ),
     )
     ion_source = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.em.EmMeasurementInstrumentIbeamColumnIonSource",
         repeats=False,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXsource",
-            name="ion_source",
-            name_type="specified",
-            optionality="required",
-        ),
     )
     lensID = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.em.EmMeasurementInstrumentIbeamColumnLensID",
         repeats=True,
         variable=True,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXelectromagnetic_lens",
-            name="lensID",
-            name_type="partial",
-            optionality="optional",
-            min_occurs=0,
-        ),
     )
     apertureID = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.em.EmMeasurementInstrumentIbeamColumnApertureID",
         repeats=True,
         variable=True,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXaperture",
-            name="apertureID",
-            name_type="partial",
-            optionality="optional",
-            min_occurs=0,
-        ),
     )
     deflectorID = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.em.EmMeasurementInstrumentIbeamColumnDeflectorID",
         repeats=True,
         variable=True,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXdeflector",
-            name="deflectorID",
-            name_type="partial",
-            optionality="optional",
-            min_occurs=0,
-        ),
     )
     blankerID = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.em.EmMeasurementInstrumentIbeamColumnBlankerID",
         repeats=True,
         variable=True,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXdeflector",
-            name="blankerID",
-            name_type="partial",
-            optionality="optional",
-            min_occurs=0,
-        ),
     )
     monochromatorID = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.em.EmMeasurementInstrumentIbeamColumnMonochromatorID",
         repeats=True,
         variable=True,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXmonochromator",
-            name="monochromatorID",
-            name_type="partial",
-            optionality="optional",
-            min_occurs=0,
-        ),
     )
     sensorID = SubSection(
         section_def="pynxtools.nomad.metainfo.base_classes.sensor.Sensor",
@@ -4236,12 +3905,6 @@ class EmMeasurementInstrumentIbeamColumn(IbeamColumn):
     scan_controller = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.em.EmMeasurementInstrumentIbeamColumnScanController",
         repeats=False,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXscan_controller",
-            name="scan_controller",
-            name_type="specified",
-            optionality="optional",
-        ),
     )
 
     def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
@@ -4327,12 +3990,6 @@ class EmMeasurementInstrumentIbeamColumnIonSource(Source):
     fabrication = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.em.EmMeasurementInstrumentIbeamColumnIonSourceFabrication",
         repeats=False,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXfabrication",
-            name="fabrication",
-            name_type="specified",
-            optionality="optional",
-        ),
     )
 
     emitter_type = Quantity(
@@ -4437,12 +4094,6 @@ class EmMeasurementInstrumentIbeamColumnLensID(ElectromagneticLens):
     fabrication = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.em.EmMeasurementInstrumentIbeamColumnLensIDFabrication",
         repeats=False,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXfabrication",
-            name="fabrication",
-            name_type="specified",
-            optionality="optional",
-        ),
     )
 
     name = Quantity(
@@ -4546,12 +4197,6 @@ class EmMeasurementInstrumentIbeamColumnApertureID(Aperture):
     fabrication = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.em.EmMeasurementInstrumentIbeamColumnApertureIDFabrication",
         repeats=False,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXfabrication",
-            name="fabrication",
-            name_type="specified",
-            optionality="optional",
-        ),
     )
 
     name = Quantity(
@@ -4655,12 +4300,6 @@ class EmMeasurementInstrumentIbeamColumnDeflectorID(Deflector):
     fabrication = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.em.EmMeasurementInstrumentIbeamColumnDeflectorIDFabrication",
         repeats=False,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXfabrication",
-            name="fabrication",
-            name_type="specified",
-            optionality="optional",
-        ),
     )
 
     name = Quantity(
@@ -4764,12 +4403,6 @@ class EmMeasurementInstrumentIbeamColumnBlankerID(Deflector):
     fabrication = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.em.EmMeasurementInstrumentIbeamColumnBlankerIDFabrication",
         repeats=False,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXfabrication",
-            name="fabrication",
-            name_type="specified",
-            optionality="optional",
-        ),
     )
 
     name = Quantity(
@@ -4873,12 +4506,6 @@ class EmMeasurementInstrumentIbeamColumnMonochromatorID(Monochromator):
     fabrication = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.em.EmMeasurementInstrumentIbeamColumnMonochromatorIDFabrication",
         repeats=False,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXfabrication",
-            name="fabrication",
-            name_type="specified",
-            optionality="optional",
-        ),
     )
 
     type = Quantity(
@@ -4995,12 +4622,6 @@ class EmMeasurementInstrumentIbeamColumnScanController(ScanController):
     fabrication = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.em.EmMeasurementInstrumentIbeamColumnScanControllerFabrication",
         repeats=False,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXfabrication",
-            name="fabrication",
-            name_type="specified",
-            optionality="optional",
-        ),
     )
 
     def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
@@ -5088,12 +4709,6 @@ class EmMeasurementInstrumentDetectorID(Detector):
     fabrication = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.em.EmMeasurementInstrumentDetectorIDFabrication",
         repeats=False,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXfabrication",
-            name="fabrication",
-            name_type="specified",
-            optionality="recommended",
-        ),
     )
 
     name = Quantity(
@@ -5195,12 +4810,6 @@ class EmMeasurementInstrumentGasInjector(Component):
     fabrication = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.em.EmMeasurementInstrumentGasInjectorFabrication",
         repeats=False,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXfabrication",
-            name="fabrication",
-            name_type="specified",
-            optionality="recommended",
-        ),
     )
 
     def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
@@ -5288,12 +4897,6 @@ class EmMeasurementInstrumentStageID(Manipulator):
     fabrication = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.em.EmMeasurementInstrumentStageIDFabrication",
         repeats=False,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXfabrication",
-            name="fabrication",
-            name_type="specified",
-            optionality="recommended",
-        ),
     )
 
     design = Quantity(
@@ -5396,12 +4999,6 @@ class EmMeasurementInstrumentNanoprobeID(Manipulator):
     fabrication = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.em.EmMeasurementInstrumentNanoprobeIDFabrication",
         repeats=False,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXfabrication",
-            name="fabrication",
-            name_type="specified",
-            optionality="recommended",
-        ),
     )
 
     def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
@@ -5536,40 +5133,24 @@ class EmMeasurementEventID(EmEventData):
         section_def="pynxtools.nomad.metainfo.applications.em.EmMeasurementEventIDImageID",
         repeats=True,
         variable=True,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXimage",
-            name="imageID",
-            name_type="partial",
-            optionality="optional",
-            min_occurs=0,
-        ),
     )
     spectrumID = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.em.EmMeasurementEventIDSpectrumID",
         repeats=True,
         variable=True,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXspectrum",
-            name="spectrumID",
-            name_type="partial",
-            optionality="optional",
-            min_occurs=0,
-        ),
     )
     instrument = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.em.EmMeasurementEventIDInstrument",
         repeats=False,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXem_instrument",
-            name="instrument",
-            name_type="specified",
-            optionality="recommended",
-        ),
     )
     collection = SubSection(
         section_def="pynxtools.nomad.metainfo.base_classes.collection.Collection",
         repeats=True,
         variable=True,
+        description=(
+            "Group with content not meant for validation to store e.g., metadata "
+            "that are currently not standardized with NeXus."
+        ),
         a_nexus_group=NeXusGroup(
             nx_class="NXcollection",
             name=None,
@@ -5650,82 +5231,34 @@ class EmMeasurementEventIDImageID(Image):
         section_def="pynxtools.nomad.metainfo.applications.em.EmMeasurementEventIDImageIDProcess",
         repeats=True,
         variable=True,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXprocess",
-            name=None,
-            name_type="any",
-            optionality="recommended",
-        ),
     )
     image_1d = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.em.EmMeasurementEventIDImageIDImage1d",
         repeats=False,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXdata",
-            name="image_1d",
-            name_type="specified",
-            optionality="optional",
-        ),
     )
     image_2d = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.em.EmMeasurementEventIDImageIDImage2d",
         repeats=False,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXdata",
-            name="image_2d",
-            name_type="specified",
-            optionality="optional",
-        ),
     )
     image_3d = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.em.EmMeasurementEventIDImageIDImage3d",
         repeats=False,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXdata",
-            name="image_3d",
-            name_type="specified",
-            optionality="optional",
-        ),
     )
     image_4d = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.em.EmMeasurementEventIDImageIDImage4d",
         repeats=False,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXdata",
-            name="image_4d",
-            name_type="specified",
-            optionality="optional",
-        ),
     )
     stack_1d = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.em.EmMeasurementEventIDImageIDStack1d",
         repeats=False,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXdata",
-            name="stack_1d",
-            name_type="specified",
-            optionality="optional",
-        ),
     )
     stack_2d = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.em.EmMeasurementEventIDImageIDStack2d",
         repeats=False,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXdata",
-            name="stack_2d",
-            name_type="specified",
-            optionality="optional",
-        ),
     )
     stack_3d = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.em.EmMeasurementEventIDImageIDStack3d",
         repeats=False,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXdata",
-            name="stack_3d",
-            name_type="specified",
-            optionality="optional",
-        ),
     )
 
     def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
@@ -5749,12 +5282,6 @@ class EmMeasurementEventIDImageIDProcess(Process):
     input = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.em.EmMeasurementEventIDImageIDProcessInput",
         repeats=False,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXnote",
-            name="input",
-            name_type="specified",
-            optionality="recommended",
-        ),
     )
 
     detector_identifier = Quantity(
@@ -7990,92 +7517,38 @@ class EmMeasurementEventIDSpectrumID(Spectrum):
         section_def="pynxtools.nomad.metainfo.applications.em.EmMeasurementEventIDSpectrumIDProcess",
         repeats=True,
         variable=True,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXprocess",
-            name=None,
-            name_type="any",
-            optionality="recommended",
-        ),
     )
     spectrum_0d = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.em.EmMeasurementEventIDSpectrumIDSpectrum0d",
         repeats=False,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXdata",
-            name="spectrum_0d",
-            name_type="specified",
-            optionality="optional",
-        ),
     )
     spectrum_1d = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.em.EmMeasurementEventIDSpectrumIDSpectrum1d",
         repeats=False,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXdata",
-            name="spectrum_1d",
-            name_type="specified",
-            optionality="optional",
-        ),
     )
     spectrum_2d = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.em.EmMeasurementEventIDSpectrumIDSpectrum2d",
         repeats=False,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXdata",
-            name="spectrum_2d",
-            name_type="specified",
-            optionality="optional",
-        ),
     )
     spectrum_3d = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.em.EmMeasurementEventIDSpectrumIDSpectrum3d",
         repeats=False,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXdata",
-            name="spectrum_3d",
-            name_type="specified",
-            optionality="optional",
-        ),
     )
     stack_0d = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.em.EmMeasurementEventIDSpectrumIDStack0d",
         repeats=False,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXdata",
-            name="stack_0d",
-            name_type="specified",
-            optionality="optional",
-        ),
     )
     stack_1d = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.em.EmMeasurementEventIDSpectrumIDStack1d",
         repeats=False,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXdata",
-            name="stack_1d",
-            name_type="specified",
-            optionality="optional",
-        ),
     )
     stack_2d = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.em.EmMeasurementEventIDSpectrumIDStack2d",
         repeats=False,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXdata",
-            name="stack_2d",
-            name_type="specified",
-            optionality="optional",
-        ),
     )
     stack_3d = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.em.EmMeasurementEventIDSpectrumIDStack3d",
         repeats=False,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXdata",
-            name="stack_3d",
-            name_type="specified",
-            optionality="optional",
-        ),
     )
 
     def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
@@ -8099,12 +7572,6 @@ class EmMeasurementEventIDSpectrumIDProcess(Process):
     input = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.em.EmMeasurementEventIDSpectrumIDProcessInput",
         repeats=False,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXnote",
-            name="input",
-            name_type="specified",
-            optionality="recommended",
-        ),
     )
 
     detector_identifier = Quantity(
@@ -9848,22 +9315,10 @@ class EmMeasurementEventIDInstrument(EmInstrument):
     ebeam_column = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.em.EmMeasurementEventIDInstrumentEbeamColumn",
         repeats=False,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXebeam_column",
-            name="ebeam_column",
-            name_type="specified",
-            optionality="required",
-        ),
     )
     ibeam_column = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.em.EmMeasurementEventIDInstrumentIbeamColumn",
         repeats=False,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXibeam_column",
-            name="ibeam_column",
-            name_type="specified",
-            optionality="optional",
-        ),
     )
     optics = SubSection(
         section_def="pynxtools.nomad.metainfo.base_classes.em_optical_system.EmOpticalSystem",
@@ -9879,25 +9334,11 @@ class EmMeasurementEventIDInstrument(EmInstrument):
         section_def="pynxtools.nomad.metainfo.applications.em.EmMeasurementEventIDInstrumentDetectorID",
         repeats=True,
         variable=True,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXdetector",
-            name="detectorID",
-            name_type="partial",
-            optionality="optional",
-            min_occurs=0,
-        ),
     )
     stageID = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.em.EmMeasurementEventIDInstrumentStageID",
         repeats=True,
         variable=True,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXmanipulator",
-            name="stageID",
-            name_type="partial",
-            optionality="optional",
-            min_occurs=0,
-        ),
     )
     pumpID = SubSection(
         section_def="pynxtools.nomad.metainfo.base_classes.pump.Pump",
@@ -9956,36 +9397,16 @@ class EmMeasurementEventIDInstrumentEbeamColumn(EbeamColumn):
     electron_source = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.em.EmMeasurementEventIDInstrumentEbeamColumnElectronSource",
         repeats=False,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXsource",
-            name="electron_source",
-            name_type="specified",
-            optionality="optional",
-        ),
     )
     lensID = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.em.EmMeasurementEventIDInstrumentEbeamColumnLensID",
         repeats=True,
         variable=True,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXelectromagnetic_lens",
-            name="lensID",
-            name_type="partial",
-            optionality="optional",
-            min_occurs=0,
-        ),
     )
     apertureID = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.em.EmMeasurementEventIDInstrumentEbeamColumnApertureID",
         repeats=True,
         variable=True,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXaperture",
-            name="apertureID",
-            name_type="partial",
-            optionality="optional",
-            min_occurs=0,
-        ),
     )
     deflectorID = SubSection(
         section_def="pynxtools.nomad.metainfo.base_classes.deflector.Deflector",
@@ -10003,35 +9424,15 @@ class EmMeasurementEventIDInstrumentEbeamColumn(EbeamColumn):
         section_def="pynxtools.nomad.metainfo.applications.em.EmMeasurementEventIDInstrumentEbeamColumnMonochromatorID",
         repeats=True,
         variable=True,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXmonochromator",
-            name="monochromatorID",
-            name_type="partial",
-            optionality="optional",
-            min_occurs=0,
-        ),
     )
     corrector_csID = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.em.EmMeasurementEventIDInstrumentEbeamColumnCorrectorCsID",
         repeats=True,
         variable=True,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXcorrector_cs",
-            name="corrector_csID",
-            name_type="partial",
-            optionality="optional",
-            min_occurs=0,
-        ),
     )
     corrector_ax = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.em.EmMeasurementEventIDInstrumentEbeamColumnCorrectorAx",
         repeats=False,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXcomponent",
-            name="corrector_ax",
-            name_type="specified",
-            optionality="optional",
-        ),
     )
     sensorID = SubSection(
         section_def="pynxtools.nomad.metainfo.base_classes.sensor.Sensor",
@@ -10072,12 +9473,6 @@ class EmMeasurementEventIDInstrumentEbeamColumn(EbeamColumn):
     scan_controller = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.em.EmMeasurementEventIDInstrumentEbeamColumnScanController",
         repeats=False,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXscan_controller",
-            name="scan_controller",
-            name_type="specified",
-            optionality="recommended",
-        ),
     )
 
     operation_mode = Quantity(
@@ -10362,13 +9757,6 @@ class EmMeasurementEventIDInstrumentEbeamColumnCorrectorCsID(CorrectorCs):
         section_def="pynxtools.nomad.metainfo.applications.em.EmMeasurementEventIDInstrumentEbeamColumnCorrectorCsIDTableauID",
         repeats=True,
         variable=True,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXprocess",
-            name="tableauID",
-            name_type="partial",
-            optionality="required",
-            min_occurs=1,
-        ),
     )
 
     applied = Quantity(
@@ -10409,392 +9797,158 @@ class EmMeasurementEventIDInstrumentEbeamColumnCorrectorCsIDTableauID(Process):
     c_1 = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.em.EmMeasurementEventIDInstrumentEbeamColumnCorrectorCsIDTableauIDC1",
         repeats=False,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXaberration",
-            name="c_1",
-            name_type="specified",
-            optionality="optional",
-        ),
     )
     a_1 = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.em.EmMeasurementEventIDInstrumentEbeamColumnCorrectorCsIDTableauIDA1",
         repeats=False,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXaberration",
-            name="a_1",
-            name_type="specified",
-            optionality="optional",
-        ),
     )
     b_2 = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.em.EmMeasurementEventIDInstrumentEbeamColumnCorrectorCsIDTableauIDB2",
         repeats=False,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXaberration",
-            name="b_2",
-            name_type="specified",
-            optionality="optional",
-        ),
     )
     a_2 = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.em.EmMeasurementEventIDInstrumentEbeamColumnCorrectorCsIDTableauIDA2",
         repeats=False,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXaberration",
-            name="a_2",
-            name_type="specified",
-            optionality="optional",
-        ),
     )
     c_3 = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.em.EmMeasurementEventIDInstrumentEbeamColumnCorrectorCsIDTableauIDC3",
         repeats=False,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXaberration",
-            name="c_3",
-            name_type="specified",
-            optionality="optional",
-        ),
     )
     s_3 = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.em.EmMeasurementEventIDInstrumentEbeamColumnCorrectorCsIDTableauIDS3",
         repeats=False,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXaberration",
-            name="s_3",
-            name_type="specified",
-            optionality="optional",
-        ),
     )
     a_3 = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.em.EmMeasurementEventIDInstrumentEbeamColumnCorrectorCsIDTableauIDA3",
         repeats=False,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXaberration",
-            name="a_3",
-            name_type="specified",
-            optionality="optional",
-        ),
     )
     b_4 = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.em.EmMeasurementEventIDInstrumentEbeamColumnCorrectorCsIDTableauIDB4",
         repeats=False,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXaberration",
-            name="b_4",
-            name_type="specified",
-            optionality="optional",
-        ),
     )
     d_4 = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.em.EmMeasurementEventIDInstrumentEbeamColumnCorrectorCsIDTableauIDD4",
         repeats=False,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXaberration",
-            name="d_4",
-            name_type="specified",
-            optionality="optional",
-        ),
     )
     a_4 = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.em.EmMeasurementEventIDInstrumentEbeamColumnCorrectorCsIDTableauIDA4",
         repeats=False,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXaberration",
-            name="a_4",
-            name_type="specified",
-            optionality="optional",
-        ),
     )
     c_5 = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.em.EmMeasurementEventIDInstrumentEbeamColumnCorrectorCsIDTableauIDC5",
         repeats=False,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXaberration",
-            name="c_5",
-            name_type="specified",
-            optionality="optional",
-        ),
     )
     s_5 = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.em.EmMeasurementEventIDInstrumentEbeamColumnCorrectorCsIDTableauIDS5",
         repeats=False,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXaberration",
-            name="s_5",
-            name_type="specified",
-            optionality="optional",
-        ),
     )
     r_5 = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.em.EmMeasurementEventIDInstrumentEbeamColumnCorrectorCsIDTableauIDR5",
         repeats=False,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXaberration",
-            name="r_5",
-            name_type="specified",
-            optionality="optional",
-        ),
     )
     a_6 = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.em.EmMeasurementEventIDInstrumentEbeamColumnCorrectorCsIDTableauIDA6",
         repeats=False,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXaberration",
-            name="a_6",
-            name_type="specified",
-            optionality="optional",
-        ),
     )
     c_1_0 = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.em.EmMeasurementEventIDInstrumentEbeamColumnCorrectorCsIDTableauIDC10",
         repeats=False,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXaberration",
-            name="c_1_0",
-            name_type="specified",
-            optionality="optional",
-        ),
     )
     c_1_2_a = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.em.EmMeasurementEventIDInstrumentEbeamColumnCorrectorCsIDTableauIDC12A",
         repeats=False,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXaberration",
-            name="c_1_2_a",
-            name_type="specified",
-            optionality="optional",
-        ),
     )
     c_1_2_b = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.em.EmMeasurementEventIDInstrumentEbeamColumnCorrectorCsIDTableauIDC12B",
         repeats=False,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXaberration",
-            name="c_1_2_b",
-            name_type="specified",
-            optionality="optional",
-        ),
     )
     c_2_1_a = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.em.EmMeasurementEventIDInstrumentEbeamColumnCorrectorCsIDTableauIDC21A",
         repeats=False,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXaberration",
-            name="c_2_1_a",
-            name_type="specified",
-            optionality="optional",
-        ),
     )
     c_2_1_b = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.em.EmMeasurementEventIDInstrumentEbeamColumnCorrectorCsIDTableauIDC21B",
         repeats=False,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXaberration",
-            name="c_2_1_b",
-            name_type="specified",
-            optionality="optional",
-        ),
     )
     c_2_3_a = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.em.EmMeasurementEventIDInstrumentEbeamColumnCorrectorCsIDTableauIDC23A",
         repeats=False,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXaberration",
-            name="c_2_3_a",
-            name_type="specified",
-            optionality="optional",
-        ),
     )
     c_2_3_b = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.em.EmMeasurementEventIDInstrumentEbeamColumnCorrectorCsIDTableauIDC23B",
         repeats=False,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXaberration",
-            name="c_2_3_b",
-            name_type="specified",
-            optionality="optional",
-        ),
     )
     c_3_0 = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.em.EmMeasurementEventIDInstrumentEbeamColumnCorrectorCsIDTableauIDC30",
         repeats=False,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXaberration",
-            name="c_3_0",
-            name_type="specified",
-            optionality="optional",
-        ),
     )
     c_3_2_a = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.em.EmMeasurementEventIDInstrumentEbeamColumnCorrectorCsIDTableauIDC32A",
         repeats=False,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXaberration",
-            name="c_3_2_a",
-            name_type="specified",
-            optionality="optional",
-        ),
     )
     c_3_2_b = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.em.EmMeasurementEventIDInstrumentEbeamColumnCorrectorCsIDTableauIDC32B",
         repeats=False,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXaberration",
-            name="c_3_2_b",
-            name_type="specified",
-            optionality="optional",
-        ),
     )
     c_3_4_a = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.em.EmMeasurementEventIDInstrumentEbeamColumnCorrectorCsIDTableauIDC34A",
         repeats=False,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXaberration",
-            name="c_3_4_a",
-            name_type="specified",
-            optionality="optional",
-        ),
     )
     c_3_4_b = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.em.EmMeasurementEventIDInstrumentEbeamColumnCorrectorCsIDTableauIDC34B",
         repeats=False,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXaberration",
-            name="c_3_4_b",
-            name_type="specified",
-            optionality="optional",
-        ),
     )
     c_4_1_a = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.em.EmMeasurementEventIDInstrumentEbeamColumnCorrectorCsIDTableauIDC41A",
         repeats=False,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXaberration",
-            name="c_4_1_a",
-            name_type="specified",
-            optionality="optional",
-        ),
     )
     c_4_1_b = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.em.EmMeasurementEventIDInstrumentEbeamColumnCorrectorCsIDTableauIDC41B",
         repeats=False,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXaberration",
-            name="c_4_1_b",
-            name_type="specified",
-            optionality="optional",
-        ),
     )
     c_4_3_a = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.em.EmMeasurementEventIDInstrumentEbeamColumnCorrectorCsIDTableauIDC43A",
         repeats=False,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXaberration",
-            name="c_4_3_a",
-            name_type="specified",
-            optionality="optional",
-        ),
     )
     c_4_3_b = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.em.EmMeasurementEventIDInstrumentEbeamColumnCorrectorCsIDTableauIDC43B",
         repeats=False,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXaberration",
-            name="c_4_3_b",
-            name_type="specified",
-            optionality="optional",
-        ),
     )
     c_4_5_a = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.em.EmMeasurementEventIDInstrumentEbeamColumnCorrectorCsIDTableauIDC45A",
         repeats=False,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXaberration",
-            name="c_4_5_a",
-            name_type="specified",
-            optionality="optional",
-        ),
     )
     c_4_5_b = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.em.EmMeasurementEventIDInstrumentEbeamColumnCorrectorCsIDTableauIDC45B",
         repeats=False,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXaberration",
-            name="c_4_5_b",
-            name_type="specified",
-            optionality="optional",
-        ),
     )
     c_5_0 = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.em.EmMeasurementEventIDInstrumentEbeamColumnCorrectorCsIDTableauIDC50",
         repeats=False,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXaberration",
-            name="c_5_0",
-            name_type="specified",
-            optionality="optional",
-        ),
     )
     c_5_2_a = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.em.EmMeasurementEventIDInstrumentEbeamColumnCorrectorCsIDTableauIDC52A",
         repeats=False,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXaberration",
-            name="c_5_2_a",
-            name_type="specified",
-            optionality="optional",
-        ),
     )
     c_5_2_b = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.em.EmMeasurementEventIDInstrumentEbeamColumnCorrectorCsIDTableauIDC52B",
         repeats=False,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXaberration",
-            name="c_5_2_b",
-            name_type="specified",
-            optionality="optional",
-        ),
     )
     c_5_4_a = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.em.EmMeasurementEventIDInstrumentEbeamColumnCorrectorCsIDTableauIDC54A",
         repeats=False,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXaberration",
-            name="c_5_4_a",
-            name_type="specified",
-            optionality="optional",
-        ),
     )
     c_5_4_b = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.em.EmMeasurementEventIDInstrumentEbeamColumnCorrectorCsIDTableauIDC54B",
         repeats=False,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXaberration",
-            name="c_5_4_b",
-            name_type="specified",
-            optionality="optional",
-        ),
     )
     c_5_6_a = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.em.EmMeasurementEventIDInstrumentEbeamColumnCorrectorCsIDTableauIDC56A",
         repeats=False,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXaberration",
-            name="c_5_6_a",
-            name_type="specified",
-            optionality="optional",
-        ),
     )
     c_5_6_b = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.em.EmMeasurementEventIDInstrumentEbeamColumnCorrectorCsIDTableauIDC56B",
         repeats=False,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXaberration",
-            name="c_5_6_b",
-            name_type="specified",
-            optionality="optional",
-        ),
     )
 
     def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
@@ -12301,36 +11455,16 @@ class EmMeasurementEventIDInstrumentIbeamColumn(IbeamColumn):
     ion_source = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.em.EmMeasurementEventIDInstrumentIbeamColumnIonSource",
         repeats=False,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXsource",
-            name="ion_source",
-            name_type="specified",
-            optionality="required",
-        ),
     )
     lensID = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.em.EmMeasurementEventIDInstrumentIbeamColumnLensID",
         repeats=True,
         variable=True,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXelectromagnetic_lens",
-            name="lensID",
-            name_type="partial",
-            optionality="optional",
-            min_occurs=0,
-        ),
     )
     apertureID = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.em.EmMeasurementEventIDInstrumentIbeamColumnApertureID",
         repeats=True,
         variable=True,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXaperture",
-            name="apertureID",
-            name_type="partial",
-            optionality="optional",
-            min_occurs=0,
-        ),
     )
     deflectorID = SubSection(
         section_def="pynxtools.nomad.metainfo.base_classes.deflector.Deflector",
@@ -12348,13 +11482,6 @@ class EmMeasurementEventIDInstrumentIbeamColumn(IbeamColumn):
         section_def="pynxtools.nomad.metainfo.applications.em.EmMeasurementEventIDInstrumentIbeamColumnMonochromatorID",
         repeats=True,
         variable=True,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXmonochromator",
-            name="monochromatorID",
-            name_type="partial",
-            optionality="optional",
-            min_occurs=0,
-        ),
     )
     sensorID = SubSection(
         section_def="pynxtools.nomad.metainfo.base_classes.sensor.Sensor",
@@ -12395,12 +11522,6 @@ class EmMeasurementEventIDInstrumentIbeamColumn(IbeamColumn):
     scan_controller = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.em.EmMeasurementEventIDInstrumentIbeamColumnScanController",
         repeats=False,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXscan_controller",
-            name="scan_controller",
-            name_type="specified",
-            optionality="recommended",
-        ),
     )
 
     operation_mode = Quantity(
@@ -12698,12 +11819,6 @@ class EmMeasurementEventIDInstrumentStageID(Manipulator):
     sample_heater = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.em.EmMeasurementEventIDInstrumentStageIDSampleHeater",
         repeats=False,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXactuator",
-            name="sample_heater",
-            name_type="specified",
-            optionality="optional",
-        ),
     )
 
     design = Quantity(
@@ -12912,26 +12027,15 @@ class EmEmSimulation(EmSimulation):
         section_def="pynxtools.nomad.metainfo.applications.em.EmSimulationProgramID",
         repeats=True,
         variable=True,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXprogram",
-            name="programID",
-            name_type="partial",
-            optionality="recommended",
-        ),
     )
     environment = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.em.EmSimulationEnvironment",
         repeats=False,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXcollection",
-            name="environment",
-            name_type="specified",
-            optionality="recommended",
-        ),
     )
     config = SubSection(
         section_def="pynxtools.nomad.metainfo.base_classes.parameters.Parameters",
         repeats=False,
+        description=("Configuration of the simulation"),
         a_nexus_group=NeXusGroup(
             nx_class="NXparameters",
             name="config",
@@ -12942,12 +12046,6 @@ class EmEmSimulation(EmSimulation):
     results = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.em.EmSimulationResults",
         repeats=False,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXprocess",
-            name="results",
-            name_type="specified",
-            optionality="optional",
-        ),
     )
 
     def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
@@ -13029,13 +12127,6 @@ class EmSimulationEnvironment(Collection):
         section_def="pynxtools.nomad.metainfo.applications.em.EmSimulationEnvironmentProgram",
         repeats=True,
         variable=True,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXprogram",
-            name=None,
-            name_type="any",
-            optionality="required",
-            min_occurs=1,
-        ),
     )
 
     def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
@@ -13177,32 +12268,14 @@ class EmRoiID(RoiProcess):
     img = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.em.EmRoiIDImg",
         repeats=False,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXem_img",
-            name="img",
-            name_type="specified",
-            optionality="optional",
-        ),
     )
     ebsd = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.em.EmRoiIDEbsd",
         repeats=False,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXem_ebsd",
-            name="ebsd",
-            name_type="specified",
-            optionality="optional",
-        ),
     )
     eds = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.em.EmRoiIDEds",
         repeats=False,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXem_eds",
-            name="eds",
-            name_type="specified",
-            optionality="optional",
-        ),
     )
     eels = SubSection(
         section_def="pynxtools.nomad.metainfo.base_classes.em_eels.EmEels",
@@ -13217,12 +12290,6 @@ class EmRoiID(RoiProcess):
     tomo = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.em.EmRoiIDTomo",
         repeats=False,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXprocess",
-            name="tomo",
-            name_type="specified",
-            optionality="optional",
-        ),
     )
 
     def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
@@ -13246,13 +12313,6 @@ class EmRoiIDImg(EmImg):
         section_def="pynxtools.nomad.metainfo.applications.em.EmRoiIDImgImageID",
         repeats=True,
         variable=True,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXimage",
-            name="imageID",
-            name_type="partial",
-            optionality="required",
-            min_occurs=1,
-        ),
     )
 
     def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
@@ -13330,52 +12390,22 @@ class EmRoiIDEbsd(EmEbsd):
     gnomonic_reference_frame = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.em.EmRoiIDEbsdGnomonicReferenceFrame",
         repeats=False,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXcoordinate_system",
-            name="gnomonic_reference_frame",
-            name_type="specified",
-            optionality="recommended",
-        ),
     )
     pattern_center = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.em.EmRoiIDEbsdPatternCenter",
         repeats=False,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXprocess",
-            name="pattern_center",
-            name_type="specified",
-            optionality="recommended",
-        ),
     )
     measurement = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.em.EmRoiIDEbsdMeasurement",
         repeats=False,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXprocess",
-            name="measurement",
-            name_type="specified",
-            optionality="optional",
-        ),
     )
     simulation = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.em.EmRoiIDEbsdSimulation",
         repeats=False,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXprocess",
-            name="simulation",
-            name_type="specified",
-            optionality="optional",
-        ),
     )
     indexing = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.em.EmRoiIDEbsdIndexing",
         repeats=False,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXprocess",
-            name="indexing",
-            name_type="specified",
-            optionality="optional",
-        ),
     )
 
     def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
@@ -13643,12 +12673,6 @@ class EmRoiIDEbsdMeasurement(Process):
     source = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.em.EmRoiIDEbsdMeasurementSource",
         repeats=False,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXnote",
-            name="source",
-            name_type="specified",
-            optionality="required",
-        ),
     )
 
     depends_on = Quantity(
@@ -13765,12 +12789,6 @@ class EmRoiIDEbsdSimulation(Process):
     source = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.em.EmRoiIDEbsdSimulationSource",
         repeats=False,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXnote",
-            name="source",
-            name_type="specified",
-            optionality="required",
-        ),
     )
 
     depends_on = Quantity(
@@ -13888,45 +12906,19 @@ class EmRoiIDEbsdIndexing(Process):
         section_def="pynxtools.nomad.metainfo.applications.em.EmRoiIDEbsdIndexingMicrostructureID",
         repeats=True,
         variable=True,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXmicrostructure",
-            name="microstructureID",
-            name_type="partial",
-            optionality="optional",
-            min_occurs=0,
-        ),
     )
     source = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.em.EmRoiIDEbsdIndexingSource",
         repeats=False,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXnote",
-            name="source",
-            name_type="specified",
-            optionality="optional",
-        ),
     )
     phaseID = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.em.EmRoiIDEbsdIndexingPhaseID",
         repeats=True,
         variable=True,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXphase",
-            name="phaseID",
-            name_type="partial",
-            optionality="optional",
-            min_occurs=0,
-        ),
     )
     roi = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.em.EmRoiIDEbsdIndexingRoi",
         repeats=False,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXdata",
-            name="roi",
-            name_type="specified",
-            optionality="recommended",
-        ),
     )
 
     number_of_scan_points = Quantity(
@@ -13990,12 +12982,6 @@ class EmRoiIDEbsdIndexingMicrostructureID(Microstructure):
     configuration = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.em.EmRoiIDEbsdIndexingMicrostructureIDConfiguration",
         repeats=False,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXprocess",
-            name="configuration",
-            name_type="specified",
-            optionality="required",
-        ),
     )
     grid = SubSection(
         section_def="pynxtools.nomad.metainfo.base_classes.cg_grid.CgGrid",
@@ -14060,42 +13046,18 @@ class EmRoiIDEbsdIndexingMicrostructureID(Microstructure):
     crystals = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.em.EmRoiIDEbsdIndexingMicrostructureIDCrystals",
         repeats=False,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXmicrostructure_feature",
-            name="crystals",
-            name_type="specified",
-            optionality="optional",
-        ),
     )
     interfaces = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.em.EmRoiIDEbsdIndexingMicrostructureIDInterfaces",
         repeats=False,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXmicrostructure_feature",
-            name="interfaces",
-            name_type="specified",
-            optionality="optional",
-        ),
     )
     triple_junctions = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.em.EmRoiIDEbsdIndexingMicrostructureIDTripleJunctions",
         repeats=False,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXmicrostructure_feature",
-            name="triple_junctions",
-            name_type="specified",
-            optionality="optional",
-        ),
     )
     quadruple_junctions = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.em.EmRoiIDEbsdIndexingMicrostructureIDQuadrupleJunctions",
         repeats=False,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXmicrostructure_feature",
-            name="quadruple_junctions",
-            name_type="specified",
-            optionality="optional",
-        ),
     )
 
     def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
@@ -14119,12 +13081,6 @@ class EmRoiIDEbsdIndexingMicrostructureIDConfiguration(Process):
         section_def="pynxtools.nomad.metainfo.applications.em.EmRoiIDEbsdIndexingMicrostructureIDConfigurationProgramID",
         repeats=True,
         variable=True,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXprogram",
-            name="programID",
-            name_type="partial",
-            optionality="recommended",
-        ),
     )
 
     dimensionality = Quantity(
@@ -14639,36 +13595,16 @@ class EmRoiIDEbsdIndexingPhaseID(Phase):
     unit_cell = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.em.EmRoiIDEbsdIndexingPhaseIDUnitCell",
         repeats=False,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXunit_cell",
-            name="unit_cell",
-            name_type="specified",
-            optionality="required",
-        ),
     )
     ipfID = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.em.EmRoiIDEbsdIndexingPhaseIDIpfID",
         repeats=True,
         variable=True,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXmicrostructure_ipf",
-            name="ipfID",
-            name_type="partial",
-            optionality="required",
-            min_occurs=1,
-        ),
     )
     odfID = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.em.EmRoiIDEbsdIndexingPhaseIDOdfID",
         repeats=True,
         variable=True,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXmicrostructure_odf",
-            name="odfID",
-            name_type="partial",
-            optionality="optional",
-            min_occurs=0,
-        ),
     )
     pfID = SubSection(
         section_def="pynxtools.nomad.metainfo.base_classes.microstructure_pf.MicrostructurePf",
@@ -14887,22 +13823,10 @@ class EmRoiIDEbsdIndexingPhaseIDIpfID(MicrostructureIpf):
     map = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.em.EmRoiIDEbsdIndexingPhaseIDIpfIDMap",
         repeats=False,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXdata",
-            name="map",
-            name_type="specified",
-            optionality="required",
-        ),
     )
     legend = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.em.EmRoiIDEbsdIndexingPhaseIDIpfIDLegend",
         repeats=False,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXdata",
-            name="legend",
-            name_type="specified",
-            optionality="required",
-        ),
     )
 
     color_model = Quantity(
@@ -15334,32 +14258,14 @@ class EmRoiIDEbsdIndexingPhaseIDOdfID(MicrostructureOdf):
     configuration = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.em.EmRoiIDEbsdIndexingPhaseIDOdfIDConfiguration",
         repeats=False,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXparameters",
-            name="configuration",
-            name_type="specified",
-            optionality="recommended",
-        ),
     )
     characteristics = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.em.EmRoiIDEbsdIndexingPhaseIDOdfIDCharacteristics",
         repeats=False,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXprocess",
-            name="characteristics",
-            name_type="specified",
-            optionality="optional",
-        ),
     )
     phi_two_plot = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.em.EmRoiIDEbsdIndexingPhaseIDOdfIDPhiTwoPlot",
         repeats=False,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXdata",
-            name="phi_two_plot",
-            name_type="specified",
-            optionality="required",
-        ),
     )
 
     def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
@@ -15923,12 +14829,6 @@ class EmRoiIDEds(EmEds):
     indexing = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.em.EmRoiIDEdsIndexing",
         repeats=False,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXprocess",
-            name="indexing",
-            name_type="specified",
-            optionality="required",
-        ),
     )
 
     def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
@@ -15951,25 +14851,11 @@ class EmRoiIDEdsIndexing(Process):
     summary = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.em.EmRoiIDEdsIndexingSummary",
         repeats=False,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXdata",
-            name="summary",
-            name_type="specified",
-            optionality="optional",
-        ),
     )
     element_specific_map = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.em.EmRoiIDEdsIndexingElementSpecificMap",
         repeats=True,
         variable=True,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXimage",
-            name="ELEMENT_SPECIFIC_MAP",
-            name_type="any",
-            optionality="optional",
-            min_occurs=0,
-            max_occurs=118,
-        ),
     )
 
     atom_types = Quantity(
@@ -16132,12 +15018,6 @@ class EmRoiIDEdsIndexingElementSpecificMap(Image):
     image_2d = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.em.EmRoiIDEdsIndexingElementSpecificMapImage2d",
         repeats=False,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXdata",
-            name="image_2d",
-            name_type="specified",
-            optionality="required",
-        ),
     )
 
     iupac_line_candidates = Quantity(
@@ -16365,13 +15245,6 @@ class EmRoiIDTomo(Process):
         section_def="pynxtools.nomad.metainfo.applications.em.EmRoiIDTomoReconstructionID",
         repeats=True,
         variable=True,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXprocess",
-            name="reconstructionID",
-            name_type="partial",
-            optionality="optional",
-            min_occurs=0,
-        ),
     )
 
     def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
@@ -16400,6 +15273,7 @@ class EmRoiIDTomoReconstructionID(Process):
     configuration = SubSection(
         section_def="pynxtools.nomad.metainfo.base_classes.parameters.Parameters",
         repeats=False,
+        description=("Parameters used for computing the tomogram."),
         a_nexus_group=NeXusGroup(
             nx_class="NXparameters",
             name="configuration",
@@ -16411,22 +15285,10 @@ class EmRoiIDTomoReconstructionID(Process):
         section_def="pynxtools.nomad.metainfo.applications.em.EmRoiIDTomoReconstructionIDProgramID",
         repeats=True,
         variable=True,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXprogram",
-            name="programID",
-            name_type="partial",
-            optionality="recommended",
-        ),
     )
     tomogram = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.em.EmRoiIDTomoReconstructionIDTomogram",
         repeats=False,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXdata",
-            name="tomogram",
-            name_type="specified",
-            optionality="required",
-        ),
     )
 
     def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:

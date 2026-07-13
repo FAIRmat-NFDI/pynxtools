@@ -92,19 +92,10 @@ class Calibration(Process):
     fit_formula_inputs = SubSection(
         section_def="pynxtools.nomad.metainfo.base_classes.calibration.CalibrationFitFormulaInputs",
         repeats=False,
-        description=("Additional input axis to be used in the formula."),
     )
     calibration_parameters = SubSection(
         section_def="pynxtools.nomad.metainfo.base_classes.calibration.CalibrationParameters",
         repeats=False,
-        description=(
-            "Fit coefficients to be used in ``fit_formula_description``. As an "
-            "example, for nonlinear energy calibrations, e.g. in a "
-            "time-of-flight (TOF) detector, a polynomial function is fitted to a "
-            "set of features (peaks) at well defined energy positions to "
-            "determine E(TOF). Here we can store the fit coefficients for that "
-            "procedure."
-        ),
     )
     data = SubSection(
         section_def="pynxtools.nomad.metainfo.base_classes.data.Data",

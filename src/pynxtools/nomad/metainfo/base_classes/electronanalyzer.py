@@ -80,50 +80,22 @@ class Electronanalyzer(Component):
     energy_resolution = SubSection(
         section_def="pynxtools.nomad.metainfo.base_classes.electronanalyzer.ElectronanalyzerEnergyResolution",
         repeats=False,
-        description=(
-            "Energy resolution of the analyzer with the current setting. May be "
-            "linked from an NXcalibration."
-        ),
     )
     momentum_resolution = SubSection(
         section_def="pynxtools.nomad.metainfo.base_classes.electronanalyzer.ElectronanalyzerMomentumResolution",
         repeats=False,
-        description=("Momentum resolution of the electron analyzer (FWHM)"),
     )
     angular_resolution = SubSection(
         section_def="pynxtools.nomad.metainfo.base_classes.electronanalyzer.ElectronanalyzerAngularResolution",
         repeats=False,
-        description=("Angular resolution of the electron analyzer (FWHM)"),
     )
     spatial_resolution = SubSection(
         section_def="pynxtools.nomad.metainfo.base_classes.electronanalyzer.ElectronanalyzerSpatialResolution",
         repeats=False,
-        description=(
-            "Spatial resolution of the electron analyzer (Airy disk radius) This "
-            "concept is related to term `10.14`_ of the ISO 18115-1:2023 "
-            "standard. .. _10.14: "
-            "https://www.iso.org/obp/ui/en/#iso:std:iso:18115:-1:ed-3:v1:en:term:10.15"
-        ),
     )
     transmission_function = SubSection(
         section_def="pynxtools.nomad.metainfo.base_classes.electronanalyzer.ElectronanalyzerTransmissionFunction",
         repeats=False,
-        description=(
-            "Transmission function of the electron analyzer. The transmission "
-            "function (TF) specifies the detection efficiency per solid angle "
-            "for electrons of different kinetic energy passing through the "
-            "electron analyzer. It depends on the spectrometer geometry as well "
-            "as operation settings such as lens mode and pass energy. The "
-            "transmission function is usually given as relative intensity vs. "
-            "kinetic energy. The TF is used for calibration of the intensity "
-            "scale in quantitative XPS. Without proper transmission correction, "
-            "a comparison of results measured from the same sample using "
-            "different operating modes for an instrument would show significant "
-            "variations in signal intensity for the same kinetic energies. This "
-            "concept is related to term `7.15`_ of the ISO 18115-1:2023 "
-            "standard. .. _7.15: "
-            "https://www.iso.org/obp/ui/en/#iso:std:iso:18115:-1:ed-3:v1:en:term:7.15"
-        ),
     )
     collectioncolumn = SubSection(
         section_def="pynxtools.nomad.metainfo.base_classes.collectioncolumn.Collectioncolumn",

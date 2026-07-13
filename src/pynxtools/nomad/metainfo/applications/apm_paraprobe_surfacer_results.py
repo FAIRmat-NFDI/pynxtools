@@ -95,18 +95,6 @@ class ApmParaprobeSurfacerResults(ApmParaprobeToolResults):
         section_def="pynxtools.nomad.metainfo.applications.apm_paraprobe_surfacer_results.ApmParaprobeSurfacerResultsPointSetWrappingID",
         repeats=True,
         variable=True,
-        description=(
-            "Paraprobe-surfacer can be used to load a ROI that is the entire or "
-            "a sub-set of the ion point cloud. In the point_cloud_wrapping "
-            "process the tool computes a triangulated surface mesh which "
-            "encloses the ROI/point cloud. This mesh can be seen as a model for "
-            "the edge of the dataset. Different algorithms can be used with "
-            "paraprobe-surfacer to create this mesh such as convex hulls, "
-            "alpha-shapes as their generalization, or alpha wrappings. Ideally, "
-            "the resulting mesh should be a watertight polyhedron. This "
-            "polyhedron is not necessarily convex. For some algorithms there is "
-            "no guarantee that the resulting mesh yields a watertight mesh."
-        ),
     )
 
     definition = Quantity(
@@ -190,13 +178,6 @@ class ApmParaprobeSurfacerResultsPointSetWrappingID(ApmParaprobeToolProcess):
         section_def="pynxtools.nomad.metainfo.applications.apm_paraprobe_surfacer_results.ApmParaprobeSurfacerResultsPointSetWrappingIDAlphaComplexID",
         repeats=True,
         variable=True,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXcg_alpha_complex",
-            name="alpha_complexID",
-            name_type="partial",
-            optionality="optional",
-            min_occurs=0,
-        ),
     )
 
     def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
@@ -221,32 +202,14 @@ class ApmParaprobeSurfacerResultsPointSetWrappingIDAlphaComplexID(CgAlphaComplex
     window = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.apm_paraprobe_surfacer_results.ApmParaprobeSurfacerResultsPointSetWrappingIDAlphaComplexIDWindow",
         repeats=False,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXcs_filter_boolean_mask",
-            name="window",
-            name_type="specified",
-            optionality="required",
-        ),
     )
     triangle_set = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.apm_paraprobe_surfacer_results.ApmParaprobeSurfacerResultsPointSetWrappingIDAlphaComplexIDTriangleSet",
         repeats=False,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXcg_triangle",
-            name="triangle_set",
-            name_type="specified",
-            optionality="optional",
-        ),
     )
     interior_tetrahedra = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.apm_paraprobe_surfacer_results.ApmParaprobeSurfacerResultsPointSetWrappingIDAlphaComplexIDInteriorTetrahedra",
         repeats=False,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXcg_tetrahedron",
-            name="interior_tetrahedra",
-            name_type="specified",
-            optionality="optional",
-        ),
     )
 
     dimensionality = Quantity(
@@ -463,12 +426,6 @@ class ApmParaprobeSurfacerResultsPointSetWrappingIDAlphaComplexIDTriangleSet(
     triangles = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.apm_paraprobe_surfacer_results.ApmParaprobeSurfacerResultsPointSetWrappingIDAlphaComplexIDTriangleSetTriangles",
         repeats=False,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXcg_face_list_data_structure",
-            name="triangles",
-            name_type="specified",
-            optionality="required",
-        ),
     )
 
     index_offset = Quantity(
@@ -710,12 +667,6 @@ class ApmParaprobeSurfacerResultsPointSetWrappingIDAlphaComplexIDInteriorTetrahe
     tetrahedra = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.apm_paraprobe_surfacer_results.ApmParaprobeSurfacerResultsPointSetWrappingIDAlphaComplexIDInteriorTetrahedraTetrahedra",
         repeats=False,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXcg_face_list_data_structure",
-            name="tetrahedra",
-            name_type="specified",
-            optionality="optional",
-        ),
     )
 
     index_offset = Quantity(

@@ -113,11 +113,6 @@ class Subentry(Object):
     thumbnail = SubSection(
         section_def="pynxtools.nomad.metainfo.base_classes.subentry.SubentryThumbnail",
         repeats=False,
-        description=(
-            "A small image that is representative of the entry. An example of "
-            "this is a 640x480 jpeg image automatically produced by a low "
-            "resolution plot of the NXdata."
-        ),
     )
     user = SubSection(
         section_def="pynxtools.nomad.metainfo.base_classes.user.User",

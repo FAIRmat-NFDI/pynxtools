@@ -72,38 +72,26 @@ class Manipulator(Component):
     cryostat = SubSection(
         section_def="pynxtools.nomad.metainfo.base_classes.manipulator.ManipulatorCryostat",
         repeats=False,
-        description=(
-            "Cryostat for cooling the sample (and, potentially, the whole manipulator)."
-        ),
     )
     temperature_sensor = SubSection(
         section_def="pynxtools.nomad.metainfo.base_classes.manipulator.ManipulatorTemperatureSensor",
         repeats=False,
-        description=("Temperature sensor measuring the sample temperature."),
     )
     sample_heater = SubSection(
         section_def="pynxtools.nomad.metainfo.base_classes.manipulator.ManipulatorSampleHeater",
         repeats=False,
-        description=("Device to heat the sample."),
     )
     drain_current_ammeter = SubSection(
         section_def="pynxtools.nomad.metainfo.base_classes.manipulator.ManipulatorDrainCurrentAmmeter",
         repeats=False,
-        description=(
-            "Ammeter measuring the drain current of the sample and sample holder."
-        ),
     )
     sample_bias_potentiostat = SubSection(
         section_def="pynxtools.nomad.metainfo.base_classes.manipulator.ManipulatorSampleBiasPotentiostat",
         repeats=False,
-        description=("Actuator applying a voltage between sample holder and sample."),
     )
     sample_bias_voltmeter = SubSection(
         section_def="pynxtools.nomad.metainfo.base_classes.manipulator.ManipulatorSampleBiasVoltmeter",
         repeats=False,
-        description=(
-            "Sensor measuring the voltage applied to sample and sample holder."
-        ),
     )
     actuator = SubSection(
         section_def="pynxtools.nomad.metainfo.base_classes.actuator.Actuator",
@@ -231,12 +219,6 @@ class ManipulatorCryostat(Actuator):
         section_def="pynxtools.nomad.metainfo.base_classes.manipulator.ManipulatorCryostatPidController",
         repeats=True,
         variable=True,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXpid_controller",
-            name=None,
-            name_type="any",
-            optionality="optional",
-        ),
     )
 
     actuation_target = Quantity(
@@ -278,12 +260,6 @@ class ManipulatorCryostatPidController(PidController):
     setpoint_log = SubSection(
         section_def="pynxtools.nomad.metainfo.base_classes.manipulator.ManipulatorCryostatPidControllerSetpointLog",
         repeats=False,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXlog",
-            name="setpoint_log",
-            name_type="specified",
-            optionality="optional",
-        ),
     )
 
     setpoint = Quantity(
@@ -377,12 +353,6 @@ class ManipulatorTemperatureSensor(Sensor):
     value_log = SubSection(
         section_def="pynxtools.nomad.metainfo.base_classes.manipulator.ManipulatorTemperatureSensorValueLog",
         repeats=False,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXlog",
-            name="value_log",
-            name_type="specified",
-            optionality="optional",
-        ),
     )
 
     measurement = Quantity(
@@ -491,23 +461,11 @@ class ManipulatorSampleHeater(Actuator):
     output_heater_power_log = SubSection(
         section_def="pynxtools.nomad.metainfo.base_classes.manipulator.ManipulatorSampleHeaterOutputHeaterPowerLog",
         repeats=False,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXlog",
-            name="output_heater_power_log",
-            name_type="specified",
-            optionality="optional",
-        ),
     )
     pid_controller = SubSection(
         section_def="pynxtools.nomad.metainfo.base_classes.manipulator.ManipulatorSampleHeaterPidController",
         repeats=True,
         variable=True,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXpid_controller",
-            name=None,
-            name_type="any",
-            optionality="optional",
-        ),
     )
 
     actuation_target = Quantity(
@@ -615,12 +573,6 @@ class ManipulatorSampleHeaterPidController(PidController):
     setpoint_log = SubSection(
         section_def="pynxtools.nomad.metainfo.base_classes.manipulator.ManipulatorSampleHeaterPidControllerSetpointLog",
         repeats=False,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXlog",
-            name="setpoint_log",
-            name_type="specified",
-            optionality="optional",
-        ),
     )
 
     setpoint = Quantity(
@@ -714,12 +666,6 @@ class ManipulatorDrainCurrentAmmeter(Sensor):
     value_log = SubSection(
         section_def="pynxtools.nomad.metainfo.base_classes.manipulator.ManipulatorDrainCurrentAmmeterValueLog",
         repeats=False,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXlog",
-            name="value_log",
-            name_type="specified",
-            optionality="optional",
-        ),
     )
 
     measurement = Quantity(
@@ -829,12 +775,6 @@ class ManipulatorSampleBiasPotentiostat(Actuator):
         section_def="pynxtools.nomad.metainfo.base_classes.manipulator.ManipulatorSampleBiasPotentiostatPidController",
         repeats=True,
         variable=True,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXpid_controller",
-            name=None,
-            name_type="any",
-            optionality="optional",
-        ),
     )
 
     actuation_target = Quantity(
@@ -876,12 +816,6 @@ class ManipulatorSampleBiasPotentiostatPidController(PidController):
     setpoint_log = SubSection(
         section_def="pynxtools.nomad.metainfo.base_classes.manipulator.ManipulatorSampleBiasPotentiostatPidControllerSetpointLog",
         repeats=False,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXlog",
-            name="setpoint_log",
-            name_type="specified",
-            optionality="optional",
-        ),
     )
 
     setpoint = Quantity(
@@ -975,12 +909,6 @@ class ManipulatorSampleBiasVoltmeter(Sensor):
     value_log = SubSection(
         section_def="pynxtools.nomad.metainfo.base_classes.manipulator.ManipulatorSampleBiasVoltmeterValueLog",
         repeats=False,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXlog",
-            name="value_log",
-            name_type="specified",
-            optionality="optional",
-        ),
     )
 
     measurement = Quantity(

@@ -69,11 +69,6 @@ class Spindispersion(Component):
     scattering_target_history = SubSection(
         section_def="pynxtools.nomad.metainfo.base_classes.spindispersion.SpindispersionScatteringTargetHistory",
         repeats=False,
-        description=(
-            "A set of activities that occurred to the ``scattering_target`` "
-            "prior to/during the. experiment. For example, this group can be "
-            "used to describe the preparation of the ``scattering_target``."
-        ),
     )
     deflector = SubSection(
         section_def="pynxtools.nomad.metainfo.base_classes.deflector.Deflector",
@@ -248,6 +243,7 @@ class SpindispersionScatteringTargetHistory(History):
     preparation = SubSection(
         section_def="pynxtools.nomad.metainfo.base_classes.activity.Activity",
         repeats=False,
+        description=("Preparation procedure of the spin target"),
         a_nexus_group=NeXusGroup(
             nx_class="NXactivity",
             name="preparation",

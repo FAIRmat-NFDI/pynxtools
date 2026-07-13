@@ -210,74 +210,27 @@ class StxmInstrument(Instrument):
         section_def="pynxtools.nomad.metainfo.applications.stxm.StxmInstrumentSource",
         repeats=False,
         variable=True,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXsource",
-            name=None,
-            name_type="any",
-            optionality="required",
-            min_occurs=1,
-            max_occurs=1,
-        ),
     )
     monochromator = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.stxm.StxmInstrumentMonochromator",
         repeats=False,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXmonochromator",
-            name="monochromator",
-            name_type="specified",
-            optionality="required",
-            min_occurs=1,
-            max_occurs=1,
-        ),
     )
     detector = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.stxm.StxmInstrumentDetector",
         repeats=True,
         variable=True,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXdetector",
-            name=None,
-            name_type="any",
-            optionality="required",
-            min_occurs=1,
-        ),
     )
     sample_x = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.stxm.StxmInstrumentSampleX",
         repeats=False,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXdetector",
-            name="sample_x",
-            name_type="specified",
-            optionality="optional",
-            min_occurs=0,
-            max_occurs=1,
-        ),
     )
     sample_y = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.stxm.StxmInstrumentSampleY",
         repeats=False,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXdetector",
-            name="sample_y",
-            name_type="specified",
-            optionality="optional",
-            min_occurs=0,
-            max_occurs=1,
-        ),
     )
     sample_z = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.stxm.StxmInstrumentSampleZ",
         repeats=False,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXdetector",
-            name="sample_z",
-            name_type="specified",
-            optionality="optional",
-            min_occurs=0,
-            max_occurs=1,
-        ),
     )
 
     def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:

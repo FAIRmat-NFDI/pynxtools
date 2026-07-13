@@ -182,32 +182,14 @@ class ArpesInstrument(Instrument):
         section_def="pynxtools.nomad.metainfo.applications.arpes.ArpesInstrumentSource",
         repeats=True,
         variable=True,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXsource",
-            name=None,
-            name_type="any",
-            optionality="required",
-        ),
     )
     monochromator = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.arpes.ArpesInstrumentMonochromator",
         repeats=False,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXmonochromator",
-            name="monochromator",
-            name_type="specified",
-            optionality="required",
-        ),
     )
     analyser = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.arpes.ArpesInstrumentAnalyser",
         repeats=False,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXdetector",
-            name="analyser",
-            name_type="specified",
-            optionality="required",
-        ),
     )
 
     def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:

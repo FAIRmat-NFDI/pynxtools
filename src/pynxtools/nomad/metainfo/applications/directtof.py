@@ -75,10 +75,6 @@ class Directtof(Tofraw):
         section_def="pynxtools.nomad.metainfo.applications.directtof.DirecttofInstrument",
         repeats=True,
         variable=True,
-        description=(
-            "We definitely want the rotation_speed and energy of the chopper. "
-            "Thus either a fermi_chopper or a disk_chopper group is required."
-        ),
     )
 
     title = Quantity(
@@ -222,24 +218,10 @@ class DirecttofInstrument(Instrument):
     fermi_chopper = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.directtof.DirecttofInstrumentFermiChopper",
         repeats=False,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXfermi_chopper",
-            name="fermi_chopper",
-            name_type="specified",
-            optionality="optional",
-            min_occurs=0,
-        ),
     )
     disk_chopper = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.directtof.DirecttofInstrumentDiskChopper",
         repeats=False,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXdisk_chopper",
-            name="disk_chopper",
-            name_type="specified",
-            optionality="optional",
-            min_occurs=0,
-        ),
     )
 
     def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:

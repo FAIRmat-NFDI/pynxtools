@@ -179,32 +179,14 @@ class SastofInstrument(Instrument):
     source = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.sastof.SastofInstrumentSource",
         repeats=False,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXsource",
-            name="source",
-            name_type="specified",
-            optionality="required",
-        ),
     )
     collimator = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.sastof.SastofInstrumentCollimator",
         repeats=False,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXcollimator",
-            name="collimator",
-            name_type="specified",
-            optionality="required",
-        ),
     )
     detector = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.sastof.SastofInstrumentDetector",
         repeats=False,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXdetector",
-            name="detector",
-            name_type="specified",
-            optionality="required",
-        ),
     )
 
     name = Quantity(
@@ -335,12 +317,6 @@ class SastofInstrumentCollimator(Collimator):
     geometry = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.sastof.SastofInstrumentCollimatorGeometry",
         repeats=False,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXgeometry",
-            name="geometry",
-            name_type="specified",
-            optionality="required",
-        ),
     )
 
     def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
@@ -363,12 +339,6 @@ class SastofInstrumentCollimatorGeometry(Geometry):
     shape = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.sastof.SastofInstrumentCollimatorGeometryShape",
         repeats=False,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXshape",
-            name="shape",
-            name_type="specified",
-            optionality="required",
-        ),
     )
 
     def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:

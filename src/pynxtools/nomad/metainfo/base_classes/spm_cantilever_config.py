@@ -75,7 +75,6 @@ class SpmCantileverConfig(Object):
         section_def="pynxtools.nomad.metainfo.base_classes.spm_cantilever_config.SpmCantileverConfigCalibration",
         repeats=True,
         variable=True,
-        description=("The calibration information of the cantilever."),
     )
 
     cantilever_coating = Quantity(

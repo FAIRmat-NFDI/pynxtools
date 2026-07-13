@@ -167,12 +167,6 @@ class XnbInstrument(Instrument):
     detector = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.xnb.XnbInstrumentDetector",
         repeats=False,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXdetector",
-            name="detector",
-            name_type="specified",
-            optionality="required",
-        ),
     )
 
     def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:

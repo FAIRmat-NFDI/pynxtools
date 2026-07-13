@@ -183,23 +183,11 @@ class XrdInstrument(Instrument):
         section_def="pynxtools.nomad.metainfo.applications.xrd.XrdInstrumentBeam",
         repeats=True,
         variable=True,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXbeam",
-            name=None,
-            name_type="any",
-            optionality="required",
-        ),
     )
     detector = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.xrd.XrdInstrumentDetector",
         repeats=True,
         variable=True,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXdetector",
-            name=None,
-            name_type="any",
-            optionality="required",
-        ),
     )
 
     def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
@@ -258,6 +246,11 @@ class XrdInstrumentDetector(Detector):
     raw_data = SubSection(
         section_def="pynxtools.nomad.metainfo.base_classes.data.Data",
         repeats=False,
+        description=(
+            "raw detector signal (usually counts) as collected it can be a "
+            "multi-dimensional dataset depending on the detector type (faster "
+            "axes) and the scanning method (slower axes)"
+        ),
         a_nexus_group=NeXusGroup(
             nx_class="NXdata",
             name="raw_data",

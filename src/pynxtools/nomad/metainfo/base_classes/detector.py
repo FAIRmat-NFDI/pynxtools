@@ -109,7 +109,6 @@ class Detector(Component):
     efficiency = SubSection(
         section_def="pynxtools.nomad.metainfo.base_classes.detector.DetectorEfficiency",
         repeats=False,
-        description=("Spectral efficiency of detector with respect to e.g. wavelength"),
     )
     calibration_method = SubSection(
         section_def="pynxtools.nomad.metainfo.base_classes.note.Note",

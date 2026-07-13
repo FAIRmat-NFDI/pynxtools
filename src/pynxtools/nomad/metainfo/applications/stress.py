@@ -144,7 +144,6 @@ class Stress(Entry):
     experiment_responsible = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.stress.StressExperimentResponsible",
         repeats=False,
-        description=("Information about the person who performed the experiment."),
     )
     instrument = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.stress.StressInstrument",
@@ -154,19 +153,11 @@ class Stress(Entry):
         section_def="pynxtools.nomad.metainfo.applications.stress.StressSampleDescription",
         repeats=False,
         variable=True,
-        description=(
-            "This is the recommended location for describing parameters "
-            "associated with the sample."
-        ),
     )
     fit = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.stress.StressFit",
         repeats=True,
         variable=True,
-        description=(
-            "Zero or more groups to describe the data processing steps to obtain "
-            "the content of this application definition."
-        ),
     )
     notes = SubSection(
         section_def="pynxtools.nomad.metainfo.base_classes.note.Note",
@@ -189,13 +180,6 @@ class Stress(Entry):
     peaks = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.stress.StressPeaks",
         repeats=False,
-        description=(
-            "This group contains all diffraction peak parameters that could be "
-            "needed for stress and strain calculations. These parameters are "
-            "derived from :ref:`peak_parameters "
-            "</NXstress/ENTRY/fit/peak_parameters-group>` and additional "
-            "metadata."
-        ),
     )
 
     definition = Quantity(
@@ -493,51 +477,20 @@ class StressInstrument(Instrument):
         section_def="pynxtools.nomad.metainfo.applications.stress.StressInstrumentCalibration",
         repeats=False,
         variable=True,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXnote",
-            name="CALIBRATION",
-            name_type="any",
-            optionality="optional",
-            min_occurs=0,
-            max_occurs=1,
-        ),
     )
     source = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.stress.StressInstrumentSource",
         repeats=False,
         variable=True,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXsource",
-            name=None,
-            name_type="any",
-            optionality="required",
-            min_occurs=1,
-            max_occurs=1,
-        ),
     )
     detector = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.stress.StressInstrumentDetector",
         repeats=True,
         variable=True,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXdetector",
-            name=None,
-            name_type="any",
-            optionality="required",
-            min_occurs=1,
-        ),
     )
     beam_intensity_profile = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.stress.StressInstrumentBeamIntensityProfile",
         repeats=False,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXbeam",
-            name="beam_intensity_profile",
-            name_type="specified",
-            optionality="required",
-            min_occurs=1,
-            max_occurs=1,
-        ),
     )
 
     name = Quantity(
@@ -806,6 +759,10 @@ class StressInstrumentDetector(Detector):
         section_def="pynxtools.nomad.metainfo.base_classes.transformations.Transformations",
         repeats=False,
         variable=True,
+        description=(
+            "This is the recommended location for detector goniometer and other "
+            "related axes."
+        ),
         a_nexus_group=NeXusGroup(
             nx_class="NXtransformations",
             name=None,
@@ -1334,19 +1291,15 @@ class StressSampleDescription(Sample):
     gauge_volume = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.stress.StressSampleDescriptionGaugeVolume",
         repeats=False,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXparameters",
-            name="gauge_volume",
-            name_type="specified",
-            optionality="optional",
-            min_occurs=0,
-            max_occurs=1,
-        ),
     )
     transformations = SubSection(
         section_def="pynxtools.nomad.metainfo.base_classes.transformations.Transformations",
         repeats=False,
         variable=True,
+        description=(
+            "This is the recommended location for sample goniometer and other "
+            "related axes."
+        ),
         a_nexus_group=NeXusGroup(
             nx_class="NXtransformations",
             name=None,
@@ -1475,6 +1428,11 @@ class StressSampleDescriptionGaugeVolume(Parameters):
         section_def="pynxtools.nomad.metainfo.base_classes.transformations.Transformations",
         repeats=False,
         variable=True,
+        description=(
+            "The last field typically depends on the first field of the "
+            ":ref:`sample transformations "
+            "</NXstress/ENTRY/SAMPLE_DESCRIPTION/TRANSFORMATIONS-group>`."
+        ),
         a_nexus_group=NeXusGroup(
             nx_class="NXtransformations",
             name=None,
@@ -1596,19 +1554,17 @@ class StressFit(Process):
     data_reduction_responsible = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.stress.StressFitDataReductionResponsible",
         repeats=False,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXuser",
-            name="data_reduction_responsible",
-            name_type="specified",
-            optionality="optional",
-            min_occurs=0,
-            max_occurs=1,
-        ),
     )
     description_group = SubSection(
         section_def="pynxtools.nomad.metainfo.base_classes.note.Note",
         repeats=True,
         variable=True,
+        description=(
+            "The note will contain information about how the data was processed "
+            "or anything about the data provenance. The contents of the note can "
+            "be anything that the processing code can understand, or a simple "
+            "text. The name will be numbered to allow for ordering of steps."
+        ),
         a_nexus_group=NeXusGroup(
             nx_class="NXnote",
             name="DESCRIPTION",
@@ -1619,38 +1575,15 @@ class StressFit(Process):
     peak_parameters = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.stress.StressFitPeakParameters",
         repeats=False,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXparameters",
-            name="peak_parameters",
-            name_type="specified",
-            optionality="required",
-            min_occurs=1,
-            max_occurs=1,
-        ),
     )
     background_parameters = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.stress.StressFitBackgroundParameters",
         repeats=False,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXparameters",
-            name="background_parameters",
-            name_type="specified",
-            optionality="required",
-            min_occurs=1,
-            max_occurs=1,
-        ),
     )
     diffractogram = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.stress.StressFitDiffractogram",
         repeats=True,
         variable=True,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXdata",
-            name="DIFFRACTOGRAM",
-            name_type="any",
-            optionality="required",
-            min_occurs=1,
-        ),
     )
 
     raw_data_file = Quantity(

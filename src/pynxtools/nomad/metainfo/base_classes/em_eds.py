@@ -90,9 +90,6 @@ class EmEds(Process):
     indexing = SubSection(
         section_def="pynxtools.nomad.metainfo.base_classes.em_eds.EmEdsIndexing",
         repeats=False,
-        description=(
-            "Details about computational steps how peaks were indexed as elements."
-        ),
     )
 
     def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
@@ -128,34 +125,16 @@ class EmEdsIndexing(Process):
     summary = SubSection(
         section_def="pynxtools.nomad.metainfo.base_classes.em_eds.EmEdsIndexingSummary",
         repeats=False,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXdata",
-            name="summary",
-            name_type="specified",
-            optionality="optional",
-        ),
     )
     peak = SubSection(
         section_def="pynxtools.nomad.metainfo.base_classes.em_eds.EmEdsIndexingPeak",
         repeats=True,
         variable=True,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXpeak",
-            name=None,
-            name_type="any",
-            optionality="optional",
-        ),
     )
     element_specific_map = SubSection(
         section_def="pynxtools.nomad.metainfo.base_classes.em_eds.EmEdsIndexingElementSpecificMap",
         repeats=True,
         variable=True,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXimage",
-            name="ELEMENT_SPECIFIC_MAP",
-            name_type="any",
-            optionality="optional",
-        ),
     )
 
     atom_types = Quantity(
@@ -298,12 +277,6 @@ class EmEdsIndexingPeak(Peak):
         section_def="pynxtools.nomad.metainfo.base_classes.em_eds.EmEdsIndexingPeakAtom",
         repeats=True,
         variable=True,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXatom",
-            name=None,
-            name_type="any",
-            optionality="optional",
-        ),
     )
 
     def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
@@ -422,12 +395,6 @@ class EmEdsIndexingElementSpecificMap(Image):
         section_def="pynxtools.nomad.metainfo.base_classes.em_eds.EmEdsIndexingElementSpecificMapProcess",
         repeats=True,
         variable=True,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXprocess",
-            name=None,
-            name_type="any",
-            optionality="optional",
-        ),
     )
 
     description = Quantity(

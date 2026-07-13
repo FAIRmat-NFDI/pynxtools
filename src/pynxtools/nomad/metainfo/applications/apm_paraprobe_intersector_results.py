@@ -88,7 +88,6 @@ class ApmParaprobeIntersectorResults(ApmParaprobeToolResults):
         section_def="pynxtools.nomad.metainfo.applications.apm_paraprobe_intersector_results.ApmParaprobeIntersectorResultsVVSpatialCorrelationID",
         repeats=False,
         variable=True,
-        description=("The results of an overlap/intersection analysis."),
     )
 
     definition = Quantity(
@@ -161,12 +160,6 @@ class ApmParaprobeIntersectorResultsVVSpatialCorrelationID(ApmParaprobeToolProce
     coprecipitation_analysis = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.apm_paraprobe_intersector_results.ApmParaprobeIntersectorResultsVVSpatialCorrelationIDCoprecipitationAnalysis",
         repeats=False,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXprocess",
-            name="coprecipitation_analysis",
-            name_type="specified",
-            optionality="optional",
-        ),
     )
 
     current_to_next_link = Quantity(

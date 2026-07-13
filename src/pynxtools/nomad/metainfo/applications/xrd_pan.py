@@ -84,27 +84,19 @@ class XrdPan(Xrd):
     experiment_config = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.xrd_pan.XrdPanExperimentConfig",
         repeats=False,
-        description=("Collect user inputs e.g. name or path of the input file."),
     )
     experiment_result = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.xrd_pan.XrdPanExperimentResult",
         repeats=False,
-        description=(
-            "All experiment results data such as scattering angle (2theta), "
-            "intensity, incident angle, scattering vector, etc will be stored "
-            "here."
-        ),
     )
     q_data = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.xrd_pan.XrdPanQData",
         repeats=False,
-        description=("The desired view for scattering vectors."),
     )
     sample = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.xrd_pan.XrdPanSample",
         repeats=True,
         variable=True,
-        description=("Description on sample."),
     )
 
     data_file = Quantity(
@@ -239,23 +231,11 @@ class XrdPanInstrument(Instrument):
         section_def="pynxtools.nomad.metainfo.applications.xrd_pan.XrdPanInstrumentSource",
         repeats=True,
         variable=True,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXsource",
-            name=None,
-            name_type="any",
-            optionality="required",
-        ),
     )
     detector = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.xrd_pan.XrdPanInstrumentDetector",
         repeats=True,
         variable=True,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXdetector",
-            name=None,
-            name_type="any",
-            optionality="required",
-        ),
     )
 
     def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
@@ -586,22 +566,10 @@ class XrdPanExperimentConfig(Object):
     two_theta = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.xrd_pan.XrdPanExperimentConfigTwoTheta",
         repeats=False,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXobject",
-            name="two_theta",
-            name_type="specified",
-            optionality="required",
-        ),
     )
     omega = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.xrd_pan.XrdPanExperimentConfigOmega",
         repeats=False,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXobject",
-            name="omega",
-            name_type="specified",
-            optionality="required",
-        ),
     )
 
     beam_attenuation_factors = Quantity(

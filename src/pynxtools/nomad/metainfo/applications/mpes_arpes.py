@@ -330,23 +330,11 @@ class MpesArpesInstrument(MpesInstrument):
         section_def="pynxtools.nomad.metainfo.applications.mpes_arpes.MpesArpesInstrumentAngularN_resolution",
         repeats=True,
         variable=True,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXresolution",
-            name="angularN_resolution",
-            name_type="partial",
-            optionality="recommended",
-        ),
     )
     electronanalyzer = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.mpes_arpes.MpesArpesInstrumentElectronanalyzer",
         repeats=True,
         variable=True,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXelectronanalyzer",
-            name=None,
-            name_type="any",
-            optionality="required",
-        ),
     )
 
     def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
@@ -450,44 +438,20 @@ class MpesArpesInstrumentElectronanalyzer(Electronanalyzer):
         section_def="pynxtools.nomad.metainfo.applications.mpes_arpes.MpesArpesInstrumentElectronanalyzerAngularN_resolution",
         repeats=True,
         variable=True,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXresolution",
-            name="angularN_resolution",
-            name_type="partial",
-            optionality="recommended",
-        ),
     )
     transformations = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.mpes_arpes.MpesArpesInstrumentElectronanalyzerTransformations",
         repeats=False,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXtransformations",
-            name="transformations",
-            name_type="specified",
-            optionality="required",
-        ),
     )
     collectioncolumn = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.mpes_arpes.MpesArpesInstrumentElectronanalyzerCollectioncolumn",
         repeats=True,
         variable=True,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXcollectioncolumn",
-            name=None,
-            name_type="any",
-            optionality="required",
-        ),
     )
     energydispersion = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.mpes_arpes.MpesArpesInstrumentElectronanalyzerEnergydispersion",
         repeats=True,
         variable=True,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXenergydispersion",
-            name=None,
-            name_type="any",
-            optionality="required",
-        ),
     )
 
     depends_on = Quantity(
@@ -913,12 +877,6 @@ class MpesArpesInstrumentElectronanalyzerEnergydispersion(Energydispersion):
     entrance_slit = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.mpes_arpes.MpesArpesInstrumentElectronanalyzerEnergydispersionEntranceSlit",
         repeats=False,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXaperture",
-            name="entrance_slit",
-            name_type="specified",
-            optionality="recommended",
-        ),
     )
 
     diameter = Quantity(
@@ -996,12 +954,6 @@ class MpesArpesSample(MpesSample):
     transformations = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.mpes_arpes.MpesArpesSampleTransformations",
         repeats=False,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXtransformations",
-            name="transformations",
-            name_type="specified",
-            optionality="required",
-        ),
     )
 
     situation = Quantity(

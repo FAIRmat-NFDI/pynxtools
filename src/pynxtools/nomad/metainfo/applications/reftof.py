@@ -188,22 +188,10 @@ class ReftofInstrument(Instrument):
     chopper = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.reftof.ReftofInstrumentChopper",
         repeats=False,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXdisk_chopper",
-            name="chopper",
-            name_type="specified",
-            optionality="required",
-        ),
     )
     detector = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.reftof.ReftofInstrumentDetector",
         repeats=False,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXdetector",
-            name="detector",
-            name_type="specified",
-            optionality="required",
-        ),
     )
 
     name = Quantity(

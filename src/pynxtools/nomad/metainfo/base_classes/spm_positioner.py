@@ -77,24 +77,6 @@ class SpmPositioner(Positioner):
     z_controller = SubSection(
         section_def="pynxtools.nomad.metainfo.base_classes.spm_positioner.SpmPositionerZController",
         repeats=False,
-        description=(
-            "This controller's task is to continuously adjust the Z position of "
-            "tip (e.g., in topography scan in STM/STS experiment) in order to "
-            "keep the selected control signal as close as possible to the Set "
-            "Point. Different control signals lead to different controller's "
-            "behavior. The second PID feedback loop intends to position the tip "
-            "in the Z direction. p_gain (proportional gain) from z_controller "
-            "refers to K_p value from PID controller. i_gain (integral gain) "
-            "from z_controller refers to K_i value from PID controller. setpoint "
-            "from z_controller refers to setpoint from PID controller. Usually, "
-            "the same controller, (z_controller) will be used for positioning "
-            "the tip in three dimensional space. In this case, the controller "
-            "coefficients (proportional, integral, differential) and other "
-            "characteristic constants will be the same. Otherwise, for separate "
-            "controllers positioning the tip in 3D space use the :ref:`feedback "
-            "</NXspm_positioner/actuator/feedback-group>` controller in "
-            "actuator."
-        ),
     )
     actuator = SubSection(
         section_def="pynxtools.nomad.metainfo.base_classes.spm_positioner.SpmPositionerActuator",

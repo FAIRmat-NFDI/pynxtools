@@ -87,10 +87,6 @@ class Source(Component):
     bunch_pattern = SubSection(
         section_def="pynxtools.nomad.metainfo.base_classes.source.SourceBunchPattern",
         repeats=False,
-        description=(
-            "For storage rings, description of the bunch pattern. This is useful "
-            "to describe irregular bunch patterns."
-        ),
     )
     pulse_shape = SubSection(
         section_def="pynxtools.nomad.metainfo.base_classes.data.Data",

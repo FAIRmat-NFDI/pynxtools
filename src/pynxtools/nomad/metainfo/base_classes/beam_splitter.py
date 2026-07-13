@@ -88,34 +88,14 @@ class BeamSplitter(Component):
         section_def="pynxtools.nomad.metainfo.base_classes.beam_splitter.BeamSplitterShape",
         repeats=True,
         variable=True,
-        description=(
-            "Describe the geometry (shape, dimension etc.) of the beam splitter. "
-            "Specify the dimensions in 'SHAPE/size'. A sketch of the device "
-            "should be provided in the 'sketch(NXdata)' field to clarify (i) the "
-            "shape and dimensions of the device, and (ii) the input and outputs "
-            "(i.e. the direction of the incoming and outcoming (split) beams)."
-        ),
     )
     substrate = SubSection(
         section_def="pynxtools.nomad.metainfo.base_classes.beam_splitter.BeamSplitterSubstrate",
         repeats=False,
-        description=(
-            "Substrate of the beam splitter. Describe the material of the "
-            "substrate in substrate/substrate_material and provide its index of "
-            "refraction in substrate/index_of_refraction_substrate, if known."
-        ),
     )
     coating = SubSection(
         section_def="pynxtools.nomad.metainfo.base_classes.beam_splitter.BeamSplitterCoating",
         repeats=False,
-        description=(
-            "Is the beam splitter coated? If yes, specify the type and material "
-            "of the coating and the spectral range for which it is designed. If "
-            "known, you may also provide its index of refraction. For a beam "
-            "splitter cube consisting of two prisms which are glued together, "
-            "you may want to specify the the glue and the coatings of each "
-            "prism."
-        ),
     )
 
     type = Quantity(
@@ -428,6 +408,12 @@ class BeamSplitterShape(Shape):
     sketch = SubSection(
         section_def="pynxtools.nomad.metainfo.base_classes.data.Data",
         repeats=False,
+        description=(
+            "Sketch of the beam splitter showing its geometry. The paths of the "
+            "incoming and split beam should be illustrated and labelled (0 for "
+            "the incoming beam, and 1, 2,..., N_outputs for the outputs (i.e. "
+            "the split beam paths))."
+        ),
         a_nexus_group=NeXusGroup(
             nx_class="NXdata",
             name="sketch",

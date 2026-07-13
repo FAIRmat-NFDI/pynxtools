@@ -72,22 +72,18 @@ class SpinRotator(Component):
     read_Bfield_current = SubSection(
         section_def="pynxtools.nomad.metainfo.base_classes.spin_rotator.SpinRotatorReadBfieldCurrent",
         repeats=False,
-        description=("current read from magnet supply."),
     )
     read_Bfield_voltage = SubSection(
         section_def="pynxtools.nomad.metainfo.base_classes.spin_rotator.SpinRotatorReadBfieldVoltage",
         repeats=False,
-        description=("voltage read from magnet supply."),
     )
     read_Efield_current = SubSection(
         section_def="pynxtools.nomad.metainfo.base_classes.spin_rotator.SpinRotatorReadEfieldCurrent",
         repeats=False,
-        description=("current read from HT supply."),
     )
     read_Efield_voltage = SubSection(
         section_def="pynxtools.nomad.metainfo.base_classes.spin_rotator.SpinRotatorReadEfieldVoltage",
         repeats=False,
-        description=("voltage read from HT supply."),
     )
 
     description = Quantity(

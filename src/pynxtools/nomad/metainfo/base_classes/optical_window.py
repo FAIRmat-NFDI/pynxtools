@@ -88,10 +88,6 @@ class OpticalWindow(Aperture):
     window_correction = SubSection(
         section_def="pynxtools.nomad.metainfo.base_classes.optical_window.OpticalWindowWindowCorrection",
         repeats=False,
-        description=(
-            "Group to describe any window correction - if none performed, then "
-            "omit this"
-        ),
     )
 
     window_effects_corrected = Quantity(

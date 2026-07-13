@@ -96,12 +96,6 @@ class Xbase(Entry):
         section_def="pynxtools.nomad.metainfo.applications.xbase.XbaseData",
         repeats=True,
         variable=True,
-        description=(
-            "The name of this group id data if there is only one detector; if "
-            "there are several the names will be data1, data2, data3 and will "
-            "point to the corresponding detector groups in the instrument "
-            "hierarchy."
-        ),
     )
 
     title = Quantity(
@@ -182,32 +176,14 @@ class XbaseInstrument(Instrument):
     source = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.xbase.XbaseInstrumentSource",
         repeats=False,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXsource",
-            name="source",
-            name_type="specified",
-            optionality="required",
-        ),
     )
     monochromator = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.xbase.XbaseInstrumentMonochromator",
         repeats=False,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXmonochromator",
-            name="monochromator",
-            name_type="specified",
-            optionality="required",
-        ),
     )
     detector = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.xbase.XbaseInstrumentDetector",
         repeats=False,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXdetector",
-            name="detector",
-            name_type="specified",
-            optionality="required",
-        ),
     )
 
     def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:

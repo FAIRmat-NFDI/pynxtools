@@ -155,42 +155,18 @@ class ApmParaprobeSpatstatConfigSpatialStatisticsID(ApmParaprobeToolConfigTaskco
     surface_distance = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.apm_paraprobe_spatstat_config.ApmParaprobeSpatstatConfigSpatialStatisticsIDSurfaceDistance",
         repeats=False,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXnote",
-            name="surface_distance",
-            name_type="specified",
-            optionality="optional",
-        ),
     )
     feature_distance = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.apm_paraprobe_spatstat_config.ApmParaprobeSpatstatConfigSpatialStatisticsIDFeatureDistance",
         repeats=False,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXnote",
-            name="feature_distance",
-            name_type="specified",
-            optionality="optional",
-        ),
     )
     random_number_generator = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.apm_paraprobe_spatstat_config.ApmParaprobeSpatstatConfigSpatialStatisticsIDRandomNumberGenerator",
         repeats=False,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXcs_prng",
-            name="random_number_generator",
-            name_type="specified",
-            optionality="recommended",
-        ),
     )
     statistics = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.apm_paraprobe_spatstat_config.ApmParaprobeSpatstatConfigSpatialStatisticsIDStatistics",
         repeats=False,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXprocess",
-            name="statistics",
-            name_type="specified",
-            optionality="required",
-        ),
     )
 
     randomize_iontypes = Quantity(
@@ -670,26 +646,10 @@ class ApmParaprobeSpatstatConfigSpatialStatisticsIDStatistics(Process):
     knn = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.apm_paraprobe_spatstat_config.ApmParaprobeSpatstatConfigSpatialStatisticsIDStatisticsKnn",
         repeats=False,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXprocess",
-            name="knn",
-            name_type="specified",
-            optionality="optional",
-            min_occurs=0,
-            max_occurs=1,
-        ),
     )
     rdf = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.apm_paraprobe_spatstat_config.ApmParaprobeSpatstatConfigSpatialStatisticsIDStatisticsRdf",
         repeats=False,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXprocess",
-            name="rdf",
-            name_type="specified",
-            optionality="optional",
-            min_occurs=0,
-            max_occurs=1,
-        ),
     )
 
     def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:

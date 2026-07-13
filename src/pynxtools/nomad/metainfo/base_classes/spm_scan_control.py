@@ -128,7 +128,6 @@ class SpmScanControl(Object):
         section_def="pynxtools.nomad.metainfo.base_classes.spm_scan_control.SpmScanControlSpiralSCAN",
         repeats=True,
         variable=True,
-        description=("To define the spiral or circular scan, use this group."),
     )
     snakeSCAN = SubSection(
         section_def="pynxtools.nomad.metainfo.base_classes.spm_scan_pattern.SpmScanPattern",

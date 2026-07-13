@@ -108,10 +108,6 @@ class MicrostructureScoreResults(Entry):
     config = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.microstructure_score_results.MicrostructureScoreResultsConfig",
         repeats=False,
-        description=(
-            "Configuration file with the parameterization of the SCORE model "
-            "that was used for this simulation."
-        ),
     )
     profiling = SubSection(
         section_def="pynxtools.nomad.metainfo.base_classes.cs_profiling.CsProfiling",
@@ -126,14 +122,10 @@ class MicrostructureScoreResults(Entry):
     program1 = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.microstructure_score_results.MicrostructureScoreResultsProgram1",
         repeats=False,
-        description=("Name of the program with which the simulation was performed."),
     )
     environment = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.microstructure_score_results.MicrostructureScoreResultsEnvironment",
         repeats=False,
-        description=(
-            "Programs and libraries representing the computational environment"
-        ),
     )
     sample_reference_frame = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.microstructure_score_results.MicrostructureScoreResultsSampleReferenceFrame",
@@ -147,13 +139,6 @@ class MicrostructureScoreResults(Entry):
         section_def="pynxtools.nomad.metainfo.applications.microstructure_score_results.MicrostructureScoreResultsSpatiotemporalID",
         repeats=True,
         variable=True,
-        description=(
-            "Documentation of the spatiotemporal evolution for each CA domain. "
-            "SCORE is a hybrid parallelized code that can evolve multiple "
-            "replicas in parallel. The set of replicas is distributed across MPI "
-            "processes. Each such replica is then evolved via OpenMP "
-            "multi-threading."
-        ),
     )
 
     definition = Quantity(
@@ -401,13 +386,6 @@ class MicrostructureScoreResultsEnvironment(Collection):
         section_def="pynxtools.nomad.metainfo.applications.microstructure_score_results.MicrostructureScoreResultsEnvironmentProgramID",
         repeats=True,
         variable=True,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXprogram",
-            name="programID",
-            name_type="partial",
-            optionality="required",
-            min_occurs=1,
-        ),
     )
 
     def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
@@ -654,22 +632,10 @@ class MicrostructureScoreResultsDiscretization(Microstructure):
     grid = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.microstructure_score_results.MicrostructureScoreResultsDiscretizationGrid",
         repeats=False,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXcg_grid",
-            name="grid",
-            name_type="specified",
-            optionality="required",
-        ),
     )
     boundary = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.microstructure_score_results.MicrostructureScoreResultsDiscretizationBoundary",
         repeats=False,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXcg_hexahedron",
-            name="boundary",
-            name_type="specified",
-            optionality="required",
-        ),
     )
 
     def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
@@ -919,24 +885,11 @@ class MicrostructureScoreResultsSpatiotemporalID(Process):
     summary_statistics = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.microstructure_score_results.MicrostructureScoreResultsSpatiotemporalIDSummaryStatistics",
         repeats=False,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXprocess",
-            name="summary_statistics",
-            name_type="specified",
-            optionality="required",
-        ),
     )
     microstructureID = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.microstructure_score_results.MicrostructureScoreResultsSpatiotemporalIDMicrostructureID",
         repeats=True,
         variable=True,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXmicrostructure",
-            name="microstructureID",
-            name_type="partial",
-            optionality="required",
-            min_occurs=1,
-        ),
     )
 
     def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
@@ -967,42 +920,18 @@ class MicrostructureScoreResultsSpatiotemporalIDSummaryStatistics(Process):
     kinetics = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.microstructure_score_results.MicrostructureScoreResultsSpatiotemporalIDSummaryStatisticsKinetics",
         repeats=False,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXdata",
-            name="kinetics",
-            name_type="specified",
-            optionality="recommended",
-        ),
     )
     stress = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.microstructure_score_results.MicrostructureScoreResultsSpatiotemporalIDSummaryStatisticsStress",
         repeats=False,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXdata",
-            name="stress",
-            name_type="specified",
-            optionality="optional",
-        ),
     )
     strain = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.microstructure_score_results.MicrostructureScoreResultsSpatiotemporalIDSummaryStatisticsStrain",
         repeats=False,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXdata",
-            name="strain",
-            name_type="specified",
-            optionality="optional",
-        ),
     )
     deformation_gradient = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.microstructure_score_results.MicrostructureScoreResultsSpatiotemporalIDSummaryStatisticsDeformationGradient",
         repeats=False,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXprocess",
-            name="deformation_gradient",
-            name_type="specified",
-            optionality="optional",
-        ),
     )
 
     def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
@@ -1379,32 +1308,14 @@ class MicrostructureScoreResultsSpatiotemporalIDMicrostructureID(Microstructure)
     grid = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.microstructure_score_results.MicrostructureScoreResultsSpatiotemporalIDMicrostructureIDGrid",
         repeats=False,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXcg_grid",
-            name="grid",
-            name_type="specified",
-            optionality="recommended",
-        ),
     )
     crystals = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.microstructure_score_results.MicrostructureScoreResultsSpatiotemporalIDMicrostructureIDCrystals",
         repeats=False,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXmicrostructure_feature",
-            name="crystals",
-            name_type="specified",
-            optionality="required",
-        ),
     )
     recrystallization_front = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.microstructure_score_results.MicrostructureScoreResultsSpatiotemporalIDMicrostructureIDRecrystallizationFront",
         repeats=False,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXmicrostructure_feature",
-            name="recrystallization_front",
-            name_type="specified",
-            optionality="recommended",
-        ),
     )
 
     time = Quantity(

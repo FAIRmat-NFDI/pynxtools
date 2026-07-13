@@ -76,16 +76,11 @@ class SpmTemperatureSensor(Sensor):
     calibration = SubSection(
         section_def="pynxtools.nomad.metainfo.base_classes.spm_temperature_sensor.SpmTemperatureSensorCalibration",
         repeats=False,
-        description=("Calibration of the temperature measurement."),
     )
     data = SubSection(
         section_def="pynxtools.nomad.metainfo.base_classes.spm_temperature_sensor.SpmTemperatureSensorData",
         repeats=True,
         variable=True,
-        description=(
-            "Data related to the temperature measurement, such as time series "
-            "data or voltage-temperature data."
-        ),
     )
 
     temperature = Quantity(
@@ -204,12 +199,6 @@ class SpmTemperatureSensorCalibration(Calibration):
     calibration_parameters = SubSection(
         section_def="pynxtools.nomad.metainfo.base_classes.spm_temperature_sensor.SpmTemperatureSensorCalibrationCalibrationParameters",
         repeats=False,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXparameters",
-            name="calibration_parameters",
-            name_type="specified",
-            optionality="optional",
-        ),
     )
 
     def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:

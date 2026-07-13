@@ -472,12 +472,6 @@ class ArchiveInstrument(Instrument):
         section_def="pynxtools.nomad.metainfo.applications.archive.ArchiveInstrumentSource",
         repeats=True,
         variable=True,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXsource",
-            name=None,
-            name_type="any",
-            optionality="required",
-        ),
     )
 
     name = Quantity(

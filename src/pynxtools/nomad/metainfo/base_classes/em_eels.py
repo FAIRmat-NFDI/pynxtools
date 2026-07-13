@@ -81,9 +81,6 @@ class EmEels(Process):
     indexing = SubSection(
         section_def="pynxtools.nomad.metainfo.base_classes.em_eels.EmEelsIndexing",
         repeats=False,
-        description=(
-            "Details about computational steps how peaks were indexed as elements."
-        ),
     )
 
     def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
@@ -120,6 +117,10 @@ class EmEelsIndexing(Process):
         section_def="pynxtools.nomad.metainfo.base_classes.peak.Peak",
         repeats=True,
         variable=True,
+        description=(
+            "Name and location of each peak in the spectrum considered to be of "
+            "relevance."
+        ),
         a_nexus_group=NeXusGroup(
             nx_class="NXpeak",
             name=None,
@@ -131,6 +132,7 @@ class EmEelsIndexing(Process):
         section_def="pynxtools.nomad.metainfo.base_classes.spectrum.Spectrum",
         repeats=True,
         variable=True,
+        description=("NXspectrum specialized for EELS."),
         a_nexus_group=NeXusGroup(
             nx_class="NXspectrum",
             name=None,

@@ -81,36 +81,26 @@ class MicrostructureMtexConfig(Parameters):
     conventions = SubSection(
         section_def="pynxtools.nomad.metainfo.base_classes.microstructure_mtex_config.MicrostructureMtexConfigConventions",
         repeats=False,
-        description=(
-            "MTex reference frame and orientation conventions. Consult the `MTex "
-            "docs <https://mtex-toolbox.github.io/EBSDReferenceFrame.html>`_ for "
-            "details."
-        ),
     )
     plotting = SubSection(
         section_def="pynxtools.nomad.metainfo.base_classes.microstructure_mtex_config.MicrostructureMtexConfigPlotting",
         repeats=False,
-        description=("Settings relevant for generating plots."),
     )
     miscellaneous = SubSection(
         section_def="pynxtools.nomad.metainfo.base_classes.microstructure_mtex_config.MicrostructureMtexConfigMiscellaneous",
         repeats=False,
-        description=("Miscellaneous other settings of MTex."),
     )
     numerics = SubSection(
         section_def="pynxtools.nomad.metainfo.base_classes.microstructure_mtex_config.MicrostructureMtexConfigNumerics",
         repeats=False,
-        description=("Miscellaneous settings relevant for numerics."),
     )
     system = SubSection(
         section_def="pynxtools.nomad.metainfo.base_classes.microstructure_mtex_config.MicrostructureMtexConfigSystem",
         repeats=False,
-        description=("Miscellaneous settings relevant of the system where MTex runs."),
     )
     path = SubSection(
         section_def="pynxtools.nomad.metainfo.base_classes.microstructure_mtex_config.MicrostructureMtexConfigPath",
         repeats=False,
-        description=("Collection of paths from where MTex reads information and code."),
     )
 
     def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:

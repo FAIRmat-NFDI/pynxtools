@@ -97,10 +97,6 @@ class Tas(Entry):
         section_def="pynxtools.nomad.metainfo.applications.tas.TasData",
         repeats=True,
         variable=True,
-        description=(
-            "One of the ei,ef,qh,qk,ql,en should get a primary=1 attribute to "
-            "denote the main scan axis"
-        ),
     )
 
     title = Quantity(
@@ -183,43 +179,19 @@ class TasInstrument(Instrument):
         section_def="pynxtools.nomad.metainfo.applications.tas.TasInstrumentSource",
         repeats=True,
         variable=True,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXsource",
-            name=None,
-            name_type="any",
-            optionality="required",
-        ),
     )
     monochromator = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.tas.TasInstrumentMonochromator",
         repeats=False,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXcrystal",
-            name="monochromator",
-            name_type="specified",
-            optionality="required",
-        ),
     )
     analyser = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.tas.TasInstrumentAnalyser",
         repeats=False,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXcrystal",
-            name="analyser",
-            name_type="specified",
-            optionality="required",
-        ),
     )
     detector = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.tas.TasInstrumentDetector",
         repeats=True,
         variable=True,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXdetector",
-            name=None,
-            name_type="any",
-            optionality="required",
-        ),
     )
 
     def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:

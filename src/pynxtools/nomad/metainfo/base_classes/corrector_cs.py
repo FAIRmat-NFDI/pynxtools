@@ -98,13 +98,6 @@ class CorrectorCs(Component):
         section_def="pynxtools.nomad.metainfo.base_classes.corrector_cs.CorrectorCsTableauID",
         repeats=True,
         variable=True,
-        description=(
-            "Specific information about the alignment procedure. This is a "
-            "process during which the corrector is configured to enable "
-            "calibrated usage of the instrument. This :ref:`NXprocess` group "
-            "should also be used when one describes in a computer simulation the "
-            "specific details about the modeled or assumed aberrations."
-        ),
     )
     electromagnetic_lens = SubSection(
         section_def="pynxtools.nomad.metainfo.base_classes.electromagnetic_lens.ElectromagneticLens",
@@ -209,6 +202,7 @@ class CorrectorCsTableauID(Process):
         section_def="pynxtools.nomad.metainfo.base_classes.image.Image",
         repeats=True,
         variable=True,
+        description=("Image(s) taken during the alignment procedure"),
         a_nexus_group=NeXusGroup(
             nx_class="NXimage",
             name="imageID",

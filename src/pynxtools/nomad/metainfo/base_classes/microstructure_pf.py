@@ -80,14 +80,10 @@ class MicrostructurePf(Process):
     configuration = SubSection(
         section_def="pynxtools.nomad.metainfo.base_classes.microstructure_pf.MicrostructurePfConfiguration",
         repeats=False,
-        description=(
-            "Details about the algorithm that was used to compute the pole figure."
-        ),
     )
     pf = SubSection(
         section_def="pynxtools.nomad.metainfo.base_classes.microstructure_pf.MicrostructurePfPf",
         repeats=False,
-        description=("Pole figure."),
     )
 
     def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:

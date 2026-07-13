@@ -217,12 +217,6 @@ class ScanInstrument(Instrument):
         section_def="pynxtools.nomad.metainfo.applications.scan.ScanInstrumentDetector",
         repeats=True,
         variable=True,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXdetector",
-            name=None,
-            name_type="any",
-            optionality="required",
-        ),
     )
 
     def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:

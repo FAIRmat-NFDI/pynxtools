@@ -111,11 +111,6 @@ class Beam(Object):
         section_def="pynxtools.nomad.metainfo.base_classes.beam.BeamTransformations",
         repeats=True,
         variable=True,
-        description=(
-            "Direction (and location) for the beam. The location of the beam can "
-            "be given by any point which it passes through as its offset "
-            "attribute."
-        ),
     )
 
     distance = Quantity(

@@ -72,12 +72,10 @@ class ElectrostaticKicker(Component):
     read_current = SubSection(
         section_def="pynxtools.nomad.metainfo.base_classes.electrostatic_kicker.ElectrostaticKickerReadCurrent",
         repeats=False,
-        description=("current read from supply."),
     )
     read_voltage = SubSection(
         section_def="pynxtools.nomad.metainfo.base_classes.electrostatic_kicker.ElectrostaticKickerReadVoltage",
         repeats=False,
-        description=("voltage read from supply."),
     )
 
     description = Quantity(

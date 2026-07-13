@@ -121,30 +121,19 @@ class Spm(SensorScan):
         section_def="pynxtools.nomad.metainfo.applications.spm.SpmSample",
         repeats=True,
         variable=True,
-        description=("The sample information."),
     )
     data = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.spm.SpmData",
         repeats=True,
         variable=True,
-        description=("The data group."),
     )
     reproducibility_indicators = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.spm.SpmReproducibilityIndicators",
         repeats=False,
-        description=(
-            "The group of indicators (links to the existing fields in different "
-            "groups) that measure the reproducibility of the experiment."
-        ),
     )
     resolution_indicators = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.spm.SpmResolutionIndicators",
         repeats=False,
-        description=(
-            "The group of indicators (links to the existing fields in different "
-            "groups) that are used to measure the resolution of the experiment "
-            "results."
-        ),
     )
 
     definition = Quantity(
@@ -388,22 +377,10 @@ class SpmInstrument(SensorScanInstrument):
     hardware = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.spm.SpmInstrumentHardware",
         repeats=False,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXfabrication",
-            name="hardware",
-            name_type="specified",
-            optionality="required",
-        ),
     )
     software = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.spm.SpmInstrumentSoftware",
         repeats=False,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXfabrication",
-            name="software",
-            name_type="specified",
-            optionality="required",
-        ),
     )
     real_time_controller = SubSection(
         section_def="pynxtools.nomad.metainfo.base_classes.rcs.Rcs",
@@ -418,59 +395,30 @@ class SpmInstrument(SensorScanInstrument):
     lockin_amplifier = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.spm.SpmInstrumentLockinAmplifier",
         repeats=False,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXlockin",
-            name="lockin_amplifier",
-            name_type="specified",
-            optionality="optional",
-        ),
     )
     scan_environment = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.spm.SpmInstrumentScanEnvironment",
         repeats=True,
         variable=True,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXenvironment",
-            name="SCAN_ENVIRONMENT",
-            name_type="any",
-            optionality="required",
-        ),
     )
     current_sensorTAG = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.spm.SpmInstrumentCurrentSensorTAG",
         repeats=True,
         variable=True,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXsensor",
-            name="current_sensorTAG",
-            name_type="partial",
-            optionality="optional",
-        ),
     )
     voltage_sensorTAG = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.spm.SpmInstrumentVoltageSensorTAG",
         repeats=True,
         variable=True,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXsensor",
-            name="voltage_sensorTAG",
-            name_type="partial",
-            optionality="optional",
-        ),
     )
     piezo_sensor = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.spm.SpmInstrumentPiezoSensor",
         repeats=False,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXspm_piezo_sensor",
-            name="piezo_sensor",
-            name_type="specified",
-            optionality="optional",
-        ),
     )
     height_piezo_sensor = SubSection(
         section_def="pynxtools.nomad.metainfo.base_classes.spm_piezo_sensor.SpmPiezoSensor",
         repeats=False,
+        description=("The sensor information for the height (Z-axis) piezo device."),
         a_nexus_group=NeXusGroup(
             nx_class="NXspm_piezo_sensor",
             name="height_piezo_sensor",
@@ -482,6 +430,10 @@ class SpmInstrument(SensorScanInstrument):
         section_def="pynxtools.nomad.metainfo.base_classes.spm_piezo_sensor.SpmPiezoSensor",
         repeats=True,
         variable=True,
+        description=(
+            "For separate piezo sensors along X-, Y-, and Z-axis register this "
+            "group, e.g., x_piezo_sensor or height_piezo_sensor."
+        ),
         a_nexus_group=NeXusGroup(
             nx_class="NXspm_piezo_sensor",
             name="XYZpiezo_sensor",
@@ -492,6 +444,10 @@ class SpmInstrument(SensorScanInstrument):
     head_temperature_sensor = SubSection(
         section_def="pynxtools.nomad.metainfo.base_classes.spm_temperature_sensor.SpmTemperatureSensor",
         repeats=False,
+        description=(
+            "The temperature of the SPM measured near the sample or tip. This "
+            "group is intended to be used for an array data (e.g., time series)."
+        ),
         a_nexus_group=NeXusGroup(
             nx_class="NXspm_temperature_sensor",
             name="head_temperature_sensor",
@@ -502,6 +458,10 @@ class SpmInstrument(SensorScanInstrument):
     cryo_bottom_temperature_sensor = SubSection(
         section_def="pynxtools.nomad.metainfo.base_classes.spm_temperature_sensor.SpmTemperatureSensor",
         repeats=False,
+        description=(
+            "The temperature of the cold tail of the cryostat. This group is "
+            "intended to be used for an array data (e.g., time series)."
+        ),
         a_nexus_group=NeXusGroup(
             nx_class="NXspm_temperature_sensor",
             name="cryo_bottom_temperature_sensor",
@@ -512,6 +472,10 @@ class SpmInstrument(SensorScanInstrument):
     cryo_shield_temperature_sensor = SubSection(
         section_def="pynxtools.nomad.metainfo.base_classes.spm_temperature_sensor.SpmTemperatureSensor",
         repeats=False,
+        description=(
+            "The temperature of the liquid nitrogen shield. This group is "
+            "intended to be used for an array data (e.g., time series)."
+        ),
         a_nexus_group=NeXusGroup(
             nx_class="NXspm_temperature_sensor",
             name="cryo_shield_temperature_sensor",
@@ -522,6 +486,10 @@ class SpmInstrument(SensorScanInstrument):
     sample_temperature_sensor = SubSection(
         section_def="pynxtools.nomad.metainfo.base_classes.spm_temperature_sensor.SpmTemperatureSensor",
         repeats=False,
+        description=(
+            "The temperature of the sample. This group is intended to be used "
+            "for an array data (e.g., time series)."
+        ),
         a_nexus_group=NeXusGroup(
             nx_class="NXspm_temperature_sensor",
             name="sample_temperature_sensor",
@@ -532,22 +500,10 @@ class SpmInstrument(SensorScanInstrument):
     bias_spectroscopy_environment = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.spm.SpmInstrumentBiasSpectroscopyEnvironment",
         repeats=False,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXenvironment",
-            name="bias_spectroscopy_environment",
-            name_type="specified",
-            optionality="optional",
-        ),
     )
     sample_bias_voltage = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.spm.SpmInstrumentSampleBiasVoltage",
         repeats=False,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXsensor",
-            name="sample_bias_voltage",
-            name_type="specified",
-            optionality="optional",
-        ),
     )
 
     def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
@@ -792,6 +748,7 @@ class SpmInstrumentScanEnvironment(Environment):
         section_def="pynxtools.nomad.metainfo.base_classes.sensor.Sensor",
         repeats=True,
         variable=True,
+        description=("This should be a link to /entry/instrument/current_sensorTAG"),
         a_nexus_group=NeXusGroup(
             nx_class="NXsensor",
             name="current_sensorTAG",
@@ -803,6 +760,7 @@ class SpmInstrumentScanEnvironment(Environment):
         section_def="pynxtools.nomad.metainfo.base_classes.sensor.Sensor",
         repeats=True,
         variable=True,
+        description=("This should be a link to /entry/instrument/voltage_sensorTAG"),
         a_nexus_group=NeXusGroup(
             nx_class="NXsensor",
             name="voltage_sensorTAG",
@@ -813,6 +771,7 @@ class SpmInstrumentScanEnvironment(Environment):
     piezo_sensor = SubSection(
         section_def="pynxtools.nomad.metainfo.base_classes.spm_piezo_sensor.SpmPiezoSensor",
         repeats=False,
+        description=("This should be a link to /entry/instrument/piezo_sensor."),
         a_nexus_group=NeXusGroup(
             nx_class="NXspm_piezo_sensor",
             name="piezo_sensor",
@@ -824,6 +783,7 @@ class SpmInstrumentScanEnvironment(Environment):
         section_def="pynxtools.nomad.metainfo.base_classes.spm_piezo_sensor.SpmPiezoSensor",
         repeats=True,
         variable=True,
+        description=("This should be a link to /entry/instrument/XYZpiezo_sensor."),
         a_nexus_group=NeXusGroup(
             nx_class="NXspm_piezo_sensor",
             name="XYZpiezo_sensor",
@@ -834,6 +794,9 @@ class SpmInstrumentScanEnvironment(Environment):
     height_piezo_sensor = SubSection(
         section_def="pynxtools.nomad.metainfo.base_classes.spm_piezo_sensor.SpmPiezoSensor",
         repeats=False,
+        description=(
+            "This should be a link to the concept entry/instrument/height_piezo_sensor."
+        ),
         a_nexus_group=NeXusGroup(
             nx_class="NXspm_piezo_sensor",
             name="height_piezo_sensor",
@@ -845,12 +808,6 @@ class SpmInstrumentScanEnvironment(Environment):
         section_def="pynxtools.nomad.metainfo.applications.spm.SpmInstrumentScanEnvironmentSpmScanControl",
         repeats=True,
         variable=True,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXspm_scan_control",
-            name=None,
-            name_type="any",
-            optionality="required",
-        ),
     )
 
     head_temperature = Quantity(
@@ -976,23 +933,11 @@ class SpmInstrumentScanEnvironmentSpmScanControl(SpmScanControl):
     scan_region = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.spm.SpmInstrumentScanEnvironmentSpmScanControlScanRegion",
         repeats=False,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXspm_scan_region",
-            name="scan_region",
-            name_type="specified",
-            optionality="required",
-        ),
     )
     meshSCAN = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.spm.SpmInstrumentScanEnvironmentSpmScanControlMeshSCAN",
         repeats=True,
         variable=True,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXspm_scan_pattern",
-            name="meshSCAN",
-            name_type="partial",
-            optionality="required",
-        ),
     )
 
     scanTAG = Quantity(
@@ -1360,23 +1305,11 @@ class SpmInstrumentCurrentSensorTAG(Sensor):
     calibration = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.spm.SpmInstrumentCurrentSensorTAGCalibration",
         repeats=False,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXcalibration",
-            name="calibration",
-            name_type="specified",
-            optionality="optional",
-        ),
     )
     amplifier = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.spm.SpmInstrumentCurrentSensorTAGAmplifier",
         repeats=True,
         variable=True,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXamplifier",
-            name=None,
-            name_type="any",
-            optionality="optional",
-        ),
     )
 
     NAMEcurrent = Quantity(
@@ -1465,12 +1398,6 @@ class SpmInstrumentCurrentSensorTAGCalibration(Calibration):
     calibration_parameters = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.spm.SpmInstrumentCurrentSensorTAGCalibrationCalibrationParameters",
         repeats=False,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXparameters",
-            name="calibration_parameters",
-            name_type="specified",
-            optionality="optional",
-        ),
     )
 
     def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
@@ -1586,23 +1513,11 @@ class SpmInstrumentVoltageSensorTAG(Sensor):
     calibration = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.spm.SpmInstrumentVoltageSensorTAGCalibration",
         repeats=False,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXcalibration",
-            name="calibration",
-            name_type="specified",
-            optionality="optional",
-        ),
     )
     amplifier = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.spm.SpmInstrumentVoltageSensorTAGAmplifier",
         repeats=True,
         variable=True,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXamplifier",
-            name=None,
-            name_type="any",
-            optionality="optional",
-        ),
     )
 
     NAMEvoltage = Quantity(
@@ -1693,12 +1608,6 @@ class SpmInstrumentVoltageSensorTAGCalibration(Calibration):
     calibration_parameters = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.spm.SpmInstrumentVoltageSensorTAGCalibrationCalibrationParameters",
         repeats=False,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXparameters",
-            name="calibration_parameters",
-            name_type="specified",
-            optionality="optional",
-        ),
     )
 
     def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
@@ -1891,12 +1800,6 @@ class SpmInstrumentBiasSpectroscopyEnvironment(Environment):
         section_def="pynxtools.nomad.metainfo.applications.spm.SpmInstrumentBiasSpectroscopyEnvironmentSpmBiasSpectroscopy",
         repeats=True,
         variable=True,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXspm_bias_spectroscopy",
-            name=None,
-            name_type="any",
-            optionality="required",
-        ),
     )
 
     def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
@@ -1926,12 +1829,6 @@ class SpmInstrumentBiasSpectroscopyEnvironmentSpmBiasSpectroscopy(SpmBiasSpectro
         section_def="pynxtools.nomad.metainfo.applications.spm.SpmInstrumentBiasSpectroscopyEnvironmentSpmBiasSpectroscopyBiasSweep",
         repeats=True,
         variable=True,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXspm_scan_control",
-            name="BIAS_SWEEP",
-            name_type="any",
-            optionality="required",
-        ),
     )
 
     def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
@@ -1963,22 +1860,10 @@ class SpmInstrumentBiasSpectroscopyEnvironmentSpmBiasSpectroscopyBiasSweep(
     scan_region = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.spm.SpmInstrumentBiasSpectroscopyEnvironmentSpmBiasSpectroscopyBiasSweepScanRegion",
         repeats=False,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXspm_scan_region",
-            name="scan_region",
-            name_type="specified",
-            optionality="required",
-        ),
     )
     linear_sweep = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.spm.SpmInstrumentBiasSpectroscopyEnvironmentSpmBiasSpectroscopyBiasSweepLinearSweep",
         repeats=False,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXspm_scan_pattern",
-            name="linear_sweep",
-            name_type="specified",
-            optionality="required",
-        ),
     )
 
     def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
@@ -2168,12 +2053,6 @@ class SpmInstrumentSampleBiasVoltage(Sensor):
     calibration = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.spm.SpmInstrumentSampleBiasVoltageCalibration",
         repeats=False,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXcalibration",
-            name="calibration",
-            name_type="specified",
-            optionality="optional",
-        ),
     )
 
     bias_voltage = Quantity(
@@ -2241,12 +2120,6 @@ class SpmInstrumentSampleBiasVoltageCalibration(Calibration):
     calibration_parameters = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.spm.SpmInstrumentSampleBiasVoltageCalibrationCalibrationParameters",
         repeats=False,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXparameters",
-            name="calibration_parameters",
-            name_type="specified",
-            optionality="optional",
-        ),
     )
 
     def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
@@ -2310,12 +2183,6 @@ class SpmSample(SensorScanSample):
     sample_environment = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.spm.SpmSampleSampleEnvironment",
         repeats=False,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXenvironment",
-            name="sample_environment",
-            name_type="specified",
-            optionality="optional",
-        ),
     )
 
     def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
@@ -2342,6 +2209,10 @@ class SpmSampleSampleEnvironment(Environment):
     sample_bias_voltage = SubSection(
         section_def="pynxtools.nomad.metainfo.base_classes.sensor.Sensor",
         repeats=False,
+        description=(
+            "This should be a link to /entry/instrument/sample_bias_voltage "
+            "sensor under instrument."
+        ),
         a_nexus_group=NeXusGroup(
             nx_class="NXsensor",
             name="sample_bias_voltage",
@@ -2352,6 +2223,10 @@ class SpmSampleSampleEnvironment(Environment):
     sample_temperature_sensor = SubSection(
         section_def="pynxtools.nomad.metainfo.base_classes.spm_temperature_sensor.SpmTemperatureSensor",
         repeats=False,
+        description=(
+            "This should be a link to "
+            "/entry/instrument/sample_temperature_sensor under instrument."
+        ),
         a_nexus_group=NeXusGroup(
             nx_class="NXspm_temperature_sensor",
             name="sample_temperature_sensor",
@@ -2470,6 +2345,10 @@ class SpmReproducibilityIndicators(Collection):
         section_def="pynxtools.nomad.metainfo.base_classes.collection.Collection",
         repeats=True,
         variable=True,
+        description=(
+            "A place holder to create link to any group relevant considered as "
+            "reproducibility indicators (defined by laboratory)."
+        ),
         a_nexus_group=NeXusGroup(
             nx_class="NXcollection",
             name="LINK_TO_GROUP",
@@ -2522,6 +2401,10 @@ class SpmResolutionIndicators(Collection):
         section_def="pynxtools.nomad.metainfo.base_classes.collection.Collection",
         repeats=True,
         variable=True,
+        description=(
+            "A place holder to create link to any group relevant considered as "
+            "reproducibility indicators (defined by laboratory)."
+        ),
         a_nexus_group=NeXusGroup(
             nx_class="NXcollection",
             name="LINK_TO_GROUP",

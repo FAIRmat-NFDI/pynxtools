@@ -87,26 +87,11 @@ class Xps(Mpes):
     xps_coordinate_system = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.xps.XpsCoordinateSystem",
         repeats=False,
-        description=(
-            "In traditional surface science, a left-handed coordinate system is "
-            "used such that the positive z-axis points along the normal of the "
-            "sample stage, and the x- and y-axes lie in the plane of the sample "
-            "stage. However, in NeXus, a coordinate system that is the same as "
-            "`McStas`_ is used. `xps_coordinate_system` gives the user the "
-            "opportunity to work in the traditional base coordinate system. .. "
-            "_McStas: http://mcstas.org/ .. image:: xps/xps_cs.png :width: 40%"
-        ),
     )
     instrument = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.xps.XpsInstrument",
         repeats=True,
         variable=True,
-        description=(
-            "Description of the XPS spectrometer and its individual parts. This "
-            "concept is related to term `12.58`_ of the ISO 18115-1:2023 "
-            "standard. .. _12.58: "
-            "https://www.iso.org/obp/ui/en/#iso:std:iso:18115:-1:ed-3:v1:en:term:12.58"
-        ),
     )
     energy_referencing = SubSection(
         section_def="pynxtools.nomad.metainfo.base_classes.calibration.Calibration",
@@ -132,14 +117,6 @@ class Xps(Mpes):
         section_def="pynxtools.nomad.metainfo.applications.xps.XpsFit",
         repeats=True,
         variable=True,
-        description=(
-            "Peak model for XPS fitting. Each `NXfit` instance shall be used for "
-            "the description of _one_ peak fit in _one_ XPS region. As an "
-            "example, this could be used to describe the fitting of one measured "
-            "C 1s spectrum. This concept is related to term `3.29`_ of the ISO "
-            "18115-1:2023 standard. .. _3.29: "
-            "https://www.iso.org/obp/ui/en/#iso:std:iso:18115:-1:ed-3:v1:en:term:3.29"
-        ),
     )
     sample = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.xps.XpsSample",
@@ -456,33 +433,15 @@ class XpsInstrument(MpesInstrument):
     source_probe = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.xps.XpsInstrumentSourceProbe",
         repeats=False,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXsource",
-            name="source_probe",
-            name_type="specified",
-            optionality="recommended",
-        ),
     )
     beam_probe = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.xps.XpsInstrumentBeamProbe",
         repeats=False,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXbeam",
-            name="beam_probe",
-            name_type="specified",
-            optionality="required",
-        ),
     )
     electronanalyzer = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.xps.XpsInstrumentElectronanalyzer",
         repeats=True,
         variable=True,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXelectronanalyzer",
-            name=None,
-            name_type="any",
-            optionality="required",
-        ),
     )
 
     def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
@@ -542,12 +501,6 @@ class XpsInstrumentBeamProbe(Beam):
     transformations = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.xps.XpsInstrumentBeamProbeTransformations",
         repeats=False,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXtransformations",
-            name="transformations",
-            name_type="specified",
-            optionality="recommended",
-        ),
     )
 
     depends_on = Quantity(
@@ -811,33 +764,15 @@ class XpsInstrumentElectronanalyzer(Electronanalyzer):
         section_def="pynxtools.nomad.metainfo.applications.xps.XpsInstrumentElectronanalyzerCollectioncolumn",
         repeats=True,
         variable=True,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXcollectioncolumn",
-            name=None,
-            name_type="any",
-            optionality="required",
-        ),
     )
     energydispersion = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.xps.XpsInstrumentElectronanalyzerEnergydispersion",
         repeats=True,
         variable=True,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXenergydispersion",
-            name=None,
-            name_type="any",
-            optionality="required",
-        ),
     )
     transformations = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.xps.XpsInstrumentElectronanalyzerTransformations",
         repeats=False,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXtransformations",
-            name="transformations",
-            name_type="specified",
-            optionality="recommended",
-        ),
     )
 
     work_function = Quantity(
@@ -1182,54 +1117,24 @@ class XpsFit(Fit):
     data = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.xps.XpsFitData",
         repeats=False,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXdata",
-            name="data",
-            name_type="specified",
-            optionality="required",
-        ),
     )
     peakPEAK = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.xps.XpsFitPeakPEAK",
         repeats=True,
         variable=True,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXpeak",
-            name="peakPEAK",
-            name_type="partial",
-            optionality="required",
-        ),
     )
     backgroundBACKGROUND = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.xps.XpsFitBackgroundBACKGROUND",
         repeats=True,
         variable=True,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXpeak",
-            name="backgroundBACKGROUND",
-            name_type="partial",
-            optionality="required",
-        ),
     )
     global_fit_function = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.xps.XpsFitGlobalFitFunction",
         repeats=False,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXfit_function",
-            name="global_fit_function",
-            name_type="specified",
-            optionality="recommended",
-        ),
     )
     error_function = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.xps.XpsFitErrorFunction",
         repeats=False,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXfit_function",
-            name="error_function",
-            name_type="specified",
-            optionality="recommended",
-        ),
     )
 
     label = Quantity(
@@ -1401,22 +1306,10 @@ class XpsFitPeakPEAK(Peak):
     data = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.xps.XpsFitPeakPEAKData",
         repeats=False,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXdata",
-            name="data",
-            name_type="specified",
-            optionality="required",
-        ),
     )
     function = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.xps.XpsFitPeakPEAKFunction",
         repeats=False,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXfit_function",
-            name="function",
-            name_type="specified",
-            optionality="recommended",
-        ),
     )
 
     label = Quantity(
@@ -1559,12 +1452,6 @@ class XpsFitPeakPEAKFunction(FitFunction):
     fit_parameters = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.xps.XpsFitPeakPEAKFunctionFitParameters",
         repeats=False,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXparameters",
-            name="fit_parameters",
-            name_type="specified",
-            optionality="recommended",
-        ),
     )
 
     function_type = Quantity(
@@ -1750,22 +1637,10 @@ class XpsFitBackgroundBACKGROUND(Peak):
     data = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.xps.XpsFitBackgroundBACKGROUNDData",
         repeats=False,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXdata",
-            name="data",
-            name_type="specified",
-            optionality="required",
-        ),
     )
     function = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.xps.XpsFitBackgroundBACKGROUNDFunction",
         repeats=False,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXfit_function",
-            name="function",
-            name_type="specified",
-            optionality="recommended",
-        ),
     )
 
     label = Quantity(
@@ -2062,12 +1937,6 @@ class XpsSample(MpesSample):
     transformations = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.xps.XpsSampleTransformations",
         repeats=False,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXtransformations",
-            name="transformations",
-            name_type="specified",
-            optionality="recommended",
-        ),
     )
 
     depends_on = Quantity(

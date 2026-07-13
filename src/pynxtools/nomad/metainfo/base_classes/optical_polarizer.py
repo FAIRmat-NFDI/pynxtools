@@ -81,35 +81,15 @@ class OpticalPolarizer(Component):
         section_def="pynxtools.nomad.metainfo.base_classes.optical_polarizer.OpticalPolarizerShape",
         repeats=True,
         variable=True,
-        description=(
-            "Describe the geometry (shape, dimension etc.) of the device. "
-            "Specify the dimensions in 'SHAPE/size'. A sketch of the device "
-            "should be provided in the 'sketch(NXdata)' field to clarify (i) the "
-            "shape and dimensions of the device, and (ii) the input and outputs "
-            "(i.e. the direction of the incoming and outcoming (split) beams)."
-        ),
     )
     substrate = SubSection(
         section_def="pynxtools.nomad.metainfo.base_classes.optical_polarizer.OpticalPolarizerSubstrate",
         repeats=False,
-        description=(
-            "Properties of the substrate material of the polarizer. If the "
-            "device has a coating specify the coating material and its "
-            "properties in ``coatingTYPE``."
-        ),
     )
     coatingTYPE = SubSection(
         section_def="pynxtools.nomad.metainfo.base_classes.optical_polarizer.OpticalPolarizerCoatingTYPE",
         repeats=True,
         variable=True,
-        description=(
-            "If the device has a coating describe the material and its "
-            "properties. Some basic information can be found e.g. [here] "
-            "(https://www.opto-e.com/basics/reflection-transmission-and-coatings). "
-            "If the back and front side of the polarizer are coated with "
-            "different materials, you may define two coatings (e.g. "
-            "coating_front and coating_back)."
-        ),
     )
 
     type = Quantity(
@@ -291,6 +271,11 @@ class OpticalPolarizerShape(Shape):
     sketch = SubSection(
         section_def="pynxtools.nomad.metainfo.base_classes.data.Data",
         repeats=False,
+        description=(
+            "Sketch of the device showing its geometry. The paths of the "
+            "incoming and outgoing beam should be illustrated and labelled (0 "
+            "for the incoming beam, and 1, 2,..., N_outputs for the outputs)."
+        ),
         a_nexus_group=NeXusGroup(
             nx_class="NXdata",
             name="sketch",

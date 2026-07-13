@@ -150,12 +150,6 @@ class ApmParaprobeTessellatorConfigTessellateID(ApmParaprobeToolConfigTaskconfig
     surface_distance = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.apm_paraprobe_tessellator_config.ApmParaprobeTessellatorConfigTessellateIDSurfaceDistance",
         repeats=False,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXnote",
-            name="surface_distance",
-            name_type="specified",
-            optionality="optional",
-        ),
     )
 
     method = Quantity(

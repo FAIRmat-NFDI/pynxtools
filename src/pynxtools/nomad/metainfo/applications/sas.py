@@ -208,46 +208,21 @@ class SasInstrument(Instrument):
         section_def="pynxtools.nomad.metainfo.applications.sas.SasInstrumentSource",
         repeats=True,
         variable=True,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXsource",
-            name=None,
-            name_type="any",
-            optionality="required",
-        ),
     )
     monochromator = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.sas.SasInstrumentMonochromator",
         repeats=True,
         variable=True,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXmonochromator",
-            name=None,
-            name_type="any",
-            optionality="required",
-        ),
     )
     collimator = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.sas.SasInstrumentCollimator",
         repeats=True,
         variable=True,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXcollimator",
-            name=None,
-            name_type="any",
-            optionality="optional",
-            min_occurs=0,
-        ),
     )
     detector = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.sas.SasInstrumentDetector",
         repeats=True,
         variable=True,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXdetector",
-            name=None,
-            name_type="any",
-            optionality="required",
-        ),
     )
 
     name = Quantity(
@@ -443,12 +418,6 @@ class SasInstrumentCollimator(Collimator):
         section_def="pynxtools.nomad.metainfo.applications.sas.SasInstrumentCollimatorGeometry",
         repeats=True,
         variable=True,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXgeometry",
-            name=None,
-            name_type="any",
-            optionality="required",
-        ),
     )
 
     def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
@@ -473,12 +442,6 @@ class SasInstrumentCollimatorGeometry(Geometry):
         section_def="pynxtools.nomad.metainfo.applications.sas.SasInstrumentCollimatorGeometryShape",
         repeats=True,
         variable=True,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXshape",
-            name=None,
-            name_type="any",
-            optionality="required",
-        ),
     )
 
     def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:

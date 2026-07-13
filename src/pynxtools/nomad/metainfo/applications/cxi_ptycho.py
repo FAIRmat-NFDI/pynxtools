@@ -197,51 +197,19 @@ class CxiPtychoInstrument1(Instrument):
     source_1 = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.cxi_ptycho.CxiPtychoInstrument1Source1",
         repeats=False,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXsource",
-            name="source_1",
-            name_type="specified",
-            optionality="required",
-            min_occurs=1,
-            max_occurs=1,
-        ),
     )
     beam_1 = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.cxi_ptycho.CxiPtychoInstrument1Beam1",
         repeats=False,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXbeam",
-            name="beam_1",
-            name_type="specified",
-            optionality="required",
-            min_occurs=1,
-            max_occurs=1,
-        ),
     )
     detector_1 = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.cxi_ptycho.CxiPtychoInstrument1Detector1",
         repeats=False,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXdetector",
-            name="detector_1",
-            name_type="specified",
-            optionality="required",
-            min_occurs=1,
-            max_occurs=1,
-        ),
     )
     monitor = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.cxi_ptycho.CxiPtychoInstrument1Monitor",
         repeats=False,
         variable=True,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXmonitor",
-            name=None,
-            name_type="any",
-            optionality="optional",
-            min_occurs=0,
-            max_occurs=1,
-        ),
     )
 
     def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
@@ -580,12 +548,6 @@ class CxiPtychoInstrument1Detector1(Detector):
     transformations = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.cxi_ptycho.CxiPtychoInstrument1Detector1Transformations",
         repeats=False,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXtransformations",
-            name="transformations",
-            name_type="specified",
-            optionality="required",
-        ),
     )
 
     axes = Quantity(

@@ -144,71 +144,31 @@ class Cansas(Entry):
         section_def="pynxtools.nomad.metainfo.applications.cansas.CansasData",
         repeats=True,
         variable=True,
-        description=(
-            "A *SASData* group contains a single reduced small-angle scattering "
-            "data set that can be represented as :math:`I(\\vec{Q})` or "
-            ":math:`I(|\\vec{Q}|)`. *Q* can be either a vector "
-            "(:math:`\\vec{Q}`) or a vector magnitude (:math:`|\\vec{Q}|`) The "
-            "name of each *SASdata* group must be unique within a SASentry "
-            "group. Suggest using names such as ``sasdata01``. NOTE: For the "
-            "first *SASdata* group, be sure to write the chosen name into the "
-            "`SASentry/@default` attribute, as in:: "
-            'SASentry/@default="sasdata01" A *SASdata* group has several '
-            "attributes: * I_axes * Q_indices * Mask_indices To indicate the "
-            "dependency relationships of other varied parameters, use attributes "
-            "similar to ``@Mask_indices`` (such as ``@Temperature_indices`` or "
-            "``@Pressure_indices``)."
-        ),
     )
     instrument = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.cansas.CansasInstrument",
         repeats=True,
         variable=True,
-        description=(
-            "Description of the small-angle scattering instrument. Consider, "
-            "carefully, the relevance to the SAS data analysis process when "
-            "adding subgroups in this **NXinstrument** group. Additional "
-            "information can be added but will likely be ignored by standardized "
-            "data analysis processes. The NeXus :ref:`NXbeam` base class may be "
-            "added as a subgroup of this **NXinstrument** group *or* as a "
-            "subgroup of the **NXsample** group to describe properties of the "
-            "beam at any point downstream from the source."
-        ),
     )
     sample = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.cansas.CansasSample",
         repeats=True,
         variable=True,
-        description=("Description of the sample."),
     )
     process = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.cansas.CansasProcess",
         repeats=True,
         variable=True,
-        description=(
-            "Description of a processing or analysis step. Add additional fields "
-            "as needed to describe value(s) of any variable, parameter, or term "
-            "related to the *SASprocess* step. Be sure to include *units* "
-            "attributes for all numerical fields."
-        ),
     )
     collection = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.cansas.CansasCollection",
         repeats=True,
         variable=True,
-        description=(
-            "Free form description of anything not covered by other elements."
-        ),
     )
     transmission_spectrum = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.cansas.CansasTransmissionSpectrum",
         repeats=True,
         variable=True,
-        description=(
-            "The *SAStransmission_spectrum* element This describes certain data "
-            "obtained from a variable-wavelength source such as pulsed-neutron "
-            "source."
-        ),
     )
 
     default = Quantity(
@@ -1182,49 +1142,21 @@ class CansasInstrument(Instrument):
         section_def="pynxtools.nomad.metainfo.applications.cansas.CansasInstrumentAperture",
         repeats=True,
         variable=True,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXaperture",
-            name=None,
-            name_type="any",
-            optionality="optional",
-            min_occurs=0,
-        ),
     )
     collimator = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.cansas.CansasInstrumentCollimator",
         repeats=True,
         variable=True,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXcollimator",
-            name=None,
-            name_type="any",
-            optionality="optional",
-            min_occurs=0,
-        ),
     )
     detector = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.cansas.CansasInstrumentDetector",
         repeats=True,
         variable=True,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXdetector",
-            name=None,
-            name_type="any",
-            optionality="optional",
-            min_occurs=0,
-        ),
     )
     source = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.cansas.CansasInstrumentSource",
         repeats=True,
         variable=True,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXsource",
-            name=None,
-            name_type="any",
-            optionality="optional",
-            min_occurs=0,
-        ),
     )
 
     canSAS_class = Quantity(
@@ -2279,13 +2211,6 @@ class CansasProcess(Process):
         section_def="pynxtools.nomad.metainfo.applications.cansas.CansasProcessCollection",
         repeats=True,
         variable=True,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXcollection",
-            name=None,
-            name_type="any",
-            optionality="optional",
-            min_occurs=0,
-        ),
     )
 
     canSAS_class = Quantity(

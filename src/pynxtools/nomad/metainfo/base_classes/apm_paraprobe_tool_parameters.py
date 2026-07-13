@@ -73,31 +73,10 @@ class ApmParaprobeToolParameters(Parameters):
     reconstruction = SubSection(
         section_def="pynxtools.nomad.metainfo.base_classes.apm_paraprobe_tool_parameters.ApmParaprobeToolParametersReconstruction",
         repeats=False,
-        description=(
-            "Specification of the tomographic reconstruction to use for this "
-            "analysis. Typically, reconstructions in the field of atom probe "
-            "tomography are communicated via files which store at least "
-            "reconstructed ion positions and mass-to-charge-state-ratio values. "
-            "Container files like HDF5 though can store multiple "
-            "reconstructions. Therefore, the position and mass_to_charge "
-            "concepts point to specific instances to use for this analysis."
-        ),
     )
     ranging = SubSection(
         section_def="pynxtools.nomad.metainfo.base_classes.apm_paraprobe_tool_parameters.ApmParaprobeToolParametersRanging",
         repeats=False,
-        description=(
-            "Specification of the ranging definitions to use for this analysis. "
-            "Ranging is the process of labeling time-of-flight data with "
-            "so-called iontypes (aka ion species). Ideally, iontypes specify the "
-            "most likely (molecular) ion that is assumed to have been evaporated "
-            "given that its mass-to-charge-state ratio lies within the specific "
-            "mass-to-charge-state-ratio value interval of the iontype. The "
-            "so-called unknown_type iontype represents the null model of an ion "
-            "that has not been ranged (for whatever reasons) or is not "
-            "rangeable. The identifier of this special iontype is always the "
-            "reserved value 0."
-        ),
     )
     surface = SubSection(
         section_def="pynxtools.nomad.metainfo.base_classes.note.Note",
@@ -117,10 +96,6 @@ class ApmParaprobeToolParameters(Parameters):
     surface_distance = SubSection(
         section_def="pynxtools.nomad.metainfo.base_classes.apm_paraprobe_tool_parameters.ApmParaprobeToolParametersSurfaceDistance",
         repeats=False,
-        description=(
-            "Specification of the point-to-triangulated-surface-mesh distances "
-            "to use for this analysis."
-        ),
     )
     spatial_filter = SubSection(
         section_def="pynxtools.nomad.metainfo.base_classes.spatial_filter.SpatialFilter",

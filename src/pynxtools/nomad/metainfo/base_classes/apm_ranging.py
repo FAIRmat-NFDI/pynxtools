@@ -100,30 +100,18 @@ class ApmRanging(Process):
     mass_to_charge_distribution = SubSection(
         section_def="pynxtools.nomad.metainfo.base_classes.apm_ranging.ApmRangingMassToChargeDistribution",
         repeats=False,
-        description=("Specifies the mass-to-charge-state ratio histogram."),
     )
     background_quantification = SubSection(
         section_def="pynxtools.nomad.metainfo.base_classes.apm_ranging.ApmRangingBackgroundQuantification",
         repeats=False,
-        description=(
-            "Details of the background model that was used to correct the total "
-            "counts per bin into counts."
-        ),
     )
     peak_search_and_deconvolution = SubSection(
         section_def="pynxtools.nomad.metainfo.base_classes.apm_ranging.ApmRangingPeakSearchAndDeconvolution",
         repeats=False,
-        description=(
-            "How were peaks in the mass-to-charge-state ratio histogram identified."
-        ),
     )
     peak_identification = SubSection(
         section_def="pynxtools.nomad.metainfo.base_classes.apm_ranging.ApmRangingPeakIdentification",
         repeats=False,
-        description=(
-            "Details about how peaks, with taking into account error models, "
-            "were interpreted as ion types or not."
-        ),
     )
 
     def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
@@ -159,6 +147,10 @@ class ApmRangingMassToChargeDistribution(Process):
     mass_spectrum = SubSection(
         section_def="pynxtools.nomad.metainfo.base_classes.data.Data",
         repeats=False,
+        description=(
+            "A default histogram aka mass spectrum of the mass-to-charge-state "
+            "ratio values."
+        ),
         a_nexus_group=NeXusGroup(
             nx_class="NXdata",
             name="mass_spectrum",

@@ -176,32 +176,14 @@ class FluoInstrument(Instrument):
         section_def="pynxtools.nomad.metainfo.applications.fluo.FluoInstrumentSource",
         repeats=True,
         variable=True,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXsource",
-            name=None,
-            name_type="any",
-            optionality="required",
-        ),
     )
     monochromator = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.fluo.FluoInstrumentMonochromator",
         repeats=False,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXmonochromator",
-            name="monochromator",
-            name_type="specified",
-            optionality="required",
-        ),
     )
     fluorescence = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.fluo.FluoInstrumentFluorescence",
         repeats=False,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXdetector",
-            name="fluorescence",
-            name_type="specified",
-            optionality="required",
-        ),
     )
 
     def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:

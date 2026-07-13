@@ -103,14 +103,10 @@ class ApmCompositionspaceResults(Entry):
     environment = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.apm_compositionspace_results.ApmCompositionspaceResultsEnvironment",
         repeats=False,
-        description=(
-            "Programs and libraries representing the computational environment"
-        ),
     )
     config = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.apm_compositionspace_results.ApmCompositionspaceResultsConfig",
         repeats=False,
-        description=("Configuration file that was used in this analysis."),
     )
     userID = SubSection(
         section_def="pynxtools.nomad.metainfo.base_classes.user.User",
@@ -126,53 +122,22 @@ class ApmCompositionspaceResults(Entry):
     specimen = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.apm_compositionspace_results.ApmCompositionspaceResultsSpecimen",
         repeats=False,
-        description=(
-            "Contextualize back to the specimen from which the dataset was "
-            "collected that was here analyzed with CompositionSpace tool."
-        ),
     )
     voxelization = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.apm_compositionspace_results.ApmCompositionspaceResultsVoxelization",
         repeats=False,
-        description=(
-            "Step during which the point cloud is discretized to compute "
-            "element-specific composition fields. Iontypes are atomically "
-            "decomposed to correctly account for the multiplicity of each "
-            "element that was ranged for each ion. Using a discretization grid "
-            "that is larger than the average distance between reconstructed ion "
-            "positions reduces computational costs. This is the key idea of the "
-            "CompositionSpace tool compared to other methods used in atom probe "
-            "for characterizing microstructural features that use the ion "
-            "position data directly."
-        ),
     )
     autophase = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.apm_compositionspace_results.ApmCompositionspaceResultsAutophase",
         repeats=False,
-        description=(
-            "Optional step during which the subsequent segmentation step is "
-            "prepared to improve the segmentation."
-        ),
     )
     segmentation = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.apm_compositionspace_results.ApmCompositionspaceResultsSegmentation",
         repeats=False,
-        description=(
-            "Step during which the voxel set is segmented into voxel sets with "
-            "different chemical composition."
-        ),
     )
     clustering = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.apm_compositionspace_results.ApmCompositionspaceResultsClustering",
         repeats=False,
-        description=(
-            "Step during which the chemically segmented voxel sets are analyzed "
-            "for their spatial organization into different spatial clusters of "
-            "voxels in the same chemical set but representing individual "
-            "objects. The objects are constructed from blobs of neighboring "
-            "voxels. The objects are not necessarily watertight or topologically "
-            "closed."
-        ),
     )
 
     definition = Quantity(
@@ -390,13 +355,6 @@ class ApmCompositionspaceResultsEnvironment(Collection):
         section_def="pynxtools.nomad.metainfo.applications.apm_compositionspace_results.ApmCompositionspaceResultsEnvironmentProgram",
         repeats=True,
         variable=True,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXprogram",
-            name=None,
-            name_type="any",
-            optionality="required",
-            min_occurs=1,
-        ),
     )
 
     def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
@@ -620,24 +578,11 @@ class ApmCompositionspaceResultsVoxelization(Process):
     grid = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.apm_compositionspace_results.ApmCompositionspaceResultsVoxelizationGrid",
         repeats=False,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXcg_grid",
-            name="grid",
-            name_type="specified",
-            optionality="required",
-        ),
     )
     ionID = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.apm_compositionspace_results.ApmCompositionspaceResultsVoxelizationIonID",
         repeats=True,
         variable=True,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXatom",
-            name="ionID",
-            name_type="partial",
-            optionality="required",
-            min_occurs=1,
-        ),
     )
 
     sequence_index = Quantity(
@@ -956,12 +901,6 @@ class ApmCompositionspaceResultsAutophase(Process):
     result = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.apm_compositionspace_results.ApmCompositionspaceResultsAutophaseResult",
         repeats=False,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXdata",
-            name="result",
-            name_type="specified",
-            optionality="required",
-        ),
     )
 
     sequence_index = Quantity(
@@ -1157,24 +1096,10 @@ class ApmCompositionspaceResultsSegmentation(Process):
     pca = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.apm_compositionspace_results.ApmCompositionspaceResultsSegmentationPca",
         repeats=False,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXprocess",
-            name="pca",
-            name_type="specified",
-            optionality="required",
-            min_occurs=1,
-            max_occurs=1,
-        ),
     )
     ic_opt = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.apm_compositionspace_results.ApmCompositionspaceResultsSegmentationIcOpt",
         repeats=False,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXprocess",
-            name="ic_opt",
-            name_type="specified",
-            optionality="required",
-        ),
     )
 
     def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
@@ -1203,12 +1128,6 @@ class ApmCompositionspaceResultsSegmentationPca(Process):
     result = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.apm_compositionspace_results.ApmCompositionspaceResultsSegmentationPcaResult",
         repeats=False,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXdata",
-            name="result",
-            name_type="specified",
-            optionality="required",
-        ),
     )
 
     sequence_index = Quantity(
@@ -1364,22 +1283,10 @@ class ApmCompositionspaceResultsSegmentationIcOpt(Process):
         section_def="pynxtools.nomad.metainfo.applications.apm_compositionspace_results.ApmCompositionspaceResultsSegmentationIcOptClusterAnalysisID",
         repeats=True,
         variable=True,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXprocess",
-            name="cluster_analysisID",
-            name_type="partial",
-            optionality="required",
-        ),
     )
     result = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.apm_compositionspace_results.ApmCompositionspaceResultsSegmentationIcOptResult",
         repeats=False,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXdata",
-            name="result",
-            name_type="specified",
-            optionality="required",
-        ),
     )
 
     sequence_index = Quantity(
@@ -1619,12 +1526,6 @@ class ApmCompositionspaceResultsClustering(Process):
     ic_opt = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.apm_compositionspace_results.ApmCompositionspaceResultsClusteringIcOpt",
         repeats=False,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXprocess",
-            name="ic_opt",
-            name_type="specified",
-            optionality="required",
-        ),
     )
 
     sequence_index = Quantity(
@@ -1669,13 +1570,6 @@ class ApmCompositionspaceResultsClusteringIcOpt(Process):
         section_def="pynxtools.nomad.metainfo.applications.apm_compositionspace_results.ApmCompositionspaceResultsClusteringIcOptClusterAnalysisID",
         repeats=True,
         variable=True,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXprocess",
-            name="cluster_analysisID",
-            name_type="partial",
-            optionality="optional",
-            min_occurs=0,
-        ),
     )
 
     def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
@@ -1701,13 +1595,6 @@ class ApmCompositionspaceResultsClusteringIcOptClusterAnalysisID(Process):
         section_def="pynxtools.nomad.metainfo.applications.apm_compositionspace_results.ApmCompositionspaceResultsClusteringIcOptClusterAnalysisIDDbscanID",
         repeats=True,
         variable=True,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXprocess",
-            name="dbscanID",
-            name_type="partial",
-            optionality="required",
-            min_occurs=1,
-        ),
     )
 
     def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:

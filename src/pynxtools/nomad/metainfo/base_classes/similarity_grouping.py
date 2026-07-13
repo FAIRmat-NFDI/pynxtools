@@ -91,10 +91,6 @@ class SimilarityGrouping(Object):
     statistics = SubSection(
         section_def="pynxtools.nomad.metainfo.base_classes.similarity_grouping.SimilarityGroupingStatistics",
         repeats=False,
-        description=(
-            "In addition to the detailed storage which objects were grouped to "
-            "which feature/group summary statistics are stored under this group."
-        ),
     )
 
     cardinality = Quantity(

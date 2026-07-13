@@ -104,11 +104,6 @@ class Mx(Entry):
         section_def="pynxtools.nomad.metainfo.applications.mx.MxSource",
         repeats=True,
         variable=True,
-        description=(
-            "The neutron or x-ray storage ring/facility. Note, the NXsource base "
-            "class has many more fields available, but at present we only "
-            "require the name."
-        ),
     )
 
     version = Quantity(
@@ -363,6 +358,16 @@ class MxSample(Sample):
         section_def="pynxtools.nomad.metainfo.base_classes.transformations.Transformations",
         repeats=True,
         variable=True,
+        description=(
+            "This is the recommended location for sample goniometer and other "
+            "related axes. This is a requirement to describe for any scan "
+            "experiment. The reason it is optional is mainly to accommodate XFEL "
+            "single shot exposures. Use of the depends_on field and the "
+            "NXtransformations group is strongly recommended. As noted above "
+            "this should be an absolute requirement to have for any scan "
+            "experiment. The reason it is optional is mainly to accommodate XFEL "
+            "single shot exposures."
+        ),
         a_nexus_group=NeXusGroup(
             nx_class="NXtransformations",
             name=None,
@@ -452,47 +457,21 @@ class MxInstrument(Instrument):
         section_def="pynxtools.nomad.metainfo.applications.mx.MxInstrumentAttenuator",
         repeats=True,
         variable=True,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXattenuator",
-            name=None,
-            name_type="any",
-            optionality="optional",
-            min_occurs=0,
-        ),
     )
     detector_group = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.mx.MxInstrumentDetectorGroup",
         repeats=True,
         variable=True,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXdetector_group",
-            name=None,
-            name_type="any",
-            optionality="recommended",
-        ),
     )
     detector = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.mx.MxInstrumentDetector",
         repeats=True,
         variable=True,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXdetector",
-            name=None,
-            name_type="any",
-            optionality="required",
-        ),
     )
     beam = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.mx.MxInstrumentBeam",
         repeats=True,
         variable=True,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXbeam",
-            name=None,
-            name_type="any",
-            optionality="required",
-            min_occurs=1,
-        ),
     )
 
     name = Quantity(
@@ -718,6 +697,11 @@ class MxInstrumentDetector(Detector):
         section_def="pynxtools.nomad.metainfo.base_classes.transformations.Transformations",
         repeats=True,
         variable=True,
+        description=(
+            "Location for axes (transformations) to do with the detector. In the "
+            "case of a single-module detector, the axes of the detector axis "
+            "chain may be stored here."
+        ),
         a_nexus_group=NeXusGroup(
             nx_class="NXtransformations",
             name=None,
@@ -730,13 +714,6 @@ class MxInstrumentDetector(Detector):
         section_def="pynxtools.nomad.metainfo.applications.mx.MxInstrumentDetectorDetectorModule",
         repeats=True,
         variable=True,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXdetector_module",
-            name=None,
-            name_type="any",
-            optionality="required",
-            min_occurs=1,
-        ),
     )
 
     depends_on = Quantity(
@@ -1792,6 +1769,14 @@ class MxInstrumentBeam(Beam):
     incident_wavelength_spectrum = SubSection(
         section_def="pynxtools.nomad.metainfo.base_classes.data.Data",
         repeats=False,
+        description=(
+            "This group is intended for use cases that do not fit the "
+            ":ref:`incident_wavelength "
+            "</NXmx/ENTRY/INSTRUMENT/BEAM/incident_wavelength-field>` and "
+            ":ref:`incident_wavelength_weights "
+            "</NXmx/ENTRY/INSTRUMENT/BEAM/incident_wavelength_weights-field>` "
+            "fields above, perhaps for example a 2D spectrometer."
+        ),
         a_nexus_group=NeXusGroup(
             nx_class="NXdata",
             name="incident_wavelength_spectrum",

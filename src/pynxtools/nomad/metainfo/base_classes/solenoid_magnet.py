@@ -72,12 +72,10 @@ class SolenoidMagnet(Component):
     read_current = SubSection(
         section_def="pynxtools.nomad.metainfo.base_classes.solenoid_magnet.SolenoidMagnetReadCurrent",
         repeats=False,
-        description=("current read from supply."),
     )
     read_voltage = SubSection(
         section_def="pynxtools.nomad.metainfo.base_classes.solenoid_magnet.SolenoidMagnetReadVoltage",
         repeats=False,
-        description=("voltage read from supply."),
     )
 
     description = Quantity(

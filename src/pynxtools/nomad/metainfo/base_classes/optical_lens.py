@@ -74,25 +74,11 @@ class OpticalLens(Component):
     substrate = SubSection(
         section_def="pynxtools.nomad.metainfo.base_classes.optical_lens.OpticalLensSubstrate",
         repeats=False,
-        description=(
-            "Properties of the substrate material of the lens. If the lens has a "
-            "coating specify the coating material and its properties in "
-            "'coating'."
-        ),
     )
     coating = SubSection(
         section_def="pynxtools.nomad.metainfo.base_classes.optical_lens.OpticalLensCoating",
         repeats=True,
         variable=True,
-        description=(
-            "If the lens has a coating describe the material and its properties. "
-            "Some basic information can be found e.g. [here] "
-            "(https://www.opto-e.com/basics/reflection-transmission-and-coatings). "
-            "If the back and front side of the lens are coated with different "
-            "materials, use separate COATING(NXsample) fields to describe the "
-            "coatings on the front and back side, respectively. For example: "
-            "coating_front(NXsample) and coating_back(NXsample)."
-        ),
     )
 
     type = Quantity(

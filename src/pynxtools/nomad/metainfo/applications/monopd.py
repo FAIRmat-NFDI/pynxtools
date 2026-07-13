@@ -184,34 +184,16 @@ class MonopdInstrument(Instrument):
         section_def="pynxtools.nomad.metainfo.applications.monopd.MonopdInstrumentSource",
         repeats=True,
         variable=True,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXsource",
-            name=None,
-            name_type="any",
-            optionality="required",
-        ),
     )
     crystal = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.monopd.MonopdInstrumentCrystal",
         repeats=True,
         variable=True,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXcrystal",
-            name=None,
-            name_type="any",
-            optionality="required",
-        ),
     )
     detector = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.monopd.MonopdInstrumentDetector",
         repeats=True,
         variable=True,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXdetector",
-            name=None,
-            name_type="any",
-            optionality="required",
-        ),
     )
 
     def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:

@@ -74,17 +74,11 @@ class Fit(Process):
     data = SubSection(
         section_def="pynxtools.nomad.metainfo.base_classes.fit.FitData",
         repeats=False,
-        description=("Data and results of the fit."),
     )
     peakPEAK = SubSection(
         section_def="pynxtools.nomad.metainfo.base_classes.fit.FitPeakPEAK",
         repeats=True,
         variable=True,
-        description=(
-            "An instance of the peak model. If there is no characteristic name "
-            "for each peak component, the peaks could be labeled as peak_0, "
-            "peak_1, and so on."
-        ),
     )
     backgroundBACKGROUND = SubSection(
         section_def="pynxtools.nomad.metainfo.base_classes.peak.Peak",
@@ -108,15 +102,10 @@ class Fit(Process):
     global_fit_function = SubSection(
         section_def="pynxtools.nomad.metainfo.base_classes.fit.FitGlobalFitFunction",
         repeats=False,
-        description=(
-            "Function used to describe the overall fit to the data, taking into "
-            "account the parameters of the individual :ref:`NXpeak` components."
-        ),
     )
     error_function = SubSection(
         section_def="pynxtools.nomad.metainfo.base_classes.fit.FitErrorFunction",
         repeats=False,
-        description=("Function used to optimize the parameters during peak fitting."),
     )
 
     label = Quantity(

@@ -100,21 +100,6 @@ class ApmReconstruction(Process):
     config = SubSection(
         section_def="pynxtools.nomad.metainfo.base_classes.apm_reconstruction.ApmReconstructionConfig",
         repeats=False,
-        description=(
-            "Parameters that configure a reconstruction algorithm which takes "
-            "hit data and mass-to-charge-state ratio values to construct a model "
-            "of the evaporated specimen. This model is called the reconstructed "
-            "volume. Researchers in the field of atom probe call these "
-            "algorithms reconstruction protocols. Different such protocols "
-            "exist. Although these are qualitatively similar, each protocol uses "
-            "and interprets the parameters slightly differently. The majority of "
-            "reconstructions is performed with the proprietary software APSuite "
-            "/ IVAS, the source code for the reconstruction protocols that this "
-            "software implements in detail is not open but the parameters and "
-            "their qualitative effect on the reconstructed volume follows the "
-            "protocols that are discussed in the atom probe literature. This "
-            "group allows to document these parameters in a standardized manner."
-        ),
     )
     naive_discretization = SubSection(
         section_def="pynxtools.nomad.metainfo.base_classes.process.Process",
@@ -129,10 +114,6 @@ class ApmReconstruction(Process):
     obb = SubSection(
         section_def="pynxtools.nomad.metainfo.base_classes.apm_reconstruction.ApmReconstructionObb",
         repeats=False,
-        description=(
-            "Tight, axis-aligned bounding box about the point cloud of the "
-            "reconstruction."
-        ),
     )
 
     reconstructed_positions = Quantity(
