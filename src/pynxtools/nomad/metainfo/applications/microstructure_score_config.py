@@ -283,7 +283,7 @@ class MicrostructureScoreConfig(Entry):
             optionality="optional",
         ),
         a_eln=ELNAnnotation(
-            component=ELNComponentEnum.StringEditQuantity,
+            component=ELNComponentEnum.RichTextEditQuantity,
         ),
     )
     start_time = Quantity(

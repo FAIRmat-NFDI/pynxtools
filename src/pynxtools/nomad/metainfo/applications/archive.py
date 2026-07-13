@@ -150,7 +150,7 @@ class Archive(Entry):
             optionality="required",
         ),
         a_eln=ELNAnnotation(
-            component=ELNComponentEnum.StringEditQuantity,
+            component=ELNComponentEnum.RichTextEditQuantity,
         ),
     )
     collection_identifier = Quantity(
@@ -182,7 +182,7 @@ class Archive(Entry):
             optionality="required",
         ),
         a_eln=ELNAnnotation(
-            component=ELNComponentEnum.StringEditQuantity,
+            component=ELNComponentEnum.RichTextEditQuantity,
         ),
     )
     entry_identifier = Quantity(
@@ -508,7 +508,7 @@ class ArchiveInstrument(Instrument):
             optionality="required",
         ),
         a_eln=ELNAnnotation(
-            component=ELNComponentEnum.StringEditQuantity,
+            component=ELNComponentEnum.RichTextEditQuantity,
         ),
     )
 
@@ -657,7 +657,7 @@ class ArchiveSample(Sample):
             optionality="required",
         ),
         a_eln=ELNAnnotation(
-            component=ELNComponentEnum.StringEditQuantity,
+            component=ELNComponentEnum.RichTextEditQuantity,
         ),
     )
     type = Quantity(

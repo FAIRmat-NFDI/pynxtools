@@ -191,7 +191,7 @@ class Aperture(Component):
             optionality="optional",
         ),
         a_eln=ELNAnnotation(
-            component=ELNComponentEnum.StringEditQuantity,
+            component=ELNComponentEnum.RichTextEditQuantity,
         ),
     )
     shape = Quantity(

@@ -136,7 +136,7 @@ class Calibration(Process):
             optionality="optional",
         ),
         a_eln=ELNAnnotation(
-            component=ELNComponentEnum.StringEditQuantity,
+            component=ELNComponentEnum.RichTextEditQuantity,
         ),
     )
     physical_quantity = Quantity(
@@ -326,7 +326,7 @@ class Calibration(Process):
             optionality="optional",
         ),
         a_eln=ELNAnnotation(
-            component=ELNComponentEnum.StringEditQuantity,
+            component=ELNComponentEnum.RichTextEditQuantity,
         ),
     )
     mapping_MAPPING = Quantity(

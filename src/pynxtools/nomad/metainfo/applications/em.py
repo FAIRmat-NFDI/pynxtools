@@ -477,7 +477,7 @@ class Em(Entry):
             optionality="optional",
         ),
         a_eln=ELNAnnotation(
-            component=ELNComponentEnum.StringEditQuantity,
+            component=ELNComponentEnum.RichTextEditQuantity,
         ),
     )
     start_time = Quantity(
@@ -1343,7 +1343,7 @@ class EmSampleID(Sample):
             optionality="optional",
         ),
         a_eln=ELNAnnotation(
-            component=ELNComponentEnum.StringEditQuantity,
+            component=ELNComponentEnum.RichTextEditQuantity,
         ),
     )
 

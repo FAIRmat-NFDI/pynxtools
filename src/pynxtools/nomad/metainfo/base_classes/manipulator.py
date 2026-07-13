@@ -177,7 +177,7 @@ class Manipulator(Component):
             optionality="optional",
         ),
         a_eln=ELNAnnotation(
-            component=ELNComponentEnum.StringEditQuantity,
+            component=ELNComponentEnum.RichTextEditQuantity,
         ),
     )
     type = Quantity(

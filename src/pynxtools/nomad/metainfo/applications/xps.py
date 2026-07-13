@@ -1617,7 +1617,7 @@ class XpsFitPeakPEAKFunction(FitFunction):
             optionality="recommended",
         ),
         a_eln=ELNAnnotation(
-            component=ELNComponentEnum.StringEditQuantity,
+            component=ELNComponentEnum.RichTextEditQuantity,
         ),
     )
     formula_description = Quantity(
@@ -1632,7 +1632,7 @@ class XpsFitPeakPEAKFunction(FitFunction):
             optionality="recommended",
         ),
         a_eln=ELNAnnotation(
-            component=ELNComponentEnum.StringEditQuantity,
+            component=ELNComponentEnum.RichTextEditQuantity,
         ),
     )
 
@@ -1896,7 +1896,7 @@ class XpsFitBackgroundBACKGROUNDFunction(FitFunction):
             optionality="recommended",
         ),
         a_eln=ELNAnnotation(
-            component=ELNComponentEnum.StringEditQuantity,
+            component=ELNComponentEnum.RichTextEditQuantity,
         ),
     )
     formula_description = Quantity(
@@ -1911,7 +1911,7 @@ class XpsFitBackgroundBACKGROUNDFunction(FitFunction):
             optionality="recommended",
         ),
         a_eln=ELNAnnotation(
-            component=ELNComponentEnum.StringEditQuantity,
+            component=ELNComponentEnum.RichTextEditQuantity,
         ),
     )
 
@@ -1959,7 +1959,7 @@ class XpsFitGlobalFitFunction(FitFunction):
             optionality="recommended",
         ),
         a_eln=ELNAnnotation(
-            component=ELNComponentEnum.StringEditQuantity,
+            component=ELNComponentEnum.RichTextEditQuantity,
         ),
     )
     formula_description = Quantity(
@@ -1974,7 +1974,7 @@ class XpsFitGlobalFitFunction(FitFunction):
             optionality="recommended",
         ),
         a_eln=ELNAnnotation(
-            component=ELNComponentEnum.StringEditQuantity,
+            component=ELNComponentEnum.RichTextEditQuantity,
         ),
     )
 
@@ -2022,7 +2022,7 @@ class XpsFitErrorFunction(FitFunction):
             optionality="recommended",
         ),
         a_eln=ELNAnnotation(
-            component=ELNComponentEnum.StringEditQuantity,
+            component=ELNComponentEnum.RichTextEditQuantity,
         ),
     )
     formula_description = Quantity(
@@ -2037,7 +2037,7 @@ class XpsFitErrorFunction(FitFunction):
             optionality="recommended",
         ),
         a_eln=ELNAnnotation(
-            component=ELNComponentEnum.StringEditQuantity,
+            component=ELNComponentEnum.RichTextEditQuantity,
         ),
     )
 

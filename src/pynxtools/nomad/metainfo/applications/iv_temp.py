@@ -221,7 +221,7 @@ class IvTemp(SensorScan):
             optionality="recommended",
         ),
         a_eln=ELNAnnotation(
-            component=ELNComponentEnum.StringEditQuantity,
+            component=ELNComponentEnum.RichTextEditQuantity,
         ),
     )
     start_time = Quantity(

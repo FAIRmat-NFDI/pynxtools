@@ -119,7 +119,7 @@ class CsProfilingEvent(Object):
             optionality="optional",
         ),
         a_eln=ELNAnnotation(
-            component=ELNComponentEnum.StringEditQuantity,
+            component=ELNComponentEnum.RichTextEditQuantity,
         ),
     )
     elapsed_time = Quantity(

@@ -623,7 +623,7 @@ class CorrectorCsTableauID(Process):
             optionality="optional",
         ),
         a_eln=ELNAnnotation(
-            component=ELNComponentEnum.StringEditQuantity,
+            component=ELNComponentEnum.RichTextEditQuantity,
         ),
     )
     tilt_angle = Quantity(

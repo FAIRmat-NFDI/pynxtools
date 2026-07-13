@@ -792,7 +792,7 @@ class MxInstrumentDetector(Detector):
             optionality="recommended",
         ),
         a_eln=ELNAnnotation(
-            component=ELNComponentEnum.StringEditQuantity,
+            component=ELNComponentEnum.RichTextEditQuantity,
         ),
     )
     time_per_channel = Quantity(

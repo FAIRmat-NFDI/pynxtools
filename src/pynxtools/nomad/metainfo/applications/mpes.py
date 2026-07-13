@@ -1994,7 +1994,7 @@ class MpesInstrumentElectronanalyzer(Electronanalyzer):
             optionality="recommended",
         ),
         a_eln=ELNAnnotation(
-            component=ELNComponentEnum.StringEditQuantity,
+            component=ELNComponentEnum.RichTextEditQuantity,
         ),
     )
     work_function = Quantity(

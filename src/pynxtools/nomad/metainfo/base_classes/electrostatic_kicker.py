@@ -93,7 +93,7 @@ class ElectrostaticKicker(Component):
             optionality="optional",
         ),
         a_eln=ELNAnnotation(
-            component=ELNComponentEnum.StringEditQuantity,
+            component=ELNComponentEnum.RichTextEditQuantity,
         ),
     )
     beamline_distance = Quantity(
@@ -151,7 +151,7 @@ class ElectrostaticKicker(Component):
             parent_field="timing",
         ),
         a_eln=ELNAnnotation(
-            component=ELNComponentEnum.StringEditQuantity,
+            component=ELNComponentEnum.RichTextEditQuantity,
         ),
     )
     set_current = Quantity(

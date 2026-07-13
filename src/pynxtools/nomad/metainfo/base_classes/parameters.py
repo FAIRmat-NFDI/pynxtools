@@ -160,7 +160,7 @@ class Parameters(Object):
             parent_field="PARAMETER",
         ),
         a_eln=ELNAnnotation(
-            component=ELNComponentEnum.StringEditQuantity,
+            component=ELNComponentEnum.RichTextEditQuantity,
         ),
     )
     PARAMETER__expression = Quantity(

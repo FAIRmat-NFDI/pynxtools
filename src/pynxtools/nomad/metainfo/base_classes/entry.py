@@ -316,7 +316,7 @@ class Entry(Object, basesections.Measurement, EntryData):
             optionality="optional",
         ),
         a_eln=ELNAnnotation(
-            component=ELNComponentEnum.StringEditQuantity,
+            component=ELNComponentEnum.RichTextEditQuantity,
         ),
     )
     collection_identifier = Quantity(
@@ -350,7 +350,7 @@ class Entry(Object, basesections.Measurement, EntryData):
             optionality="optional",
         ),
         a_eln=ELNAnnotation(
-            component=ELNComponentEnum.StringEditQuantity,
+            component=ELNComponentEnum.RichTextEditQuantity,
         ),
     )
     entry_identifier = Quantity(

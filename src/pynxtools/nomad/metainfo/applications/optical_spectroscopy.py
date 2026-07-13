@@ -343,7 +343,7 @@ class OpticalSpectroscopy(Entry):
             optionality="optional",
         ),
         a_eln=ELNAnnotation(
-            component=ELNComponentEnum.StringEditQuantity,
+            component=ELNComponentEnum.RichTextEditQuantity,
         ),
     )
     experiment_type = Quantity(
@@ -2742,7 +2742,7 @@ class OpticalSpectroscopySample(Sample):
             optionality="optional",
         ),
         a_eln=ELNAnnotation(
-            component=ELNComponentEnum.StringEditQuantity,
+            component=ELNComponentEnum.RichTextEditQuantity,
         ),
     )
     chemical_formula = Quantity(

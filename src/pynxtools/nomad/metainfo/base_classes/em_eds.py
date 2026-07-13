@@ -443,7 +443,7 @@ class EmEdsIndexingElementSpecificMap(Image):
             optionality="optional",
         ),
         a_eln=ELNAnnotation(
-            component=ELNComponentEnum.StringEditQuantity,
+            component=ELNComponentEnum.RichTextEditQuantity,
         ),
     )
     iupac_line_candidates = Quantity(

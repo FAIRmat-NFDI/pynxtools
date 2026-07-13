@@ -98,7 +98,7 @@ class DispersionRepeatedParameter(Object):
             optionality="optional",
         ),
         a_eln=ELNAnnotation(
-            component=ELNComponentEnum.StringEditQuantity,
+            component=ELNComponentEnum.RichTextEditQuantity,
         ),
     )
     parameter_units = Quantity(

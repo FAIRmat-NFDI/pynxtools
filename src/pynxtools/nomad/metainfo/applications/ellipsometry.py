@@ -340,7 +340,7 @@ class Ellipsometry(OpticalSpectroscopy):
             optionality="optional",
         ),
         a_eln=ELNAnnotation(
-            component=ELNComponentEnum.StringEditQuantity,
+            component=ELNComponentEnum.RichTextEditQuantity,
         ),
     )
     experiment_sub_type = Quantity(

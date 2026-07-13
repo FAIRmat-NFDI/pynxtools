@@ -108,7 +108,7 @@ class Reflections(Object):
             parent_field="h",
         ),
         a_eln=ELNAnnotation(
-            component=ELNComponentEnum.StringEditQuantity,
+            component=ELNComponentEnum.RichTextEditQuantity,
         ),
     )
     k = Quantity(
@@ -139,7 +139,7 @@ class Reflections(Object):
             parent_field="k",
         ),
         a_eln=ELNAnnotation(
-            component=ELNComponentEnum.StringEditQuantity,
+            component=ELNComponentEnum.RichTextEditQuantity,
         ),
     )
     l = Quantity(
@@ -170,7 +170,7 @@ class Reflections(Object):
             parent_field="l",
         ),
         a_eln=ELNAnnotation(
-            component=ELNComponentEnum.StringEditQuantity,
+            component=ELNComponentEnum.RichTextEditQuantity,
         ),
     )
     id = Quantity(
@@ -205,7 +205,7 @@ class Reflections(Object):
             parent_field="id",
         ),
         a_eln=ELNAnnotation(
-            component=ELNComponentEnum.StringEditQuantity,
+            component=ELNComponentEnum.RichTextEditQuantity,
         ),
     )
     reflection_id = Quantity(
@@ -239,7 +239,7 @@ class Reflections(Object):
             parent_field="reflection_id",
         ),
         a_eln=ELNAnnotation(
-            component=ELNComponentEnum.StringEditQuantity,
+            component=ELNComponentEnum.RichTextEditQuantity,
         ),
     )
     entering = Quantity(
@@ -270,7 +270,7 @@ class Reflections(Object):
             parent_field="entering",
         ),
         a_eln=ELNAnnotation(
-            component=ELNComponentEnum.StringEditQuantity,
+            component=ELNComponentEnum.RichTextEditQuantity,
         ),
     )
     det_module = Quantity(
@@ -301,7 +301,7 @@ class Reflections(Object):
             parent_field="det_module",
         ),
         a_eln=ELNAnnotation(
-            component=ELNComponentEnum.StringEditQuantity,
+            component=ELNComponentEnum.RichTextEditQuantity,
         ),
     )
     flags = Quantity(
@@ -347,7 +347,7 @@ class Reflections(Object):
             parent_field="flags",
         ),
         a_eln=ELNAnnotation(
-            component=ELNComponentEnum.StringEditQuantity,
+            component=ELNComponentEnum.RichTextEditQuantity,
         ),
     )
     d = Quantity(
@@ -378,7 +378,7 @@ class Reflections(Object):
             parent_field="d",
         ),
         a_eln=ELNAnnotation(
-            component=ELNComponentEnum.StringEditQuantity,
+            component=ELNComponentEnum.RichTextEditQuantity,
         ),
     )
     partiality = Quantity(
@@ -412,7 +412,7 @@ class Reflections(Object):
             parent_field="partiality",
         ),
         a_eln=ELNAnnotation(
-            component=ELNComponentEnum.StringEditQuantity,
+            component=ELNComponentEnum.RichTextEditQuantity,
         ),
     )
     predicted_frame = Quantity(
@@ -448,7 +448,7 @@ class Reflections(Object):
             parent_field="predicted_frame",
         ),
         a_eln=ELNAnnotation(
-            component=ELNComponentEnum.StringEditQuantity,
+            component=ELNComponentEnum.RichTextEditQuantity,
         ),
     )
     predicted_x = Quantity(
@@ -484,7 +484,7 @@ class Reflections(Object):
             parent_field="predicted_x",
         ),
         a_eln=ELNAnnotation(
-            component=ELNComponentEnum.StringEditQuantity,
+            component=ELNComponentEnum.RichTextEditQuantity,
         ),
     )
     predicted_y = Quantity(
@@ -520,7 +520,7 @@ class Reflections(Object):
             parent_field="predicted_y",
         ),
         a_eln=ELNAnnotation(
-            component=ELNComponentEnum.StringEditQuantity,
+            component=ELNComponentEnum.RichTextEditQuantity,
         ),
     )
     predicted_phi = Quantity(
@@ -556,7 +556,7 @@ class Reflections(Object):
             parent_field="predicted_phi",
         ),
         a_eln=ELNAnnotation(
-            component=ELNComponentEnum.StringEditQuantity,
+            component=ELNComponentEnum.RichTextEditQuantity,
         ),
     )
     predicted_px_x = Quantity(
@@ -593,7 +593,7 @@ class Reflections(Object):
             parent_field="predicted_px_x",
         ),
         a_eln=ELNAnnotation(
-            component=ELNComponentEnum.StringEditQuantity,
+            component=ELNComponentEnum.RichTextEditQuantity,
         ),
     )
     predicted_px_y = Quantity(
@@ -630,7 +630,7 @@ class Reflections(Object):
             parent_field="predicted_px_y",
         ),
         a_eln=ELNAnnotation(
-            component=ELNComponentEnum.StringEditQuantity,
+            component=ELNComponentEnum.RichTextEditQuantity,
         ),
     )
     observed_frame = Quantity(
@@ -667,7 +667,7 @@ class Reflections(Object):
             parent_field="observed_frame",
         ),
         a_eln=ELNAnnotation(
-            component=ELNComponentEnum.StringEditQuantity,
+            component=ELNComponentEnum.RichTextEditQuantity,
         ),
     )
     observed_frame_var = Quantity(
@@ -704,7 +704,7 @@ class Reflections(Object):
             parent_field="observed_frame_var",
         ),
         a_eln=ELNAnnotation(
-            component=ELNComponentEnum.StringEditQuantity,
+            component=ELNComponentEnum.RichTextEditQuantity,
         ),
     )
     observed_frame_errors = Quantity(
@@ -741,7 +741,7 @@ class Reflections(Object):
             parent_field="observed_frame_errors",
         ),
         a_eln=ELNAnnotation(
-            component=ELNComponentEnum.StringEditQuantity,
+            component=ELNComponentEnum.RichTextEditQuantity,
         ),
     )
     observed_px_x = Quantity(
@@ -778,7 +778,7 @@ class Reflections(Object):
             parent_field="observed_px_x",
         ),
         a_eln=ELNAnnotation(
-            component=ELNComponentEnum.StringEditQuantity,
+            component=ELNComponentEnum.RichTextEditQuantity,
         ),
     )
     observed_px_x_var = Quantity(
@@ -815,7 +815,7 @@ class Reflections(Object):
             parent_field="observed_px_x_var",
         ),
         a_eln=ELNAnnotation(
-            component=ELNComponentEnum.StringEditQuantity,
+            component=ELNComponentEnum.RichTextEditQuantity,
         ),
     )
     observed_px_x_errors = Quantity(
@@ -852,7 +852,7 @@ class Reflections(Object):
             parent_field="observed_px_x_errors",
         ),
         a_eln=ELNAnnotation(
-            component=ELNComponentEnum.StringEditQuantity,
+            component=ELNComponentEnum.RichTextEditQuantity,
         ),
     )
     observed_px_y = Quantity(
@@ -889,7 +889,7 @@ class Reflections(Object):
             parent_field="observed_px_y",
         ),
         a_eln=ELNAnnotation(
-            component=ELNComponentEnum.StringEditQuantity,
+            component=ELNComponentEnum.RichTextEditQuantity,
         ),
     )
     observed_px_y_var = Quantity(
@@ -926,7 +926,7 @@ class Reflections(Object):
             parent_field="observed_px_y_var",
         ),
         a_eln=ELNAnnotation(
-            component=ELNComponentEnum.StringEditQuantity,
+            component=ELNComponentEnum.RichTextEditQuantity,
         ),
     )
     observed_px_y_errors = Quantity(
@@ -963,7 +963,7 @@ class Reflections(Object):
             parent_field="observed_px_y_errors",
         ),
         a_eln=ELNAnnotation(
-            component=ELNComponentEnum.StringEditQuantity,
+            component=ELNComponentEnum.RichTextEditQuantity,
         ),
     )
     observed_phi = Quantity(
@@ -1000,7 +1000,7 @@ class Reflections(Object):
             parent_field="observed_phi",
         ),
         a_eln=ELNAnnotation(
-            component=ELNComponentEnum.StringEditQuantity,
+            component=ELNComponentEnum.RichTextEditQuantity,
         ),
     )
     observed_phi_var = Quantity(
@@ -1037,7 +1037,7 @@ class Reflections(Object):
             parent_field="observed_phi_var",
         ),
         a_eln=ELNAnnotation(
-            component=ELNComponentEnum.StringEditQuantity,
+            component=ELNComponentEnum.RichTextEditQuantity,
         ),
     )
     observed_phi_errors = Quantity(
@@ -1074,7 +1074,7 @@ class Reflections(Object):
             parent_field="observed_phi_errors",
         ),
         a_eln=ELNAnnotation(
-            component=ELNComponentEnum.StringEditQuantity,
+            component=ELNComponentEnum.RichTextEditQuantity,
         ),
     )
     observed_x = Quantity(
@@ -1111,7 +1111,7 @@ class Reflections(Object):
             parent_field="observed_x",
         ),
         a_eln=ELNAnnotation(
-            component=ELNComponentEnum.StringEditQuantity,
+            component=ELNComponentEnum.RichTextEditQuantity,
         ),
     )
     observed_x_var = Quantity(
@@ -1148,7 +1148,7 @@ class Reflections(Object):
             parent_field="observed_x_var",
         ),
         a_eln=ELNAnnotation(
-            component=ELNComponentEnum.StringEditQuantity,
+            component=ELNComponentEnum.RichTextEditQuantity,
         ),
     )
     observed_x_errors = Quantity(
@@ -1185,7 +1185,7 @@ class Reflections(Object):
             parent_field="observed_x_errors",
         ),
         a_eln=ELNAnnotation(
-            component=ELNComponentEnum.StringEditQuantity,
+            component=ELNComponentEnum.RichTextEditQuantity,
         ),
     )
     observed_y = Quantity(
@@ -1222,7 +1222,7 @@ class Reflections(Object):
             parent_field="observed_y",
         ),
         a_eln=ELNAnnotation(
-            component=ELNComponentEnum.StringEditQuantity,
+            component=ELNComponentEnum.RichTextEditQuantity,
         ),
     )
     observed_y_var = Quantity(
@@ -1259,7 +1259,7 @@ class Reflections(Object):
             parent_field="observed_y_var",
         ),
         a_eln=ELNAnnotation(
-            component=ELNComponentEnum.StringEditQuantity,
+            component=ELNComponentEnum.RichTextEditQuantity,
         ),
     )
     observed_y_errors = Quantity(
@@ -1296,7 +1296,7 @@ class Reflections(Object):
             parent_field="observed_y_errors",
         ),
         a_eln=ELNAnnotation(
-            component=ELNComponentEnum.StringEditQuantity,
+            component=ELNComponentEnum.RichTextEditQuantity,
         ),
     )
     bounding_box = Quantity(
@@ -1339,7 +1339,7 @@ class Reflections(Object):
             parent_field="bounding_box",
         ),
         a_eln=ELNAnnotation(
-            component=ELNComponentEnum.StringEditQuantity,
+            component=ELNComponentEnum.RichTextEditQuantity,
         ),
     )
     background_mean = Quantity(
@@ -1370,7 +1370,7 @@ class Reflections(Object):
             parent_field="background_mean",
         ),
         a_eln=ELNAnnotation(
-            component=ELNComponentEnum.StringEditQuantity,
+            component=ELNComponentEnum.RichTextEditQuantity,
         ),
     )
     int_prf = Quantity(
@@ -1401,7 +1401,7 @@ class Reflections(Object):
             parent_field="int_prf",
         ),
         a_eln=ELNAnnotation(
-            component=ELNComponentEnum.StringEditQuantity,
+            component=ELNComponentEnum.RichTextEditQuantity,
         ),
     )
     int_prf_var = Quantity(
@@ -1435,7 +1435,7 @@ class Reflections(Object):
             parent_field="int_prf_var",
         ),
         a_eln=ELNAnnotation(
-            component=ELNComponentEnum.StringEditQuantity,
+            component=ELNComponentEnum.RichTextEditQuantity,
         ),
     )
     int_prf_errors = Quantity(
@@ -1469,7 +1469,7 @@ class Reflections(Object):
             parent_field="int_prf_errors",
         ),
         a_eln=ELNAnnotation(
-            component=ELNComponentEnum.StringEditQuantity,
+            component=ELNComponentEnum.RichTextEditQuantity,
         ),
     )
     int_sum = Quantity(
@@ -1500,7 +1500,7 @@ class Reflections(Object):
             parent_field="int_sum",
         ),
         a_eln=ELNAnnotation(
-            component=ELNComponentEnum.StringEditQuantity,
+            component=ELNComponentEnum.RichTextEditQuantity,
         ),
     )
     int_sum_var = Quantity(
@@ -1533,7 +1533,7 @@ class Reflections(Object):
             parent_field="int_sum_var",
         ),
         a_eln=ELNAnnotation(
-            component=ELNComponentEnum.StringEditQuantity,
+            component=ELNComponentEnum.RichTextEditQuantity,
         ),
     )
     int_sum_errors = Quantity(
@@ -1567,7 +1567,7 @@ class Reflections(Object):
             parent_field="int_sum_errors",
         ),
         a_eln=ELNAnnotation(
-            component=ELNComponentEnum.StringEditQuantity,
+            component=ELNComponentEnum.RichTextEditQuantity,
         ),
     )
     lp = Quantity(
@@ -1600,7 +1600,7 @@ class Reflections(Object):
             parent_field="lp",
         ),
         a_eln=ELNAnnotation(
-            component=ELNComponentEnum.StringEditQuantity,
+            component=ELNComponentEnum.RichTextEditQuantity,
         ),
     )
     prf_cc = Quantity(
@@ -1634,7 +1634,7 @@ class Reflections(Object):
             parent_field="prf_cc",
         ),
         a_eln=ELNAnnotation(
-            component=ELNComponentEnum.StringEditQuantity,
+            component=ELNComponentEnum.RichTextEditQuantity,
         ),
     )
     overlaps = Quantity(
@@ -1672,7 +1672,7 @@ class Reflections(Object):
             parent_field="overlaps",
         ),
         a_eln=ELNAnnotation(
-            component=ELNComponentEnum.StringEditQuantity,
+            component=ELNComponentEnum.RichTextEditQuantity,
         ),
     )
     polar_angle = Quantity(
@@ -1709,7 +1709,7 @@ class Reflections(Object):
             parent_field="polar_angle",
         ),
         a_eln=ELNAnnotation(
-            component=ELNComponentEnum.StringEditQuantity,
+            component=ELNComponentEnum.RichTextEditQuantity,
         ),
     )
     azimuthal_angle = Quantity(
@@ -1745,7 +1745,7 @@ class Reflections(Object):
             optionality="optional",
         ),
         a_eln=ELNAnnotation(
-            component=ELNComponentEnum.StringEditQuantity,
+            component=ELNComponentEnum.RichTextEditQuantity,
         ),
     )
 

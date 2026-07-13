@@ -314,7 +314,7 @@ class SampleComponent(Component, basesections.Component):
             optionality="optional",
         ),
         a_eln=ELNAnnotation(
-            component=ELNComponentEnum.StringEditQuantity,
+            component=ELNComponentEnum.RichTextEditQuantity,
         ),
     )
     volume_fraction = Quantity(

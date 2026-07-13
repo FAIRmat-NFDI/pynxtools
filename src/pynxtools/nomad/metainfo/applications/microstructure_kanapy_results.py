@@ -168,7 +168,7 @@ class MicrostructureKanapyResults(Entry):
             optionality="required",
         ),
         a_eln=ELNAnnotation(
-            component=ELNComponentEnum.StringEditQuantity,
+            component=ELNComponentEnum.RichTextEditQuantity,
         ),
     )
     start_time = Quantity(

@@ -253,7 +253,7 @@ class SensorScan(Entry):
             optionality="recommended",
         ),
         a_eln=ELNAnnotation(
-            component=ELNComponentEnum.StringEditQuantity,
+            component=ELNComponentEnum.RichTextEditQuantity,
         ),
     )
     start_time = Quantity(
@@ -737,7 +737,7 @@ class SensorScanInstrumentEnvironmentSensor(Sensor):
             parent_field="run_control",
         ),
         a_eln=ELNAnnotation(
-            component=ELNComponentEnum.StringEditQuantity,
+            component=ELNComponentEnum.RichTextEditQuantity,
         ),
     )
     calibration_time = Quantity(

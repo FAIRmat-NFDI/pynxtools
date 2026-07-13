@@ -750,7 +750,7 @@ class CansasData(Data):
             parent_field="Q",
         ),
         a_eln=ELNAnnotation(
-            component=ELNComponentEnum.StringEditQuantity,
+            component=ELNComponentEnum.RichTextEditQuantity,
         ),
     )
     I = Quantity(
@@ -2360,7 +2360,7 @@ class CansasProcess(Process):
             optionality="optional",
         ),
         a_eln=ELNAnnotation(
-            component=ELNComponentEnum.StringEditQuantity,
+            component=ELNComponentEnum.RichTextEditQuantity,
         ),
     )
     term = Quantity(

@@ -517,7 +517,7 @@ class SnseventDaslogsLog(Log):
             optionality="required",
         ),
         a_eln=ELNAnnotation(
-            component=ELNComponentEnum.StringEditQuantity,
+            component=ELNComponentEnum.RichTextEditQuantity,
         ),
     )
     duration = Quantity(
@@ -684,7 +684,7 @@ class SnseventDaslogsPositioner(Positioner):
             optionality="required",
         ),
         a_eln=ELNAnnotation(
-            component=ELNComponentEnum.StringEditQuantity,
+            component=ELNComponentEnum.RichTextEditQuantity,
         ),
     )
     duration = Quantity(
@@ -866,7 +866,7 @@ class SnseventSnshistotool(Note):
             optionality="required",
         ),
         a_eln=ELNAnnotation(
-            component=ELNComponentEnum.StringEditQuantity,
+            component=ELNComponentEnum.RichTextEditQuantity,
         ),
     )
     version = Quantity(
@@ -1645,7 +1645,7 @@ class SnseventInstrumentDetectorOriginShape(Shape):
             optionality="required",
         ),
         a_eln=ELNAnnotation(
-            component=ELNComponentEnum.StringEditQuantity,
+            component=ELNComponentEnum.RichTextEditQuantity,
         ),
     )
     shape = Quantity(
@@ -2047,7 +2047,7 @@ class SnseventInstrumentApertureOriginShape(Shape):
             optionality="required",
         ),
         a_eln=ELNAnnotation(
-            component=ELNComponentEnum.StringEditQuantity,
+            component=ELNComponentEnum.RichTextEditQuantity,
         ),
     )
     shape = Quantity(
@@ -2300,7 +2300,7 @@ class SnseventInstrumentCrystalOrigin(Geometry):
             optionality="required",
         ),
         a_eln=ELNAnnotation(
-            component=ELNComponentEnum.StringEditQuantity,
+            component=ELNComponentEnum.RichTextEditQuantity,
         ),
     )
 
@@ -2368,7 +2368,7 @@ class SnseventInstrumentCrystalOriginShape(Shape):
             optionality="required",
         ),
         a_eln=ELNAnnotation(
-            component=ELNComponentEnum.StringEditQuantity,
+            component=ELNComponentEnum.RichTextEditQuantity,
         ),
     )
     shape = Quantity(

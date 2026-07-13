@@ -740,7 +740,7 @@ class Sample(Component, basesections.CompositeSystem):
             optionality="optional",
         ),
         a_eln=ELNAnnotation(
-            component=ELNComponentEnum.StringEditQuantity,
+            component=ELNComponentEnum.RichTextEditQuantity,
         ),
     )
     preparation_date = Quantity(

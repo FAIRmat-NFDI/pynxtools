@@ -508,11 +508,13 @@ def _eln_component_for(
     shape: list | None,
     name_type: str | None,
     scalar_items: list[str] | None,
+    field_name: str = "",
 ) -> tuple[str | None, str | None]:
     """Return (eln_component, eln_default) for a generated Quantity.
 
     Returns (None, None) for arrays, variadic quantities, Bytes, and link targets.
     Single-value MEnum fields get their sole enum string as ``eln_default``.
+    String fields whose name contains "description" get RichTextEditQuantity.
     """
     if shape:  # non-empty list → array; None or [] → scalar
         return None, None
@@ -528,6 +530,8 @@ def _eln_component_for(
         default = scalar_items[0] if scalar_items and len(scalar_items) == 1 else None
         return "EnumEditQuantity", default
     if python_type == "str":
+        if "description" in field_name:
+            return "RichTextEditQuantity", None
         return "StringEditQuantity", None
     # Numeric: np.float64, np.int64, np.complex128, int, float
     return "NumberEditQuantity", None
@@ -580,7 +584,7 @@ def _build_quantity_from_node(
         python_type = nx_type_to_source(node.dtype)
 
     eln_component, eln_default = _eln_component_for(
-        python_type, shape, node.name_type, scalar_items
+        python_type, shape, node.name_type, scalar_items, field_name=node.name or ""
     )
 
     return QuantityContext(
