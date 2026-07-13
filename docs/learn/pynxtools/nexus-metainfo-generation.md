@@ -61,7 +61,7 @@ generator. This gives:
 
 - **Inheritance resolution**: NexusNode follows the `extends` chain and merges attributes
   from parent classes. The generator never needs to know about inheritance.
-- **Stable surface**: if the NXDL XML format changes, only `nexus_tree.py` needs to
+- **Stable surface**: If the NXDL XML format changes, only `nexus_tree.py` needs to
   change; the generator and all generated files stay the same.
 - **Testability**: unit tests target `NexusNode` properties, not generator output.
 
@@ -151,7 +151,7 @@ Has no `unit`, `long_name`, `interpretation`, or plotting-hint attributes.
 
 ## Annotation models
 
-Six `AnnotationModel` subclasses (one per NXDL node kind) carry all NeXus-specific metadata on generated sections and quantities . Each annotation is queryable
+Six `AnnotationModel` subclasses (one per NXDL node kind) carry all NeXus-specific metadata on generated sections and quantities. Each annotation is queryable
 at runtime via `m_def.m_get_annotations("nexus_field")` etc.
 
 ### `NeXusDefinition`
@@ -242,7 +242,7 @@ class NeXusLink(AnnotationModel):
 
 Attached to each `SubSection` representing one alternative in a NXDL `<choice>`
 block. A choice allows exactly one NX class to occupy a named slot. One
-SubSection is generated per alternative; all share the same `group_name`.
+`SubSection` is generated per alternative; all share the same `group_name`.
 
 Naming: `{choice_name}_{class_suffix}` — e.g. `pixel_shape_off_geometry` and
 `pixel_shape_cylindrical_geometry` for `<choice name="pixel_shape">`.
@@ -318,7 +318,7 @@ class Xps(Entry):
     # with XPS-specific optionality
 ```
 
-- `Xps` **is** a specialized kind of Entry, not a wrapper around an entry.
+- `Xps` **is** a specialized kind of `Entry`, not a wrapper around an entry.
 - Parser logic is simpler: directly instantiate `Xps` when an HDF5 file's `NX_class` attribute says `"NXxps"`.
 - Inheritance chain is clear: `Object → Entry → Xps`.
 - 1:1 mapping of NXentry to NOMAD entry is preserved.
