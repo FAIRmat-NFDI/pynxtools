@@ -451,7 +451,7 @@ class EntryThumbnail(Note):
         super().normalize(archive, logger)
 ```
 
-### Named concepts vs. cross-file SubSections
+### Named concepts vs. cross-file `SubSections`
 
 A named concept class is generated only when the group defines **its own quantities** that
 differ from the generic class: changed optionality, extra fields, or different
@@ -467,7 +467,7 @@ class).
 | Class defined in **another file** (cross-file reference) | On the `SubSection` |
 
 This means: named concept classes fully self-describe their occurrence context.
-Cross-file SubSections carry the occurrence context because the target class is generic
+Cross-file `SubSections` carry the occurrence context because the target class is generic
 and may appear in multiple parent contexts.
 
 ---
@@ -601,7 +601,7 @@ print(len(pkg_apps.section_definitions), "application sections")  # 345 includin
 ```
 
 During package assembly, `__init_metainfo__()` resolves all `SubSection.section_def`
-string FQNs into live class references.
+string fully qualified names (FQNs) into live class references.
 ---
 
 ## Inheritance chain
@@ -624,7 +624,7 @@ name collisions when the generated NeXus class and the NOMAD base share the same
 name (e.g. both `Component`).
 
 The secondary NOMAD base is only added when the NeXus `extends` chain does not already
-provide it;s preventing duplicate entries in the MRO.
+provide it; thus preventing duplicate entries in the method resolution order (MRO).
 
 | NXDL class | Generated class signature |
 |-----------|--------------------------|

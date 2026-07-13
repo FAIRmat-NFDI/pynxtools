@@ -74,7 +74,7 @@ class NexusApplicationsEntryPoint(SchemaPackageEntryPoint):
 nexus_base_classes = NexusBaseClassesEntryPoint(
     name="NeXus Base Classes",
     description=(
-        "Python-native NOMAD metainfo Section classes for all NeXus base classes, "
+        "Python-native NOMAD Metainfo Section classes for all NeXus base classes, "
         "generated from the NXDL definitions bundled with pynxtools."
     ),
 )
@@ -82,7 +82,7 @@ nexus_base_classes = NexusBaseClassesEntryPoint(
 nexus_applications = NexusApplicationsEntryPoint(
     name="NeXus Application Definitions",
     description=(
-        "Python-native NOMAD metainfo Section classes for all NeXus application "
+        "Python-native NOMAD Metainfo Section classes for all NeXus application "
         "and contributed definitions, generated from the NXDL definitions bundled "
         "with pynxtools."
     ),

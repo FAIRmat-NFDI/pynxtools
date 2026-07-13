@@ -834,10 +834,14 @@ def _build_named_concept(
     whole recursion to avoid name collisions between nested concepts.
 
     ``naming_base`` is the prefix used to derive nested concept names from
-    (defaults to ``concept_class_name``). It differs from
+    (defaults to ``concept_class_name``). 
+    
+    It differs from
     ``concept_class_name`` only when this concept itself was re-prefixed to
     avoid circular inheritance (e.g. ``EmEmMeasurement(EmMeasurement)``):
-    nested concepts are named from the un-doubled ``EmMeasurement`` (giving
+    
+    
+    Nested concepts are named from the un-doubled ``EmMeasurement`` (giving
     ``EmMeasurementInstrument``, not ``EmEmMeasurementInstrument``), since
     they have no analogous collision with their own base class.
     """
