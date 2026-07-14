@@ -188,9 +188,9 @@ class NeXusGroup(AnnotationModel):
 
 ### `NeXusField`
 
-Attached to every `Quantity` derived from a NXDL `<field>` element. Fields
-carry typed data arrays and may have unit categories, interpretation hints,
-and long names.
+Attached to every `Quantity` derived from a NXDL `<field>` element. Fields define the
+type and shape of associated data, which may be scalar or array-valued. Fields may have
+unit categories, interpretation hints, and long names.
 
 ```python
 class NeXusField(AnnotationModel):
@@ -284,16 +284,16 @@ src/pynxtools/nomad/
     metainfo/
         __init__.py             # public API: build_base_classes_package(), build_applications_package()
         _package.py             # assembles NOMAD Packages
-        base_classes/           # 142 generated base class files
+        base_classes/           # generated base class files
             __init__.py
             entry.py            # Entry(Object, basesections.Measurement)
             sample.py           # Sample(Object, basesections.CompositeSystem)
             detector.py
             ...
-        applications/           # 85 generated application definition files
+        applications/           # generated application definition files
             __init__.py
-            arpes.py            # Arpes(Entry) — application specialization of Entry
-            xps.py              # Xps(Entry) — application specialization of Entry
+            arpes.py            # Arpes(Entry), application specialization of Entry
+            xps.py              # Xps(Entry), application specialization of Entry
             ...
 ```
 
@@ -378,7 +378,7 @@ class Entry(Object, basesections.Measurement):
     )
 
     # Named concept SubSection: a_nexus_group lives on EntryThumbnail.m_def.
-    # No description here — EntryThumbnail's own docstring already carries it.
+    # No description here, EntryThumbnail's own docstring already carries it.
     thumbnail = SubSection(
         section_def="pynxtools.nomad.metainfo.base_classes.entry.EntryThumbnail",
         repeats=False,
@@ -474,10 +474,11 @@ and may appear in multiple parent contexts.
 The `repeats` flag on a generated `SubSection` is derived from the NXDL `@maxOccurs`
 attribute (via `NexusGroup.occurrence_limits[1]`):
 
-- `repeats=True` if more than one instance is structurally allowed — i.e. the group is
-  variadic (`name_type` is `"any"` or `"partial"`) **and** `maxOccurs` is absent or
-  greater than 1, **or** the group is fixed-name but NXDL explicitly sets `maxOccurs > 1`.
-- `repeats=False` otherwise — including the case where a variadic group has
+- `repeats=True` if more than one instance is structurally allowed. This is the case if
+  the group is variadic (`name_type` is `"any"` or `"partial"`) **and** `maxOccurs`
+  is absent or greater than 1, **or** the group is fixed-name but NXDL explicitly sets
+  `maxOccurs > 1`.
+- `repeats=False` otherwise, including the case where a variadic group has
   `maxOccurs=1` (meaning exactly one instance with a user-chosen name is allowed but
   not more).
 
@@ -602,7 +603,7 @@ pynx nomad generate-metainfo --all --output-dir ../nomad-measurements/nexus/meta
 from pynxtools.nomad.metainfo import build_base_classes_package
 
 pkg_base = build_base_classes_package()
-print(len(pkg_base.section_definitions), "base sections")  # 327 including named concepts
+print(len(pkg_base.section_definitions), "base sections")
 ```
 
 ### Applications package
@@ -611,7 +612,7 @@ print(len(pkg_base.section_definitions), "base sections")  # 327 including named
 from pynxtools.nomad.metainfo import build_applications_package
 
 pkg_apps = build_applications_package()
-print(len(pkg_apps.section_definitions), "application sections")  # 345 including named concepts
+print(len(pkg_apps.section_definitions), "application sections")
 ```
 
 During package assembly, `__init_metainfo__()` resolves all `SubSection.section_def`
@@ -754,7 +755,7 @@ The `a_nexus_group(name=...)` annotation, separately, faithfully records what
 NXDL actually declares: `None` only for a genuinely anonymous group (no
 `name=` attribute at all), the literal NXDL name otherwise — so `name=None`
 for any `NXuser`, but `name="BIAS_SWEEP"` for the explicitly-named variadic
-group above, even though both get lowercased the same way for the Python
+group above, even though both get lower-cased the same way for the Python
 attribute name.
 
 **Exceptions — groups that get a `_group` suffix instead:**

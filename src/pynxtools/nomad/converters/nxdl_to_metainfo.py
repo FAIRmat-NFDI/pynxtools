@@ -72,6 +72,10 @@ _DEFAULT_APPLICATIONS_OUTPUT_DIR = _DEFAULT_OUTPUT_DIR / "applications"
 # When the schema moves to nomad-measurements, change this constant and regenerate.
 _METAINFO_PACKAGE_ROOT = "pynxtools.nomad.metainfo"
 
+# Indentation of description= string continuations in generated files.
+# Must match the Quantity/SubSection argument indent in nexus.py.j2.
+_DESCRIPTION_INDENT = 12
+
 _jinja_env = jinja2.Environment(
     loader=jinja2.FileSystemLoader(str(_TEMPLATE_DIR)),
     trim_blocks=True,
@@ -131,13 +135,13 @@ class SubSectionContext:
 class LinkContext:
     """A NXDL <link> element — emitted as a Quantity with NeXusLink.
 
-    The Quantity's type/dimensionality/unit/shape are taken from the field or
-    attribute the link's ``target`` path resolves to (via
-    ``_resolve_link_quantity``), so e.g. a link to a NX_FLOAT field with unit
-    category NX_TIME_OF_FLIGHT becomes ``Quantity(type=np.float64, unit="s")``,
-    not a bare ``type=str``. When the target cannot be resolved within the
-    application's tree, ``target_quantity`` is None and the link falls back to
-    ``type=str``.
+    Type, dimensionality, unit, and shape come from the field or attribute the
+    link's ``target`` path resolves to (via ``_resolve_link_quantity``).
+    For example, a link to an NX_FLOAT field with unit category NX_TIME_OF_FLIGHT
+    becomes ``Quantity(type=np.float64, unit="s")``.
+
+    If the target cannot be resolved, ``target_quantity`` is None and the
+    Quantity falls back to ``type=str``.
     """
 
     python_name: str  # nxdl_to_quantity_name(node.name)
@@ -161,19 +165,12 @@ class ChoiceSubSectionContext:
 
 @dataclass
 class NamedConceptContext:
-    """Section class for a group occurrence that defines its own quantities or children.
+    """Section class generated for a group occurrence with its own own quantities or children.
 
-    Generated when the NXDL group element specifies fields/attributes that
-    differ from the generic class (changed optionality, extra fields, different
-    type/units/enumeration) OR has sub-group children with nx_class not present
-    in the base NXDL class (application-specific nested groups, e.g.
-    NXelectronanalyzer inside NXinstrument in NXmpes).
-
-    Inherits from the specific generic class (e.g. ``Note`` for NXnote) so that
-    all base class quantities are available. The import is wrapped in
-    ``try/except ImportError`` in the generated file to handle the rare case of
-    circular NXDL group references. The SubSection pointing to this class
-    carries a_nexus_group; this class carries only the differing members.
+    Created when the NXDL group element specifies fields or attributes that
+    differ from the parent class (changed optionality, extra fields, different
+    type/units/enumeration/description), or when it has sub-group children whose
+    ``nx_class`` is not present in the base NXDL class.
     """
 
     class_name: str  # "EntryThumbnail"
@@ -391,14 +388,16 @@ def _description_string(node) -> str | None:
         return None
     collapsed = " ".join(textwrap.dedent(raw).split())
     escaped = collapsed.replace("\\", "\\\\").replace('"', '\\"')
-    # Wrap to (79 - 12 col indent) = 67 chars
     wrapped = textwrap.fill(
-        escaped, width=67, break_long_words=False, break_on_hyphens=False
+        escaped,
+        width=79 - _DESCRIPTION_INDENT,
+        break_long_words=False,
+        break_on_hyphens=False,
     )
     lines = wrapped.split("\n")
     if len(lines) == 1:
         return f'"{escaped}"'
-    pad = " " * 12
+    pad = " " * _DESCRIPTION_INDENT
     parts = [f'"{line} "' for line in lines[:-1]] + [f'"{lines[-1]}"']
     return ("\n" + pad).join(parts)
 
@@ -411,22 +410,10 @@ def _description_string(node) -> str | None:
 def _group_has_explicit_name(name: str, nx_class: str) -> bool:
     """Return True if a NXDL ``<group>`` had an explicit ``name=`` attribute.
 
-    Only used to decide what to record in the ``a_nexus_group(name=...)``
-    annotation literal — *not* for Python attribute naming, which always
-    uses ``node.name`` regardless (see ``_group_python_name``). The
-    annotation should faithfully say "NXDL declares no name here" (``None``)
-    for a genuinely anonymous group (e.g. a bare ``<group
-    type="NXpid_controller"/>``), as opposed to one NXDL does name even
-    though instances may use a different actual name (e.g. ``name=
-    "BIAS_SWEEP"`` with ``nameType="any"``).
+    Only used to decide the ``a_nexus_group(name=...)`` annotation,
+    not for Python attribute naming (which always uses ``node.name``, see
+    ``_group_python_name``).
 
-    ``NexusNode.add_node_from()`` (in ``nexus_tree.py``) auto-derives a
-    group's ``name`` from ``strip_nx_prefix(nx_class)`` — the uppercase
-    class stem, e.g. ``"PID_CONTROLLER"`` for ``NXpid_controller`` — only
-    when no ``name`` attribute was present in the XML. So a group whose
-    resolved ``name`` matches that derived stem exactly had no explicit
-    name; mirrors that derivation rather than re-implementing a second
-    heuristic, so it can't drift out of sync with it.
     """
     return name != strip_nx_prefix(nx_class)
 
@@ -434,21 +421,20 @@ def _group_has_explicit_name(name: str, nx_class: str) -> bool:
 def _concept_class_name(parent_class_name: str, node: NXTreeGroup) -> str:
     """Return the Python class name for a named concept class.
 
+    The name is ``{ParentClassName}{Suffix}``.
+
     ``node.name`` is always populated by ``NexusNode`` — either the NXDL's
     explicit ``name=`` attribute, or (when absent) the NX class stem in
-    uppercase, e.g. ``"USER"`` for ``NXuser``. So variadic groups
-    (name_type="any") and fixed-name groups (name_type="specified") use the
-    same CamelCase-from-name logic below: e.g. ``"USER"`` → ``User`` (same
-    result as CamelCasing the NX class directly, since that's exactly what
-    ``name`` already is when no explicit name was given), and an explicitly
-    named variadic group like ``name="BIAS_SWEEP"`` on a ``nameType="any"``
-    group → ``BiasSweep`` ("any" only means instances may use any actual
-    name, not that NXDL gives no template name for the slot).
+    uppercase (e.g. ``"USER"`` for ``NXuser``). Both variadic and fixed-name
+    groups use the same CamelCase-from-name logic. An explicitly-named variadic
+    group like ``name="BIAS_SWEEP"`` on a ``nameType="any"`` group becomes
+    suffix ``BiasSweep``.
 
-    For partial groups (name_type="partial") the NXDL name follows the
-    convention ``fixedPrefixVARIABLE_SUFFIX`` — the upper-case part marks the
-    user-chosen portion. Only the lower-case prefix is meaningful, e.g.
-    ``peakPEAK`` → ``"peak"`` → ``FitPeak``.
+    For partial groups the NXDL name follows the convention
+    ``lowercasePrefixUPPERCASE_MARKER``. The full suffix keeps the uppercase
+    marker intact. For example, inside ``NXfit`` (parent class ``Fit``), the
+    partial group ``peakPEAK`` produces suffix ``PeakPEAK`` and concept class
+    ``FitPeakPEAK``.
     """
     return _concept_class_name_from_parts(
         parent_class_name, node.name, node.name_type or "specified"
@@ -458,17 +444,16 @@ def _concept_class_name(parent_class_name: str, node: NXTreeGroup) -> str:
 def _concept_class_name_from_parts(
     parent_class_name: str, name: str, name_type: str
 ) -> str:
-    """Compute concept class name from explicit name/name_type parts.
+    """Compute concept class name from explicit name/name_type strings.
 
-    Used when the source is a raw inheritance XML element (via ``group_naming_at``)
-    rather than a full NexusGroup node.
+    A leading redundant parent prefix is stripped from the suffix to avoid
+    doubling. For example, ``xps_coordinate_system`` inside ``Xps`` produces
+    suffix ``XpsCoordinateSystem``, stripped to ``CoordinateSystem``, giving
+    final name ``XpsCoordinateSystem``.
 
-    Strips a leading redundant parent prefix from the suffix when the NXDL name
-    itself starts with the parent prefix (e.g. ``xps_coordinate_system`` inside
-    ``Xps`` gives suffix ``XpsCoordinateSystem`` → stripped to ``CoordinateSystem``
-    → final name ``XpsCoordinateSystem``).  The circular-inheritance check in
-    ``build_context`` re-adds the prefix when the resulting concept name would equal
-    the base class name (e.g. ``ApmApmMeasurement`` is intentional).
+    The circular-inheritance check in ``build_context`` re-adds the prefix
+    when the result would equal the base class name, e.g. ``ApmApmMeasurement``
+    is intentional and not a bug.
     """
     if name_type == "partial":
         # Partial names are `lowercasePrefix` + `UPPERCASE_MARKER` (e.g.
@@ -616,17 +601,15 @@ def _build_subsection_from_node(
     section_fqn: str,
     is_named_concept: bool = False,
 ) -> SubSectionContext:
-    """Build a SubSectionContext from a NexusGroup (group) node.
+    """Build a SubSectionContext from a NexusGroup node.
 
-    ``section_fqn`` is the fully-qualified string proxy that NOMAD resolves at
-    __init_metainfo__() time. For groups with no own quantities this points to
-    the generic class (e.g. "...user.User") and ``is_named_concept=False``.
-    For groups with own quantities it points to the named concept class defined
-    in this same file and ``is_named_concept=True``.
+    ``section_fqn`` is resolved lazily by NOMAD at ``__init_metainfo__()``
+    time. Where ``a_nexus_group`` is placed depends on ``is_named_concept``:
 
-    When ``is_named_concept=True`` the concept class carries a_nexus_group on
-    its own m_def and the SubSection is rendered clean (no annotation).
-    When ``is_named_concept=False`` a_nexus_group is rendered on the SubSection.
+    - ``False``: SubSection references a generic class (e.g. ``"...user.User"``);
+      ``a_nexus_group`` is on the SubSection.
+    - ``True``: SubSection references a named concept class in this same file;
+      ``a_nexus_group`` is on the concept's ``m_def``, SubSection is clean.
     """
     nx_name_type = node.name_type or "specified"
 
@@ -641,28 +624,22 @@ def _build_subsection_from_node(
     variable = nx_name_type in ("any", "partial")
 
     if nx_name_type == "any":
-        # node.name is always populated by NexusNode — either the NXDL's
-        # explicit name= attribute (e.g. "BIAS_SWEEP") or, when absent, the
-        # NX class stem in uppercase (e.g. "USER" for any NXuser). Either
-        # way it's the right template name for this slot; "any" only means
-        # instances may use a different actual HDF5 name. Lowercase it for
-        # a pythonic attribute name (e.g. "bias_sweep"/"user") — unlike
-        # "specified" names, NXDL writes these in uppercase by convention.
+        # NXDL writes variadic group names in uppercase (e.g. "BIAS_SWEEP",
+        # "USER"). Lowercase for a pythonic attribute name.
         python_name = nxdl_to_subsection_name(node.name.lower())
     elif nx_name_type == "partial":
-        # Partial groups: use the full NXDL name as the python attribute name
-        # (e.g. "peakPEAK") so the partial-group nature is visible in code and
-        # the name is consistent with the concept class name (FitPeakPEAK).
+        # Keep the full NXDL name (e.g. "peakPEAK" from NXfit) so the
+        # partial-group marker is visible in code and matches the concept
+        # class name (e.g. FitPeakPEAK).
         python_name = nxdl_to_subsection_name(node.name)
     else:
         python_name = nxdl_to_subsection_name(node.name)
 
-    # The annotation literal records what NXDL actually declares: None for a
-    # genuinely anonymous group (no name= attribute at all — node.name was
-    # auto-derived from the class stem), the literal name otherwise — even
-    # for "any" groups that do have an explicit template name (e.g.
-    # "BIAS_SWEEP"). This is independent of python_name above, which always
-    # uses node.name regardless.
+    # Record what NXDL actually declares: None for anonymous groups (no
+    # name= attribute), the literal name otherwise. An "any" group with an
+    # explicit name= (e.g. "BIAS_SWEEP") is not anonymous and gets its name.
+    # This is independent of python_name above, which always
+    # uses node.name regardless
     if nx_name_type == "any" and not _group_has_explicit_name(node.name, node.nx_class):
         nx_name_literal = "None"
     else:
@@ -687,7 +664,7 @@ _base_group_nx_classes_cache: dict[str, frozenset[str]] = {}
 
 
 def _parent_generates_concept(child: NXTreeGroup, parent_app_file: str) -> bool:
-    """Return True if the parent application defines a named concept for ``child``.
+    """Return True if the parent definition defines a named concept for ``child``.
 
     Uses ``child.children_at_definition(parent_app_file)`` — the NexusNode API
     that selects children defined at a specific NXDL level without re-parsing.
@@ -834,47 +811,36 @@ def _build_named_concept(
     seen_concept: set[str] | None = None,
     naming_base: str | None = None,
 ) -> tuple[NamedConceptContext, list[NamedConceptContext]]:
-    """Build a NamedConceptContext for a group occurrence.
+    """Build a NamedConceptContext for a named group occurrence.
 
-    Collects the fields/attributes defined *inside* the group XML element
-    (one level deep) as own Quantities of the concept class. The returned
-    context's ``quantities``/``links``/``subsections`` are empty when the group
-    occurrence adds nothing beyond what the generic class already provides —
-    callers use that to decide whether a named concept class is needed at all.
+    Reads fields and attributes defined one level inside the group element
+    and packages them as Quantities of the concept class.
 
-    ``module_name``/``category`` identify the file the concept will be rendered
-    into (all named concepts for one NXDL class share a single generated file).
-    When given, child sub-groups that introduce a new, specifically-named slot
-    not present on the generic class (e.g. ``analyser`` inside NXarpes's
-    ``instrument``, where the generic ``NXinstrument`` only has a variadic
-    ``detector``) are recursively built via this same function. If such a child
-    itself adds quantities/links/subsections, its concept is returned in the
-    second element of the result tuple and must be added to the file's
-    named-concept list by the caller. ``seen_concept`` is shared across the
-    whole recursion to avoid name collisions between nested concepts.
+    Sub-groups that introduce new concepts absent from the parent class are
+    processed recursively (e.g. ``analyser`` inside NXarpes's ``instrument``).
+    Their concepts are returned in the second tuple element; the caller adds
+    them to the file's named-concept list.
 
-    ``naming_base`` is the prefix used to derive nested concept names from
-    (defaults to ``concept_class_name``).
+    Returns empty ``quantities`` / ``links`` / ``subsections`` if nothing differs
+    from the parent class — callers skip generating a class in that case.
 
-    It differs from
-    ``concept_class_name`` only when this concept itself was re-prefixed to
-    avoid circular inheritance (e.g. ``EmEmMeasurement(EmMeasurement)``):
+    ``module_name`` / ``category`` name the output file — all named concepts
+    for one NXDL class share a single generated file. ``seen_concept`` is
+    shared across the recursion to prevent name collisions.
 
+    ``naming_base`` is the prefix for nested concept names. It matches
+    ``concept_class_name`` in most cases. The exception: when a class was
+    re-prefixed for circular inheritance (e.g. ``EmEmMeasurement``), its
+    ``naming_base`` is the un-doubled form ``EmMeasurement``, so nested
+    concepts do not double-prefix (``EmMeasurementInstrument``, not
+    ``EmEmMeasurementInstrument``).
 
-    Nested concepts are named from the un-doubled ``EmMeasurement`` (giving
-    ``EmMeasurementInstrument``, not ``EmEmMeasurementInstrument``), since
-    they have no analogous collision with their own base class.
+    **Symmetric inheritance rule.**
+    The higher-level concept keeps the unqualified name.
 
-    **Conflict resolution (symmetric inheritance rule):**
-    The concept at a higher level in the NeXus inheritance chain keeps the
-    unqualified Python name; the lower-level (more specific) concept is renamed.
-
-    - Ancestor GROUP vs. own FIELD/ATTRIBUTE: the field is renamed to
-      ``<name>_quantity`` (``field_conflicts_with_group``).
-    - Ancestor FIELD/ATTRIBUTE vs. own GROUP (sub-group of this concept): the
-      group's SubSection is renamed to ``<name>_group``, leaving the ancestor
-      field unchanged. The rename is local to this named concept — it does not
-      propagate to the ancestor class's generated Python file.
+    - Own field vs. ancestor GROUP: field renamed to ``<name>_quantity``.
+    - Own GROUP vs. ancestor field: SubSection renamed to ``<name>_group``,
+      local to this concept only.
     """
     _seen_concept = seen_concept if seen_concept is not None else set()
     _naming_base = naming_base if naming_base is not None else concept_class_name
@@ -906,7 +872,7 @@ def _build_named_concept(
     )
 
     # Own quantities: fields and attributes defined inside the group in NXDL
-    # that genuinely differ from the generic class (new field, different
+    # that genuinely differ from the parent class (new field, different
     # optionality, different type/units/enumeration).
     own_quantities: list[QuantityContext] = []
     own_links: list[LinkContext] = []
@@ -983,9 +949,9 @@ def _build_named_concept(
                     own_quantities.append(attr_qty)
 
     # Application-specific sub-groups: group children whose Python SubSection
-    # name is NOT already provided by the generic class (a genuinely new,
+    # name is NOT already provided by the parent class (a genuinely new,
     # specifically-named slot — e.g. "analyser" inside NXarpes's "instrument",
-    # where generic NXinstrument only has a variadic "detector") AND not already
+    # where parent NXinstrument only has a variadic "detector") AND not already
     # declared by the parent concept class (if one exists, e.g. MpesInstrument
     # for XpsInstrument).
     base_group_python_names = _base_class_group_python_names(node.nx_class)
@@ -1035,9 +1001,9 @@ def _build_named_concept(
             continue
 
         # New, specifically-named sub-group: recursively check whether it adds
-        # quantities/links/subsections of its own beyond its generic class —
+        # quantities/links/subsections of its own beyond its parent class —
         # if so it gets its own nested named concept; otherwise it just gets a
-        # SubSection pointing at the generic class with this specific name (or,
+        # SubSection pointing at the parent class with this specific name (or,
         # for a collision, nothing — the inherited SubSection already applies).
         sub_section: SubSectionContext | None = None
         if module_name is not None and category is not None:
@@ -1163,8 +1129,8 @@ def _all_ancestor_member_names(nx_class: str) -> tuple[frozenset[str], frozenset
                 if c.nxdl_base != primary:
                     continue
                 if c.nx_type == "group":
-                    nx_nt = c.name_type or "specified"
-                    if nx_nt == "any":
+                    nx_name_type = c.name_type or "specified"
+                    if nx_name_type == "any":
                         sub_names.add(nxdl_to_subsection_name(c.name.lower()))
                     else:
                         sub_names.add(nxdl_to_subsection_name(c.name))
