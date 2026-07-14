@@ -1371,12 +1371,13 @@ def build_context(nx_name: str) -> dict:
     # with own quantities. Imports are wrapped in try/except in the template.
     concept_imports: list[tuple[str, str]] = []
 
-    # Collect all SubSection python_names from the full ancestor chain to detect
-    # Quantity-vs-SubSection type conflicts. When a child Quantity has the same
-    # python_name as an ancestor SubSection, the Quantity is renamed to _quantity
-    # (ancestor concept wins). The reverse (child SubSection vs ancestor Quantity)
-    # is handled locally in named concepts: the group gets a _group suffix there.
+    # Collect ancestor member names for two-direction conflict detection:
+    # - parent_sub_names: ancestor SubSection names → child Quantity renamed _quantity
+    # - parent_qty_names: ancestor Quantity names → child SubSection renamed _group
+    # (Symmetric inheritance rule: whichever concept is higher in the NeXus chain
+    # keeps the unqualified name; the lower-level concept is renamed.)
     parent_sub_names: frozenset[str] = frozenset()
+    parent_qty_names: frozenset[str] = frozenset()
     if base_is_generated:
         if _unwrapped_children is not None:
             # Python base is Entry (from NXentry unwrapping); use NXentry's ancestor
@@ -1389,7 +1390,9 @@ def build_context(nx_name: str) -> dict:
                 if root_node.inheritance
                 else "NXobject"
             )
-        _, parent_sub_names = _all_ancestor_member_names(_conflict_ancestor)
+        parent_qty_names, parent_sub_names = _all_ancestor_member_names(
+            _conflict_ancestor
+        )
 
     # For unwrapped application definitions, children come from the NXentry group;
     # for all others, from root_node directly.
@@ -1558,6 +1561,10 @@ def build_context(nx_name: str) -> dict:
                 # class via string FQN.
                 target_fqn = _section_fqn(child.nx_class)
                 sub_section = _build_subsection_from_node(child, section_fqn=target_fqn)
+            # Symmetric inheritance rule: if this group conflicts with an ancestor
+            # Quantity of the same name, the group gets _group suffix here.
+            if sub_section.python_name in parent_qty_names:
+                sub_section.python_name = f"{sub_section.python_name}_group"
             if sub_section.python_name in seen_subsections:
                 # Two named groups with the same subsection name — disambiguate.
                 if not child.variadic:

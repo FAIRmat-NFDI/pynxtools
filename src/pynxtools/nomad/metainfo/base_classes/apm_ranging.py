@@ -75,7 +75,7 @@ class ApmRanging(Process):
         ),
     )
 
-    program = SubSection(
+    program_group = SubSection(
         section_def="pynxtools.nomad.metainfo.base_classes.program.Program",
         repeats=True,
         variable=True,
