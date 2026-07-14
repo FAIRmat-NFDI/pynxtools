@@ -378,12 +378,10 @@ class Entry(Object, basesections.Measurement):
     )
 
     # Named concept SubSection: a_nexus_group lives on EntryThumbnail.m_def.
+    # No description here — EntryThumbnail's own docstring already carries it.
     thumbnail = SubSection(
         section_def="pynxtools.nomad.metainfo.base_classes.entry.EntryThumbnail",
         repeats=False,
-        description=(
-            ...
-        ),
     )
 
     start_time = Quantity(
@@ -454,10 +452,11 @@ class EntryThumbnail(Note):
 ### Named concepts vs. cross-file `SubSections`
 
 A named concept class is generated only when the group defines **its own quantities** that
-differ from the generic class: changed optionality, extra fields, or different
-type/units/enumeration. Groups that exist purely for occurrence context (e.g. a
-`backgroundBACKGROUND` group with no additional fields) point their `SubSection` directly
-at the generic class; no named concept class is generated. This rule also prevents
+differ from the generic class: changed optionality, extra fields, different
+type/units/enumeration, or a description that diverges from the base class. Groups that
+exist purely for occurrence context (e.g. a `backgroundBACKGROUND` group with no
+additional fields and the same documentation as the base) point their `SubSection`
+directly at the generic class; no named concept class is generated. This rule also prevents
 circular imports since every class transitively extends `Object` (the generated `NXobject`
 class).
 
@@ -469,6 +468,21 @@ class).
 This means: named concept classes fully self-describe their occurrence context.
 Cross-file `SubSections` carry the occurrence context because the target class is generic
 and may appear in multiple parent contexts.
+
+### `repeats` derivation
+
+The `repeats` flag on a generated `SubSection` is derived from the NXDL `@maxOccurs`
+attribute (via `NexusGroup.occurrence_limits[1]`):
+
+- `repeats=True` if more than one instance is structurally allowed — i.e. the group is
+  variadic (`name_type` is `"any"` or `"partial"`) **and** `maxOccurs` is absent or
+  greater than 1, **or** the group is fixed-name but NXDL explicitly sets `maxOccurs > 1`.
+- `repeats=False` otherwise — including the case where a variadic group has
+  `maxOccurs=1` (meaning exactly one instance with a user-chosen name is allowed but
+  not more).
+
+`None` in `occurrence_limits` means the attribute was absent from the NXDL, which is
+treated as unbounded.
 
 ---
 
@@ -709,9 +723,12 @@ been renamed to `names` upstream, removing the collision at the source, but
 the shape check stays as a general safeguard for any other such field.
 
 Separately, when a field name collides with a same-class or ancestor
-`SubSection` name, the field always gets `_quantity` regardless of shape
-(groups always win the unqualified name — *that* collision genuinely can't
-be resolved by overriding, see [Subsection names](#subsection-names) below).
+`SubSection` name, the field always gets `_quantity` regardless of shape.
+This collision can't be resolved by overriding — `SubSection` and `Quantity`
+are different NOMAD property kinds, and NOMAD rejects the combination outright.
+See [Subsection names](#subsection-names) below for the full naming rules,
+including the symmetric case where a named concept group conflicts with an
+ancestor field.
 
 ### Subsection names
 
@@ -740,22 +757,29 @@ for any `NXuser`, but `name="BIAS_SWEEP"` for the explicitly-named variadic
 group above, even though both get lowercased the same way for the Python
 attribute name.
 
-**One exception to "groups always win the unqualified name"**: a group
-literally named `name`, `datetime`, `lab_id`, or `description` gets a
-`_group` suffix instead (e.g. `name` → `name_group`). These four names take
-precedence over any NXDL group because every single generated class — without
-exception — inherits them first: `Object`, the universal root all generated
-classes derive from, itself extends `basesections.BaseSection`, which defines
-exactly these four quantities. By the time a NeXus-specific group is added,
-the slot is already occupied by a `Quantity`, not optionally or
-class-specifically but structurally, for every class in the hierarchy. A
-`SubSection` can never override a same-named `Quantity` the way a *field* can
-(see [Quantity names](#quantity-names) above) — they're different property
-*kinds*, which NOMAD rejects outright with `MetainfoError: Cannot inherit
-from different property types.` So while any NXDL *field* may safely reuse
-one of these four names, a *group* using one of them always needs the
-suffix — there is no field/group asymmetry here other than what NOMAD's
-override mechanism itself allows.
+**Exceptions — groups that get a `_group` suffix instead:**
+
+**1. NOMAD BaseSection reserved names.**
+A group literally named `name`, `datetime`, `lab_id`, or `description` always gets a
+`_group` suffix (e.g. `name` → `name_group`). These four names are occupied structurally,
+not optionally: `Object`, the universal root all generated classes derive from, itself
+extends `basesections.BaseSection`, which defines exactly these four `Quantity` properties.
+A `SubSection` can never override a same-named `Quantity` — they're different NOMAD
+property *kinds*, which NOMAD rejects outright with `MetainfoError: Cannot inherit from
+different property types.` So while any NXDL *field* may safely reuse one of these four
+names (NOMAD allows same-kind quantity overriding), a *group* using one of them always
+needs the suffix.
+
+**2. Named concept groups that conflict with an ancestor field (symmetric inheritance
+rule).**
+When a named concept class defines a group whose name is already used as a field
+(`Quantity`) on an ancestor class in the NeXus inheritance chain, the *group* gets a
+`_group` suffix locally in that named concept class (e.g. `program_group` for a `program`
+GROUP in a class that extends `NXprocess`, which already defines a `program` field). The
+ancestor class is not modified — it keeps the unqualified name `program`. This is the
+symmetric counterpart to the field rename rule: whichever concept is higher in the NeXus
+inheritance chain keeps the unqualified name; the lower-level (more specific) concept is
+renamed. The suffix is local to the named concept and does not propagate.
 
 ### Field-attribute quantities
 
