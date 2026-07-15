@@ -117,6 +117,9 @@
                     <item value="data"/>
                 </enumeration>
             </attribute>
+            <attribute name="AXISNAME_indices" type="NX_UINT" nameType="partial">
+                <doc>A dummy entry to test required variadic attribute resolution.</doc>
+            </attribute>
         </group>
         <group type="NXnote" name="required_group">
             <doc>This is a required yet empty group.</doc>

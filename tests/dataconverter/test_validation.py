@@ -202,6 +202,9 @@ TEMPLATE["required"]["/ENTRY[my_entry]/NXODD_name[nxodd_name]/type"] = "2nd type
 TEMPLATE["required"]["/ENTRY[my_entry]/NXODD_name[nxodd_name]/type/@array"] = [0, 1, 2]
 TEMPLATE["required"]["/ENTRY[my_entry]/NXODD_name[nxodd_name]/@signal"] = "data"
 TEMPLATE["required"]["/ENTRY[my_entry]/NXODD_name[nxodd_name]/DATA[data]"] = 1  # pylint: disable=E1126
+TEMPLATE["required"][
+    "/ENTRY[my_entry]/NXODD_name[nxodd_name]/@AXISNAME_indices[@axis_a_indices]"
+] = np.array([0], dtype=np.uint32)
 
 TEMPLATE["required"]["/ENTRY[my_entry]/NXODD_name[nxodd_two_name]/bool_value"] = True  # pylint: disable=E1126
 TEMPLATE["required"][
@@ -246,6 +249,9 @@ TEMPLATE["required"]["/ENTRY[my_entry]/NXODD_name[nxodd_two_name]/@group_attribu
 )
 TEMPLATE["required"]["/ENTRY[my_entry]/NXODD_name[nxodd_two_name]/@signal"] = "data"
 TEMPLATE["required"]["/ENTRY[my_entry]/NXODD_name[nxodd_two_name]/DATA[data]"] = 1  # pylint: disable=E1126
+TEMPLATE["required"][
+    "/ENTRY[my_entry]/NXODD_name[nxodd_two_name]/@AXISNAME_indices[@axis_a_indices]"
+] = np.array([0], dtype=np.uint32)
 
 TEMPLATE["optional"]["/ENTRY[my_entry]/required_group/description"] = (
     "An example description"
@@ -2230,6 +2236,17 @@ def format_error_message(msg: str) -> str:
             ],
             id="symbol-size-mismatch",
         ),
+        pytest.param(
+            remove_from_dict(
+                TEMPLATE,
+                "/ENTRY[my_entry]/NXODD_name[nxodd_name]/@AXISNAME_indices[@axis_a_indices]",
+                "required",
+            ),
+            [
+                "The required attribute /ENTRY[my_entry]/NXODD_name[nxodd_name]/@AXISNAME_indices hasn't been supplied."
+            ],
+            id="missing-required-variadic-axisname-indices-attribute",
+        ),
     ],
 )
 def test_validate_data_dict(data_dict, error_messages, caplog, request):
@@ -3656,6 +3673,17 @@ def test_validate_data_dict(data_dict, error_messages, caplog, request):
                 "'field_a': size 10, 'field_b': size 8."
             ],
             id="symbol-size-mismatch",
+        ),
+        pytest.param(
+            remove_from_dict(
+                TEMPLATE,
+                "/ENTRY[my_entry]/NXODD_name[nxodd_name]/@AXISNAME_indices[@axis_a_indices]",
+                "required",
+            ),
+            [
+                "The required attribute /my_entry/nxodd_name/@AXISNAME_indices hasn't been supplied."
+            ],
+            id="missing-required-variadic-axisname-indices-attribute",
         ),
     ],
 )
