@@ -3834,7 +3834,6 @@ warnings_storage_layouts_alternative = [
     "WARNING: The value at /entry1/measurement/event1/image1/stack_2d/@indices_image_indices should be one of the following Python types: (<class 'numpy.unsignedinteger'>,), as defined in the NXDL as NX_UINT.",
     "WARNING: The required group /entry1/measurement/instrument hasn't been supplied.",
     "WARNING: The required group /entry1/sampleID hasn't been supplied.",
-    "WARNING: The required attribute /entry1/measurement/event1/image1/stack_2d/@AXISNAME_indices hasn't been supplied.",
     "WARNING: The required field /entry1/start_time hasn't been supplied.",
 ]
 

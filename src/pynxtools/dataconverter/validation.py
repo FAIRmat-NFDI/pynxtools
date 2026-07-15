@@ -450,13 +450,29 @@ class ValidationVisitor(NexusVisitor):
         if _parent_of(variadic_name) != _parent_of(path):
             return False
 
-        concept_node = resolve_path(self._tree, variadic_name, node_type=node_type)
+        # Both `variadic_name` and `path` carry the "@" on their last segment for
+        # attributes (e.g. ".../@AXISNAME_indices"), but `resolve_path`/`best_child_for`
+        # match against bare concept names (e.g. "AXISNAME_indices") and don't strip
+        # it themselves — an unstripped "@" makes both the schema lookup and the
+        # namefit comparison fail even for a legitimate variadic match.
+        concept_lookup_path = (
+            variadic_name.replace("/@", "/")
+            if node_type == "attribute"
+            else variadic_name
+        )
+        concept_node = resolve_path(
+            self._tree, concept_lookup_path, node_type=node_type
+        )
         if concept_node is None or not concept_node.variadic:
             return False
 
+        instance_name = path.rsplit("/", 1)[-1]
+        if node_type == "attribute":
+            instance_name = instance_name.removeprefix("@")
+
         return (
             get_nx_namefit(
-                path.rsplit("/", 1)[-1],
+                instance_name,
                 concept_node.name,
                 concept_node.name_type == "any",
                 concept_node.name_type == "partial",
@@ -685,6 +701,7 @@ class ValidationVisitor(NexusVisitor):
         n_dims = len(info.signal.shape)
         for attr in group.attrs.keys():
             if attr.endswith("_indices"):
+                self._remove_from_req_entities(f"{path}/@{attr}")
                 idx = group.attrs[attr]
                 if isinstance(idx, _numbers.Integral) and not (0 <= int(idx) < n_dims):
                     collector.collect_and_log(
