@@ -259,6 +259,22 @@ class SpeData(Data):
         ),
         a_display={"unit": "radian"},
     )
+    azimuthal__min = Quantity(
+        type=np.float64,
+        description="Minimum of azimuthal, computed over the full array at parse time.",
+    )
+    azimuthal__max = Quantity(
+        type=np.float64,
+        description="Maximum of azimuthal, computed over the full array at parse time.",
+    )
+    azimuthal__size = Quantity(
+        type=np.int64,
+        description="Number of elements of azimuthal in the HDF5 file.",
+    )
+    azimuthal__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of azimuthal in the HDF5 file.",
+    )
     azimuthal_width = Quantity(
         type=np.float64,
         links=[
@@ -277,6 +293,22 @@ class SpeData(Data):
             component=ELNComponentEnum.NumberEditQuantity,
         ),
         a_display={"unit": "radian"},
+    )
+    azimuthal_width__min = Quantity(
+        type=np.float64,
+        description="Minimum of azimuthal_width, computed over the full array at parse time.",
+    )
+    azimuthal_width__max = Quantity(
+        type=np.float64,
+        description="Maximum of azimuthal_width, computed over the full array at parse time.",
+    )
+    azimuthal_width__size = Quantity(
+        type=np.int64,
+        description="Number of elements of azimuthal_width in the HDF5 file.",
+    )
+    azimuthal_width__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of azimuthal_width in the HDF5 file.",
     )
     polar = Quantity(
         type=np.float64,
@@ -297,6 +329,22 @@ class SpeData(Data):
         ),
         a_display={"unit": "radian"},
     )
+    polar__min = Quantity(
+        type=np.float64,
+        description="Minimum of polar, computed over the full array at parse time.",
+    )
+    polar__max = Quantity(
+        type=np.float64,
+        description="Maximum of polar, computed over the full array at parse time.",
+    )
+    polar__size = Quantity(
+        type=np.int64,
+        description="Number of elements of polar in the HDF5 file.",
+    )
+    polar__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of polar in the HDF5 file.",
+    )
     polar_width = Quantity(
         type=np.float64,
         links=[
@@ -315,6 +363,22 @@ class SpeData(Data):
             component=ELNComponentEnum.NumberEditQuantity,
         ),
         a_display={"unit": "radian"},
+    )
+    polar_width__min = Quantity(
+        type=np.float64,
+        description="Minimum of polar_width, computed over the full array at parse time.",
+    )
+    polar_width__max = Quantity(
+        type=np.float64,
+        description="Maximum of polar_width, computed over the full array at parse time.",
+    )
+    polar_width__size = Quantity(
+        type=np.int64,
+        description="Number of elements of polar_width in the HDF5 file.",
+    )
+    polar_width__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of polar_width in the HDF5 file.",
     )
     distance = Quantity(
         type=np.float64,
@@ -335,6 +399,22 @@ class SpeData(Data):
         ),
         a_display={"unit": "m"},
     )
+    distance__min = Quantity(
+        type=np.float64,
+        description="Minimum of distance, computed over the full array at parse time.",
+    )
+    distance__max = Quantity(
+        type=np.float64,
+        description="Maximum of distance, computed over the full array at parse time.",
+    )
+    distance__size = Quantity(
+        type=np.int64,
+        description="Number of elements of distance in the HDF5 file.",
+    )
+    distance__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of distance in the HDF5 file.",
+    )
     data_quantity = Quantity(
         type=np.float64,
         links=[
@@ -350,6 +430,22 @@ class SpeData(Data):
             component=ELNComponentEnum.NumberEditQuantity,
         ),
     )
+    data_quantity__min = Quantity(
+        type=np.float64,
+        description="Minimum of data_quantity, computed over the full array at parse time.",
+    )
+    data_quantity__max = Quantity(
+        type=np.float64,
+        description="Maximum of data_quantity, computed over the full array at parse time.",
+    )
+    data_quantity__size = Quantity(
+        type=np.int64,
+        description="Number of elements of data_quantity in the HDF5 file.",
+    )
+    data_quantity__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of data_quantity in the HDF5 file.",
+    )
     error = Quantity(
         type=np.float64,
         links=[
@@ -364,6 +460,22 @@ class SpeData(Data):
         a_eln=ELNAnnotation(
             component=ELNComponentEnum.NumberEditQuantity,
         ),
+    )
+    error__min = Quantity(
+        type=np.float64,
+        description="Minimum of error, computed over the full array at parse time.",
+    )
+    error__max = Quantity(
+        type=np.float64,
+        description="Maximum of error, computed over the full array at parse time.",
+    )
+    error__size = Quantity(
+        type=np.int64,
+        description="Number of elements of error in the HDF5 file.",
+    )
+    error__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of error in the HDF5 file.",
     )
     energy = Quantity(
         type=np.float64,
@@ -383,6 +495,22 @@ class SpeData(Data):
             component=ELNComponentEnum.NumberEditQuantity,
         ),
         a_display={"unit": "eV"},
+    )
+    energy__min = Quantity(
+        type=np.float64,
+        description="Minimum of energy, computed over the full array at parse time.",
+    )
+    energy__max = Quantity(
+        type=np.float64,
+        description="Maximum of energy, computed over the full array at parse time.",
+    )
+    energy__size = Quantity(
+        type=np.int64,
+        description="Number of elements of energy in the HDF5 file.",
+    )
+    energy__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of energy in the HDF5 file.",
     )
 
     def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:

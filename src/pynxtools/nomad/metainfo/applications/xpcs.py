@@ -295,6 +295,22 @@ class XpcsData(Data):
         ),
         a_display={"unit": "dimensionless"},
     )
+    frame_sum__min = Quantity(
+        type=np.float64,
+        description="Minimum of frame_sum, computed over the full array at parse time.",
+    )
+    frame_sum__max = Quantity(
+        type=np.float64,
+        description="Maximum of frame_sum, computed over the full array at parse time.",
+    )
+    frame_sum__size = Quantity(
+        type=np.int64,
+        description="Number of elements of frame_sum in the HDF5 file.",
+    )
+    frame_sum__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of frame_sum in the HDF5 file.",
+    )
     frame_average = Quantity(
         type=np.float64,
         links=[
@@ -317,6 +333,22 @@ class XpcsData(Data):
             component=ELNComponentEnum.NumberEditQuantity,
         ),
         a_display={"unit": "dimensionless"},
+    )
+    frame_average__min = Quantity(
+        type=np.float64,
+        description="Minimum of frame_average, computed over the full array at parse time.",
+    )
+    frame_average__max = Quantity(
+        type=np.float64,
+        description="Maximum of frame_average, computed over the full array at parse time.",
+    )
+    frame_average__size = Quantity(
+        type=np.int64,
+        description="Number of elements of frame_average in the HDF5 file.",
+    )
+    frame_average__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of frame_average in the HDF5 file.",
     )
     g2 = Quantity(
         type=np.float64,
@@ -362,6 +394,22 @@ class XpcsData(Data):
             component=ELNComponentEnum.NumberEditQuantity,
         ),
         a_display={"unit": "dimensionless"},
+    )
+    g2__min = Quantity(
+        type=np.float64,
+        description="Minimum of g2, computed over the full array at parse time.",
+    )
+    g2__max = Quantity(
+        type=np.float64,
+        description="Maximum of g2, computed over the full array at parse time.",
+    )
+    g2__size = Quantity(
+        type=np.int64,
+        description="Number of elements of g2 in the HDF5 file.",
+    )
+    g2__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of g2 in the HDF5 file.",
     )
     g2__storage_mode = Quantity(
         type=MEnum(["one_array", "data_exchange_keys", "other"]),
@@ -412,6 +460,22 @@ class XpcsData(Data):
         ),
         a_display={"unit": "dimensionless"},
     )
+    g2_derr__min = Quantity(
+        type=np.float64,
+        description="Minimum of g2_derr, computed over the full array at parse time.",
+    )
+    g2_derr__max = Quantity(
+        type=np.float64,
+        description="Maximum of g2_derr, computed over the full array at parse time.",
+    )
+    g2_derr__size = Quantity(
+        type=np.int64,
+        description="Number of elements of g2_derr in the HDF5 file.",
+    )
+    g2_derr__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of g2_derr in the HDF5 file.",
+    )
     g2_derr__storage_mode = Quantity(
         type=MEnum(["one_array", "data_exchange_keys", "other"]),
         links=[
@@ -450,6 +514,22 @@ class XpcsData(Data):
         a_eln=ELNAnnotation(
             component=ELNComponentEnum.NumberEditQuantity,
         ),
+    )
+    G2_unnormalized__min = Quantity(
+        type=np.float64,
+        description="Minimum of G2_unnormalized, computed over the full array at parse time.",
+    )
+    G2_unnormalized__max = Quantity(
+        type=np.float64,
+        description="Maximum of G2_unnormalized, computed over the full array at parse time.",
+    )
+    G2_unnormalized__size = Quantity(
+        type=np.int64,
+        description="Number of elements of G2_unnormalized in the HDF5 file.",
+    )
+    G2_unnormalized__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of G2_unnormalized in the HDF5 file.",
     )
     G2_unnormalized__storage_mode = Quantity(
         type=MEnum(["one_array", "data_exchange_keys", "other"]),
@@ -495,6 +575,22 @@ class XpcsData(Data):
             component=ELNComponentEnum.NumberEditQuantity,
         ),
         a_display={"unit": "dimensionless"},
+    )
+    delay_difference__min = Quantity(
+        type=np.int64,
+        description="Minimum of delay_difference, computed over the full array at parse time.",
+    )
+    delay_difference__max = Quantity(
+        type=np.int64,
+        description="Maximum of delay_difference, computed over the full array at parse time.",
+    )
+    delay_difference__size = Quantity(
+        type=np.int64,
+        description="Number of elements of delay_difference in the HDF5 file.",
+    )
+    delay_difference__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of delay_difference in the HDF5 file.",
     )
     delay_difference__storage_mode = Quantity(
         type=MEnum(["one_array", "data_exchange_keys", "other"]),
@@ -580,6 +676,22 @@ class XpcsTwotime(Data):
         a_eln=ELNAnnotation(
             component=ELNComponentEnum.NumberEditQuantity,
         ),
+    )
+    two_time_corr_func__min = Quantity(
+        type=np.float64,
+        description="Minimum of two_time_corr_func, computed over the full array at parse time.",
+    )
+    two_time_corr_func__max = Quantity(
+        type=np.float64,
+        description="Maximum of two_time_corr_func, computed over the full array at parse time.",
+    )
+    two_time_corr_func__size = Quantity(
+        type=np.int64,
+        description="Number of elements of two_time_corr_func in the HDF5 file.",
+    )
+    two_time_corr_func__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of two_time_corr_func in the HDF5 file.",
     )
     two_time_corr_func__storage_mode = Quantity(
         type=MEnum(
@@ -702,6 +814,22 @@ class XpcsTwotime(Data):
         ),
         a_display={"unit": "dimensionless"},
     )
+    g2_from_two_time_corr_func__min = Quantity(
+        type=np.float64,
+        description="Minimum of g2_from_two_time_corr_func, computed over the full array at parse time.",
+    )
+    g2_from_two_time_corr_func__max = Quantity(
+        type=np.float64,
+        description="Maximum of g2_from_two_time_corr_func, computed over the full array at parse time.",
+    )
+    g2_from_two_time_corr_func__size = Quantity(
+        type=np.int64,
+        description="Number of elements of g2_from_two_time_corr_func in the HDF5 file.",
+    )
+    g2_from_two_time_corr_func__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of g2_from_two_time_corr_func in the HDF5 file.",
+    )
     g2_from_two_time_corr_func__storage_mode = Quantity(
         type=MEnum(
             ["one_array_q_first", "one_array_q_last", "data_exchange_keys", "other"]
@@ -791,6 +919,22 @@ class XpcsTwotime(Data):
         ),
         a_display={"unit": "dimensionless"},
     )
+    g2_err_from_two_time_corr_func__min = Quantity(
+        type=np.float64,
+        description="Minimum of g2_err_from_two_time_corr_func, computed over the full array at parse time.",
+    )
+    g2_err_from_two_time_corr_func__max = Quantity(
+        type=np.float64,
+        description="Maximum of g2_err_from_two_time_corr_func, computed over the full array at parse time.",
+    )
+    g2_err_from_two_time_corr_func__size = Quantity(
+        type=np.int64,
+        description="Number of elements of g2_err_from_two_time_corr_func in the HDF5 file.",
+    )
+    g2_err_from_two_time_corr_func__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of g2_err_from_two_time_corr_func in the HDF5 file.",
+    )
     g2_err_from_two_time_corr_func__storage_mode = Quantity(
         type=MEnum(
             ["one_array_q_first", "one_array_q_last", "data_exchange_keys", "other"]
@@ -847,6 +991,22 @@ class XpcsTwotime(Data):
             component=ELNComponentEnum.NumberEditQuantity,
         ),
         a_display={"unit": "dimensionless"},
+    )
+    g2_from_two_time_corr_func_partials__min = Quantity(
+        type=np.float64,
+        description="Minimum of g2_from_two_time_corr_func_partials, computed over the full array at parse time.",
+    )
+    g2_from_two_time_corr_func_partials__max = Quantity(
+        type=np.float64,
+        description="Maximum of g2_from_two_time_corr_func_partials, computed over the full array at parse time.",
+    )
+    g2_from_two_time_corr_func_partials__size = Quantity(
+        type=np.int64,
+        description="Number of elements of g2_from_two_time_corr_func_partials in the HDF5 file.",
+    )
+    g2_from_two_time_corr_func_partials__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of g2_from_two_time_corr_func_partials in the HDF5 file.",
     )
     g2_from_two_time_corr_func_partials__storage_mode = Quantity(
         type=MEnum(["one_array", "data_exchange_keys", "other"]),
@@ -905,6 +1065,22 @@ class XpcsTwotime(Data):
             component=ELNComponentEnum.NumberEditQuantity,
         ),
         a_display={"unit": "dimensionless"},
+    )
+    g2_err_from_two_time_corr_func_partials__min = Quantity(
+        type=np.float64,
+        description="Minimum of g2_err_from_two_time_corr_func_partials, computed over the full array at parse time.",
+    )
+    g2_err_from_two_time_corr_func_partials__max = Quantity(
+        type=np.float64,
+        description="Maximum of g2_err_from_two_time_corr_func_partials, computed over the full array at parse time.",
+    )
+    g2_err_from_two_time_corr_func_partials__size = Quantity(
+        type=np.int64,
+        description="Number of elements of g2_err_from_two_time_corr_func_partials in the HDF5 file.",
+    )
+    g2_err_from_two_time_corr_func_partials__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of g2_err_from_two_time_corr_func_partials in the HDF5 file.",
     )
 
     def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:

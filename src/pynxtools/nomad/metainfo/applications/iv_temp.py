@@ -443,6 +443,22 @@ class IvTempData(Data):
             component=ELNComponentEnum.NumberEditQuantity,
         ),
     )
+    temperature__min = Quantity(
+        type=np.float64,
+        description="Minimum of temperature, computed over the full array at parse time.",
+    )
+    temperature__max = Quantity(
+        type=np.float64,
+        description="Maximum of temperature, computed over the full array at parse time.",
+    )
+    temperature__size = Quantity(
+        type=np.int64,
+        description="Number of elements of temperature in the HDF5 file.",
+    )
+    temperature__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of temperature in the HDF5 file.",
+    )
     voltage = Quantity(
         type=np.float64,
         links=[
@@ -457,6 +473,22 @@ class IvTempData(Data):
         a_eln=ELNAnnotation(
             component=ELNComponentEnum.NumberEditQuantity,
         ),
+    )
+    voltage__min = Quantity(
+        type=np.float64,
+        description="Minimum of voltage, computed over the full array at parse time.",
+    )
+    voltage__max = Quantity(
+        type=np.float64,
+        description="Maximum of voltage, computed over the full array at parse time.",
+    )
+    voltage__size = Quantity(
+        type=np.int64,
+        description="Number of elements of voltage in the HDF5 file.",
+    )
+    voltage__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of voltage in the HDF5 file.",
     )
     current = Quantity(
         type=np.float64,

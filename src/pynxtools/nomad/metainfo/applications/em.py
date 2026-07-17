@@ -5950,6 +5950,22 @@ class EmMeasurementEventIDImageIDImage2d(Data):
             component=ELNComponentEnum.NumberEditQuantity,
         ),
     )
+    magnitude__min = Quantity(
+        type=np.complex128,
+        description="Minimum of magnitude, computed over the full array at parse time.",
+    )
+    magnitude__max = Quantity(
+        type=np.complex128,
+        description="Maximum of magnitude, computed over the full array at parse time.",
+    )
+    magnitude__size = Quantity(
+        type=np.int64,
+        description="Number of elements of magnitude in the HDF5 file.",
+    )
+    magnitude__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of magnitude in the HDF5 file.",
+    )
     magnitude__long_name = Quantity(
         type=str,
         links=[
@@ -9753,6 +9769,22 @@ class EmMeasurementEventIDSpectrumIDStack1d(Data):
             component=ELNComponentEnum.NumberEditQuantity,
         ),
     )
+    intensity__min = Quantity(
+        type=np.float64,
+        description="Minimum of intensity, computed over the full array at parse time.",
+    )
+    intensity__max = Quantity(
+        type=np.float64,
+        description="Maximum of intensity, computed over the full array at parse time.",
+    )
+    intensity__size = Quantity(
+        type=np.int64,
+        description="Number of elements of intensity in the HDF5 file.",
+    )
+    intensity__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of intensity in the HDF5 file.",
+    )
     intensity__long_name = Quantity(
         type=str,
         links=[
@@ -9783,6 +9815,22 @@ class EmMeasurementEventIDSpectrumIDStack1d(Data):
         a_eln=ELNAnnotation(
             component=ELNComponentEnum.NumberEditQuantity,
         ),
+    )
+    indices_spectrum__min = Quantity(
+        type=np.int64,
+        description="Minimum of indices_spectrum, computed over the full array at parse time.",
+    )
+    indices_spectrum__max = Quantity(
+        type=np.int64,
+        description="Maximum of indices_spectrum, computed over the full array at parse time.",
+    )
+    indices_spectrum__size = Quantity(
+        type=np.int64,
+        description="Number of elements of indices_spectrum in the HDF5 file.",
+    )
+    indices_spectrum__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of indices_spectrum in the HDF5 file.",
     )
     indices_spectrum__long_name = Quantity(
         type=str,
@@ -9815,6 +9863,22 @@ class EmMeasurementEventIDSpectrumIDStack1d(Data):
             component=ELNComponentEnum.NumberEditQuantity,
         ),
     )
+    axis_i__min = Quantity(
+        type=np.float64,
+        description="Minimum of axis_i, computed over the full array at parse time.",
+    )
+    axis_i__max = Quantity(
+        type=np.float64,
+        description="Maximum of axis_i, computed over the full array at parse time.",
+    )
+    axis_i__size = Quantity(
+        type=np.int64,
+        description="Number of elements of axis_i in the HDF5 file.",
+    )
+    axis_i__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of axis_i in the HDF5 file.",
+    )
     axis_i__long_name = Quantity(
         type=str,
         links=[
@@ -9845,6 +9909,22 @@ class EmMeasurementEventIDSpectrumIDStack1d(Data):
         a_eln=ELNAnnotation(
             component=ELNComponentEnum.NumberEditQuantity,
         ),
+    )
+    axis_energy__min = Quantity(
+        type=np.float64,
+        description="Minimum of axis_energy, computed over the full array at parse time.",
+    )
+    axis_energy__max = Quantity(
+        type=np.float64,
+        description="Maximum of axis_energy, computed over the full array at parse time.",
+    )
+    axis_energy__size = Quantity(
+        type=np.int64,
+        description="Number of elements of axis_energy in the HDF5 file.",
+    )
+    axis_energy__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of axis_energy in the HDF5 file.",
     )
     axis_energy__long_name = Quantity(
         type=str,
@@ -15322,6 +15402,22 @@ class EmRoiIDEbsdIndexingPhaseIDIpfIDMap(Data):
         ),
         a_display={"unit": "dimensionless"},
     )
+    data_quantity__min = Quantity(
+        type=np.float64,
+        description="Minimum of data_quantity, computed over the full array at parse time.",
+    )
+    data_quantity__max = Quantity(
+        type=np.float64,
+        description="Maximum of data_quantity, computed over the full array at parse time.",
+    )
+    data_quantity__size = Quantity(
+        type=np.int64,
+        description="Number of elements of data_quantity in the HDF5 file.",
+    )
+    data_quantity__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of data_quantity in the HDF5 file.",
+    )
     data_quantity__long_name = Quantity(
         type=str,
         links=[
@@ -16271,6 +16367,22 @@ class EmRoiIDEbsdIndexingRoi(Data):
         a_eln=ELNAnnotation(
             component=ELNComponentEnum.NumberEditQuantity,
         ),
+    )
+    axis_z__min = Quantity(
+        type=np.float64,
+        description="Minimum of axis_z, computed over the full array at parse time.",
+    )
+    axis_z__max = Quantity(
+        type=np.float64,
+        description="Maximum of axis_z, computed over the full array at parse time.",
+    )
+    axis_z__size = Quantity(
+        type=np.int64,
+        description="Number of elements of axis_z in the HDF5 file.",
+    )
+    axis_z__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of axis_z in the HDF5 file.",
     )
     axis_z__long_name = Quantity(
         type=str,

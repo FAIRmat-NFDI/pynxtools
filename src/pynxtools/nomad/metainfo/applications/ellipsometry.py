@@ -728,6 +728,22 @@ class EllipsometryDataCollection(OpticalSpectroscopyData):
             component=ELNComponentEnum.NumberEditQuantity,
         ),
     )
+    data_identifier__min = Quantity(
+        type=np.float64,
+        description="Minimum of data_identifier, computed over the full array at parse time.",
+    )
+    data_identifier__max = Quantity(
+        type=np.float64,
+        description="Maximum of data_identifier, computed over the full array at parse time.",
+    )
+    data_identifier__size = Quantity(
+        type=np.int64,
+        description="Number of elements of data_identifier in the HDF5 file.",
+    )
+    data_identifier__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of data_identifier in the HDF5 file.",
+    )
     data_type = Quantity(
         type=MEnum(
             [
@@ -1011,6 +1027,22 @@ class EllipsometryDataCollection(OpticalSpectroscopyData):
         a_eln=ELNAnnotation(
             component=ELNComponentEnum.NumberEditQuantity,
         ),
+    )
+    reference_data_link__min = Quantity(
+        type=np.float64,
+        description="Minimum of reference_data_link, computed over the full array at parse time.",
+    )
+    reference_data_link__max = Quantity(
+        type=np.float64,
+        description="Maximum of reference_data_link, computed over the full array at parse time.",
+    )
+    reference_data_link__size = Quantity(
+        type=np.int64,
+        description="Number of elements of reference_data_link in the HDF5 file.",
+    )
+    reference_data_link__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of reference_data_link in the HDF5 file.",
     )
 
     def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:

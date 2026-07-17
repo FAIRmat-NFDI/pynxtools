@@ -4113,6 +4113,22 @@ class ApmMeasurementStandingVoltageTime(Data):
             component=ELNComponentEnum.NumberEditQuantity,
         ),
     )
+    elapsed_time__min = Quantity(
+        type=np.float64,
+        description="Minimum of elapsed_time, computed over the full array at parse time.",
+    )
+    elapsed_time__max = Quantity(
+        type=np.float64,
+        description="Maximum of elapsed_time, computed over the full array at parse time.",
+    )
+    elapsed_time__size = Quantity(
+        type=np.int64,
+        description="Number of elements of elapsed_time in the HDF5 file.",
+    )
+    elapsed_time__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of elapsed_time in the HDF5 file.",
+    )
     elapsed_time__units = Quantity(
         type=str,
         links=[
@@ -4159,6 +4175,22 @@ class ApmMeasurementStandingVoltageTime(Data):
         a_eln=ELNAnnotation(
             component=ELNComponentEnum.NumberEditQuantity,
         ),
+    )
+    standing_voltage__min = Quantity(
+        type=np.float64,
+        description="Minimum of standing_voltage, computed over the full array at parse time.",
+    )
+    standing_voltage__max = Quantity(
+        type=np.float64,
+        description="Maximum of standing_voltage, computed over the full array at parse time.",
+    )
+    standing_voltage__size = Quantity(
+        type=np.int64,
+        description="Number of elements of standing_voltage in the HDF5 file.",
+    )
+    standing_voltage__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of standing_voltage in the HDF5 file.",
     )
     standing_voltage__units = Quantity(
         type=str,
@@ -4293,6 +4325,22 @@ class ApmMeasurementPulseFrequencyTime(Data):
             component=ELNComponentEnum.NumberEditQuantity,
         ),
     )
+    elapsed_time__min = Quantity(
+        type=np.float64,
+        description="Minimum of elapsed_time, computed over the full array at parse time.",
+    )
+    elapsed_time__max = Quantity(
+        type=np.float64,
+        description="Maximum of elapsed_time, computed over the full array at parse time.",
+    )
+    elapsed_time__size = Quantity(
+        type=np.int64,
+        description="Number of elements of elapsed_time in the HDF5 file.",
+    )
+    elapsed_time__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of elapsed_time in the HDF5 file.",
+    )
     elapsed_time__units = Quantity(
         type=str,
         links=[
@@ -4339,6 +4387,22 @@ class ApmMeasurementPulseFrequencyTime(Data):
         a_eln=ELNAnnotation(
             component=ELNComponentEnum.NumberEditQuantity,
         ),
+    )
+    pulse_frequency__min = Quantity(
+        type=np.float64,
+        description="Minimum of pulse_frequency, computed over the full array at parse time.",
+    )
+    pulse_frequency__max = Quantity(
+        type=np.float64,
+        description="Maximum of pulse_frequency, computed over the full array at parse time.",
+    )
+    pulse_frequency__size = Quantity(
+        type=np.int64,
+        description="Number of elements of pulse_frequency in the HDF5 file.",
+    )
+    pulse_frequency__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of pulse_frequency in the HDF5 file.",
     )
     pulse_frequency__units = Quantity(
         type=str,
@@ -4473,6 +4537,22 @@ class ApmMeasurementDetectionRateTime(Data):
             component=ELNComponentEnum.NumberEditQuantity,
         ),
     )
+    elapsed_time__min = Quantity(
+        type=np.float64,
+        description="Minimum of elapsed_time, computed over the full array at parse time.",
+    )
+    elapsed_time__max = Quantity(
+        type=np.float64,
+        description="Maximum of elapsed_time, computed over the full array at parse time.",
+    )
+    elapsed_time__size = Quantity(
+        type=np.int64,
+        description="Number of elements of elapsed_time in the HDF5 file.",
+    )
+    elapsed_time__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of elapsed_time in the HDF5 file.",
+    )
     elapsed_time__units = Quantity(
         type=str,
         links=[
@@ -4519,6 +4599,22 @@ class ApmMeasurementDetectionRateTime(Data):
         a_eln=ELNAnnotation(
             component=ELNComponentEnum.NumberEditQuantity,
         ),
+    )
+    detection_rate__min = Quantity(
+        type=np.float64,
+        description="Minimum of detection_rate, computed over the full array at parse time.",
+    )
+    detection_rate__max = Quantity(
+        type=np.float64,
+        description="Maximum of detection_rate, computed over the full array at parse time.",
+    )
+    detection_rate__size = Quantity(
+        type=np.int64,
+        description="Number of elements of detection_rate in the HDF5 file.",
+    )
+    detection_rate__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of detection_rate in the HDF5 file.",
     )
     detection_rate__units = Quantity(
         type=str,
@@ -4653,6 +4749,22 @@ class ApmMeasurementDetectionRateSetTime(Data):
             component=ELNComponentEnum.NumberEditQuantity,
         ),
     )
+    elapsed_time__min = Quantity(
+        type=np.float64,
+        description="Minimum of elapsed_time, computed over the full array at parse time.",
+    )
+    elapsed_time__max = Quantity(
+        type=np.float64,
+        description="Maximum of elapsed_time, computed over the full array at parse time.",
+    )
+    elapsed_time__size = Quantity(
+        type=np.int64,
+        description="Number of elements of elapsed_time in the HDF5 file.",
+    )
+    elapsed_time__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of elapsed_time in the HDF5 file.",
+    )
     elapsed_time__units = Quantity(
         type=str,
         links=[
@@ -4699,6 +4811,22 @@ class ApmMeasurementDetectionRateSetTime(Data):
         a_eln=ELNAnnotation(
             component=ELNComponentEnum.NumberEditQuantity,
         ),
+    )
+    detection_rate_set__min = Quantity(
+        type=np.float64,
+        description="Minimum of detection_rate_set, computed over the full array at parse time.",
+    )
+    detection_rate_set__max = Quantity(
+        type=np.float64,
+        description="Maximum of detection_rate_set, computed over the full array at parse time.",
+    )
+    detection_rate_set__size = Quantity(
+        type=np.int64,
+        description="Number of elements of detection_rate_set in the HDF5 file.",
+    )
+    detection_rate_set__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of detection_rate_set in the HDF5 file.",
     )
     detection_rate_set__units = Quantity(
         type=str,
@@ -4833,6 +4961,22 @@ class ApmMeasurementPressureTime(Data):
             component=ELNComponentEnum.NumberEditQuantity,
         ),
     )
+    elapsed_time__min = Quantity(
+        type=np.float64,
+        description="Minimum of elapsed_time, computed over the full array at parse time.",
+    )
+    elapsed_time__max = Quantity(
+        type=np.float64,
+        description="Maximum of elapsed_time, computed over the full array at parse time.",
+    )
+    elapsed_time__size = Quantity(
+        type=np.int64,
+        description="Number of elements of elapsed_time in the HDF5 file.",
+    )
+    elapsed_time__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of elapsed_time in the HDF5 file.",
+    )
     elapsed_time__units = Quantity(
         type=str,
         links=[
@@ -4879,6 +5023,22 @@ class ApmMeasurementPressureTime(Data):
         a_eln=ELNAnnotation(
             component=ELNComponentEnum.NumberEditQuantity,
         ),
+    )
+    pressure__min = Quantity(
+        type=np.float64,
+        description="Minimum of pressure, computed over the full array at parse time.",
+    )
+    pressure__max = Quantity(
+        type=np.float64,
+        description="Maximum of pressure, computed over the full array at parse time.",
+    )
+    pressure__size = Quantity(
+        type=np.int64,
+        description="Number of elements of pressure in the HDF5 file.",
+    )
+    pressure__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of pressure in the HDF5 file.",
     )
     pressure__units = Quantity(
         type=str,
@@ -5013,6 +5173,22 @@ class ApmMeasurementSpecimenVoltageTime(Data):
             component=ELNComponentEnum.NumberEditQuantity,
         ),
     )
+    elapsed_time__min = Quantity(
+        type=np.float64,
+        description="Minimum of elapsed_time, computed over the full array at parse time.",
+    )
+    elapsed_time__max = Quantity(
+        type=np.float64,
+        description="Maximum of elapsed_time, computed over the full array at parse time.",
+    )
+    elapsed_time__size = Quantity(
+        type=np.int64,
+        description="Number of elements of elapsed_time in the HDF5 file.",
+    )
+    elapsed_time__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of elapsed_time in the HDF5 file.",
+    )
     elapsed_time__units = Quantity(
         type=str,
         links=[
@@ -5059,6 +5235,22 @@ class ApmMeasurementSpecimenVoltageTime(Data):
         a_eln=ELNAnnotation(
             component=ELNComponentEnum.NumberEditQuantity,
         ),
+    )
+    specimen_voltage__min = Quantity(
+        type=np.float64,
+        description="Minimum of specimen_voltage, computed over the full array at parse time.",
+    )
+    specimen_voltage__max = Quantity(
+        type=np.float64,
+        description="Maximum of specimen_voltage, computed over the full array at parse time.",
+    )
+    specimen_voltage__size = Quantity(
+        type=np.int64,
+        description="Number of elements of specimen_voltage in the HDF5 file.",
+    )
+    specimen_voltage__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of specimen_voltage in the HDF5 file.",
     )
     specimen_voltage__units = Quantity(
         type=str,
@@ -5193,6 +5385,22 @@ class ApmMeasurementSpecimenTemperatureTime(Data):
             component=ELNComponentEnum.NumberEditQuantity,
         ),
     )
+    elapsed_time__min = Quantity(
+        type=np.float64,
+        description="Minimum of elapsed_time, computed over the full array at parse time.",
+    )
+    elapsed_time__max = Quantity(
+        type=np.float64,
+        description="Maximum of elapsed_time, computed over the full array at parse time.",
+    )
+    elapsed_time__size = Quantity(
+        type=np.int64,
+        description="Number of elements of elapsed_time in the HDF5 file.",
+    )
+    elapsed_time__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of elapsed_time in the HDF5 file.",
+    )
     elapsed_time__units = Quantity(
         type=str,
         links=[
@@ -5239,6 +5447,22 @@ class ApmMeasurementSpecimenTemperatureTime(Data):
         a_eln=ELNAnnotation(
             component=ELNComponentEnum.NumberEditQuantity,
         ),
+    )
+    specimen_temperature__min = Quantity(
+        type=np.float64,
+        description="Minimum of specimen_temperature, computed over the full array at parse time.",
+    )
+    specimen_temperature__max = Quantity(
+        type=np.float64,
+        description="Maximum of specimen_temperature, computed over the full array at parse time.",
+    )
+    specimen_temperature__size = Quantity(
+        type=np.int64,
+        description="Number of elements of specimen_temperature in the HDF5 file.",
+    )
+    specimen_temperature__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of specimen_temperature in the HDF5 file.",
     )
     specimen_temperature__units = Quantity(
         type=str,
@@ -5373,6 +5597,22 @@ class ApmMeasurementAmbientTemperatureTime(Data):
             component=ELNComponentEnum.NumberEditQuantity,
         ),
     )
+    elapsed_time__min = Quantity(
+        type=np.float64,
+        description="Minimum of elapsed_time, computed over the full array at parse time.",
+    )
+    elapsed_time__max = Quantity(
+        type=np.float64,
+        description="Maximum of elapsed_time, computed over the full array at parse time.",
+    )
+    elapsed_time__size = Quantity(
+        type=np.int64,
+        description="Number of elements of elapsed_time in the HDF5 file.",
+    )
+    elapsed_time__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of elapsed_time in the HDF5 file.",
+    )
     elapsed_time__units = Quantity(
         type=str,
         links=[
@@ -5419,6 +5659,22 @@ class ApmMeasurementAmbientTemperatureTime(Data):
         a_eln=ELNAnnotation(
             component=ELNComponentEnum.NumberEditQuantity,
         ),
+    )
+    ambient_temperature__min = Quantity(
+        type=np.float64,
+        description="Minimum of ambient_temperature, computed over the full array at parse time.",
+    )
+    ambient_temperature__max = Quantity(
+        type=np.float64,
+        description="Maximum of ambient_temperature, computed over the full array at parse time.",
+    )
+    ambient_temperature__size = Quantity(
+        type=np.int64,
+        description="Number of elements of ambient_temperature in the HDF5 file.",
+    )
+    ambient_temperature__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of ambient_temperature in the HDF5 file.",
     )
     ambient_temperature__units = Quantity(
         type=str,
@@ -5553,6 +5809,22 @@ class ApmMeasurementReflectronVoltageTime(Data):
             component=ELNComponentEnum.NumberEditQuantity,
         ),
     )
+    elapsed_time__min = Quantity(
+        type=np.float64,
+        description="Minimum of elapsed_time, computed over the full array at parse time.",
+    )
+    elapsed_time__max = Quantity(
+        type=np.float64,
+        description="Maximum of elapsed_time, computed over the full array at parse time.",
+    )
+    elapsed_time__size = Quantity(
+        type=np.int64,
+        description="Number of elements of elapsed_time in the HDF5 file.",
+    )
+    elapsed_time__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of elapsed_time in the HDF5 file.",
+    )
     elapsed_time__units = Quantity(
         type=str,
         links=[
@@ -5599,6 +5871,22 @@ class ApmMeasurementReflectronVoltageTime(Data):
         a_eln=ELNAnnotation(
             component=ELNComponentEnum.NumberEditQuantity,
         ),
+    )
+    reflectron_voltage__min = Quantity(
+        type=np.float64,
+        description="Minimum of reflectron_voltage, computed over the full array at parse time.",
+    )
+    reflectron_voltage__max = Quantity(
+        type=np.float64,
+        description="Maximum of reflectron_voltage, computed over the full array at parse time.",
+    )
+    reflectron_voltage__size = Quantity(
+        type=np.int64,
+        description="Number of elements of reflectron_voltage in the HDF5 file.",
+    )
+    reflectron_voltage__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of reflectron_voltage in the HDF5 file.",
     )
     reflectron_voltage__units = Quantity(
         type=str,
@@ -5733,6 +6021,22 @@ class ApmMeasurementXstagePositionTime(Data):
             component=ELNComponentEnum.NumberEditQuantity,
         ),
     )
+    elapsed_time__min = Quantity(
+        type=np.float64,
+        description="Minimum of elapsed_time, computed over the full array at parse time.",
+    )
+    elapsed_time__max = Quantity(
+        type=np.float64,
+        description="Maximum of elapsed_time, computed over the full array at parse time.",
+    )
+    elapsed_time__size = Quantity(
+        type=np.int64,
+        description="Number of elements of elapsed_time in the HDF5 file.",
+    )
+    elapsed_time__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of elapsed_time in the HDF5 file.",
+    )
     elapsed_time__units = Quantity(
         type=str,
         links=[
@@ -5779,6 +6083,22 @@ class ApmMeasurementXstagePositionTime(Data):
         a_eln=ELNAnnotation(
             component=ELNComponentEnum.NumberEditQuantity,
         ),
+    )
+    xstage_position__min = Quantity(
+        type=np.float64,
+        description="Minimum of xstage_position, computed over the full array at parse time.",
+    )
+    xstage_position__max = Quantity(
+        type=np.float64,
+        description="Maximum of xstage_position, computed over the full array at parse time.",
+    )
+    xstage_position__size = Quantity(
+        type=np.int64,
+        description="Number of elements of xstage_position in the HDF5 file.",
+    )
+    xstage_position__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of xstage_position in the HDF5 file.",
     )
     xstage_position__units = Quantity(
         type=str,
@@ -5913,6 +6233,22 @@ class ApmMeasurementYstagePositionTime(Data):
             component=ELNComponentEnum.NumberEditQuantity,
         ),
     )
+    elapsed_time__min = Quantity(
+        type=np.float64,
+        description="Minimum of elapsed_time, computed over the full array at parse time.",
+    )
+    elapsed_time__max = Quantity(
+        type=np.float64,
+        description="Maximum of elapsed_time, computed over the full array at parse time.",
+    )
+    elapsed_time__size = Quantity(
+        type=np.int64,
+        description="Number of elements of elapsed_time in the HDF5 file.",
+    )
+    elapsed_time__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of elapsed_time in the HDF5 file.",
+    )
     elapsed_time__units = Quantity(
         type=str,
         links=[
@@ -5959,6 +6295,22 @@ class ApmMeasurementYstagePositionTime(Data):
         a_eln=ELNAnnotation(
             component=ELNComponentEnum.NumberEditQuantity,
         ),
+    )
+    ystage_position__min = Quantity(
+        type=np.float64,
+        description="Minimum of ystage_position, computed over the full array at parse time.",
+    )
+    ystage_position__max = Quantity(
+        type=np.float64,
+        description="Maximum of ystage_position, computed over the full array at parse time.",
+    )
+    ystage_position__size = Quantity(
+        type=np.int64,
+        description="Number of elements of ystage_position in the HDF5 file.",
+    )
+    ystage_position__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of ystage_position in the HDF5 file.",
     )
     ystage_position__units = Quantity(
         type=str,
@@ -6093,6 +6445,22 @@ class ApmMeasurementZstagePositionTime(Data):
             component=ELNComponentEnum.NumberEditQuantity,
         ),
     )
+    elapsed_time__min = Quantity(
+        type=np.float64,
+        description="Minimum of elapsed_time, computed over the full array at parse time.",
+    )
+    elapsed_time__max = Quantity(
+        type=np.float64,
+        description="Maximum of elapsed_time, computed over the full array at parse time.",
+    )
+    elapsed_time__size = Quantity(
+        type=np.int64,
+        description="Number of elements of elapsed_time in the HDF5 file.",
+    )
+    elapsed_time__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of elapsed_time in the HDF5 file.",
+    )
     elapsed_time__units = Quantity(
         type=str,
         links=[
@@ -6139,6 +6507,22 @@ class ApmMeasurementZstagePositionTime(Data):
         a_eln=ELNAnnotation(
             component=ELNComponentEnum.NumberEditQuantity,
         ),
+    )
+    zstage_position__min = Quantity(
+        type=np.float64,
+        description="Minimum of zstage_position, computed over the full array at parse time.",
+    )
+    zstage_position__max = Quantity(
+        type=np.float64,
+        description="Maximum of zstage_position, computed over the full array at parse time.",
+    )
+    zstage_position__size = Quantity(
+        type=np.int64,
+        description="Number of elements of zstage_position in the HDF5 file.",
+    )
+    zstage_position__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of zstage_position in the HDF5 file.",
     )
     zstage_position__units = Quantity(
         type=str,
@@ -6273,6 +6657,22 @@ class ApmMeasurementStandingVoltageSequence(Data):
             component=ELNComponentEnum.NumberEditQuantity,
         ),
     )
+    event_id__min = Quantity(
+        type=np.int64,
+        description="Minimum of event_id, computed over the full array at parse time.",
+    )
+    event_id__max = Quantity(
+        type=np.int64,
+        description="Maximum of event_id, computed over the full array at parse time.",
+    )
+    event_id__size = Quantity(
+        type=np.int64,
+        description="Number of elements of event_id in the HDF5 file.",
+    )
+    event_id__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of event_id in the HDF5 file.",
+    )
     event_id__units = Quantity(
         type=str,
         links=[
@@ -6319,6 +6719,22 @@ class ApmMeasurementStandingVoltageSequence(Data):
         a_eln=ELNAnnotation(
             component=ELNComponentEnum.NumberEditQuantity,
         ),
+    )
+    standing_voltage__min = Quantity(
+        type=np.float64,
+        description="Minimum of standing_voltage, computed over the full array at parse time.",
+    )
+    standing_voltage__max = Quantity(
+        type=np.float64,
+        description="Maximum of standing_voltage, computed over the full array at parse time.",
+    )
+    standing_voltage__size = Quantity(
+        type=np.int64,
+        description="Number of elements of standing_voltage in the HDF5 file.",
+    )
+    standing_voltage__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of standing_voltage in the HDF5 file.",
     )
     standing_voltage__units = Quantity(
         type=str,
@@ -6453,6 +6869,22 @@ class ApmMeasurementPulseFrequencySequence(Data):
             component=ELNComponentEnum.NumberEditQuantity,
         ),
     )
+    event_id__min = Quantity(
+        type=np.int64,
+        description="Minimum of event_id, computed over the full array at parse time.",
+    )
+    event_id__max = Quantity(
+        type=np.int64,
+        description="Maximum of event_id, computed over the full array at parse time.",
+    )
+    event_id__size = Quantity(
+        type=np.int64,
+        description="Number of elements of event_id in the HDF5 file.",
+    )
+    event_id__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of event_id in the HDF5 file.",
+    )
     event_id__units = Quantity(
         type=str,
         links=[
@@ -6499,6 +6931,22 @@ class ApmMeasurementPulseFrequencySequence(Data):
         a_eln=ELNAnnotation(
             component=ELNComponentEnum.NumberEditQuantity,
         ),
+    )
+    pulse_frequency__min = Quantity(
+        type=np.float64,
+        description="Minimum of pulse_frequency, computed over the full array at parse time.",
+    )
+    pulse_frequency__max = Quantity(
+        type=np.float64,
+        description="Maximum of pulse_frequency, computed over the full array at parse time.",
+    )
+    pulse_frequency__size = Quantity(
+        type=np.int64,
+        description="Number of elements of pulse_frequency in the HDF5 file.",
+    )
+    pulse_frequency__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of pulse_frequency in the HDF5 file.",
     )
     pulse_frequency__units = Quantity(
         type=str,
@@ -6633,6 +7081,22 @@ class ApmMeasurementDetectionRateSequence(Data):
             component=ELNComponentEnum.NumberEditQuantity,
         ),
     )
+    event_id__min = Quantity(
+        type=np.int64,
+        description="Minimum of event_id, computed over the full array at parse time.",
+    )
+    event_id__max = Quantity(
+        type=np.int64,
+        description="Maximum of event_id, computed over the full array at parse time.",
+    )
+    event_id__size = Quantity(
+        type=np.int64,
+        description="Number of elements of event_id in the HDF5 file.",
+    )
+    event_id__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of event_id in the HDF5 file.",
+    )
     event_id__units = Quantity(
         type=str,
         links=[
@@ -6679,6 +7143,22 @@ class ApmMeasurementDetectionRateSequence(Data):
         a_eln=ELNAnnotation(
             component=ELNComponentEnum.NumberEditQuantity,
         ),
+    )
+    detection_rate__min = Quantity(
+        type=np.float64,
+        description="Minimum of detection_rate, computed over the full array at parse time.",
+    )
+    detection_rate__max = Quantity(
+        type=np.float64,
+        description="Maximum of detection_rate, computed over the full array at parse time.",
+    )
+    detection_rate__size = Quantity(
+        type=np.int64,
+        description="Number of elements of detection_rate in the HDF5 file.",
+    )
+    detection_rate__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of detection_rate in the HDF5 file.",
     )
     detection_rate__units = Quantity(
         type=str,
@@ -6813,6 +7293,22 @@ class ApmMeasurementDetectionRateSetSequence(Data):
             component=ELNComponentEnum.NumberEditQuantity,
         ),
     )
+    event_id__min = Quantity(
+        type=np.int64,
+        description="Minimum of event_id, computed over the full array at parse time.",
+    )
+    event_id__max = Quantity(
+        type=np.int64,
+        description="Maximum of event_id, computed over the full array at parse time.",
+    )
+    event_id__size = Quantity(
+        type=np.int64,
+        description="Number of elements of event_id in the HDF5 file.",
+    )
+    event_id__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of event_id in the HDF5 file.",
+    )
     event_id__units = Quantity(
         type=str,
         links=[
@@ -6859,6 +7355,22 @@ class ApmMeasurementDetectionRateSetSequence(Data):
         a_eln=ELNAnnotation(
             component=ELNComponentEnum.NumberEditQuantity,
         ),
+    )
+    detection_rate_set__min = Quantity(
+        type=np.float64,
+        description="Minimum of detection_rate_set, computed over the full array at parse time.",
+    )
+    detection_rate_set__max = Quantity(
+        type=np.float64,
+        description="Maximum of detection_rate_set, computed over the full array at parse time.",
+    )
+    detection_rate_set__size = Quantity(
+        type=np.int64,
+        description="Number of elements of detection_rate_set in the HDF5 file.",
+    )
+    detection_rate_set__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of detection_rate_set in the HDF5 file.",
     )
     detection_rate_set__units = Quantity(
         type=str,
@@ -6993,6 +7505,22 @@ class ApmMeasurementPressureSequence(Data):
             component=ELNComponentEnum.NumberEditQuantity,
         ),
     )
+    event_id__min = Quantity(
+        type=np.int64,
+        description="Minimum of event_id, computed over the full array at parse time.",
+    )
+    event_id__max = Quantity(
+        type=np.int64,
+        description="Maximum of event_id, computed over the full array at parse time.",
+    )
+    event_id__size = Quantity(
+        type=np.int64,
+        description="Number of elements of event_id in the HDF5 file.",
+    )
+    event_id__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of event_id in the HDF5 file.",
+    )
     event_id__units = Quantity(
         type=str,
         links=[
@@ -7039,6 +7567,22 @@ class ApmMeasurementPressureSequence(Data):
         a_eln=ELNAnnotation(
             component=ELNComponentEnum.NumberEditQuantity,
         ),
+    )
+    pressure__min = Quantity(
+        type=np.float64,
+        description="Minimum of pressure, computed over the full array at parse time.",
+    )
+    pressure__max = Quantity(
+        type=np.float64,
+        description="Maximum of pressure, computed over the full array at parse time.",
+    )
+    pressure__size = Quantity(
+        type=np.int64,
+        description="Number of elements of pressure in the HDF5 file.",
+    )
+    pressure__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of pressure in the HDF5 file.",
     )
     pressure__units = Quantity(
         type=str,
@@ -7173,6 +7717,22 @@ class ApmMeasurementSpecimenVoltageSequence(Data):
             component=ELNComponentEnum.NumberEditQuantity,
         ),
     )
+    event_id__min = Quantity(
+        type=np.int64,
+        description="Minimum of event_id, computed over the full array at parse time.",
+    )
+    event_id__max = Quantity(
+        type=np.int64,
+        description="Maximum of event_id, computed over the full array at parse time.",
+    )
+    event_id__size = Quantity(
+        type=np.int64,
+        description="Number of elements of event_id in the HDF5 file.",
+    )
+    event_id__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of event_id in the HDF5 file.",
+    )
     event_id__units = Quantity(
         type=str,
         links=[
@@ -7219,6 +7779,22 @@ class ApmMeasurementSpecimenVoltageSequence(Data):
         a_eln=ELNAnnotation(
             component=ELNComponentEnum.NumberEditQuantity,
         ),
+    )
+    specimen_voltage__min = Quantity(
+        type=np.float64,
+        description="Minimum of specimen_voltage, computed over the full array at parse time.",
+    )
+    specimen_voltage__max = Quantity(
+        type=np.float64,
+        description="Maximum of specimen_voltage, computed over the full array at parse time.",
+    )
+    specimen_voltage__size = Quantity(
+        type=np.int64,
+        description="Number of elements of specimen_voltage in the HDF5 file.",
+    )
+    specimen_voltage__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of specimen_voltage in the HDF5 file.",
     )
     specimen_voltage__units = Quantity(
         type=str,
@@ -7353,6 +7929,22 @@ class ApmMeasurementSpecimenTemperatureSequence(Data):
             component=ELNComponentEnum.NumberEditQuantity,
         ),
     )
+    event_id__min = Quantity(
+        type=np.int64,
+        description="Minimum of event_id, computed over the full array at parse time.",
+    )
+    event_id__max = Quantity(
+        type=np.int64,
+        description="Maximum of event_id, computed over the full array at parse time.",
+    )
+    event_id__size = Quantity(
+        type=np.int64,
+        description="Number of elements of event_id in the HDF5 file.",
+    )
+    event_id__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of event_id in the HDF5 file.",
+    )
     event_id__units = Quantity(
         type=str,
         links=[
@@ -7399,6 +7991,22 @@ class ApmMeasurementSpecimenTemperatureSequence(Data):
         a_eln=ELNAnnotation(
             component=ELNComponentEnum.NumberEditQuantity,
         ),
+    )
+    specimen_temperature__min = Quantity(
+        type=np.float64,
+        description="Minimum of specimen_temperature, computed over the full array at parse time.",
+    )
+    specimen_temperature__max = Quantity(
+        type=np.float64,
+        description="Maximum of specimen_temperature, computed over the full array at parse time.",
+    )
+    specimen_temperature__size = Quantity(
+        type=np.int64,
+        description="Number of elements of specimen_temperature in the HDF5 file.",
+    )
+    specimen_temperature__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of specimen_temperature in the HDF5 file.",
     )
     specimen_temperature__units = Quantity(
         type=str,
@@ -7533,6 +8141,22 @@ class ApmMeasurementAmbientTemperatureSequence(Data):
             component=ELNComponentEnum.NumberEditQuantity,
         ),
     )
+    event_id__min = Quantity(
+        type=np.int64,
+        description="Minimum of event_id, computed over the full array at parse time.",
+    )
+    event_id__max = Quantity(
+        type=np.int64,
+        description="Maximum of event_id, computed over the full array at parse time.",
+    )
+    event_id__size = Quantity(
+        type=np.int64,
+        description="Number of elements of event_id in the HDF5 file.",
+    )
+    event_id__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of event_id in the HDF5 file.",
+    )
     event_id__units = Quantity(
         type=str,
         links=[
@@ -7579,6 +8203,22 @@ class ApmMeasurementAmbientTemperatureSequence(Data):
         a_eln=ELNAnnotation(
             component=ELNComponentEnum.NumberEditQuantity,
         ),
+    )
+    ambient_temperature__min = Quantity(
+        type=np.float64,
+        description="Minimum of ambient_temperature, computed over the full array at parse time.",
+    )
+    ambient_temperature__max = Quantity(
+        type=np.float64,
+        description="Maximum of ambient_temperature, computed over the full array at parse time.",
+    )
+    ambient_temperature__size = Quantity(
+        type=np.int64,
+        description="Number of elements of ambient_temperature in the HDF5 file.",
+    )
+    ambient_temperature__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of ambient_temperature in the HDF5 file.",
     )
     ambient_temperature__units = Quantity(
         type=str,
@@ -7713,6 +8353,22 @@ class ApmMeasurementReflectronVoltageSequence(Data):
             component=ELNComponentEnum.NumberEditQuantity,
         ),
     )
+    event_id__min = Quantity(
+        type=np.int64,
+        description="Minimum of event_id, computed over the full array at parse time.",
+    )
+    event_id__max = Quantity(
+        type=np.int64,
+        description="Maximum of event_id, computed over the full array at parse time.",
+    )
+    event_id__size = Quantity(
+        type=np.int64,
+        description="Number of elements of event_id in the HDF5 file.",
+    )
+    event_id__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of event_id in the HDF5 file.",
+    )
     event_id__units = Quantity(
         type=str,
         links=[
@@ -7759,6 +8415,22 @@ class ApmMeasurementReflectronVoltageSequence(Data):
         a_eln=ELNAnnotation(
             component=ELNComponentEnum.NumberEditQuantity,
         ),
+    )
+    reflectron_voltage__min = Quantity(
+        type=np.float64,
+        description="Minimum of reflectron_voltage, computed over the full array at parse time.",
+    )
+    reflectron_voltage__max = Quantity(
+        type=np.float64,
+        description="Maximum of reflectron_voltage, computed over the full array at parse time.",
+    )
+    reflectron_voltage__size = Quantity(
+        type=np.int64,
+        description="Number of elements of reflectron_voltage in the HDF5 file.",
+    )
+    reflectron_voltage__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of reflectron_voltage in the HDF5 file.",
     )
     reflectron_voltage__units = Quantity(
         type=str,
@@ -7893,6 +8565,22 @@ class ApmMeasurementXstagePositionSequence(Data):
             component=ELNComponentEnum.NumberEditQuantity,
         ),
     )
+    event_id__min = Quantity(
+        type=np.int64,
+        description="Minimum of event_id, computed over the full array at parse time.",
+    )
+    event_id__max = Quantity(
+        type=np.int64,
+        description="Maximum of event_id, computed over the full array at parse time.",
+    )
+    event_id__size = Quantity(
+        type=np.int64,
+        description="Number of elements of event_id in the HDF5 file.",
+    )
+    event_id__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of event_id in the HDF5 file.",
+    )
     event_id__units = Quantity(
         type=str,
         links=[
@@ -7939,6 +8627,22 @@ class ApmMeasurementXstagePositionSequence(Data):
         a_eln=ELNAnnotation(
             component=ELNComponentEnum.NumberEditQuantity,
         ),
+    )
+    xstage_position__min = Quantity(
+        type=np.float64,
+        description="Minimum of xstage_position, computed over the full array at parse time.",
+    )
+    xstage_position__max = Quantity(
+        type=np.float64,
+        description="Maximum of xstage_position, computed over the full array at parse time.",
+    )
+    xstage_position__size = Quantity(
+        type=np.int64,
+        description="Number of elements of xstage_position in the HDF5 file.",
+    )
+    xstage_position__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of xstage_position in the HDF5 file.",
     )
     xstage_position__units = Quantity(
         type=str,
@@ -8073,6 +8777,22 @@ class ApmMeasurementYstagePositionSequence(Data):
             component=ELNComponentEnum.NumberEditQuantity,
         ),
     )
+    event_id__min = Quantity(
+        type=np.int64,
+        description="Minimum of event_id, computed over the full array at parse time.",
+    )
+    event_id__max = Quantity(
+        type=np.int64,
+        description="Maximum of event_id, computed over the full array at parse time.",
+    )
+    event_id__size = Quantity(
+        type=np.int64,
+        description="Number of elements of event_id in the HDF5 file.",
+    )
+    event_id__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of event_id in the HDF5 file.",
+    )
     event_id__units = Quantity(
         type=str,
         links=[
@@ -8119,6 +8839,22 @@ class ApmMeasurementYstagePositionSequence(Data):
         a_eln=ELNAnnotation(
             component=ELNComponentEnum.NumberEditQuantity,
         ),
+    )
+    ystage_position__min = Quantity(
+        type=np.float64,
+        description="Minimum of ystage_position, computed over the full array at parse time.",
+    )
+    ystage_position__max = Quantity(
+        type=np.float64,
+        description="Maximum of ystage_position, computed over the full array at parse time.",
+    )
+    ystage_position__size = Quantity(
+        type=np.int64,
+        description="Number of elements of ystage_position in the HDF5 file.",
+    )
+    ystage_position__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of ystage_position in the HDF5 file.",
     )
     ystage_position__units = Quantity(
         type=str,
@@ -8253,6 +8989,22 @@ class ApmMeasurementZstagePositionSequence(Data):
             component=ELNComponentEnum.NumberEditQuantity,
         ),
     )
+    event_id__min = Quantity(
+        type=np.int64,
+        description="Minimum of event_id, computed over the full array at parse time.",
+    )
+    event_id__max = Quantity(
+        type=np.int64,
+        description="Maximum of event_id, computed over the full array at parse time.",
+    )
+    event_id__size = Quantity(
+        type=np.int64,
+        description="Number of elements of event_id in the HDF5 file.",
+    )
+    event_id__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of event_id in the HDF5 file.",
+    )
     event_id__units = Quantity(
         type=str,
         links=[
@@ -8299,6 +9051,22 @@ class ApmMeasurementZstagePositionSequence(Data):
         a_eln=ELNAnnotation(
             component=ELNComponentEnum.NumberEditQuantity,
         ),
+    )
+    zstage_position__min = Quantity(
+        type=np.float64,
+        description="Minimum of zstage_position, computed over the full array at parse time.",
+    )
+    zstage_position__max = Quantity(
+        type=np.float64,
+        description="Maximum of zstage_position, computed over the full array at parse time.",
+    )
+    zstage_position__size = Quantity(
+        type=np.int64,
+        description="Number of elements of zstage_position in the HDF5 file.",
+    )
+    zstage_position__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of zstage_position in the HDF5 file.",
     )
     zstage_position__units = Quantity(
         type=str,

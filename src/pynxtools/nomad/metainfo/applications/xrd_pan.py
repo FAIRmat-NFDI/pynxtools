@@ -1034,6 +1034,22 @@ class XrdPanExperimentResult(XrdData):
             component=ELNComponentEnum.NumberEditQuantity,
         ),
     )
+    q_parallel__min = Quantity(
+        type=np.float64,
+        description="Minimum of q_parallel, computed over the full array at parse time.",
+    )
+    q_parallel__max = Quantity(
+        type=np.float64,
+        description="Maximum of q_parallel, computed over the full array at parse time.",
+    )
+    q_parallel__size = Quantity(
+        type=np.int64,
+        description="Number of elements of q_parallel in the HDF5 file.",
+    )
+    q_parallel__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of q_parallel in the HDF5 file.",
+    )
     q_perpendicular = Quantity(
         type=np.float64,
         links=[
@@ -1054,6 +1070,22 @@ class XrdPanExperimentResult(XrdData):
         a_eln=ELNAnnotation(
             component=ELNComponentEnum.NumberEditQuantity,
         ),
+    )
+    q_perpendicular__min = Quantity(
+        type=np.float64,
+        description="Minimum of q_perpendicular, computed over the full array at parse time.",
+    )
+    q_perpendicular__max = Quantity(
+        type=np.float64,
+        description="Maximum of q_perpendicular, computed over the full array at parse time.",
+    )
+    q_perpendicular__size = Quantity(
+        type=np.int64,
+        description="Number of elements of q_perpendicular in the HDF5 file.",
+    )
+    q_perpendicular__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of q_perpendicular in the HDF5 file.",
     )
     q_norm = Quantity(
         type=np.float64,
@@ -1078,6 +1110,22 @@ class XrdPanExperimentResult(XrdData):
         a_eln=ELNAnnotation(
             component=ELNComponentEnum.NumberEditQuantity,
         ),
+    )
+    q_norm__min = Quantity(
+        type=np.float64,
+        description="Minimum of q_norm, computed over the full array at parse time.",
+    )
+    q_norm__max = Quantity(
+        type=np.float64,
+        description="Maximum of q_norm, computed over the full array at parse time.",
+    )
+    q_norm__size = Quantity(
+        type=np.int64,
+        description="Number of elements of q_norm in the HDF5 file.",
+    )
+    q_norm__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of q_norm in the HDF5 file.",
     )
 
     def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
@@ -1122,6 +1170,22 @@ class XrdPanQData(XrdData):
             component=ELNComponentEnum.NumberEditQuantity,
         ),
     )
+    q__min = Quantity(
+        type=np.float64,
+        description="Minimum of q, computed over the full array at parse time.",
+    )
+    q__max = Quantity(
+        type=np.float64,
+        description="Maximum of q, computed over the full array at parse time.",
+    )
+    q__size = Quantity(
+        type=np.int64,
+        description="Number of elements of q in the HDF5 file.",
+    )
+    q__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of q in the HDF5 file.",
+    )
     intensity = Quantity(
         type=np.float64,
         links=[
@@ -1142,6 +1206,22 @@ class XrdPanQData(XrdData):
         a_eln=ELNAnnotation(
             component=ELNComponentEnum.NumberEditQuantity,
         ),
+    )
+    intensity__min = Quantity(
+        type=np.float64,
+        description="Minimum of intensity, computed over the full array at parse time.",
+    )
+    intensity__max = Quantity(
+        type=np.float64,
+        description="Maximum of intensity, computed over the full array at parse time.",
+    )
+    intensity__size = Quantity(
+        type=np.int64,
+        description="Number of elements of intensity in the HDF5 file.",
+    )
+    intensity__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of intensity in the HDF5 file.",
     )
     q_parallel = Quantity(
         type=np.float64,
@@ -1165,6 +1245,22 @@ class XrdPanQData(XrdData):
             component=ELNComponentEnum.NumberEditQuantity,
         ),
     )
+    q_parallel__min = Quantity(
+        type=np.float64,
+        description="Minimum of q_parallel, computed over the full array at parse time.",
+    )
+    q_parallel__max = Quantity(
+        type=np.float64,
+        description="Maximum of q_parallel, computed over the full array at parse time.",
+    )
+    q_parallel__size = Quantity(
+        type=np.int64,
+        description="Number of elements of q_parallel in the HDF5 file.",
+    )
+    q_parallel__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of q_parallel in the HDF5 file.",
+    )
     q_perpendicular = Quantity(
         type=np.float64,
         links=[
@@ -1185,6 +1281,22 @@ class XrdPanQData(XrdData):
         a_eln=ELNAnnotation(
             component=ELNComponentEnum.NumberEditQuantity,
         ),
+    )
+    q_perpendicular__min = Quantity(
+        type=np.float64,
+        description="Minimum of q_perpendicular, computed over the full array at parse time.",
+    )
+    q_perpendicular__max = Quantity(
+        type=np.float64,
+        description="Maximum of q_perpendicular, computed over the full array at parse time.",
+    )
+    q_perpendicular__size = Quantity(
+        type=np.int64,
+        description="Number of elements of q_perpendicular in the HDF5 file.",
+    )
+    q_perpendicular__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of q_perpendicular in the HDF5 file.",
     )
 
     def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
