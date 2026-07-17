@@ -276,6 +276,22 @@ class MxData(Data):
             component=ELNComponentEnum.NumberEditQuantity,
         ),
     )
+    data_quantity__min = Quantity(
+        type=np.float64,
+        description="Minimum of data_quantity, computed over the full array at parse time.",
+    )
+    data_quantity__max = Quantity(
+        type=np.float64,
+        description="Maximum of data_quantity, computed over the full array at parse time.",
+    )
+    data_quantity__size = Quantity(
+        type=np.int64,
+        description="Number of elements of data_quantity in the HDF5 file.",
+    )
+    data_quantity__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of data_quantity in the HDF5 file.",
+    )
     data_scaling_factor = Quantity(
         type=np.float64,
         links=[
@@ -314,6 +330,22 @@ class MxData(Data):
             component=ELNComponentEnum.NumberEditQuantity,
         ),
     )
+    data_scaling_factor__min = Quantity(
+        type=np.float64,
+        description="Minimum of data_scaling_factor, computed over the full array at parse time.",
+    )
+    data_scaling_factor__max = Quantity(
+        type=np.float64,
+        description="Maximum of data_scaling_factor, computed over the full array at parse time.",
+    )
+    data_scaling_factor__size = Quantity(
+        type=np.int64,
+        description="Number of elements of data_scaling_factor in the HDF5 file.",
+    )
+    data_scaling_factor__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of data_scaling_factor in the HDF5 file.",
+    )
     data_offset = Quantity(
         type=np.float64,
         links=[
@@ -333,6 +365,22 @@ class MxData(Data):
         a_eln=ELNAnnotation(
             component=ELNComponentEnum.NumberEditQuantity,
         ),
+    )
+    data_offset__min = Quantity(
+        type=np.float64,
+        description="Minimum of data_offset, computed over the full array at parse time.",
+    )
+    data_offset__max = Quantity(
+        type=np.float64,
+        description="Maximum of data_offset, computed over the full array at parse time.",
+    )
+    data_offset__size = Quantity(
+        type=np.int64,
+        description="Number of elements of data_offset in the HDF5 file.",
+    )
+    data_offset__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of data_offset in the HDF5 file.",
     )
 
     def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:

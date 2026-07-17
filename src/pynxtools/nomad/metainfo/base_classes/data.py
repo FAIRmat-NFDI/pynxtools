@@ -789,6 +789,22 @@ class Data(Object, basesections.ActivityResult):
             component=ELNComponentEnum.NumberEditQuantity,
         ),
     )
+    errors__min = Quantity(
+        type=np.float64,
+        description="Minimum of errors, computed over the full array at parse time.",
+    )
+    errors__max = Quantity(
+        type=np.float64,
+        description="Maximum of errors, computed over the full array at parse time.",
+    )
+    errors__size = Quantity(
+        type=np.int64,
+        description="Number of elements of errors in the HDF5 file.",
+    )
+    errors__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of errors in the HDF5 file.",
+    )
     FIELDNAME_scaling_factor = Quantity(
         type=np.float64,
         links=[
@@ -900,6 +916,22 @@ class Data(Object, basesections.ActivityResult):
             component=ELNComponentEnum.NumberEditQuantity,
         ),
     )
+    scaling_factor__min = Quantity(
+        type=np.float64,
+        description="Minimum of scaling_factor, computed over the full array at parse time.",
+    )
+    scaling_factor__max = Quantity(
+        type=np.float64,
+        description="Maximum of scaling_factor, computed over the full array at parse time.",
+    )
+    scaling_factor__size = Quantity(
+        type=np.int64,
+        description="Number of elements of scaling_factor in the HDF5 file.",
+    )
+    scaling_factor__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of scaling_factor in the HDF5 file.",
+    )
     offset = Quantity(
         type=np.float64,
         links=[
@@ -922,6 +954,22 @@ class Data(Object, basesections.ActivityResult):
             component=ELNComponentEnum.NumberEditQuantity,
         ),
     )
+    offset__min = Quantity(
+        type=np.float64,
+        description="Minimum of offset, computed over the full array at parse time.",
+    )
+    offset__max = Quantity(
+        type=np.float64,
+        description="Maximum of offset, computed over the full array at parse time.",
+    )
+    offset__size = Quantity(
+        type=np.int64,
+        description="Number of elements of offset in the HDF5 file.",
+    )
+    offset__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of offset in the HDF5 file.",
+    )
     title = Quantity(
         type=np.float64,
         links=[
@@ -937,6 +985,22 @@ class Data(Object, basesections.ActivityResult):
         a_eln=ELNAnnotation(
             component=ELNComponentEnum.NumberEditQuantity,
         ),
+    )
+    title__min = Quantity(
+        type=np.float64,
+        description="Minimum of title, computed over the full array at parse time.",
+    )
+    title__max = Quantity(
+        type=np.float64,
+        description="Maximum of title, computed over the full array at parse time.",
+    )
+    title__size = Quantity(
+        type=np.int64,
+        description="Number of elements of title in the HDF5 file.",
+    )
+    title__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of title in the HDF5 file.",
     )
     x = Quantity(
         type=np.float64,

@@ -1220,6 +1220,22 @@ class XpsFitData(Data):
             component=ELNComponentEnum.NumberEditQuantity,
         ),
     )
+    input_dependent__min = Quantity(
+        type=np.float64,
+        description="Minimum of input_dependent, computed over the full array at parse time.",
+    )
+    input_dependent__max = Quantity(
+        type=np.float64,
+        description="Maximum of input_dependent, computed over the full array at parse time.",
+    )
+    input_dependent__size = Quantity(
+        type=np.int64,
+        description="Number of elements of input_dependent in the HDF5 file.",
+    )
+    input_dependent__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of input_dependent in the HDF5 file.",
+    )
     input_independent = Quantity(
         type=np.float64,
         links=[
@@ -1243,6 +1259,22 @@ class XpsFitData(Data):
         ),
         a_display={"unit": "eV"},
     )
+    input_independent__min = Quantity(
+        type=np.float64,
+        description="Minimum of input_independent, computed over the full array at parse time.",
+    )
+    input_independent__max = Quantity(
+        type=np.float64,
+        description="Maximum of input_independent, computed over the full array at parse time.",
+    )
+    input_independent__size = Quantity(
+        type=np.int64,
+        description="Number of elements of input_independent in the HDF5 file.",
+    )
+    input_independent__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of input_independent in the HDF5 file.",
+    )
     fit_sum = Quantity(
         type=np.float64,
         links=[
@@ -1260,6 +1292,22 @@ class XpsFitData(Data):
             component=ELNComponentEnum.NumberEditQuantity,
         ),
     )
+    fit_sum__min = Quantity(
+        type=np.float64,
+        description="Minimum of fit_sum, computed over the full array at parse time.",
+    )
+    fit_sum__max = Quantity(
+        type=np.float64,
+        description="Maximum of fit_sum, computed over the full array at parse time.",
+    )
+    fit_sum__size = Quantity(
+        type=np.int64,
+        description="Number of elements of fit_sum in the HDF5 file.",
+    )
+    fit_sum__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of fit_sum in the HDF5 file.",
+    )
     residual = Quantity(
         type=np.float64,
         links=[
@@ -1276,6 +1324,22 @@ class XpsFitData(Data):
         a_eln=ELNAnnotation(
             component=ELNComponentEnum.NumberEditQuantity,
         ),
+    )
+    residual__min = Quantity(
+        type=np.float64,
+        description="Minimum of residual, computed over the full array at parse time.",
+    )
+    residual__max = Quantity(
+        type=np.float64,
+        description="Maximum of residual, computed over the full array at parse time.",
+    )
+    residual__size = Quantity(
+        type=np.int64,
+        description="Number of elements of residual in the HDF5 file.",
+    )
+    residual__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of residual in the HDF5 file.",
     )
 
     def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
@@ -1401,6 +1465,22 @@ class XpsFitPeakPEAKData(Data):
         ),
         a_display={"unit": "eV"},
     )
+    position__min = Quantity(
+        type=np.float64,
+        description="Minimum of position, computed over the full array at parse time.",
+    )
+    position__max = Quantity(
+        type=np.float64,
+        description="Maximum of position, computed over the full array at parse time.",
+    )
+    position__size = Quantity(
+        type=np.int64,
+        description="Number of elements of position in the HDF5 file.",
+    )
+    position__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of position in the HDF5 file.",
+    )
     intensity = Quantity(
         type=np.float64,
         links=[
@@ -1423,6 +1503,22 @@ class XpsFitPeakPEAKData(Data):
         a_eln=ELNAnnotation(
             component=ELNComponentEnum.NumberEditQuantity,
         ),
+    )
+    intensity__min = Quantity(
+        type=np.float64,
+        description="Minimum of intensity, computed over the full array at parse time.",
+    )
+    intensity__max = Quantity(
+        type=np.float64,
+        description="Maximum of intensity, computed over the full array at parse time.",
+    )
+    intensity__size = Quantity(
+        type=np.int64,
+        description="Number of elements of intensity in the HDF5 file.",
+    )
+    intensity__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of intensity in the HDF5 file.",
     )
 
     def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
@@ -1688,6 +1784,22 @@ class XpsFitBackgroundBACKGROUNDData(Data):
         ),
         a_display={"unit": "eV"},
     )
+    position__min = Quantity(
+        type=np.float64,
+        description="Minimum of position, computed over the full array at parse time.",
+    )
+    position__max = Quantity(
+        type=np.float64,
+        description="Maximum of position, computed over the full array at parse time.",
+    )
+    position__size = Quantity(
+        type=np.int64,
+        description="Number of elements of position in the HDF5 file.",
+    )
+    position__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of position in the HDF5 file.",
+    )
     intensity = Quantity(
         type=np.float64,
         links=[
@@ -1704,6 +1816,22 @@ class XpsFitBackgroundBACKGROUNDData(Data):
         a_eln=ELNAnnotation(
             component=ELNComponentEnum.NumberEditQuantity,
         ),
+    )
+    intensity__min = Quantity(
+        type=np.float64,
+        description="Minimum of intensity, computed over the full array at parse time.",
+    )
+    intensity__max = Quantity(
+        type=np.float64,
+        description="Maximum of intensity, computed over the full array at parse time.",
+    )
+    intensity__size = Quantity(
+        type=np.int64,
+        description="Number of elements of intensity in the HDF5 file.",
+    )
+    intensity__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of intensity in the HDF5 file.",
     )
 
     def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
@@ -2224,6 +2352,22 @@ class XpsData(MpesData):
             component=ELNComponentEnum.NumberEditQuantity,
         ),
         a_display={"unit": "eV"},
+    )
+    energy__min = Quantity(
+        type=np.float64,
+        description="Minimum of energy, computed over the full array at parse time.",
+    )
+    energy__max = Quantity(
+        type=np.float64,
+        description="Maximum of energy, computed over the full array at parse time.",
+    )
+    energy__size = Quantity(
+        type=np.int64,
+        description="Number of elements of energy in the HDF5 file.",
+    )
+    energy__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of energy in the HDF5 file.",
     )
     energy__type = Quantity(
         type=MEnum(["kinetic", "binding"]),
