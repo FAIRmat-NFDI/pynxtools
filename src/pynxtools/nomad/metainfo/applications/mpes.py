@@ -2688,6 +2688,22 @@ class MpesInstrumentElectronanalyzerElectronDetectorRawData(Data):
             component=ELNComponentEnum.NumberEditQuantity,
         ),
     )
+    raw__min = Quantity(
+        type=np.float64,
+        description="Minimum of raw, computed over the full array at parse time.",
+    )
+    raw__max = Quantity(
+        type=np.float64,
+        description="Maximum of raw, computed over the full array at parse time.",
+    )
+    raw__size = Quantity(
+        type=np.int64,
+        description="Number of elements of raw in the HDF5 file.",
+    )
+    raw__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of raw in the HDF5 file.",
+    )
     pixel_x = Quantity(
         type=np.int64,
         links=[
@@ -2704,6 +2720,22 @@ class MpesInstrumentElectronanalyzerElectronDetectorRawData(Data):
             component=ELNComponentEnum.NumberEditQuantity,
         ),
     )
+    pixel_x__min = Quantity(
+        type=np.int64,
+        description="Minimum of pixel_x, computed over the full array at parse time.",
+    )
+    pixel_x__max = Quantity(
+        type=np.int64,
+        description="Maximum of pixel_x, computed over the full array at parse time.",
+    )
+    pixel_x__size = Quantity(
+        type=np.int64,
+        description="Number of elements of pixel_x in the HDF5 file.",
+    )
+    pixel_x__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of pixel_x in the HDF5 file.",
+    )
     pixel_y = Quantity(
         type=np.int64,
         links=[
@@ -2719,6 +2751,22 @@ class MpesInstrumentElectronanalyzerElectronDetectorRawData(Data):
         a_eln=ELNAnnotation(
             component=ELNComponentEnum.NumberEditQuantity,
         ),
+    )
+    pixel_y__min = Quantity(
+        type=np.int64,
+        description="Minimum of pixel_y, computed over the full array at parse time.",
+    )
+    pixel_y__max = Quantity(
+        type=np.int64,
+        description="Maximum of pixel_y, computed over the full array at parse time.",
+    )
+    pixel_y__size = Quantity(
+        type=np.int64,
+        description="Number of elements of pixel_y in the HDF5 file.",
+    )
+    pixel_y__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of pixel_y in the HDF5 file.",
     )
     energy = Quantity(
         type=np.float64,
@@ -2739,6 +2787,22 @@ class MpesInstrumentElectronanalyzerElectronDetectorRawData(Data):
             component=ELNComponentEnum.NumberEditQuantity,
         ),
         a_display={"unit": "eV"},
+    )
+    energy__min = Quantity(
+        type=np.float64,
+        description="Minimum of energy, computed over the full array at parse time.",
+    )
+    energy__max = Quantity(
+        type=np.float64,
+        description="Maximum of energy, computed over the full array at parse time.",
+    )
+    energy__size = Quantity(
+        type=np.int64,
+        description="Number of elements of energy in the HDF5 file.",
+    )
+    energy__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of energy in the HDF5 file.",
     )
     energy__type = Quantity(
         type=MEnum(["kinetic", "binding"]),
@@ -2783,6 +2847,22 @@ class MpesInstrumentElectronanalyzerElectronDetectorRawData(Data):
         ),
         a_display={"unit": "eV"},
     )
+    photon_energy__min = Quantity(
+        type=np.float64,
+        description="Minimum of photon_energy, computed over the full array at parse time.",
+    )
+    photon_energy__max = Quantity(
+        type=np.float64,
+        description="Maximum of photon_energy, computed over the full array at parse time.",
+    )
+    photon_energy__size = Quantity(
+        type=np.int64,
+        description="Number of elements of photon_energy in the HDF5 file.",
+    )
+    photon_energy__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of photon_energy in the HDF5 file.",
+    )
     kx = Quantity(
         type=np.float64,
         links=[
@@ -2812,6 +2892,22 @@ class MpesInstrumentElectronanalyzerElectronDetectorRawData(Data):
         ),
         a_display={"unit": "1 / angstrom"},
     )
+    kx__min = Quantity(
+        type=np.float64,
+        description="Minimum of kx, computed over the full array at parse time.",
+    )
+    kx__max = Quantity(
+        type=np.float64,
+        description="Maximum of kx, computed over the full array at parse time.",
+    )
+    kx__size = Quantity(
+        type=np.int64,
+        description="Number of elements of kx in the HDF5 file.",
+    )
+    kx__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of kx in the HDF5 file.",
+    )
     ky = Quantity(
         type=np.float64,
         links=[
@@ -2837,6 +2933,22 @@ class MpesInstrumentElectronanalyzerElectronDetectorRawData(Data):
         ),
         a_display={"unit": "1 / angstrom"},
     )
+    ky__min = Quantity(
+        type=np.float64,
+        description="Minimum of ky, computed over the full array at parse time.",
+    )
+    ky__max = Quantity(
+        type=np.float64,
+        description="Maximum of ky, computed over the full array at parse time.",
+    )
+    ky__size = Quantity(
+        type=np.int64,
+        description="Number of elements of ky in the HDF5 file.",
+    )
+    ky__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of ky in the HDF5 file.",
+    )
     kz = Quantity(
         type=np.float64,
         links=[
@@ -2861,6 +2973,22 @@ class MpesInstrumentElectronanalyzerElectronDetectorRawData(Data):
             component=ELNComponentEnum.NumberEditQuantity,
         ),
         a_display={"unit": "1 / angstrom"},
+    )
+    kz__min = Quantity(
+        type=np.float64,
+        description="Minimum of kz, computed over the full array at parse time.",
+    )
+    kz__max = Quantity(
+        type=np.float64,
+        description="Maximum of kz, computed over the full array at parse time.",
+    )
+    kz__size = Quantity(
+        type=np.int64,
+        description="Number of elements of kz in the HDF5 file.",
+    )
+    kz__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of kz in the HDF5 file.",
     )
     k_parallel = Quantity(
         type=np.float64,
@@ -2893,6 +3021,22 @@ class MpesInstrumentElectronanalyzerElectronDetectorRawData(Data):
         ),
         a_display={"unit": "1 / angstrom"},
     )
+    k_parallel__min = Quantity(
+        type=np.float64,
+        description="Minimum of k_parallel, computed over the full array at parse time.",
+    )
+    k_parallel__max = Quantity(
+        type=np.float64,
+        description="Maximum of k_parallel, computed over the full array at parse time.",
+    )
+    k_parallel__size = Quantity(
+        type=np.int64,
+        description="Number of elements of k_parallel in the HDF5 file.",
+    )
+    k_parallel__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of k_parallel in the HDF5 file.",
+    )
     k_perpendicular = Quantity(
         type=np.float64,
         links=[
@@ -2923,6 +3067,22 @@ class MpesInstrumentElectronanalyzerElectronDetectorRawData(Data):
         ),
         a_display={"unit": "1 / angstrom"},
     )
+    k_perpendicular__min = Quantity(
+        type=np.float64,
+        description="Minimum of k_perpendicular, computed over the full array at parse time.",
+    )
+    k_perpendicular__max = Quantity(
+        type=np.float64,
+        description="Maximum of k_perpendicular, computed over the full array at parse time.",
+    )
+    k_perpendicular__size = Quantity(
+        type=np.int64,
+        description="Number of elements of k_perpendicular in the HDF5 file.",
+    )
+    k_perpendicular__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of k_perpendicular in the HDF5 file.",
+    )
     angular0 = Quantity(
         type=np.float64,
         links=[
@@ -2952,6 +3112,22 @@ class MpesInstrumentElectronanalyzerElectronDetectorRawData(Data):
         ),
         a_display={"unit": "radian"},
     )
+    angular0__min = Quantity(
+        type=np.float64,
+        description="Minimum of angular0, computed over the full array at parse time.",
+    )
+    angular0__max = Quantity(
+        type=np.float64,
+        description="Maximum of angular0, computed over the full array at parse time.",
+    )
+    angular0__size = Quantity(
+        type=np.int64,
+        description="Number of elements of angular0 in the HDF5 file.",
+    )
+    angular0__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of angular0 in the HDF5 file.",
+    )
     angular1 = Quantity(
         type=np.float64,
         links=[
@@ -2977,6 +3153,22 @@ class MpesInstrumentElectronanalyzerElectronDetectorRawData(Data):
             component=ELNComponentEnum.NumberEditQuantity,
         ),
         a_display={"unit": "radian"},
+    )
+    angular1__min = Quantity(
+        type=np.float64,
+        description="Minimum of angular1, computed over the full array at parse time.",
+    )
+    angular1__max = Quantity(
+        type=np.float64,
+        description="Maximum of angular1, computed over the full array at parse time.",
+    )
+    angular1__size = Quantity(
+        type=np.int64,
+        description="Number of elements of angular1 in the HDF5 file.",
+    )
+    angular1__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of angular1 in the HDF5 file.",
     )
     spatial0 = Quantity(
         type=np.float64,
@@ -3007,6 +3199,22 @@ class MpesInstrumentElectronanalyzerElectronDetectorRawData(Data):
         ),
         a_display={"unit": "m"},
     )
+    spatial0__min = Quantity(
+        type=np.float64,
+        description="Minimum of spatial0, computed over the full array at parse time.",
+    )
+    spatial0__max = Quantity(
+        type=np.float64,
+        description="Maximum of spatial0, computed over the full array at parse time.",
+    )
+    spatial0__size = Quantity(
+        type=np.int64,
+        description="Number of elements of spatial0 in the HDF5 file.",
+    )
+    spatial0__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of spatial0 in the HDF5 file.",
+    )
     spatial1 = Quantity(
         type=np.float64,
         links=[
@@ -3033,6 +3241,22 @@ class MpesInstrumentElectronanalyzerElectronDetectorRawData(Data):
         ),
         a_display={"unit": "m"},
     )
+    spatial1__min = Quantity(
+        type=np.float64,
+        description="Minimum of spatial1, computed over the full array at parse time.",
+    )
+    spatial1__max = Quantity(
+        type=np.float64,
+        description="Maximum of spatial1, computed over the full array at parse time.",
+    )
+    spatial1__size = Quantity(
+        type=np.int64,
+        description="Number of elements of spatial1 in the HDF5 file.",
+    )
+    spatial1__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of spatial1 in the HDF5 file.",
+    )
     delay = Quantity(
         type=np.float64,
         links=[
@@ -3058,6 +3282,22 @@ class MpesInstrumentElectronanalyzerElectronDetectorRawData(Data):
         ),
         a_display={"unit": "second"},
     )
+    delay__min = Quantity(
+        type=np.float64,
+        description="Minimum of delay, computed over the full array at parse time.",
+    )
+    delay__max = Quantity(
+        type=np.float64,
+        description="Maximum of delay, computed over the full array at parse time.",
+    )
+    delay__size = Quantity(
+        type=np.int64,
+        description="Number of elements of delay in the HDF5 file.",
+    )
+    delay__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of delay in the HDF5 file.",
+    )
     temperature = Quantity(
         type=np.float64,
         links=[
@@ -3082,6 +3322,22 @@ class MpesInstrumentElectronanalyzerElectronDetectorRawData(Data):
             component=ELNComponentEnum.NumberEditQuantity,
         ),
         a_display={"unit": "second"},
+    )
+    temperature__min = Quantity(
+        type=np.float64,
+        description="Minimum of temperature, computed over the full array at parse time.",
+    )
+    temperature__max = Quantity(
+        type=np.float64,
+        description="Maximum of temperature, computed over the full array at parse time.",
+    )
+    temperature__size = Quantity(
+        type=np.int64,
+        description="Number of elements of temperature in the HDF5 file.",
+    )
+    temperature__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of temperature in the HDF5 file.",
     )
 
     def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
@@ -5253,6 +5509,22 @@ class MpesData(Data):
             component=ELNComponentEnum.NumberEditQuantity,
         ),
     )
+    data_quantity__min = Quantity(
+        type=np.float64,
+        description="Minimum of data_quantity, computed over the full array at parse time.",
+    )
+    data_quantity__max = Quantity(
+        type=np.float64,
+        description="Maximum of data_quantity, computed over the full array at parse time.",
+    )
+    data_quantity__size = Quantity(
+        type=np.int64,
+        description="Number of elements of data_quantity in the HDF5 file.",
+    )
+    data_quantity__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of data_quantity in the HDF5 file.",
+    )
     energy = Quantity(
         type=np.float64,
         links=[
@@ -5272,6 +5544,22 @@ class MpesData(Data):
             component=ELNComponentEnum.NumberEditQuantity,
         ),
         a_display={"unit": "eV"},
+    )
+    energy__min = Quantity(
+        type=np.float64,
+        description="Minimum of energy, computed over the full array at parse time.",
+    )
+    energy__max = Quantity(
+        type=np.float64,
+        description="Maximum of energy, computed over the full array at parse time.",
+    )
+    energy__size = Quantity(
+        type=np.int64,
+        description="Number of elements of energy in the HDF5 file.",
+    )
+    energy__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of energy in the HDF5 file.",
     )
     energy__type = Quantity(
         type=MEnum(["kinetic", "binding"]),
@@ -5331,6 +5619,22 @@ class MpesData(Data):
         ),
         a_display={"unit": "eV"},
     )
+    photon_energy__min = Quantity(
+        type=np.float64,
+        description="Minimum of photon_energy, computed over the full array at parse time.",
+    )
+    photon_energy__max = Quantity(
+        type=np.float64,
+        description="Maximum of photon_energy, computed over the full array at parse time.",
+    )
+    photon_energy__size = Quantity(
+        type=np.int64,
+        description="Number of elements of photon_energy in the HDF5 file.",
+    )
+    photon_energy__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of photon_energy in the HDF5 file.",
+    )
     kx = Quantity(
         type=np.float64,
         links=[
@@ -5359,6 +5663,22 @@ class MpesData(Data):
         ),
         a_display={"unit": "1 / angstrom"},
     )
+    kx__min = Quantity(
+        type=np.float64,
+        description="Minimum of kx, computed over the full array at parse time.",
+    )
+    kx__max = Quantity(
+        type=np.float64,
+        description="Maximum of kx, computed over the full array at parse time.",
+    )
+    kx__size = Quantity(
+        type=np.int64,
+        description="Number of elements of kx in the HDF5 file.",
+    )
+    kx__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of kx in the HDF5 file.",
+    )
     ky = Quantity(
         type=np.float64,
         links=[
@@ -5383,6 +5703,22 @@ class MpesData(Data):
         ),
         a_display={"unit": "1 / angstrom"},
     )
+    ky__min = Quantity(
+        type=np.float64,
+        description="Minimum of ky, computed over the full array at parse time.",
+    )
+    ky__max = Quantity(
+        type=np.float64,
+        description="Maximum of ky, computed over the full array at parse time.",
+    )
+    ky__size = Quantity(
+        type=np.int64,
+        description="Number of elements of ky in the HDF5 file.",
+    )
+    ky__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of ky in the HDF5 file.",
+    )
     kz = Quantity(
         type=np.float64,
         links=[
@@ -5406,6 +5742,22 @@ class MpesData(Data):
             component=ELNComponentEnum.NumberEditQuantity,
         ),
         a_display={"unit": "1 / angstrom"},
+    )
+    kz__min = Quantity(
+        type=np.float64,
+        description="Minimum of kz, computed over the full array at parse time.",
+    )
+    kz__max = Quantity(
+        type=np.float64,
+        description="Maximum of kz, computed over the full array at parse time.",
+    )
+    kz__size = Quantity(
+        type=np.int64,
+        description="Number of elements of kz in the HDF5 file.",
+    )
+    kz__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of kz in the HDF5 file.",
     )
     k_parallel = Quantity(
         type=np.float64,
@@ -5437,6 +5789,22 @@ class MpesData(Data):
         ),
         a_display={"unit": "1 / angstrom"},
     )
+    k_parallel__min = Quantity(
+        type=np.float64,
+        description="Minimum of k_parallel, computed over the full array at parse time.",
+    )
+    k_parallel__max = Quantity(
+        type=np.float64,
+        description="Maximum of k_parallel, computed over the full array at parse time.",
+    )
+    k_parallel__size = Quantity(
+        type=np.int64,
+        description="Number of elements of k_parallel in the HDF5 file.",
+    )
+    k_parallel__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of k_parallel in the HDF5 file.",
+    )
     k_perpendicular = Quantity(
         type=np.float64,
         links=[
@@ -5465,6 +5833,22 @@ class MpesData(Data):
             component=ELNComponentEnum.NumberEditQuantity,
         ),
         a_display={"unit": "1 / angstrom"},
+    )
+    k_perpendicular__min = Quantity(
+        type=np.float64,
+        description="Minimum of k_perpendicular, computed over the full array at parse time.",
+    )
+    k_perpendicular__max = Quantity(
+        type=np.float64,
+        description="Maximum of k_perpendicular, computed over the full array at parse time.",
+    )
+    k_perpendicular__size = Quantity(
+        type=np.int64,
+        description="Number of elements of k_perpendicular in the HDF5 file.",
+    )
+    k_perpendicular__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of k_perpendicular in the HDF5 file.",
     )
     angular0 = Quantity(
         type=np.float64,
@@ -5495,6 +5879,22 @@ class MpesData(Data):
         ),
         a_display={"unit": "radian"},
     )
+    angular0__min = Quantity(
+        type=np.float64,
+        description="Minimum of angular0, computed over the full array at parse time.",
+    )
+    angular0__max = Quantity(
+        type=np.float64,
+        description="Maximum of angular0, computed over the full array at parse time.",
+    )
+    angular0__size = Quantity(
+        type=np.int64,
+        description="Number of elements of angular0 in the HDF5 file.",
+    )
+    angular0__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of angular0 in the HDF5 file.",
+    )
     angular1 = Quantity(
         type=np.float64,
         links=[
@@ -5519,6 +5919,22 @@ class MpesData(Data):
             component=ELNComponentEnum.NumberEditQuantity,
         ),
         a_display={"unit": "radian"},
+    )
+    angular1__min = Quantity(
+        type=np.float64,
+        description="Minimum of angular1, computed over the full array at parse time.",
+    )
+    angular1__max = Quantity(
+        type=np.float64,
+        description="Maximum of angular1, computed over the full array at parse time.",
+    )
+    angular1__size = Quantity(
+        type=np.int64,
+        description="Number of elements of angular1 in the HDF5 file.",
+    )
+    angular1__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of angular1 in the HDF5 file.",
     )
     spatial0 = Quantity(
         type=np.float64,
@@ -5549,6 +5965,22 @@ class MpesData(Data):
         ),
         a_display={"unit": "m"},
     )
+    spatial0__min = Quantity(
+        type=np.float64,
+        description="Minimum of spatial0, computed over the full array at parse time.",
+    )
+    spatial0__max = Quantity(
+        type=np.float64,
+        description="Maximum of spatial0, computed over the full array at parse time.",
+    )
+    spatial0__size = Quantity(
+        type=np.int64,
+        description="Number of elements of spatial0 in the HDF5 file.",
+    )
+    spatial0__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of spatial0 in the HDF5 file.",
+    )
     spatial1 = Quantity(
         type=np.float64,
         links=[
@@ -5574,6 +6006,22 @@ class MpesData(Data):
         ),
         a_display={"unit": "m"},
     )
+    spatial1__min = Quantity(
+        type=np.float64,
+        description="Minimum of spatial1, computed over the full array at parse time.",
+    )
+    spatial1__max = Quantity(
+        type=np.float64,
+        description="Maximum of spatial1, computed over the full array at parse time.",
+    )
+    spatial1__size = Quantity(
+        type=np.int64,
+        description="Number of elements of spatial1 in the HDF5 file.",
+    )
+    spatial1__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of spatial1 in the HDF5 file.",
+    )
     delay = Quantity(
         type=np.float64,
         links=[
@@ -5596,6 +6044,22 @@ class MpesData(Data):
             component=ELNComponentEnum.NumberEditQuantity,
         ),
         a_display={"unit": "second"},
+    )
+    delay__min = Quantity(
+        type=np.float64,
+        description="Minimum of delay, computed over the full array at parse time.",
+    )
+    delay__max = Quantity(
+        type=np.float64,
+        description="Maximum of delay, computed over the full array at parse time.",
+    )
+    delay__size = Quantity(
+        type=np.int64,
+        description="Number of elements of delay in the HDF5 file.",
+    )
+    delay__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of delay in the HDF5 file.",
     )
     temperature = Quantity(
         type=np.float64,
@@ -5621,6 +6085,22 @@ class MpesData(Data):
             component=ELNComponentEnum.NumberEditQuantity,
         ),
         a_display={"unit": "second"},
+    )
+    temperature__min = Quantity(
+        type=np.float64,
+        description="Minimum of temperature, computed over the full array at parse time.",
+    )
+    temperature__max = Quantity(
+        type=np.float64,
+        description="Maximum of temperature, computed over the full array at parse time.",
+    )
+    temperature__size = Quantity(
+        type=np.int64,
+        description="Number of elements of temperature in the HDF5 file.",
+    )
+    temperature__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of temperature in the HDF5 file.",
     )
 
     def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:

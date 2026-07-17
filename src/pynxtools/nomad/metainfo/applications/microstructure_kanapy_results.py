@@ -627,6 +627,22 @@ class MicrostructureKanapyResultsMicrostructureIDGridStructure(Data):
         ),
         a_display={"unit": "dimensionless"},
     )
+    indices_crystal__min = Quantity(
+        type=np.int64,
+        description="Minimum of indices_crystal, computed over the full array at parse time.",
+    )
+    indices_crystal__max = Quantity(
+        type=np.int64,
+        description="Maximum of indices_crystal, computed over the full array at parse time.",
+    )
+    indices_crystal__size = Quantity(
+        type=np.int64,
+        description="Number of elements of indices_crystal in the HDF5 file.",
+    )
+    indices_crystal__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of indices_crystal in the HDF5 file.",
+    )
     z = Quantity(
         type=np.float64,
         links=[

@@ -173,6 +173,22 @@ class PeakData(Data):
             component=ELNComponentEnum.NumberEditQuantity,
         ),
     )
+    position__min = Quantity(
+        type=np.float64,
+        description="Minimum of position, computed over the full array at parse time.",
+    )
+    position__max = Quantity(
+        type=np.float64,
+        description="Maximum of position, computed over the full array at parse time.",
+    )
+    position__size = Quantity(
+        type=np.int64,
+        description="Number of elements of position in the HDF5 file.",
+    )
+    position__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of position in the HDF5 file.",
+    )
     intensity = Quantity(
         type=np.float64,
         links=[
@@ -193,6 +209,22 @@ class PeakData(Data):
         a_eln=ELNAnnotation(
             component=ELNComponentEnum.NumberEditQuantity,
         ),
+    )
+    intensity__min = Quantity(
+        type=np.float64,
+        description="Minimum of intensity, computed over the full array at parse time.",
+    )
+    intensity__max = Quantity(
+        type=np.float64,
+        description="Maximum of intensity, computed over the full array at parse time.",
+    )
+    intensity__size = Quantity(
+        type=np.int64,
+        description="Number of elements of intensity in the HDF5 file.",
+    )
+    intensity__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of intensity in the HDF5 file.",
     )
 
     def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:

@@ -1292,6 +1292,22 @@ class OpticalSpectroscopyInstrumentDetectorTYPERawData(Data):
             component=ELNComponentEnum.NumberEditQuantity,
         ),
     )
+    raw__min = Quantity(
+        type=np.float64,
+        description="Minimum of raw, computed over the full array at parse time.",
+    )
+    raw__max = Quantity(
+        type=np.float64,
+        description="Maximum of raw, computed over the full array at parse time.",
+    )
+    raw__size = Quantity(
+        type=np.int64,
+        description="Number of elements of raw in the HDF5 file.",
+    )
+    raw__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of raw in the HDF5 file.",
+    )
 
     def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
         super().normalize(archive, logger)

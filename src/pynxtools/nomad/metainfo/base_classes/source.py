@@ -944,6 +944,22 @@ class SourceBunchPattern(Data):
             component=ELNComponentEnum.NumberEditQuantity,
         ),
     )
+    title__min = Quantity(
+        type=np.float64,
+        description="Minimum of title, computed over the full array at parse time.",
+    )
+    title__max = Quantity(
+        type=np.float64,
+        description="Maximum of title, computed over the full array at parse time.",
+    )
+    title__size = Quantity(
+        type=np.int64,
+        description="Number of elements of title in the HDF5 file.",
+    )
+    title__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of title in the HDF5 file.",
+    )
 
     def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
         super().normalize(archive, logger)

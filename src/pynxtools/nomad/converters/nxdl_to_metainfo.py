@@ -568,20 +568,22 @@ def _build_quantity_from_node(
         python_type, shape, node.name_type, scalar_items, field_name=node.name or ""
     )
 
-    # NXDL leaves some NXdata signals (DATA/AXISNAME) with no <dimensions>
-    # element at all — node.shape is None, even though they are, by NeXus
-    # convention, always arrays (just of unspecified rank). This is only used
-    # to decide has_statistics below; it must NOT feed back into the
-    # quantity's own declared `shape` (qty.shape stays exactly what
+    # NXDL leaves most NXdata signals/axes with no <dimensions> element at
+    # all — node.shape is None, even though they are, by NeXus convention,
+    # always arrays (just of unspecified rank). This holds regardless of
+    # whether the field's name is variadic (AXISNAME, name_type "any"/
+    # "partial") or concretely named (e.g. NXmpes's "energy"/"kx"/"ky" in its
+    # DATA group, name_type "specified") — every field inside an NXdata group
+    # is either the signal or an axis, both array-valued by definition. This
+    # is only used to decide has_statistics below; it must NOT feed back into
+    # the quantity's own declared `shape` (qty.shape stays exactly what
     # _shape_from_node() returned) — declaring shape=["*"] on the actual
     # Quantity changed how the parser populates it (it now requires real
     # array structure) and broke previously-working scalar-style population
     # for fields like AXISNAME in real files (confirmed via a regression in
     # test_arpes_example: "Invalid shape for [1.2404502e-05]").
     is_effectively_array = bool(shape) or (
-        is_nxdata_class
-        and isinstance(node, NXTreeField)
-        and (node.name_type or "specified") in ("any", "partial")
+        is_nxdata_class and isinstance(node, NXTreeField)
     )
 
     has_statistics = (
@@ -1733,9 +1735,8 @@ def build_context(nx_name: str) -> dict:
             qty = _build_quantity_from_node(
                 child, is_nxdata_class=(nx_name == "NXdata")
             )
-            if qty.python_name in _qty_field_suffix_for.get(nx_name, frozenset()):
-                qty.python_name = field_conflicts_with_group(qty.python_name)
-            elif qty.python_name in all_sub_names:
+            # Ancestor SubSection wins: rename field with _quantity suffix.
+            if qty.python_name in all_sub_names:
                 qty.python_name = field_conflicts_with_group(qty.python_name)
             if qty.python_name in seen_quantities:
                 continue

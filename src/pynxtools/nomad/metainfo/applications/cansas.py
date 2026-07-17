@@ -583,6 +583,22 @@ class CansasData(Data):
         ),
         a_display={"unit": "1 / m"},
     )
+    Q__min = Quantity(
+        type=np.float64,
+        description="Minimum of Q, computed over the full array at parse time.",
+    )
+    Q__max = Quantity(
+        type=np.float64,
+        description="Maximum of Q, computed over the full array at parse time.",
+    )
+    Q__size = Quantity(
+        type=np.int64,
+        description="Number of elements of Q in the HDF5 file.",
+    )
+    Q__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of Q in the HDF5 file.",
+    )
     Q__units = Quantity(
         type=MEnum(["1/m", "1/nm", "1/angstrom"]),
         links=[
@@ -755,6 +771,22 @@ class CansasData(Data):
             component=ELNComponentEnum.NumberEditQuantity,
         ),
     )
+    I__min = Quantity(
+        type=np.float64,
+        description="Minimum of I, computed over the full array at parse time.",
+    )
+    I__max = Quantity(
+        type=np.float64,
+        description="Maximum of I, computed over the full array at parse time.",
+    )
+    I__size = Quantity(
+        type=np.int64,
+        description="Number of elements of I in the HDF5 file.",
+    )
+    I__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of I in the HDF5 file.",
+    )
     I__units = Quantity(
         type=MEnum(["1/m", "1/cm", "m2/g", "cm2/g", "arbitrary"]),
         links=[
@@ -859,6 +891,22 @@ class CansasData(Data):
             component=ELNComponentEnum.NumberEditQuantity,
         ),
     )
+    Idev__min = Quantity(
+        type=np.float64,
+        description="Minimum of Idev, computed over the full array at parse time.",
+    )
+    Idev__max = Quantity(
+        type=np.float64,
+        description="Maximum of Idev, computed over the full array at parse time.",
+    )
+    Idev__size = Quantity(
+        type=np.int64,
+        description="Number of elements of Idev in the HDF5 file.",
+    )
+    Idev__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of Idev in the HDF5 file.",
+    )
     Idev__units = Quantity(
         type=MEnum(["1/m", "1/cm", "m2/g", "cm2/g", "arbitrary"]),
         links=[
@@ -911,6 +959,22 @@ class CansasData(Data):
         ),
         a_display={"unit": "1 / m"},
     )
+    Qdev__min = Quantity(
+        type=np.float64,
+        description="Minimum of Qdev, computed over the full array at parse time.",
+    )
+    Qdev__max = Quantity(
+        type=np.float64,
+        description="Maximum of Qdev, computed over the full array at parse time.",
+    )
+    Qdev__size = Quantity(
+        type=np.int64,
+        description="Number of elements of Qdev in the HDF5 file.",
+    )
+    Qdev__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of Qdev in the HDF5 file.",
+    )
     Qdev__units = Quantity(
         type=MEnum(["1/m", "1/nm", "1/angstrom"]),
         links=[
@@ -960,6 +1024,22 @@ class CansasData(Data):
             component=ELNComponentEnum.NumberEditQuantity,
         ),
         a_display={"unit": "1 / m"},
+    )
+    dQw__min = Quantity(
+        type=np.float64,
+        description="Minimum of dQw, computed over the full array at parse time.",
+    )
+    dQw__max = Quantity(
+        type=np.float64,
+        description="Maximum of dQw, computed over the full array at parse time.",
+    )
+    dQw__size = Quantity(
+        type=np.int64,
+        description="Number of elements of dQw in the HDF5 file.",
+    )
+    dQw__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of dQw in the HDF5 file.",
     )
     dQw__units = Quantity(
         type=MEnum(["1/m", "1/nm", "1/angstrom"]),
@@ -1011,6 +1091,22 @@ class CansasData(Data):
         ),
         a_display={"unit": "1 / m"},
     )
+    dQl__min = Quantity(
+        type=np.float64,
+        description="Minimum of dQl, computed over the full array at parse time.",
+    )
+    dQl__max = Quantity(
+        type=np.float64,
+        description="Maximum of dQl, computed over the full array at parse time.",
+    )
+    dQl__size = Quantity(
+        type=np.int64,
+        description="Number of elements of dQl in the HDF5 file.",
+    )
+    dQl__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of dQl in the HDF5 file.",
+    )
     dQl__units = Quantity(
         type=MEnum(["1/m", "1/nm", "1/angstrom"]),
         links=[
@@ -1058,6 +1154,22 @@ class CansasData(Data):
         ),
         a_display={"unit": "1 / m"},
     )
+    Qmean__min = Quantity(
+        type=np.float64,
+        description="Minimum of Qmean, computed over the full array at parse time.",
+    )
+    Qmean__max = Quantity(
+        type=np.float64,
+        description="Maximum of Qmean, computed over the full array at parse time.",
+    )
+    Qmean__size = Quantity(
+        type=np.int64,
+        description="Number of elements of Qmean in the HDF5 file.",
+    )
+    Qmean__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of Qmean in the HDF5 file.",
+    )
     Qmean__units = Quantity(
         type=MEnum(["1/m", "1/nm", "1/angstrom"]),
         links=[
@@ -1103,6 +1215,22 @@ class CansasData(Data):
             component=ELNComponentEnum.NumberEditQuantity,
         ),
         a_display={"unit": "dimensionless"},
+    )
+    ShadowFactor__min = Quantity(
+        type=np.float64,
+        description="Minimum of ShadowFactor, computed over the full array at parse time.",
+    )
+    ShadowFactor__max = Quantity(
+        type=np.float64,
+        description="Maximum of ShadowFactor, computed over the full array at parse time.",
+    )
+    ShadowFactor__size = Quantity(
+        type=np.int64,
+        description="Number of elements of ShadowFactor in the HDF5 file.",
+    )
+    ShadowFactor__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of ShadowFactor in the HDF5 file.",
     )
 
     def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
@@ -2562,6 +2690,22 @@ class CansasTransmissionSpectrum(Data):
         ),
         a_display={"unit": "angstrom"},
     )
+    lambda_quantity__min = Quantity(
+        type=np.float64,
+        description="Minimum of lambda_quantity, computed over the full array at parse time.",
+    )
+    lambda_quantity__max = Quantity(
+        type=np.float64,
+        description="Maximum of lambda_quantity, computed over the full array at parse time.",
+    )
+    lambda_quantity__size = Quantity(
+        type=np.int64,
+        description="Number of elements of lambda_quantity in the HDF5 file.",
+    )
+    lambda_quantity__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of lambda_quantity in the HDF5 file.",
+    )
     T = Quantity(
         type=np.float64,
         links=[
@@ -2584,6 +2728,22 @@ class CansasTransmissionSpectrum(Data):
             component=ELNComponentEnum.NumberEditQuantity,
         ),
         a_display={"unit": "dimensionless"},
+    )
+    T__min = Quantity(
+        type=np.float64,
+        description="Minimum of T, computed over the full array at parse time.",
+    )
+    T__max = Quantity(
+        type=np.float64,
+        description="Maximum of T, computed over the full array at parse time.",
+    )
+    T__size = Quantity(
+        type=np.int64,
+        description="Number of elements of T in the HDF5 file.",
+    )
+    T__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of T in the HDF5 file.",
     )
     T__uncertainties = Quantity(
         type=str,
@@ -2634,6 +2794,22 @@ class CansasTransmissionSpectrum(Data):
             component=ELNComponentEnum.NumberEditQuantity,
         ),
         a_display={"unit": "dimensionless"},
+    )
+    Tdev__min = Quantity(
+        type=np.float64,
+        description="Minimum of Tdev, computed over the full array at parse time.",
+    )
+    Tdev__max = Quantity(
+        type=np.float64,
+        description="Maximum of Tdev, computed over the full array at parse time.",
+    )
+    Tdev__size = Quantity(
+        type=np.int64,
+        description="Number of elements of Tdev in the HDF5 file.",
+    )
+    Tdev__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of Tdev in the HDF5 file.",
     )
 
     def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
