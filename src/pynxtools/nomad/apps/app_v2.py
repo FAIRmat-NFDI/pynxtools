@@ -72,12 +72,12 @@ nexus_app_v2 = AppEntryPoint(
             ),
             Column(
                 title="Author",
-                search_quantity=f"data.user[*].name_quantity#{schema}",
+                search_quantity=f"data.user[*].name#{schema}",
                 selected=True,
             ),
             Column(
                 title="Sample",
-                search_quantity=f"data.sample[*].name_quantity#{schema}",
+                search_quantity=f"data.sample[*].name#{schema}",
                 selected=True,
             ),
             Column(
@@ -150,13 +150,13 @@ nexus_app_v2 = AppEntryPoint(
                     items=[
                         MenuItemTerms(
                             title="Name",
-                            search_quantity=f"data.instrument.name_quantity#{schema}",
+                            search_quantity=f"data.instrument.name#{schema}",
                             width=12,
                             options=12,
                         ),
                         MenuItemTerms(
                             title="Short Name",
-                            search_quantity=f"data.instrument.name_quantity__short_name#{schema}",
+                            search_quantity=f"data.instrument.name__short_name#{schema}",
                             width=12,
                             options=12,
                         ),
@@ -168,7 +168,7 @@ nexus_app_v2 = AppEntryPoint(
                     items=[
                         MenuItemTerms(
                             title="Name",
-                            search_quantity=f"data.sample.name_quantity#{schema}",
+                            search_quantity=f"data.sample.name#{schema}",
                             width=12,
                             options=12,
                         ),
@@ -186,7 +186,7 @@ nexus_app_v2 = AppEntryPoint(
                     items=[
                         MenuItemTerms(
                             title="Entry Author",
-                            search_quantity=f"data.user.name_quantity#{schema}",
+                            search_quantity=f"data.user.name#{schema}",
                             width=12,
                             options=5,
                         ),
@@ -262,7 +262,7 @@ nexus_app_v2 = AppEntryPoint(
                     "type": "terms",
                     "show_input": True,
                     "scale": "linear",
-                    "quantity": f"data.user.name_quantity#{schema}",
+                    "quantity": f"data.user.name#{schema}",
                     "title": "Author",
                     "layout": {
                         "sm": {"minH": 3, "minW": 3, "h": 5, "w": 4, "y": 5, "x": 4},
@@ -276,7 +276,7 @@ nexus_app_v2 = AppEntryPoint(
                     "type": "terms",
                     "show_input": True,
                     "scale": "linear",
-                    "quantity": f"data.sample.name_quantity#{schema}",
+                    "quantity": f"data.sample.name#{schema}",
                     "title": "Sample",
                     "layout": {
                         "sm": {"minH": 3, "minW": 3, "h": 5, "w": 4, "y": 5, "x": 8},
