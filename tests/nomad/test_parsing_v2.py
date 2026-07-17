@@ -343,7 +343,7 @@ def test_nexus_string_decode_to_utf8(tmp_path):
     extend_nexus_file(data_to_add, modified_file)
     NexusParserV2().parse(str(modified_file), archive, get_logger(__name__))
     obj = archive.data
-    assert obj.user[0].name_quantity == "['Any name', 'name González (HU)', 'straße']"
+    assert obj.user[0].name == "['Any name', 'name González (HU)', 'straße']"
 
 
 # ---------------------------------------------------------------------------
