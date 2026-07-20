@@ -259,9 +259,15 @@ class NexusMeasurement(Measurement, Schema, PlotSection):
                         "base": config.services.api_base_path.rstrip("/"),
                         "prefix": ep.prefix.strip("/"),
                         "ontology_name": ep.ontologies[0].name,
+                        "PaNET_methods_class": ep.ontologies[0].PaNET_methods_class,
+                        "NeXus_application_class": ep.ontologies[
+                            0
+                        ].NeXus_application_class,
                     }
                 except Exception as e:
-                    logger.warning(f"Could not initialize ontology for ontology service: {e}")
+                    logger.warning(
+                        f"Could not initialize ontology for ontology service: {e}"
+                    )
 
             for entry in app_entry:
                 ref = NexusActivityStep(name=entry.name, reference=entry)
@@ -295,30 +301,90 @@ class NexusMeasurement(Measurement, Schema, PlotSection):
                                 base = ontology_info["base"]
                                 prefix = ontology_info["prefix"]
                                 ontology_name = ontology_info["ontology_name"]
-                                url = f"http://localhost:8000{base}/{prefix}/{ontology_name}/superclasses/{class_name}"
-                                response = requests.get(url)
-                                if response.status_code == 200:
-                                    superclasses = response.json().get("superclasses", [])
+                                PaNET_methods_class = ontology_info[
+                                    "PaNET_methods_class"
+                                ]
+                                NeXus_application_class = ontology_info[
+                                    "NeXus_application_class"
+                                ]
+
+                                url_superclasses = f"http://localhost:8000{base}/{prefix}/{ontology_name}/superclasses/{class_name}"
+                                response_superclasses = requests.get(url_superclasses)
+
+                                url_panet_descendants = f"http://localhost:8000{base}/{prefix}/{ontology_name}/descendants/{PaNET_methods_class}"
+                                response_panet_descendants = requests.get(
+                                    url_panet_descendants
+                                )
+
+                                url_nexus_application = f"http://localhost:8000{base}/{prefix}/{ontology_name}/descendants/{NeXus_application_class}"
+                                response_nexus_application = requests.get(
+                                    url_nexus_application
+                                )
+
+                                # Check that BOTH requests were successful
+                                if (
+                                    response_superclasses.status_code == 200
+                                    and response_panet_descendants.status_code == 200
+                                    and response_nexus_application.status_code == 200
+                                ):
+                                    superclasses = response_superclasses.json().get(
+                                        "superclasses", []
+                                    )
+                                    panet_descendants = (
+                                        response_panet_descendants.json().get(
+                                            "descendants", []
+                                        )
+                                    )
+                                    nexus_application_descendants = (
+                                        response_nexus_application.json().get(
+                                            "descendants", []
+                                        )
+                                    )
+
+                                    # Calculate the intersection
+                                    valid_methods = (
+                                        set(superclasses)
+                                        & set(nexus_application_descendants)
+                                    ) | (set(superclasses) & set(panet_descendants))
+
                                     if archive.results.eln.methods is None:
                                         archive.results.eln.methods = []
-                                    for superclass in superclasses:
-                                        if superclass not in archive.results.eln.methods:
-                                            archive.results.eln.methods.append(superclass)
+
+                                    # Append only the intersection
+                                    for method in valid_methods:
+                                        if method not in archive.results.eln.methods:
+                                            archive.results.eln.methods.append(method)
                                 else:
                                     logger.warning(
-                                        f"Failed to fetch superclasses: {response.status_code} - {response.text}"
+                                        f"Failed to fetch ontology data. "
+                                        f"Superclasses API: {response_superclasses.status_code}. "
+                                        f"PaNET Descendants API: {response_panet_descendants.status_code}. "
+                                        f"NeXus Application Descendants API: {response_nexus_application.status_code}."
                                     )
-                                    archive.results.eln.methods.append(class_name)
+                                    if archive.results.eln.methods is None:
+                                        archive.results.eln.methods = []
+                                    if class_name not in archive.results.eln.methods:
+                                        archive.results.eln.methods.append(class_name)
                             except Exception as e:
                                 logger.warning(f"Ontology service error: {e}")
-                                archive.results.eln.methods.append(class_name)
+                                if archive.results.eln.methods is None:
+                                    archive.results.eln.methods = []
+                                if class_name not in archive.results.eln.methods:
+                                    archive.results.eln.methods.append(class_name)
                         else:
-                            archive.results.eln.methods.append(class_name)
+                            if archive.results.eln.methods is None:
+                                archive.results.eln.methods = []
+                            if class_name not in archive.results.eln.methods:
+                                archive.results.eln.methods.append(class_name)
                     else:
                         logger.warning("entry.definition__field is missing or empty.")
+                        if archive.results.eln.methods is None:
+                            archive.results.eln.methods = []
                         archive.results.eln.methods.append("Generic Experiment")
                 except Exception as e:
                     logger.warning(f"Failed to extract superclasses: {e}")
+                    if archive.results.eln.methods is None:
+                        archive.results.eln.methods = []
                     archive.results.eln.methods.append("Generic Experiment")
             if self.m_def.name == "Root":
                 self.method = "Generic Experiment"
