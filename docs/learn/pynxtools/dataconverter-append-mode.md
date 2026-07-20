@@ -11,9 +11,9 @@ passing the `--append` flag during command line invocation (see [Tutorial -> Con
 
 We take this tutorial and its `NXxps` case study as an example. It composes the HDF5 file with content from two input files: the `EX439_S718_Au.sle` with proprietary formatting and the `eln_data_sle.yaml`, a NOMAD-specific metadata exchange file. Instead of running the tutorial with passing both input in one go, one could first add process only the proprietary file (without using `--append`) and thereafter process the YAML file (with using `--append`). The minimal command line call reads as follows.
 
-```
-dataconverter EX439_S718_Au.sle --reader xps --nxdl NXxps --output Au_25_mbar_O2_no_align.nxs
-dataconverter eln_data_sle.yaml --reader xps --nxdl NXxps --append --output Au_25_mbar_O2_no_align.nxs
+```bash
+pynx convert EX439_S718_Au.sle --reader xps --nxdl NXxps --output Au_25_mbar_O2_no_align.nxs
+pynx convert eln_data_sle.yaml --reader xps --nxdl NXxps --append --output Au_25_mbar_O2_no_align.nxs
 ```
 
 When processing both the `*.sle` and `*.yaml` file in one call, adding `--append` has no effect, i.e.,

@@ -86,7 +86,7 @@ Every application definition is an XML file following the NXDL schema. Create `N
 If you have `pynxtools` installed (see [Installation Guide](./installation.md)), add the NXDL XML file under `src/pynxtools/definitions/contributed_definitions` and validate that pynxtools can read it:
 
 ```bash
-dataconverter generate-template --nxdl NXdouble_slit
+pynx convert generate-template NXdouble_slit
 ```
 
 You should see a JSON template listing paths like `/ENTRY[entry]/title` and `/ENTRY[entry]/start_time`.
@@ -384,7 +384,7 @@ nyaml2nxdl NXdouble_slit.yaml --output-file NXdouble_slit.nxdl.xml
 Run `generate-template` one final time and check that all required paths are listed:
 
 ```bash
-dataconverter generate-template --nxdl NXdouble_slit
+pynx convert generate-template NXdouble_slit
 ```
 
 Write a minimal HDF5 test file filling all required fields, then validate:
@@ -504,7 +504,7 @@ cp NXdouble_slit.nxdl.xml  src/pynxtools/definitions/contributed_definitions/
 Verify that pynxtools picks them up:
 
 ```bash
-dataconverter generate-template --nxdl NXdouble_slit
+pynx convert generate-template NXdouble_slit
 ```
 
 This change lives only in your local checkout. It is useful for iterating quickly before submitting upstream.

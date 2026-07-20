@@ -106,7 +106,7 @@ uv pip install -e ".[dev]"
 ### Verify the setup
 
 ```bash
-dataconverter --help
+pynx convert --help
 ```
 
 If you see the help text, you're ready.
@@ -203,7 +203,7 @@ You will see groups, fields, and attributes.  Each element has an **optionality*
 Now generate the **template** — the full list of paths the appdef expects:
 
 ```bash
-dataconverter generate-template --nxdl NXsimple
+pynx convert generate-template NXsimple
 ```
 
 The output shows every path and its requirement level.
@@ -515,7 +515,7 @@ It is a JSON file where:
 
 ### Step 1 — compare the appdef to your data
 
-Run `dataconverter generate-template --nxdl NXsimple` again.
+Run `pynx convert generate-template NXsimple` again.
 For each required or recommended path, decide:
 
 - Is the value in `self.hdf5_data`? → use `"@attrs:<hdf5-path>"`
@@ -594,7 +594,7 @@ Create `tests/data/workshop-example/my_config.json` and fill it in.
 ## 7 — Run the converter (~15 min)
 
 ```bash
-dataconverter \
+pynx convert \
     tests/data/workshop-example/mock_data.h5 \
     tests/data/workshop-example/eln_data.yaml \
     tests/data/workshop-example/my_config.json \
@@ -632,7 +632,7 @@ output file is provided in `tests/data/workshop-example/`.
 Generate it from your working reader:
 
 ```bash
-dataconverter \
+pynx convert \
     tests/data/workshop-example/mock_data.h5 \
     tests/data/workshop-example/eln_data.yaml \
     tests/data/workshop-example/config_file.json \
@@ -741,7 +741,7 @@ plt.show()
 | Exercise 2b | `handle_eln_file` | `parse_yml` for ELN → template paths |
 | Exercises 3–5 | Three callback methods | The `@prefix:path` dispatch pattern |
 | Exercise 6 | `config_file.json` | Semantic source↔NeXus mapping |
-| Run | `dataconverter` | Validation is automatic |
+| Run | `pynx convert` | Validation is automatic |
 | Tests | `pytest` | Reproducibility testing |
 | Section 7 | Uploaded to NOMAD | NeXus files are parsed automatically; explore via DATA tab and NORTH |
 
