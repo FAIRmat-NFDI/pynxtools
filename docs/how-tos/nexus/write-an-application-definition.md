@@ -209,15 +209,13 @@ You can learn more in the [`nyaml` documentation](https://fairmat-nfdi.github.io
 Place the file in `src/pynxtools/definitions/contributed_definitions/` and run:
 
 ```bash
-dataconverter generate-template --nxdl NXdouble_slit
+pynx convert generate-template NXdouble_slit
 ```
 
 This confirms `pynxtools` resolves the definition and lists all expected paths.
 
 !!! note
-    The `dataconverter generate-template` method does not actually validate the NeXus definition
-    by itself. Rather, it creates a `pynxtools` template from a given application definition. 
-    For this to work, the application definition has to be valid.
+    The `pynx convert generate-template` method does not actually validate the NeXus definition by itself. Rather, it creates a `pynxtools` template from a given application definition. For this to work, the application definition has to be valid.
 
     Note that there exists a [validation workflow](https://github.com/FAIRmat-NFDI/nexus_definitions/blob/fairmat/.github/workflows/validate.yaml) that is run in the GitHub CI/CD of the definitions repository. For this to run on your NXDL file, you need to add your application definition there (see below).
 

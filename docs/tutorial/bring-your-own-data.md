@@ -381,7 +381,8 @@ and installed `pynxtools` plugins:
 Test whether the application definition is known:
 
 ```bash
-dataconverter generate-template --nxdl NXmpes
+pynx convert generate-template NXmpes
+
 ```
 
 ### No application definition? Write a minimal one.
@@ -421,7 +422,8 @@ Add it to point `pynxtools` in the `contributed_definitions` folder.
 ### Mapping checklist
 
 ```bash
-dataconverter generate-template --nxdl <YOUR_NXDL> > template.txt
+pynx convert generate-template <YOUR_NXDL> > template.txt
+
 ```
 
 Work through the output line by line.  For each path, fill in the
@@ -466,7 +468,7 @@ NeXus requires units for every numeric field.  Options:
 ## Step 6 — Convert, validate, iterate (~20 min)
 
 ```bash
-dataconverter \
+pynx convert \
     your_file.ext \
     eln_data.yaml \
     config_file.json \
@@ -562,7 +564,7 @@ def post_process(self) -> None:
 
 ## Checklist before you leave
 
-- [ ] `dataconverter` runs without errors on your own data
+- [ ] `pynx convert` runs without errors on your own data
 - [ ] All required fields in the application definition are present in `output.nxs`
 - [ ] Units are set for every numeric field
 - [ ] `reader.py` and `config_file.json` are committed to your repository
