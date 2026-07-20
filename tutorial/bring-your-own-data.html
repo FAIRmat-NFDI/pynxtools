@@ -24,7 +24,7 @@
       
       
       <link rel="icon" href="../assets/favicon.png">
-      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.6">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.7">
     
     
       
@@ -32,7 +32,7 @@
       
     
     
-      <link rel="stylesheet" href="../assets/stylesheets/main.484c7ddc.min.css">
+      <link rel="stylesheet" href="../assets/stylesheets/main.ec1eaa64.min.css">
       
         
         <link rel="stylesheet" href="../assets/stylesheets/palette.ab4e12ef.min.css">
@@ -2822,7 +2822,7 @@ and installed <code>pynxtools</code> plugins:</p>
 </tbody>
 </table>
 <p>Test whether the application definition is known:</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-14-1" name="__codelineno-14-1" href="#__codelineno-14-1"></a>dataconverter<span class="w"> </span>generate-template<span class="w"> </span>--nxdl<span class="w"> </span>NXmpes
+<div class="highlight"><pre><span></span><code><a id="__codelineno-14-1" name="__codelineno-14-1" href="#__codelineno-14-1"></a>pynx<span class="w"> </span>convert<span class="w"> </span>generate-template<span class="w"> </span>NXmpes
 </code></pre></div>
 <h3 id="no-application-definition-write-a-minimal-one">No application definition? Write a minimal one.<a class="headerlink" href="#no-application-definition-write-a-minimal-one" title="Permanent link">&para;</a></h3>
 <p>See the tutorial on <a href="writing-an-application-definition.html">Writing your first application definition</a>.</p>
@@ -2851,7 +2851,7 @@ and installed <code>pynxtools</code> plugins:</p>
 <hr />
 <h2 id="step-5-write-the-config-file-40-min">Step 5 — Write the config file (~40 min)<a class="headerlink" href="#step-5-write-the-config-file-40-min" title="Permanent link">&para;</a></h2>
 <h3 id="mapping-checklist">Mapping checklist<a class="headerlink" href="#mapping-checklist" title="Permanent link">&para;</a></h3>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-16-1" name="__codelineno-16-1" href="#__codelineno-16-1"></a>dataconverter<span class="w"> </span>generate-template<span class="w"> </span>--nxdl<span class="w"> </span>&lt;YOUR_NXDL&gt;<span class="w"> </span>&gt;<span class="w"> </span>template.txt
+<div class="highlight"><pre><span></span><code><a id="__codelineno-16-1" name="__codelineno-16-1" href="#__codelineno-16-1"></a>pynx<span class="w"> </span>convert<span class="w"> </span>generate-template<span class="w"> </span>&lt;YOUR_NXDL&gt;<span class="w"> </span>&gt;<span class="w"> </span>template.txt
 </code></pre></div>
 <p>Work through the output line by line.  For each path, fill in the
 config JSON with the right <code>@</code>-prefix:</p>
@@ -2904,7 +2904,7 @@ silently removed from the output instead of causing a validation error.</p>
 </code></pre></div>
 <hr />
 <h2 id="step-6-convert-validate-iterate-20-min">Step 6 — Convert, validate, iterate (~20 min)<a class="headerlink" href="#step-6-convert-validate-iterate-20-min" title="Permanent link">&para;</a></h2>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-19-1" name="__codelineno-19-1" href="#__codelineno-19-1"></a>dataconverter<span class="w"> </span><span class="se">\</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-19-1" name="__codelineno-19-1" href="#__codelineno-19-1"></a>pynx<span class="w"> </span>convert<span class="w"> </span><span class="se">\</span>
 <a id="__codelineno-19-2" name="__codelineno-19-2" href="#__codelineno-19-2"></a><span class="w">    </span>your_file.ext<span class="w"> </span><span class="se">\</span>
 <a id="__codelineno-19-3" name="__codelineno-19-3" href="#__codelineno-19-3"></a><span class="w">    </span>eln_data.yaml<span class="w"> </span><span class="se">\</span>
 <a id="__codelineno-19-4" name="__codelineno-19-4" href="#__codelineno-19-4"></a><span class="w">    </span>config_file.json<span class="w"> </span><span class="se">\</span>
@@ -3022,7 +3022,7 @@ silently removed from the output instead of causing a validation error.</p>
 <hr />
 <h2 id="checklist-before-you-leave">Checklist before you leave<a class="headerlink" href="#checklist-before-you-leave" title="Permanent link">&para;</a></h2>
 <ul>
-<li>[ ] <code>dataconverter</code> runs without errors on your own data</li>
+<li>[ ] <code>pynx convert</code> runs without errors on your own data</li>
 <li>[ ] All required fields in the application definition are present in <code>output.nxs</code></li>
 <li>[ ] Units are set for every numeric field</li>
 <li>[ ] <code>reader.py</code> and <code>config_file.json</code> are committed to your repository</li>
@@ -3127,7 +3127,7 @@ silently removed from the output instead of causing a validation error.</p>
       <script id="__config" type="application/json">{"annotate": null, "base": "..", "features": ["navigation.instant", "navigation.footer", "content.code.copy", "content.code.annotate", "search.suggest"], "search": "../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
     
     
-      <script src="../assets/javascripts/bundle.79ae519e.min.js"></script>
+      <script src="../assets/javascripts/bundle.d7400e89.min.js"></script>
       
         <script src="../assets/_markdown_exec_pyodide.js"></script>
       

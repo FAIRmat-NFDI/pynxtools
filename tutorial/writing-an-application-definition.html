@@ -24,7 +24,7 @@
       
       
       <link rel="icon" href="../assets/favicon.png">
-      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.6">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.7">
     
     
       
@@ -32,7 +32,7 @@
       
     
     
-      <link rel="stylesheet" href="../assets/stylesheets/main.484c7ddc.min.css">
+      <link rel="stylesheet" href="../assets/stylesheets/main.ec1eaa64.min.css">
       
         
         <link rel="stylesheet" href="../assets/stylesheets/palette.ab4e12ef.min.css">
@@ -2260,7 +2260,7 @@ You can learn more in the <a href="https://fairmat-nfdi.github.io/nyaml/"><code>
 <a id="__codelineno-0-23" name="__codelineno-0-23" href="#__codelineno-0-23"></a><span class="nt">&lt;/definition&gt;</span>
 </code></pre></div>
 <p>If you have <code>pynxtools</code> installed (see <a href="installation.html">Installation Guide</a>), add the NXDL XML file under <code>src/pynxtools/definitions/contributed_definitions</code> and validate that pynxtools can read it:</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>dataconverter<span class="w"> </span>generate-template<span class="w"> </span>--nxdl<span class="w"> </span>NXdouble_slit
+<div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>pynx<span class="w"> </span>convert<span class="w"> </span>generate-template<span class="w"> </span>NXdouble_slit
 </code></pre></div>
 <p>You should see a JSON template listing paths like <code>/ENTRY[entry]/title</code> and <code>/ENTRY[entry]/start_time</code>.</p>
 <div class="admonition note">
@@ -2546,7 +2546,7 @@ You can learn more in the <a href="https://fairmat-nfdi.github.io/nyaml/"><code>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-13-1" name="__codelineno-13-1" href="#__codelineno-13-1"></a>nyaml2nxdl<span class="w"> </span>NXdouble_slit.yaml<span class="w"> </span>--output-file<span class="w"> </span>NXdouble_slit.nxdl.xml
 </code></pre></div>
 <p>Run <code>generate-template</code> one final time and check that all required paths are listed:</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-14-1" name="__codelineno-14-1" href="#__codelineno-14-1"></a>dataconverter<span class="w"> </span>generate-template<span class="w"> </span>--nxdl<span class="w"> </span>NXdouble_slit
+<div class="highlight"><pre><span></span><code><a id="__codelineno-14-1" name="__codelineno-14-1" href="#__codelineno-14-1"></a>pynx<span class="w"> </span>convert<span class="w"> </span>generate-template<span class="w"> </span>NXdouble_slit
 </code></pre></div>
 <p>Write a minimal HDF5 test file filling all required fields, then validate:</p>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-15-1" name="__codelineno-15-1" href="#__codelineno-15-1"></a>pynx<span class="w"> </span>validate<span class="w"> </span>my_test_file.nxs
@@ -3014,7 +3014,7 @@ You can learn more in the <a href="https://fairmat-nfdi.github.io/nyaml/"><code>
 <a id="__codelineno-22-2" name="__codelineno-22-2" href="#__codelineno-22-2"></a>cp<span class="w"> </span>NXdouble_slit.nxdl.xml<span class="w">  </span>src/pynxtools/definitions/contributed_definitions/
 </code></pre></div>
 <p>Verify that pynxtools picks them up:</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-23-1" name="__codelineno-23-1" href="#__codelineno-23-1"></a>dataconverter<span class="w"> </span>generate-template<span class="w"> </span>--nxdl<span class="w"> </span>NXdouble_slit
+<div class="highlight"><pre><span></span><code><a id="__codelineno-23-1" name="__codelineno-23-1" href="#__codelineno-23-1"></a>pynx<span class="w"> </span>convert<span class="w"> </span>generate-template<span class="w"> </span>NXdouble_slit
 </code></pre></div>
 <p>This change lives only in your local checkout. It is useful for iterating quickly before submitting upstream.</p>
 <h3 id="option-b-community-contribution-permanent">Option B — Community contribution (permanent)<a class="headerlink" href="#option-b-community-contribution-permanent" title="Permanent link">&para;</a></h3>
@@ -3130,7 +3130,7 @@ You can learn more in the <a href="https://fairmat-nfdi.github.io/nyaml/"><code>
       <script id="__config" type="application/json">{"annotate": null, "base": "..", "features": ["navigation.instant", "navigation.footer", "content.code.copy", "content.code.annotate", "search.suggest"], "search": "../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
     
     
-      <script src="../assets/javascripts/bundle.79ae519e.min.js"></script>
+      <script src="../assets/javascripts/bundle.d7400e89.min.js"></script>
       
         <script src="../assets/_markdown_exec_pyodide.js"></script>
       

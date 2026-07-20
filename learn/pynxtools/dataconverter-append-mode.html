@@ -24,7 +24,7 @@
       
       
       <link rel="icon" href="../../assets/favicon.png">
-      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.6">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.7">
     
     
       
@@ -32,7 +32,7 @@
       
     
     
-      <link rel="stylesheet" href="../../assets/stylesheets/main.484c7ddc.min.css">
+      <link rel="stylesheet" href="../../assets/stylesheets/main.ec1eaa64.min.css">
       
         
         <link rel="stylesheet" href="../../assets/stylesheets/palette.ab4e12ef.min.css">
@@ -1740,8 +1740,8 @@
 <p>Enabling such use cases while minimizing data copying is the idea behind the append mode of the dataconverter. It is activated by
 passing the <code>--append</code> flag during command line invocation (see <a href="../../tutorial/converting-data-to-nexus.html">Tutorial -&gt; Converting your research data to NeXus</a>.</p>
 <p>We take this tutorial and its <code>NXxps</code> case study as an example. It composes the HDF5 file with content from two input files: the <code>EX439_S718_Au.sle</code> with proprietary formatting and the <code>eln_data_sle.yaml</code>, a NOMAD-specific metadata exchange file. Instead of running the tutorial with passing both input in one go, one could first add process only the proprietary file (without using <code>--append</code>) and thereafter process the YAML file (with using <code>--append</code>). The minimal command line call reads as follows.</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>dataconverter EX439_S718_Au.sle --reader xps --nxdl NXxps --output Au_25_mbar_O2_no_align.nxs
-<a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>dataconverter eln_data_sle.yaml --reader xps --nxdl NXxps --append --output Au_25_mbar_O2_no_align.nxs
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>pynx<span class="w"> </span>convert<span class="w"> </span>EX439_S718_Au.sle<span class="w"> </span>--reader<span class="w"> </span>xps<span class="w"> </span>--nxdl<span class="w"> </span>NXxps<span class="w"> </span>--output<span class="w"> </span>Au_25_mbar_O2_no_align.nxs
+<a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>pynx<span class="w"> </span>convert<span class="w"> </span>eln_data_sle.yaml<span class="w"> </span>--reader<span class="w"> </span>xps<span class="w"> </span>--nxdl<span class="w"> </span>NXxps<span class="w"> </span>--append<span class="w"> </span>--output<span class="w"> </span>Au_25_mbar_O2_no_align.nxs
 </code></pre></div>
 <p>When processing both the <code>*.sle</code> and <code>*.yaml</code> file in one call, adding <code>--append</code> has no effect, i.e.,
 <code>pynxtools</code> proceeds as if <code>--append</code> is absent but mind that adding the flag deactivates the verification.</p>
@@ -1890,7 +1890,7 @@ when comparing the binary content of two HDF5 files using this parser. </p>
       <script id="__config" type="application/json">{"annotate": null, "base": "../..", "features": ["navigation.instant", "navigation.footer", "content.code.copy", "content.code.annotate", "search.suggest"], "search": "../../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
     
     
-      <script src="../../assets/javascripts/bundle.79ae519e.min.js"></script>
+      <script src="../../assets/javascripts/bundle.d7400e89.min.js"></script>
       
         <script src="../../assets/_markdown_exec_pyodide.js"></script>
       

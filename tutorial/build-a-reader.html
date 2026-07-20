@@ -24,7 +24,7 @@
       
       
       <link rel="icon" href="../assets/favicon.png">
-      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.6">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.7">
     
     
       
@@ -32,7 +32,7 @@
       
     
     
-      <link rel="stylesheet" href="../assets/stylesheets/main.484c7ddc.min.css">
+      <link rel="stylesheet" href="../assets/stylesheets/main.ec1eaa64.min.css">
       
         
         <link rel="stylesheet" href="../assets/stylesheets/palette.ab4e12ef.min.css">
@@ -2901,7 +2901,7 @@ We are working on those in separate tutorials.</p>
 <a id="__codelineno-3-5" name="__codelineno-3-5" href="#__codelineno-3-5"></a>uv<span class="w"> </span>pip<span class="w"> </span>install<span class="w"> </span>-e<span class="w"> </span><span class="s2">&quot;.[dev]&quot;</span>
 </code></pre></div>
 <h3 id="verify-the-setup">Verify the setup<a class="headerlink" href="#verify-the-setup" title="Permanent link">&para;</a></h3>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a>dataconverter<span class="w"> </span>--help
+<div class="highlight"><pre><span></span><code><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a>pynx<span class="w"> </span>convert<span class="w"> </span>--help
 </code></pre></div>
 <p>If you see the help text, you're ready.</p>
 <hr />
@@ -2990,7 +2990,7 @@ Open <code>tests/data/workshop-example/NXsimple.nxdl.xml</code> and look at its 
 </tbody>
 </table>
 <p>Now generate the <strong>template</strong> — the full list of paths the appdef expects:</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-9-1" name="__codelineno-9-1" href="#__codelineno-9-1"></a>dataconverter<span class="w"> </span>generate-template<span class="w"> </span>--nxdl<span class="w"> </span>NXsimple
+<div class="highlight"><pre><span></span><code><a id="__codelineno-9-1" name="__codelineno-9-1" href="#__codelineno-9-1"></a>pynx<span class="w"> </span>convert<span class="w"> </span>generate-template<span class="w"> </span>NXsimple
 </code></pre></div>
 <p>The output shows every path and its requirement level.
 Keep this open — you will use it when writing the config file.</p>
@@ -3275,7 +3275,7 @@ application definition.</p>
 - <strong>Keys</strong> are NeXus template paths (from <code>generate-template</code>)
 - <strong>Values</strong> tell the reader where to find the data using <code>@</code>-prefixes</p>
 <h3 id="step-1-compare-the-appdef-to-your-data">Step 1 — compare the appdef to your data<a class="headerlink" href="#step-1-compare-the-appdef-to-your-data" title="Permanent link">&para;</a></h3>
-<p>Run <code>dataconverter generate-template --nxdl NXsimple</code> again.
+<p>Run <code>pynx convert generate-template NXsimple</code> again.
 For each required or recommended path, decide:</p>
 <ul>
 <li>Is the value in <code>self.hdf5_data</code>? → use <code>"@attrs:&lt;hdf5-path&gt;"</code></li>
@@ -3407,7 +3407,7 @@ For each required or recommended path, decide:</p>
 </details>
 <hr />
 <h2 id="7-run-the-converter-15-min">7 — Run the converter (~15 min)<a class="headerlink" href="#7-run-the-converter-15-min" title="Permanent link">&para;</a></h2>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-27-1" name="__codelineno-27-1" href="#__codelineno-27-1"></a>dataconverter<span class="w"> </span><span class="se">\</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-27-1" name="__codelineno-27-1" href="#__codelineno-27-1"></a>pynx<span class="w"> </span>convert<span class="w"> </span><span class="se">\</span>
 <a id="__codelineno-27-2" name="__codelineno-27-2" href="#__codelineno-27-2"></a><span class="w">    </span>tests/data/workshop-example/mock_data.h5<span class="w"> </span><span class="se">\</span>
 <a id="__codelineno-27-3" name="__codelineno-27-3" href="#__codelineno-27-3"></a><span class="w">    </span>tests/data/workshop-example/eln_data.yaml<span class="w"> </span><span class="se">\</span>
 <a id="__codelineno-27-4" name="__codelineno-27-4" href="#__codelineno-27-4"></a><span class="w">    </span>tests/data/workshop-example/my_config.json<span class="w"> </span><span class="se">\</span>
@@ -3434,7 +3434,7 @@ every required path should be present.</p>
 <p>The template already includes a test framework.  For the workshop, a reference
 output file is provided in <code>tests/data/workshop-example/</code>.</p>
 <p>Generate it from your working reader:</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-29-1" name="__codelineno-29-1" href="#__codelineno-29-1"></a>dataconverter<span class="w"> </span><span class="se">\</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-29-1" name="__codelineno-29-1" href="#__codelineno-29-1"></a>pynx<span class="w"> </span>convert<span class="w"> </span><span class="se">\</span>
 <a id="__codelineno-29-2" name="__codelineno-29-2" href="#__codelineno-29-2"></a><span class="w">    </span>tests/data/workshop-example/mock_data.h5<span class="w"> </span><span class="se">\</span>
 <a id="__codelineno-29-3" name="__codelineno-29-3" href="#__codelineno-29-3"></a><span class="w">    </span>tests/data/workshop-example/eln_data.yaml<span class="w"> </span><span class="se">\</span>
 <a id="__codelineno-29-4" name="__codelineno-29-4" href="#__codelineno-29-4"></a><span class="w">    </span>tests/data/workshop-example/config_file.json<span class="w"> </span><span class="se">\</span>
@@ -3584,7 +3584,7 @@ Store the data in <code>self.csv_data</code> and expose it via <code>get_attr</c
 </tr>
 <tr>
 <td>Run</td>
-<td><code>dataconverter</code></td>
+<td><code>pynx convert</code></td>
 <td>Validation is automatic</td>
 </tr>
 <tr>
@@ -3823,7 +3823,7 @@ application definition.  See <a href="bring-your-own-data.html">Day 2 — Bring 
       <script id="__config" type="application/json">{"annotate": null, "base": "..", "features": ["navigation.instant", "navigation.footer", "content.code.copy", "content.code.annotate", "search.suggest"], "search": "../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
     
     
-      <script src="../assets/javascripts/bundle.79ae519e.min.js"></script>
+      <script src="../assets/javascripts/bundle.d7400e89.min.js"></script>
       
         <script src="../assets/_markdown_exec_pyodide.js"></script>
       

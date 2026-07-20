@@ -24,7 +24,7 @@
       
       
       <link rel="icon" href="../../assets/favicon.png">
-      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.6">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.7">
     
     
       
@@ -32,7 +32,7 @@
       
     
     
-      <link rel="stylesheet" href="../../assets/stylesheets/main.484c7ddc.min.css">
+      <link rel="stylesheet" href="../../assets/stylesheets/main.ec1eaa64.min.css">
       
         
         <link rel="stylesheet" href="../../assets/stylesheets/palette.ab4e12ef.min.css">
@@ -2039,14 +2039,12 @@ Use standard field names from the chosen base class where they exist
 <hr />
 <h2 id="step-4-validate-locally">Step 4 — Validate locally<a class="headerlink" href="#step-4-validate-locally" title="Permanent link">&para;</a></h2>
 <p>Place the file in <code>src/pynxtools/definitions/contributed_definitions/</code> and run:</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>dataconverter<span class="w"> </span>generate-template<span class="w"> </span>--nxdl<span class="w"> </span>NXdouble_slit
+<div class="highlight"><pre><span></span><code><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>pynx<span class="w"> </span>convert<span class="w"> </span>generate-template<span class="w"> </span>NXdouble_slit
 </code></pre></div>
 <p>This confirms <code>pynxtools</code> resolves the definition and lists all expected paths.</p>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
-<p>The <code>dataconverter generate-template</code> method does not actually validate the NeXus definition
-by itself. Rather, it creates a <code>pynxtools</code> template from a given application definition. 
-For this to work, the application definition has to be valid.</p>
+<p>The <code>pynx convert generate-template</code> method does not actually validate the NeXus definition by itself. Rather, it creates a <code>pynxtools</code> template from a given application definition. For this to work, the application definition has to be valid.</p>
 <p>Note that there exists a <a href="https://github.com/FAIRmat-NFDI/nexus_definitions/blob/fairmat/.github/workflows/validate.yaml">validation workflow</a> that is run in the GitHub CI/CD of the definitions repository. For this to run on your NXDL file, you need to add your application definition there (see below).</p>
 </div>
 <hr />
@@ -2140,7 +2138,7 @@ For this to work, the application definition has to be valid.</p>
       <script id="__config" type="application/json">{"annotate": null, "base": "../..", "features": ["navigation.instant", "navigation.footer", "content.code.copy", "content.code.annotate", "search.suggest"], "search": "../../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
     
     
-      <script src="../../assets/javascripts/bundle.79ae519e.min.js"></script>
+      <script src="../../assets/javascripts/bundle.d7400e89.min.js"></script>
       
         <script src="../../assets/_markdown_exec_pyodide.js"></script>
       
