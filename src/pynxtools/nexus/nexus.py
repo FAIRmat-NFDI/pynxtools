@@ -25,7 +25,6 @@ from pynxtools.definitions.dev_tools.utils.nxdl_utils import (
     check_attr_name_nxdl,
     get_best_child,
     get_hdf_info_parent,
-    get_local_name_from_xml,
     get_node_concept_path,
     get_node_name,
     get_nx_class,
@@ -117,7 +116,7 @@ def _check_deprecation_enum_axis(
             for item in s_doc:
                 if isinstance(item, ET._Comment):
                     continue
-                if get_local_name_from_xml(item) == "item":
+                if item.tag.rsplit("}", 1)[-1] == "item":
                     if doc:
                         logger.debug("-> " + item.attrib["value"])
     for base_elem in elem_list if not attr else [elem]:  # check for doc
