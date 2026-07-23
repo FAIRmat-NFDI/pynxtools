@@ -25,12 +25,12 @@ from typing import TYPE_CHECKING
 
 import numpy as np
 from nomad.datamodel.hdf5 import HDF5Reference
-from nomad.datamodel.metainfo import basesections
 from nomad.datamodel.metainfo.annotations import (
     ELNAnnotation,
     ELNComponentEnum,
     SchemaAnnotation,
 )
+from nomad.datamodel.metainfo.basesections import v2 as basesections
 from nomad.metainfo import MEnum, Quantity, Section, SubSection
 from nomad.metainfo.data_type import Bytes, Datetime
 
@@ -50,7 +50,7 @@ if TYPE_CHECKING:
 __all__ = ["Object"]
 
 
-class Object(basesections.BaseSection):
+class Object(basesections.ArchiveSection):
     """
     This is the base object of NeXus. The groups and fields contained within
     this file are allowed to be present in any derived base class.

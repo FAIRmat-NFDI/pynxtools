@@ -30,6 +30,7 @@ from nomad.datamodel.metainfo.annotations import (
     ELNComponentEnum,
     SchemaAnnotation,
 )
+from nomad.datamodel.metainfo.basesections import v2 as basesections
 from nomad.metainfo import MEnum, Quantity, Section, SubSection
 from nomad.metainfo.data_type import Bytes, Datetime
 
@@ -57,7 +58,7 @@ if TYPE_CHECKING:
 __all__ = ["Azint1d"]
 
 
-class Azint1d(Entry):
+class Azint1d(Entry, basesections.Measurement):
     """
     Application definition for data from two-dimensional area detectors that
     has been integrated azimuthally, with a certain radial binning in units of
