@@ -29,6 +29,7 @@ from nomad.datamodel.metainfo.annotations import (
     ELNComponentEnum,
     SchemaAnnotation,
 )
+from nomad.datamodel.metainfo.basesections import v2 as basesections
 from nomad.metainfo import MEnum, Quantity, Section, SubSection
 from nomad.metainfo.data_type import Bytes, Datetime
 
@@ -56,7 +57,7 @@ if TYPE_CHECKING:
 __all__ = ["Sqom"]
 
 
-class Sqom(Entry):
+class Sqom(Entry, basesections.Measurement):
     """
     This is the application definition for S(Q,OM) processed data.
 
