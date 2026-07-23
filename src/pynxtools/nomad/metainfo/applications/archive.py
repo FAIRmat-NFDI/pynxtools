@@ -30,6 +30,7 @@ from nomad.datamodel.metainfo.annotations import (
     ELNComponentEnum,
     SchemaAnnotation,
 )
+from nomad.datamodel.metainfo.basesections import v2 as basesections
 from nomad.metainfo import MEnum, Quantity, Section, SubSection
 from nomad.metainfo.data_type import Bytes, Datetime
 
@@ -55,7 +56,7 @@ if TYPE_CHECKING:
 __all__ = ["Archive"]
 
 
-class Archive(Entry):
+class Archive(Entry, basesections.Measurement):
     """
     This is a definition for data to be archived by ICAT
     (http://www.icatproject.org/).

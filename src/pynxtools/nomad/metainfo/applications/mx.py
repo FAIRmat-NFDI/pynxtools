@@ -30,6 +30,7 @@ from nomad.datamodel.metainfo.annotations import (
     ELNComponentEnum,
     SchemaAnnotation,
 )
+from nomad.datamodel.metainfo.basesections import v2 as basesections
 from nomad.metainfo import MEnum, Quantity, Section, SubSection
 from nomad.metainfo.data_type import Bytes, Datetime
 
@@ -60,7 +61,7 @@ if TYPE_CHECKING:
 __all__ = ["Mx"]
 
 
-class Mx(Entry):
+class Mx(Entry, basesections.Measurement):
     """
     functional application definition for macromolecular crystallography
     """

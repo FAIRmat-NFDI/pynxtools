@@ -34,6 +34,7 @@ from nomad.datamodel.metainfo.annotations import (
     ELNComponentEnum,
     SchemaAnnotation,
 )
+from nomad.datamodel.metainfo.basesections import v2 as basesections
 from nomad.metainfo import MEnum, Quantity, Section, SubSection
 from nomad.metainfo.data_type import Bytes, Datetime
 
@@ -58,7 +59,7 @@ if TYPE_CHECKING:
 __all__ = ["Xas"]
 
 
-class Xas(Entry):
+class Xas(Entry, basesections.Measurement):
     """
     This is a generic application definition for X-ray absorption spectroscopy.
     Technique-specific application definitions extend this base definition.
