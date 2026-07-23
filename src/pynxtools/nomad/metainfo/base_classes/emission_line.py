@@ -27,6 +27,7 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 
 import numpy as np
+from nomad.datamodel.data import ArchiveSection
 from nomad.datamodel.metainfo.annotations import (
     ELNAnnotation,
     ELNComponentEnum,
@@ -45,7 +46,7 @@ if TYPE_CHECKING:
 __all__ = ["EmissionLine"]
 
 
-class EmissionLine(Object):
+class EmissionLine(Object, ArchiveSection):
     """
     An emission line. It arises from the radiative decay of an atom with a core
     hole: an electron from a higher level fills the hole and a photon is
