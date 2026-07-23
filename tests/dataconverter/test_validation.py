@@ -2763,8 +2763,6 @@ def test_validate_data_dict(data_dict, error_messages, caplog, request):
                 "123",
             ),
             [
-                "No attribute 'NX_class' could be written for "
-                "/ENTRY[my_entry]/identified_calibration/identifier_1.",
                 # Does not get checked because of the caplog
                 # "Group '/my_entry/identified_calibration/identifier_1' does not have an NX_class "
                 # "attribute and will therefore not be validated.",
