@@ -56,7 +56,7 @@ __all__ = ["ElectrostaticKicker"]
 
 class ElectrostaticKicker(Component):
     """
-    definition for a electrostatic kicker.
+    Base class for an electrostatic kicker.
     """
 
     m_def = Section(
@@ -83,7 +83,7 @@ class ElectrostaticKicker(Component):
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXelectrostatic_kicker.html#nxelectrostatic_kicker-description-field"
         ],
-        description=("extended description of the kicker."),
+        description=("Extended description of the kicker."),
         a_nexus_field=NeXusField(
             name="description",
             type="NX_CHAR",
@@ -102,7 +102,7 @@ class ElectrostaticKicker(Component):
         dimensionality="[length]",
         unit="m",
         description=(
-            "define position of beamline element relative to production target"
+            "Define position of beamline element relative to production target"
         ),
         a_nexus_field=NeXusField(
             name="beamline_distance",
@@ -123,7 +123,7 @@ class ElectrostaticKicker(Component):
         ],
         dimensionality="[time]",
         unit="second",
-        description=("kicker timing as defined by ``description`` attribute"),
+        description=("Kicker timing as defined by ``description`` attribute"),
         a_nexus_field=NeXusField(
             name="timing",
             type="NX_FLOAT",
@@ -159,7 +159,7 @@ class ElectrostaticKicker(Component):
         ],
         dimensionality="[current]",
         unit="ampere",
-        description=("current set on supply."),
+        description=("Current set on supply."),
         a_nexus_field=NeXusField(
             name="set_current",
             type="NX_FLOAT",
@@ -179,7 +179,7 @@ class ElectrostaticKicker(Component):
         ],
         dimensionality="[mass] * [length] ** 2 / [time] ** 3 / [current]",
         unit="volt",
-        description=("voltage set on supply."),
+        description=("Voltage set on supply."),
         a_nexus_field=NeXusField(
             name="set_voltage",
             type="NX_FLOAT",
@@ -208,7 +208,7 @@ class ElectrostaticKicker(Component):
 
 class ElectrostaticKickerReadCurrent(Log):
     """
-    current read from supply.
+    Current read from supply.
     """
 
     m_def = Section(
@@ -250,7 +250,7 @@ class ElectrostaticKickerReadCurrent(Log):
 
 class ElectrostaticKickerReadVoltage(Log):
     """
-    voltage read from supply.
+    Voltage read from supply.
     """
 
     m_def = Section(

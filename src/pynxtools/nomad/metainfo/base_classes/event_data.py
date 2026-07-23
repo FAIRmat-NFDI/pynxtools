@@ -111,7 +111,9 @@ class EventData(Object):
         shape=["*"],
         description=(
             "There will be extra information in the NXdetector to convert "
-            "event_id to detector_number."
+            "event_id to detector_number. But in short, event_id contains "
+            "information about detector_id which is related to the specific "
+            "pixels on the detector bank."
         ),
         a_nexus_field=NeXusField(
             name="event_id",
@@ -165,7 +167,12 @@ class EventData(Object):
         shape=["*"],
         description=(
             "The index into the event_time_offset, event_id pair for the pulse "
-            "occurring at the matching entry in event_time_zero."
+            "occurring at the matching entry in event_time_zero. Each pulse "
+            "creates an entry in the event_index, the value of event_index "
+            "points to the latest index of the event in event_id. Sometimes, two "
+            "adjacent event_index[i] and event_index[i+1] will have the same "
+            "value, this means there is no additional neutron hit the detector "
+            "bank in (i+1)th pulse."
         ),
         a_nexus_field=NeXusField(
             name="event_index",
