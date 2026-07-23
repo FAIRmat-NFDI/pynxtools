@@ -29,6 +29,7 @@ from nomad.datamodel.metainfo.annotations import (
     ELNComponentEnum,
     SchemaAnnotation,
 )
+from nomad.datamodel.metainfo.basesections import v2 as basesections
 from nomad.metainfo import MEnum, Quantity, Section, SubSection
 from nomad.metainfo.data_type import Bytes, Datetime
 
@@ -56,7 +57,7 @@ if TYPE_CHECKING:
 __all__ = ["Tofnpd"]
 
 
-class Tofnpd(Entry):
+class Tofnpd(Entry, basesections.Measurement):
     """
     This is a application definition for raw data from a TOF neutron powder
     diffractometer

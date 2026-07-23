@@ -29,6 +29,7 @@ from nomad.datamodel.metainfo.annotations import (
     ELNComponentEnum,
     SchemaAnnotation,
 )
+from nomad.datamodel.metainfo.basesections import v2 as basesections
 from nomad.metainfo import MEnum, Quantity, Section, SubSection
 from nomad.metainfo.data_type import Bytes, Datetime
 
@@ -56,7 +57,7 @@ if TYPE_CHECKING:
 __all__ = ["Tomoproc"]
 
 
-class Tomoproc(Entry):
+class Tomoproc(Entry, basesections.Measurement):
     """
     This is an application definition for the final result of a tomography
     experiment: a 3D construction of some volume of physical properties.
