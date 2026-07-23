@@ -24,6 +24,7 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 
 import numpy as np
+from nomad.datamodel.data import ArchiveSection
 from nomad.datamodel.metainfo.annotations import (
     ELNAnnotation,
     ELNComponentEnum,
@@ -49,7 +50,7 @@ if TYPE_CHECKING:
 __all__ = ["History"]
 
 
-class History(Object):
+class History(Object, ArchiveSection):
     """
     A set of activities that occurred to a physical entity prior/during
     experiment.

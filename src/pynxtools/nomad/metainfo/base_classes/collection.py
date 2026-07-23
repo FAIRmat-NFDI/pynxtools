@@ -24,6 +24,7 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 
 import numpy as np
+from nomad.datamodel.data import ArchiveSection
 from nomad.datamodel.metainfo.annotations import (
     ELNAnnotation,
     ELNComponentEnum,
@@ -49,7 +50,7 @@ if TYPE_CHECKING:
 __all__ = ["Collection"]
 
 
-class Collection(Object):
+class Collection(Object, ArchiveSection):
     """
     An unvalidated set of terms, such as the description of a beam line.
 

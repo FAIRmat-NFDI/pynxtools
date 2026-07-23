@@ -28,6 +28,7 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 
 import numpy as np
+from nomad.datamodel.data import ArchiveSection
 from nomad.datamodel.metainfo.annotations import (
     ELNAnnotation,
     ELNComponentEnum,
@@ -54,7 +55,7 @@ if TYPE_CHECKING:
 __all__ = ["SpmScanPattern"]
 
 
-class SpmScanPattern(Object):
+class SpmScanPattern(Object, ArchiveSection):
     """
     Basic base class to define the pattern of a scan in a given scan region.
 

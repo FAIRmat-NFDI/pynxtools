@@ -29,6 +29,7 @@ from nomad.datamodel.metainfo.annotations import (
     ELNComponentEnum,
     SchemaAnnotation,
 )
+from nomad.datamodel.metainfo.basesections import v2 as basesections
 from nomad.metainfo import MEnum, Quantity, Section, SubSection
 from nomad.metainfo.data_type import Bytes, Datetime
 
@@ -49,7 +50,7 @@ if TYPE_CHECKING:
 __all__ = ["Activity"]
 
 
-class Activity(Object):
+class Activity(Object, basesections.Process):
     """
     A planned or unplanned action that has a temporal extension and for some
     time depends on some entity.

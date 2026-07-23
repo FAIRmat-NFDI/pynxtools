@@ -28,6 +28,7 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 
 import numpy as np
+from nomad.datamodel.data import ArchiveSection
 from nomad.datamodel.metainfo.annotations import (
     ELNAnnotation,
     ELNComponentEnum,
@@ -59,7 +60,7 @@ if TYPE_CHECKING:
 __all__ = ["SpmBiasSpectroscopy"]
 
 
-class SpmBiasSpectroscopy(Object):
+class SpmBiasSpectroscopy(Object, ArchiveSection):
     """
     A base class for bias spectroscopy to describe the change in the physical
     properties of the sample with respect to the sweep voltage applied on a

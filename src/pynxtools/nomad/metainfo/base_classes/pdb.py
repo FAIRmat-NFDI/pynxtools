@@ -24,6 +24,7 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 
 import numpy as np
+from nomad.datamodel.data import ArchiveSection
 from nomad.datamodel.metainfo.annotations import (
     ELNAnnotation,
     ELNComponentEnum,
@@ -49,7 +50,7 @@ if TYPE_CHECKING:
 __all__ = ["Pdb"]
 
 
-class Pdb(Object):
+class Pdb(Object, ArchiveSection):
     """
     A NeXus transliteration of a PDB file, to be validated only as a PDB rather
     than in NeXus.

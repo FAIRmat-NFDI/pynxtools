@@ -24,6 +24,7 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 
 import numpy as np
+from nomad.datamodel.data import ArchiveSection
 from nomad.datamodel.metainfo.annotations import (
     ELNAnnotation,
     ELNComponentEnum,
@@ -49,7 +50,7 @@ if TYPE_CHECKING:
 __all__ = ["DetectorGroup"]
 
 
-class DetectorGroup(Object):
+class DetectorGroup(Object, ArchiveSection):
     """
     Logical grouping of detectors. When used, describes a group of detectors.
 

@@ -28,6 +28,7 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 
 import numpy as np
+from nomad.datamodel.data import ArchiveSection
 from nomad.datamodel.metainfo.annotations import (
     ELNAnnotation,
     ELNComponentEnum,
@@ -53,7 +54,7 @@ if TYPE_CHECKING:
 __all__ = ["DispersionRepeatedParameter"]
 
 
-class DispersionRepeatedParameter(Object):
+class DispersionRepeatedParameter(Object, ArchiveSection):
     """
     A repeated parameter for a dispersion function
     """

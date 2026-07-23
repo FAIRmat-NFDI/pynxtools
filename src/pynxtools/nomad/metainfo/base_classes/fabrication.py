@@ -24,12 +24,12 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 
 import numpy as np
-from nomad.datamodel.metainfo import basesections
 from nomad.datamodel.metainfo.annotations import (
     ELNAnnotation,
     ELNComponentEnum,
     SchemaAnnotation,
 )
+from nomad.datamodel.metainfo.basesections import v2 as basesections
 from nomad.metainfo import MEnum, Quantity, Section, SubSection
 from nomad.metainfo.data_type import Bytes, Datetime
 
@@ -50,7 +50,7 @@ if TYPE_CHECKING:
 __all__ = ["Fabrication"]
 
 
-class Fabrication(Object, basesections.Instrument):
+class Fabrication(Object, basesections.InstrumentEntry):
     """
     Details about a component as it is defined by its manufacturer.
     """

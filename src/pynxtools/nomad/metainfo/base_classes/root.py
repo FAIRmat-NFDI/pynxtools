@@ -25,12 +25,12 @@ from typing import TYPE_CHECKING
 
 import numpy as np
 from nomad.datamodel.data import EntryData
-from nomad.datamodel.metainfo import basesections
 from nomad.datamodel.metainfo.annotations import (
     ELNAnnotation,
     ELNComponentEnum,
     SchemaAnnotation,
 )
+from nomad.datamodel.metainfo.basesections import v2 as basesections
 from nomad.metainfo import MEnum, Quantity, Section, SubSection
 from nomad.metainfo.data_type import Bytes, Datetime
 
@@ -375,7 +375,6 @@ class Root(Object, basesections.Experiment, EntryData):
         if not self.m_entry_paths:
             return
         try:
-            from nomad.datamodel.metainfo.basesections import ExperimentStep
             from nomad.utils import generate_entry_id
 
             upload_id = archive.m_context.upload_id
@@ -391,7 +390,7 @@ class Root(Object, basesections.Experiment, EntryData):
                     entry_id = generate_entry_id(upload_id, mainfile)
                 else:
                     entry_id = generate_entry_id(upload_id, mainfile, entry_name)
-                step = ExperimentStep()
+                step = basesections.ExperimentStep()
                 step.name = entry_name
                 step.activity = f"../upload/archive/{entry_id}#data"
                 new_steps.append(step)

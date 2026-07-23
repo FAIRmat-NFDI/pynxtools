@@ -28,6 +28,7 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 
 import numpy as np
+from nomad.datamodel.data import ArchiveSection
 from nomad.datamodel.metainfo.annotations import (
     ELNAnnotation,
     ELNComponentEnum,
@@ -53,7 +54,7 @@ if TYPE_CHECKING:
 __all__ = ["SpmScanRegion"]
 
 
-class SpmScanRegion(Object):
+class SpmScanRegion(Object, ArchiveSection):
     """
     The scan region is the area of phase space or sub-phase space where the
     scan is performed. The region could be N-dimensional and is defined by the

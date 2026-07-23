@@ -28,6 +28,7 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 
 import numpy as np
+from nomad.datamodel.data import ArchiveSection
 from nomad.datamodel.metainfo.annotations import (
     ELNAnnotation,
     ELNComponentEnum,
@@ -57,7 +58,7 @@ if TYPE_CHECKING:
 __all__ = ["Microstructure"]
 
 
-class Microstructure(Object):
+class Microstructure(Object, ArchiveSection):
     r"""
     Base class to describe a microstructure, its structural aspects, associated
     descriptors, properties.

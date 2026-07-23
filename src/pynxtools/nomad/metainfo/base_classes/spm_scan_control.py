@@ -28,6 +28,7 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 
 import numpy as np
+from nomad.datamodel.data import ArchiveSection
 from nomad.datamodel.metainfo.annotations import (
     ELNAnnotation,
     ELNComponentEnum,
@@ -54,7 +55,7 @@ if TYPE_CHECKING:
 __all__ = ["SpmScanControl"]
 
 
-class SpmScanControl(Object):
+class SpmScanControl(Object, ArchiveSection):
     """
     A scan is performed inside an N-dimensional phase space, where each
     dimension can correspond not only to real space coordinates (x,y) but also

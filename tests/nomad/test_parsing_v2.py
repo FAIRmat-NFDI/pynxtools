@@ -37,7 +37,7 @@ import structlog
 try:
     from nomad.datamodel import EntryArchive
     from nomad.datamodel.data import EntryData
-    from nomad.datamodel.metainfo.basesections import Experiment, Measurement
+    from nomad.datamodel.metainfo.basesections.v2 import Activity, Experiment
     from nomad.units import ureg
     from nomad.utils import get_logger
 except ImportError:
@@ -354,7 +354,10 @@ def test_nexus_string_decode_to_utf8(tmp_path):
 @pytest.mark.parametrize(
     ("cls", "expected_bases"),
     [
-        pytest.param(Entry, (Object, Measurement, EntryData), id="entry"),
+        # Entry defaults to Activity (not Measurement) — not every NXentry is a
+        # real measurement (e.g. simulation-only em/apm entries). See ADR-009
+        # decision 6; application definitions opt into Measurement explicitly.
+        pytest.param(Entry, (Object, Activity, EntryData), id="entry"),
         pytest.param(Root, (Object, Experiment, EntryData), id="root"),
     ],
 )

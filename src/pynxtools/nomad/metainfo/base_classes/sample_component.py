@@ -24,12 +24,12 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 
 import numpy as np
-from nomad.datamodel.metainfo import basesections
 from nomad.datamodel.metainfo.annotations import (
     ELNAnnotation,
     ELNComponentEnum,
     SchemaAnnotation,
 )
+from nomad.datamodel.metainfo.basesections import v2 as basesections
 from nomad.metainfo import MEnum, Quantity, Section, SubSection
 from nomad.metainfo.data_type import Bytes, Datetime
 
@@ -50,7 +50,7 @@ if TYPE_CHECKING:
 __all__ = ["SampleComponent"]
 
 
-class SampleComponent(Component, basesections.Component):
+class SampleComponent(Component, basesections.System):
     """
     One group like this per component can be recorded for a sample consisting
     of multiple components.

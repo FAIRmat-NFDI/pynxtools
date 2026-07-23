@@ -28,6 +28,7 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 
 import numpy as np
+from nomad.datamodel.data import ArchiveSection
 from nomad.datamodel.metainfo.annotations import (
     ELNAnnotation,
     ELNComponentEnum,
@@ -54,7 +55,7 @@ if TYPE_CHECKING:
 __all__ = ["Delocalization"]
 
 
-class Delocalization(Object):
+class Delocalization(Object, ArchiveSection):
     """
     Base class of the configuration and results of a delocalization algorithm.
 

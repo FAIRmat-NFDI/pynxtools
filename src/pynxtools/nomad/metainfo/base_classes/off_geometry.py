@@ -24,6 +24,7 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 
 import numpy as np
+from nomad.datamodel.data import ArchiveSection
 from nomad.datamodel.metainfo.annotations import (
     ELNAnnotation,
     ELNComponentEnum,
@@ -49,7 +50,7 @@ if TYPE_CHECKING:
 __all__ = ["OffGeometry"]
 
 
-class OffGeometry(Object):
+class OffGeometry(Object, ArchiveSection):
     """
     Geometry (shape) description. The format closely matches the Object File
     Format (OFF) which can be output by most CAD software. It can be used to

@@ -29,6 +29,7 @@ from nomad.datamodel.metainfo.annotations import (
     ELNComponentEnum,
     SchemaAnnotation,
 )
+from nomad.datamodel.metainfo.basesections import v2 as basesections
 from nomad.metainfo import MEnum, Quantity, Section, SubSection
 from nomad.metainfo.data_type import Bytes, Datetime
 
@@ -72,7 +73,7 @@ if TYPE_CHECKING:
 __all__ = ["Mpes"]
 
 
-class Mpes(Entry):
+class Mpes(Entry, basesections.Measurement):
     """
     This is the most general application definition for photoemission
     experiments.

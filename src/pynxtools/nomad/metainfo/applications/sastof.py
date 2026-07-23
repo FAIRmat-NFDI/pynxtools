@@ -29,6 +29,7 @@ from nomad.datamodel.metainfo.annotations import (
     ELNComponentEnum,
     SchemaAnnotation,
 )
+from nomad.datamodel.metainfo.basesections import v2 as basesections
 from nomad.metainfo import MEnum, Quantity, Section, SubSection
 from nomad.metainfo.data_type import Bytes, Datetime
 
@@ -59,7 +60,7 @@ if TYPE_CHECKING:
 __all__ = ["Sastof"]
 
 
-class Sastof(Entry):
+class Sastof(Entry, basesections.Measurement):
     """
     raw, 2-D SAS data with an area detector with a time-of-flight source
 

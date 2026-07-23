@@ -29,6 +29,7 @@ from nomad.datamodel.metainfo.annotations import (
     ELNComponentEnum,
     SchemaAnnotation,
 )
+from nomad.datamodel.metainfo.basesections import v2 as basesections
 from nomad.metainfo import MEnum, Quantity, Section, SubSection
 from nomad.metainfo.data_type import Bytes, Datetime
 
@@ -72,7 +73,7 @@ if TYPE_CHECKING:
 __all__ = ["OpticalSpectroscopy"]
 
 
-class OpticalSpectroscopy(Entry):
+class OpticalSpectroscopy(Entry, basesections.Measurement):
     """
     A general application definition of optical spectroscopy elements, which
     may be used as a template to derive specialized optical spectroscopy

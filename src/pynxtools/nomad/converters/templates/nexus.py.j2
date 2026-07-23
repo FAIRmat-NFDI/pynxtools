@@ -31,8 +31,8 @@ from typing import TYPE_CHECKING
 
 import numpy as np
 
-{% for mod, cls in nomad_extra_bases %}{% if mod != "nomad.datamodel.metainfo.basesections" %}from {{ mod }} import {{ cls }}
-{% endif %}{% endfor %}{% if needs_basesections %}from nomad.datamodel.metainfo import basesections
+{% for mod, cls in nomad_extra_bases %}{% if mod != "nomad.datamodel.metainfo.basesections.v2" %}from {{ mod }} import {{ cls }}
+{% endif %}{% endfor %}{% if needs_basesections %}from nomad.datamodel.metainfo.basesections import v2 as basesections
 {% endif %}from nomad.datamodel.metainfo.annotations import ELNAnnotation, ELNComponentEnum, SchemaAnnotation
 from nomad.metainfo import (
     MEnum,
@@ -66,7 +66,7 @@ if TYPE_CHECKING:
 __all__ = ["{{ class_name }}"]
 
 
-class {{ class_name }}({{ base_class }}{% if base_is_generated %}{% for mod, cls in nomad_extra_bases %}, {% if mod == "nomad.datamodel.metainfo.basesections" %}basesections.{{ cls }}{% else %}{{ cls }}{% endif %}{% endfor %}{% endif %}):
+class {{ class_name }}({{ base_class }}{% if base_is_generated %}{% for mod, cls in nomad_extra_bases %}, {% if mod == "nomad.datamodel.metainfo.basesections.v2" %}basesections.{{ cls }}{% else %}{{ cls }}{% endif %}{% endfor %}{% endif %}):
     """
     {{ docstring | indent(4) }}
     """

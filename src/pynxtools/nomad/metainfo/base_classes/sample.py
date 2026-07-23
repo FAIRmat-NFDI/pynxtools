@@ -24,12 +24,12 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 
 import numpy as np
-from nomad.datamodel.metainfo import basesections
 from nomad.datamodel.metainfo.annotations import (
     ELNAnnotation,
     ELNComponentEnum,
     SchemaAnnotation,
 )
+from nomad.datamodel.metainfo.basesections import v2 as basesections
 from nomad.metainfo import MEnum, Quantity, Section, SubSection
 from nomad.metainfo.data_type import Bytes, Datetime
 
@@ -50,7 +50,7 @@ if TYPE_CHECKING:
 __all__ = ["Sample"]
 
 
-class Sample(Component, basesections.CompositeSystem):
+class Sample(Component, basesections.System):
     """
     Any information on the sample.
 
@@ -1094,3 +1094,15 @@ class Sample(Component, basesections.CompositeSystem):
 
     def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
         super().normalize(archive, logger)
+
+        # Bridge NeXus's direct-containment sample_component list onto
+        # System.sub_systems' reference/wrapper-based (NestedSubSystem) shape,
+        # so generic NOMAD tooling built against sub_systems also sees NeXus
+        # samples' composition. See ADR-009 decision 8.
+        # basesections.System.sub_systems is declared via SectionProxy (a
+        # forward reference to 'SubSystem'), which mypy cannot resolve.
+        if self.sample_component and not self.sub_systems:  # type: ignore[has-type]
+            self.sub_systems = [
+                basesections.NestedSubSystem(nested_system=component)
+                for component in self.sample_component
+            ]

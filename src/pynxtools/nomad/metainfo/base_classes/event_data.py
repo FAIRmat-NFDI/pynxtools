@@ -24,6 +24,7 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 
 import numpy as np
+from nomad.datamodel.data import ArchiveSection
 from nomad.datamodel.metainfo.annotations import (
     ELNAnnotation,
     ELNComponentEnum,
@@ -49,7 +50,7 @@ if TYPE_CHECKING:
 __all__ = ["EventData"]
 
 
-class EventData(Object):
+class EventData(Object, ArchiveSection):
     """
     NXevent_data is a special group for storing data from neutron detectors in
     event mode. In this mode, the detector electronics emits a stream of
