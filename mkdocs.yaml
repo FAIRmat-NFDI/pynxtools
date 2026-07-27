@@ -38,6 +38,7 @@ nav:
     - pynxtools:
       - learn/pynxtools/architecture.md
       - learn/pynxtools/nexus-definitions.md
+      - learn/pynxtools/licensing.md
       - learn/pynxtools/dataconverter-and-readers.md
       - learn/pynxtools/nexus-validation.md
       - learn/pynxtools/multi-format-reader.md

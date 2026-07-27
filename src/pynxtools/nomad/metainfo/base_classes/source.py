@@ -1,24 +1,23 @@
+# SPDX-FileCopyrightText: NeXus International Advisory Committee (NIAC)
+# SPDX-FileCopyrightText: The pynxtools Authors
 #
-# Copyright The NOMAD Authors.
+# SPDX-License-Identifier: LGPL-3.0-or-later
 #
-# This file is part of NOMAD. See https://nomad-lab.eu for further info.
-#
-# Licensed under the Apache License, Version 2.0 (the "License");
-# you may not use this file except in compliance with the License.
-# You may obtain a copy of the License at
-#
-#     http://www.apache.org/licenses/LICENSE-2.0
-#
-# Unless required by applicable law or agreed to in writing, software
-# distributed under the License is distributed on an "AS IS" BASIS,
-# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-# See the License for the specific language governing permissions and
-# limitations under the License.
-#
+# This file is generated from the NeXus definition NXsource (see
+# https://github.com/nexusformat/definitions). It preserves that
+# definition's structure and content as NOMAD Metainfo
+# (Quantity/SubSection) objects. Accordingly, it is distributed under
+# LGPL-3.0-or-later, matching the license of the upstream NXDL
+# definitions, unlike the rest of this package (Apache-2.0).
+# During generation, pynxtools may add project-specific content (extra quantities,
+# annotations, normalize() logic, ...). See
+# docs/learn/pynxtools/licensing.md and
+# LICENSES/LGPL-3.0-or-later.txt.
 #
 # This file is AUTO-GENERATED from the NeXus definitions (NXDL).
 # Run `pynx nomad generate-metainfo --nxdl NXsource` to regenerate.
-# Additive-only: the generator will never remove or rename existing class members.
+# Additive-only: the generator will not remove or rename existing class members
+# (unless the `--force` flag is used).
 # Add normalize() logic directly; it will be preserved on regeneration.
 from __future__ import annotations
 
