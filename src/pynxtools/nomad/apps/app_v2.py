@@ -16,7 +16,7 @@
 # limitations under the License.
 #
 """
-NeXus App v2 — backed by the Phase 2 generated Python metainfo (NexusParserV2).
+NeXus App v2 — backed by the generated Python metainfo (NexusParserV2).
 
 Column paths use new archive structure (no __field suffix, lowercase
 group names).
@@ -45,17 +45,27 @@ nexus_app_v2 = AppEntryPoint(
     name="NeXus App",
     description="NeXus app backed by generated Python metainfo.",
     app=App(
+        # Label of the App
         label="NeXus v2",
+        # Path used in the URL, must be unique
         path="nexusappv2",
+        # Used to categorize apps in the explore menu
         category="Experiment",
+        # Brief description used in the app menu
         description="Search app for NeXus data parsed by the annotation-based parser.",
+        # Longer description that can also use markdown
         readme=(
             "Searches NeXus entries parsed using the generated Python metainfo classes "
             "(nexus_parser_v2)."
         ),
+        # If you want to use quantities from a custom schema, you need to load
+        # the search quantities from it first here. Note that you can use a glob
+        # syntax to load the entire package, or just a single schema from a
+        # package.
         search_quantities=SearchQuantities(
             include=[f"*#{schema}"],
         ),
+        # Controls which columns are shown in the results table
         columns=[
             Column(title="Entry ID", search_quantity="entry_id", selected=True),
             Column(title="Entry Name", search_quantity="entry_name", selected=True),
@@ -91,7 +101,11 @@ nexus_app_v2 = AppEntryPoint(
                 selected=True,
             ),
         ],
+        # Dictionary of search filters that are always enabled for queries made
+        # within this app. This is especially important to narrow down the
+        # results to the wanted subset.
         filters_locked={"section_defs.definition_qualified_name": [schema]},
+        # Controls the menu shown on the left
         menu=Menu(
             size=MenuSizeEnum.MD,
             title="Menu",
@@ -216,6 +230,7 @@ nexus_app_v2 = AppEntryPoint(
                 ),
             ],
         ),
+        # Controls the default dashboard shown in the search interface
         dashboard={
             "widgets": [
                 {
