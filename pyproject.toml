@@ -42,6 +42,9 @@ dependencies = [
     "cachetools",
     "structlog",
     "orjson",
+    "owlready2",
+    "fastapi",
+    "pygit2", # transitive from NeXusOntology submodule
 ]
 
 [project.urls]
@@ -110,6 +113,7 @@ nexus_schema = "pynxtools.nomad.schema_packages:nexus_schema"
 nexus_data_converter = "pynxtools.nomad.schema_packages:nexus_data_converter"
 nexus_app = "pynxtools.nomad.apps:nexus_app"
 simple_nexus_example = "pynxtools.nomad.example_uploads:simple_nexus_example"
+ontology_service = "pynxtools.nomad.apis:ontology_service"
 
 [project.scripts]
 pynx           = "pynxtools.cli:pynx"
@@ -120,6 +124,7 @@ validate_nexus = "pynxtools.dataconverter.cli:validate"
 
 [tool.setuptools.package-data]
 pynxtools = ["definitions/**/*.xml", "definitions/**/*.xsd"]
+"pynxtools.NeXusOntology.script" = ["*.py"]
 
 [tool.setuptools.packages.find]
 where = [
@@ -133,7 +138,10 @@ local_scheme = "node-and-date"
 
 [tool.ruff]
 include = ["src/*.py", "tests/*.py"]
-exclude = ["src/pynxtools/definitions"]
+exclude = [
+    "src/pynxtools/definitions",
+    "src/pynxtools/NeXusOntology",
+]
 line-length = 88
 indent-width = 4
 
@@ -181,9 +189,10 @@ ignore_missing_imports = true
 follow_imports = "silent"
 no_strict_optional = true
 disable_error_code = "import, import-untyped, annotation-unchecked"
-exclude = ["src/pynxtools/definitions/*"]
+exclude = ["src/pynxtools/definitions/*", "src/pynxtools/NeXusOntology/*"]
 
 [tool.uv]
 extra-index-url = [
 "https://gitlab.mpcdf.mpg.de/api/v4/projects/2187/packages/pypi/simple",
 ]
+
