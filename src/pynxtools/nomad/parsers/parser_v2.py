@@ -395,7 +395,7 @@ class NomadVisitorV2(NexusVisitor):
 
         # hdf_path → MSection (groups only, under the target entry)
         self._sections: dict[str, MSection] = {}
-        # HDF5 path → archive path mapping for m_nx_data_path
+        # archive path → HDF5 path mapping for m_nx_data_path
         self._path_map: dict[str, str] = {}
         # hdf parent_path → (hdf_field_name, nxdl_concept_name), for on_attribute
         self._current_field_concept: dict[str, tuple[str, str]] = {}
@@ -469,7 +469,7 @@ class NomadVisitorV2(NexusVisitor):
         variadic NXdata field named 'intensity'), then looks up the matching Python
         Quantity via _SectionIndex. For NeXusLink quantities, stores the HDF5 target
         path string instead of data. For numeric arrays, stores the mean value.
-        Records the HDF5→archive path mapping in self._path_map.
+        Records the archive→HDF5 path mapping in self._path_map.
         """
         if (
             not hdf_path.startswith(self._target_entry_name + "/")
@@ -641,14 +641,14 @@ class NomadVisitorV2(NexusVisitor):
         new_section.__dict__["nx_name"] = group_name
         parent_section.m_add_sub_section(sub_def, new_section)
 
-        # Track in path map (entry-relative path)
+        # Track in path map: archive path -> HDF5 path (entry-relative)
         entry_prefix = self._target_entry_name + "/"
         rel_path = (
             hdf_path[len(entry_prefix) :]
             if hdf_path.startswith(entry_prefix)
             else hdf_path
         )
-        self._path_map[rel_path] = _archive_path_for(new_section)
+        self._path_map[_archive_path_for(new_section)] = rel_path
         return new_section
 
     # ------------------------------------------------------------------
@@ -782,14 +782,16 @@ class NomadVisitorV2(NexusVisitor):
             self._logger.debug("Error setting field %s: %s", hdf_field_name, e)
             return
 
-        # Record path mapping (entry-relative)
+        # Record path mapping: archive path -> HDF5 path (entry-relative)
         entry_prefix = self._target_entry_name + "/"
         rel_path = (
             hdf_path[len(entry_prefix) :]
             if hdf_path.startswith(entry_prefix)
             else hdf_path
         )
-        self._path_map[rel_path] = _archive_path_for(current) + "." + qty.name
+        container_path = _archive_path_for(current)
+        archive_path = f"{container_path}/{qty.name}" if container_path else qty.name
+        self._path_map[archive_path] = rel_path
 
         idx = _SectionIndex.for_cls(type(current))
 
@@ -893,14 +895,20 @@ def _nxdata_hint(hdf_node: h5py.Dataset, field_name: str) -> Any:
 
 
 def _archive_path_for(section: MSection) -> str:
-    """Build a rough archive path string for a section (for path map values)."""
-    parts = []
-    s = section
-    while s is not None:
-        name = s.__dict__.get("nx_name") or type(s).__name__
-        parts.append(name)
-        s = getattr(s, "m_parent", None)
-    return ".".join(reversed(parts))
+    """Build the real, navigable archive-JSON path for a section, relative to
+    ``archive.data`` (the Entry) - e.g. "instrument/0/energy_resolution".
+
+    Uses NOMAD's own ``MSection.m_path()`` (built from each ancestor's actual
+    SubSection attribute name and repeat index via m_parent_sub_section/
+    m_parent_index), not the section's own nx_name/class name - those don't
+    necessarily match the Python attribute name declared on the parent, and
+    never included repeat indices at all.
+    """
+    full_path = section.m_path()  # e.g. "/data/instrument/0/energy_resolution"
+    prefix = "/data/"
+    if full_path.startswith(prefix):
+        return full_path[len(prefix) :]
+    return full_path.lstrip("/") if full_path != "/data" else ""
 
 
 # ---------------------------------------------------------------------------
