@@ -1505,7 +1505,12 @@ def build_context(nx_name: str) -> dict:
                 _parent_concept_file,
                 _child_parent_app,
             ) = _parent_app_concept_override(
-                child, (_parent_app_file, _parent_module, _parent_class_name)
+                child,
+                (_parent_app_file, _parent_module, _parent_class_name)
+                if _parent_app_file is not None
+                and _parent_module is not None
+                and _parent_class_name is not None
+                else None,
             )
             _parent_category = _nxdl_category(nx_name)
             concept, extra_concepts = _build_named_concept(
