@@ -48,6 +48,7 @@ from pynxtools.nomad.metainfo._category import ExperimentCategory
 from pynxtools.nomad.metainfo.applications.sensor_scan import (
     SensorScan,
     SensorScanInstrument,
+    SensorScanInstrumentEnvironment,
     SensorScanSample,
 )
 from pynxtools.nomad.metainfo.base_classes.amplifier import Amplifier
@@ -722,7 +723,7 @@ class SpmInstrumentLockinAmplifier(Lockin):
         super().normalize(archive, logger)
 
 
-class SpmInstrumentScanEnvironment(Environment):
+class SpmInstrumentScanEnvironment(SensorScanInstrumentEnvironment):
     """
     Information of the scan environment holding concept for temperature,
     setpoint (current or height), scan area and scan data.
@@ -1775,7 +1776,7 @@ class SpmInstrumentPiezoSensor(SpmPiezoSensor):
         super().normalize(archive, logger)
 
 
-class SpmInstrumentBiasSpectroscopyEnvironment(Environment):
+class SpmInstrumentBiasSpectroscopyEnvironment(SensorScanInstrumentEnvironment):
     """
     To explain bias and current behavior (sweep measurement especially in STS
     experiment) due to voltage applied to the sample.

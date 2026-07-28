@@ -48,11 +48,11 @@ from pynxtools.nomad.metainfo._category import ExperimentCategory
 from pynxtools.nomad.metainfo.applications.spm import (
     Spm,
     SpmInstrument,
+    SpmInstrumentScanEnvironment,
     SpmReproducibilityIndicators,
     SpmResolutionIndicators,
 )
 from pynxtools.nomad.metainfo.base_classes.detector import Detector
-from pynxtools.nomad.metainfo.base_classes.environment import Environment
 from pynxtools.nomad.metainfo.base_classes.spm_cantilever import SpmCantilever
 from pynxtools.nomad.metainfo.base_classes.spm_cantilever_oscillator import (
     SpmCantileverOscillator,
@@ -536,7 +536,7 @@ class AfmInstrumentSpmCantileverCantileverOscillator(SpmCantileverOscillator):
         super().normalize(archive, logger)
 
 
-class AfmInstrumentScanEnvironment(Environment):
+class AfmInstrumentScanEnvironment(SpmInstrumentScanEnvironment):
     """
     The environment information.
     """

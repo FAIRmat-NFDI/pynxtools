@@ -48,10 +48,10 @@ from pynxtools.nomad.metainfo._category import ExperimentCategory
 from pynxtools.nomad.metainfo.applications.spm import (
     Spm,
     SpmInstrument,
+    SpmInstrumentLockinAmplifier,
     SpmReproducibilityIndicators,
     SpmResolutionIndicators,
 )
-from pynxtools.nomad.metainfo.base_classes.lockin import Lockin
 
 if TYPE_CHECKING:
     from nomad.datamodel import EntryArchive
@@ -341,7 +341,7 @@ class StmInstrument(SpmInstrument):
         super().normalize(archive, logger)
 
 
-class StmInstrumentLockinAmplifier(Lockin):
+class StmInstrumentLockinAmplifier(SpmInstrumentLockinAmplifier):
     """
     The lock-in amplifier information. The device is being used to extract the
     very weak signal buried in noisy signals.

@@ -45,13 +45,13 @@ from pynxtools.nomad.metainfo.applications.mpes import (
     Mpes,
     MpesData,
     MpesInstrument,
+    MpesInstrumentElectronanalyzer,
+    MpesInstrumentElectronanalyzerCollectioncolumn,
+    MpesInstrumentElectronanalyzerEnergydispersion,
     MpesSample,
 )
 from pynxtools.nomad.metainfo.base_classes.aperture import Aperture
-from pynxtools.nomad.metainfo.base_classes.collectioncolumn import Collectioncolumn
 from pynxtools.nomad.metainfo.base_classes.coordinate_system import CoordinateSystem
-from pynxtools.nomad.metainfo.base_classes.electronanalyzer import Electronanalyzer
-from pynxtools.nomad.metainfo.base_classes.energydispersion import Energydispersion
 from pynxtools.nomad.metainfo.base_classes.resolution import Resolution
 from pynxtools.nomad.metainfo.base_classes.transformations import Transformations
 
@@ -419,7 +419,7 @@ class MpesArpesInstrumentAngularN_resolution(Resolution):
         super().normalize(archive, logger)
 
 
-class MpesArpesInstrumentElectronanalyzer(Electronanalyzer):
+class MpesArpesInstrumentElectronanalyzer(MpesInstrumentElectronanalyzer):
     m_def = Section(
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXmpes_arpes.html#nxmpes_arpes-entry-instrument-electronanalyzer-group"
@@ -804,7 +804,9 @@ class MpesArpesInstrumentElectronanalyzerTransformations(Transformations):
         super().normalize(archive, logger)
 
 
-class MpesArpesInstrumentElectronanalyzerCollectioncolumn(Collectioncolumn):
+class MpesArpesInstrumentElectronanalyzerCollectioncolumn(
+    MpesInstrumentElectronanalyzerCollectioncolumn
+):
     m_def = Section(
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXmpes_arpes.html#nxmpes_arpes-entry-instrument-electronanalyzer-collectioncolumn-group"
@@ -859,7 +861,9 @@ class MpesArpesInstrumentElectronanalyzerCollectioncolumn(Collectioncolumn):
         super().normalize(archive, logger)
 
 
-class MpesArpesInstrumentElectronanalyzerEnergydispersion(Energydispersion):
+class MpesArpesInstrumentElectronanalyzerEnergydispersion(
+    MpesInstrumentElectronanalyzerEnergydispersion
+):
     m_def = Section(
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXmpes_arpes.html#nxmpes_arpes-entry-instrument-electronanalyzer-energydispersion-group"

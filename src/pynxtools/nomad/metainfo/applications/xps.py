@@ -45,19 +45,19 @@ from pynxtools.nomad.metainfo.applications.mpes import (
     Mpes,
     MpesData,
     MpesInstrument,
+    MpesInstrumentBeamProbe,
+    MpesInstrumentElectronanalyzer,
+    MpesInstrumentElectronanalyzerCollectioncolumn,
+    MpesInstrumentElectronanalyzerEnergydispersion,
+    MpesInstrumentSourceProbe,
     MpesSample,
 )
-from pynxtools.nomad.metainfo.base_classes.beam import Beam
-from pynxtools.nomad.metainfo.base_classes.collectioncolumn import Collectioncolumn
 from pynxtools.nomad.metainfo.base_classes.coordinate_system import CoordinateSystem
 from pynxtools.nomad.metainfo.base_classes.data import Data
-from pynxtools.nomad.metainfo.base_classes.electronanalyzer import Electronanalyzer
-from pynxtools.nomad.metainfo.base_classes.energydispersion import Energydispersion
 from pynxtools.nomad.metainfo.base_classes.fit import Fit
 from pynxtools.nomad.metainfo.base_classes.fit_function import FitFunction
 from pynxtools.nomad.metainfo.base_classes.parameters import Parameters
 from pynxtools.nomad.metainfo.base_classes.peak import Peak
-from pynxtools.nomad.metainfo.base_classes.source import Source
 from pynxtools.nomad.metainfo.base_classes.transformations import Transformations
 
 if TYPE_CHECKING:
@@ -447,7 +447,7 @@ class XpsInstrument(MpesInstrument):
         super().normalize(archive, logger)
 
 
-class XpsInstrumentSourceProbe(Source):
+class XpsInstrumentSourceProbe(MpesInstrumentSourceProbe):
     m_def = Section(
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXxps.html#nxxps-entry-instrument-source-probe-group"
@@ -484,7 +484,7 @@ class XpsInstrumentSourceProbe(Source):
         super().normalize(archive, logger)
 
 
-class XpsInstrumentBeamProbe(Beam):
+class XpsInstrumentBeamProbe(MpesInstrumentBeamProbe):
     m_def = Section(
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXxps.html#nxxps-entry-instrument-beam-probe-group"
@@ -745,7 +745,7 @@ class XpsInstrumentBeamProbeTransformations(Transformations):
         super().normalize(archive, logger)
 
 
-class XpsInstrumentElectronanalyzer(Electronanalyzer):
+class XpsInstrumentElectronanalyzer(MpesInstrumentElectronanalyzer):
     m_def = Section(
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXxps.html#nxxps-entry-instrument-electronanalyzer-group"
@@ -817,7 +817,9 @@ class XpsInstrumentElectronanalyzer(Electronanalyzer):
         super().normalize(archive, logger)
 
 
-class XpsInstrumentElectronanalyzerCollectioncolumn(Collectioncolumn):
+class XpsInstrumentElectronanalyzerCollectioncolumn(
+    MpesInstrumentElectronanalyzerCollectioncolumn
+):
     m_def = Section(
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXxps.html#nxxps-entry-instrument-electronanalyzer-collectioncolumn-group"
@@ -855,7 +857,9 @@ class XpsInstrumentElectronanalyzerCollectioncolumn(Collectioncolumn):
         super().normalize(archive, logger)
 
 
-class XpsInstrumentElectronanalyzerEnergydispersion(Energydispersion):
+class XpsInstrumentElectronanalyzerEnergydispersion(
+    MpesInstrumentElectronanalyzerEnergydispersion
+):
     m_def = Section(
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXxps.html#nxxps-entry-instrument-electronanalyzer-energydispersion-group"
