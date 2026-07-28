@@ -44,6 +44,7 @@ from pynxtools.nomad.metainfo._category import ExperimentCategory
 from pynxtools.nomad.metainfo.base_classes.actuator import Actuator
 from pynxtools.nomad.metainfo.base_classes.beam import Beam
 from pynxtools.nomad.metainfo.base_classes.calibration import Calibration
+from pynxtools.nomad.metainfo.base_classes.cite import Cite
 from pynxtools.nomad.metainfo.base_classes.component import Component
 from pynxtools.nomad.metainfo.base_classes.coordinate_system import CoordinateSystem
 from pynxtools.nomad.metainfo.base_classes.data import Data
@@ -103,6 +104,11 @@ class OpticalSpectroscopy(Entry):
         ),
     )
 
+    citeID = SubSection(
+        section_def="pynxtools.nomad.metainfo.applications.optical_spectroscopy.OpticalSpectroscopyCiteID",
+        repeats=True,
+        variable=True,
+    )
     beam_ref_frame = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.optical_spectroscopy.OpticalSpectroscopyBeamRefFrame",
         repeats=False,
@@ -377,6 +383,60 @@ class OpticalSpectroscopy(Entry):
 # generic class so all # base quantities are available.
 # Resolved lazily by NOMAD at __init_metainfo__() time via string FQNs.
 # =============================================================================
+
+
+class OpticalSpectroscopyCiteID(Cite):
+    """
+    Citation information for the experiment. This may be a DOI or a reference
+    to a publication, which describes the experiment in more detail.
+    """
+
+    m_def = Section(
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXoptical_spectroscopy.html#nxoptical_spectroscopy-entry-citeid-group"
+        ],
+        variable=True,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXcite",
+            name="citeID",
+            name_type="partial",
+            optionality="optional",
+        ),
+    )
+
+    author = Quantity(
+        type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXoptical_spectroscopy.html#nxoptical_spectroscopy-entry-citeid-author-field"
+        ],
+        a_nexus_field=NeXusField(
+            name="author",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="recommended",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
+    )
+    doi = Quantity(
+        type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXoptical_spectroscopy.html#nxoptical_spectroscopy-entry-citeid-doi-field"
+        ],
+        a_nexus_field=NeXusField(
+            name="doi",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="recommended",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
+    )
+
+    def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
+        super().normalize(archive, logger)
 
 
 class OpticalSpectroscopyBeamRefFrame(CoordinateSystem):
