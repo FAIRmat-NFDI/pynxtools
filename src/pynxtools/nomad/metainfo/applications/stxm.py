@@ -371,7 +371,7 @@ class StxmInstrumentMonochromator(Monochromator):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXstxm.html#nxstxm-entry-instrument-monochromator-energy-field"
         ],
         dimensionality="[mass] * [length] ** 2 / [time] ** 2",
-        unit="joule",
+        unit="eV",
         shape=["*"],
         a_nexus_field=NeXusField(
             name="energy",

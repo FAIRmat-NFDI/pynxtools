@@ -148,7 +148,7 @@ class Attenuator(Component):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXattenuator.html#nxattenuator-scattering-cross-section-field"
         ],
         dimensionality="[length] ** 2",
-        unit="m ** 2",
+        unit="barn",
         description=("Scattering cross section (coherent+incoherent)"),
         a_nexus_field=NeXusField(
             name="scattering_cross_section",
@@ -160,7 +160,7 @@ class Attenuator(Component):
         a_eln=ELNAnnotation(
             component=ELNComponentEnum.NumberEditQuantity,
         ),
-        a_display={"unit": "m ** 2"},
+        a_display={"unit": "barn"},
     )
     absorption_cross_section = Quantity(
         type=np.float64,
@@ -168,7 +168,7 @@ class Attenuator(Component):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXattenuator.html#nxattenuator-absorption-cross-section-field"
         ],
         dimensionality="[length] ** 2",
-        unit="m ** 2",
+        unit="barn",
         description=("Absorption cross section"),
         a_nexus_field=NeXusField(
             name="absorption_cross_section",
@@ -180,7 +180,7 @@ class Attenuator(Component):
         a_eln=ELNAnnotation(
             component=ELNComponentEnum.NumberEditQuantity,
         ),
-        a_display={"unit": "m ** 2"},
+        a_display={"unit": "barn"},
     )
     attenuator_transmission = Quantity(
         type=np.float64,

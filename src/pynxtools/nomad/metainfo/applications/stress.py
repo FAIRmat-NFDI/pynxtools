@@ -839,7 +839,7 @@ class StressInstrumentDetector(Detector):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXstress.html#nxstress-entry-instrument-detector-wavelength-field"
         ],
         dimensionality="[length]",
-        unit="m",
+        unit="angstrom",
         shape=["*", "*"],
         description=(
             "This field can be two things: 1. For a pixel detector it provides "
@@ -1230,7 +1230,7 @@ class StressInstrumentBeamIntensityProfile(Beam):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXstress.html#nxstress-entry-instrument-beam-intensity-profile-incident-energy-field"
         ],
         dimensionality="[mass] * [length] ** 2 / [time] ** 2",
-        unit="joule",
+        unit="eV",
         shape=["*"],
         description=("Incident energy mostly useful for monochromatic beams."),
         a_nexus_field=NeXusField(
@@ -1247,7 +1247,7 @@ class StressInstrumentBeamIntensityProfile(Beam):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXstress.html#nxstress-entry-instrument-beam-intensity-profile-incident-wavelength-field"
         ],
         dimensionality="[length]",
-        unit="m",
+        unit="angstrom",
         description=("Incident wavelength mostly useful for monochromatic beams."),
         a_nexus_field=NeXusField(
             name="incident_wavelength",
@@ -1259,7 +1259,7 @@ class StressInstrumentBeamIntensityProfile(Beam):
         a_eln=ELNAnnotation(
             component=ELNComponentEnum.NumberEditQuantity,
         ),
-        a_display={"unit": "m"},
+        a_display={"unit": "angstrom"},
     )
 
     def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:

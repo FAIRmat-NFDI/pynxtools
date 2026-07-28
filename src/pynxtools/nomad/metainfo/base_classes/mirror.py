@@ -289,7 +289,7 @@ class Mirror(Component):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXmirror.html#nxmirror-substrate-density-field"
         ],
         dimensionality="[mass] / [length] ** 3",
-        unit="kilogram / m ** 3",
+        unit="gram / m ** 3",
         a_nexus_field=NeXusField(
             name="substrate_density",
             type="NX_FLOAT",
@@ -300,7 +300,7 @@ class Mirror(Component):
         a_eln=ELNAnnotation(
             component=ELNComponentEnum.NumberEditQuantity,
         ),
-        a_display={"unit": "kilogram / m ** 3"},
+        a_display={"unit": "gram / m ** 3"},
     )
     substrate_thickness = Quantity(
         type=np.float64,
@@ -395,7 +395,7 @@ class Mirror(Component):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXmirror.html#nxmirror-even-layer-density-field"
         ],
         dimensionality="[mass] / [length] ** 3",
-        unit="kilogram / m ** 3",
+        unit="gram / m ** 3",
         a_nexus_field=NeXusField(
             name="even_layer_density",
             type="NX_FLOAT",
@@ -406,7 +406,7 @@ class Mirror(Component):
         a_eln=ELNAnnotation(
             component=ELNComponentEnum.NumberEditQuantity,
         ),
-        a_display={"unit": "kilogram / m ** 3"},
+        a_display={"unit": "gram / m ** 3"},
     )
     odd_layer_material = Quantity(
         type=str,
@@ -429,7 +429,7 @@ class Mirror(Component):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXmirror.html#nxmirror-odd-layer-density-field"
         ],
         dimensionality="[mass] / [length] ** 3",
-        unit="kilogram / m ** 3",
+        unit="gram / m ** 3",
         a_nexus_field=NeXusField(
             name="odd_layer_density",
             type="NX_FLOAT",
@@ -440,7 +440,7 @@ class Mirror(Component):
         a_eln=ELNAnnotation(
             component=ELNComponentEnum.NumberEditQuantity,
         ),
-        a_display={"unit": "kilogram / m ** 3"},
+        a_display={"unit": "gram / m ** 3"},
     )
     layer_thickness = Quantity(
         type=np.float64,

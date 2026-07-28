@@ -172,7 +172,7 @@ class Monochromator(Component):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXmonochromator.html#nxmonochromator-wavelength-field"
         ],
         dimensionality="[length]",
-        unit="m",
+        unit="angstrom",
         description=("wavelength selected"),
         a_nexus_field=NeXusField(
             name="wavelength",
@@ -184,7 +184,7 @@ class Monochromator(Component):
         a_eln=ELNAnnotation(
             component=ELNComponentEnum.NumberEditQuantity,
         ),
-        a_display={"unit": "m"},
+        a_display={"unit": "angstrom"},
     )
     wavelength_error = Quantity(
         type=np.float64,
@@ -192,7 +192,7 @@ class Monochromator(Component):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXmonochromator.html#nxmonochromator-wavelength-error-field"
         ],
         dimensionality="[length]",
-        unit="m",
+        unit="angstrom",
         description=("wavelength standard deviation"),
         a_nexus_field=NeXusField(
             name="wavelength_error",
@@ -205,7 +205,7 @@ class Monochromator(Component):
         a_eln=ELNAnnotation(
             component=ELNComponentEnum.NumberEditQuantity,
         ),
-        a_display={"unit": "m"},
+        a_display={"unit": "angstrom"},
     )
     wavelength_errors = Quantity(
         type=np.float64,
@@ -213,7 +213,7 @@ class Monochromator(Component):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXmonochromator.html#nxmonochromator-wavelength-errors-field"
         ],
         dimensionality="[length]",
-        unit="m",
+        unit="angstrom",
         description=("wavelength standard deviation"),
         a_nexus_field=NeXusField(
             name="wavelength_errors",
@@ -225,7 +225,7 @@ class Monochromator(Component):
         a_eln=ELNAnnotation(
             component=ELNComponentEnum.NumberEditQuantity,
         ),
-        a_display={"unit": "m"},
+        a_display={"unit": "angstrom"},
     )
     energy = Quantity(
         type=np.float64,
@@ -233,7 +233,7 @@ class Monochromator(Component):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXmonochromator.html#nxmonochromator-energy-field"
         ],
         dimensionality="[mass] * [length] ** 2 / [time] ** 2",
-        unit="joule",
+        unit="eV",
         description=("energy selected"),
         a_nexus_field=NeXusField(
             name="energy",
@@ -245,7 +245,7 @@ class Monochromator(Component):
         a_eln=ELNAnnotation(
             component=ELNComponentEnum.NumberEditQuantity,
         ),
-        a_display={"unit": "joule"},
+        a_display={"unit": "eV"},
     )
     energy_error = Quantity(
         type=np.float64,
@@ -253,7 +253,7 @@ class Monochromator(Component):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXmonochromator.html#nxmonochromator-energy-error-field"
         ],
         dimensionality="[mass] * [length] ** 2 / [time] ** 2",
-        unit="joule",
+        unit="eV",
         description=("energy standard deviation"),
         a_nexus_field=NeXusField(
             name="energy_error",
@@ -266,7 +266,7 @@ class Monochromator(Component):
         a_eln=ELNAnnotation(
             component=ELNComponentEnum.NumberEditQuantity,
         ),
-        a_display={"unit": "joule"},
+        a_display={"unit": "eV"},
     )
     energy_errors = Quantity(
         type=np.float64,
@@ -274,7 +274,7 @@ class Monochromator(Component):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXmonochromator.html#nxmonochromator-energy-errors-field"
         ],
         dimensionality="[mass] * [length] ** 2 / [time] ** 2",
-        unit="joule",
+        unit="eV",
         description=("energy standard deviation"),
         a_nexus_field=NeXusField(
             name="energy_errors",
@@ -286,7 +286,7 @@ class Monochromator(Component):
         a_eln=ELNAnnotation(
             component=ELNComponentEnum.NumberEditQuantity,
         ),
-        a_display={"unit": "joule"},
+        a_display={"unit": "eV"},
     )
     energy_dispersion = Quantity(
         type=np.float64,

@@ -221,7 +221,7 @@ class XlaueInstrumentSourceDistribution(Data):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXxlaue.html#nxxlaue-entry-instrument-source-distribution-wavelength-field"
         ],
         dimensionality="[length]",
-        unit="m",
+        unit="angstrom",
         shape=["*"],
         a_nexus_field=NeXusField(
             name="wavelength",

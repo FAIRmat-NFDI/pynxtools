@@ -627,7 +627,7 @@ class DispersiveMaterialDispersionXDispersionFunction(DispersionFunction):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXdispersive_material.html#nxdispersive_material-entry-dispersion-x-dispersion-function-energy-unit-field"
         ],
         dimensionality="[mass] * [length] ** 2 / [time] ** 2",
-        unit="joule",
+        unit="eV",
         a_nexus_field=NeXusField(
             name="energy_unit",
             type="NX_NUMBER",
@@ -638,7 +638,7 @@ class DispersiveMaterialDispersionXDispersionFunction(DispersionFunction):
         a_eln=ELNAnnotation(
             component=ELNComponentEnum.NumberEditQuantity,
         ),
-        a_display={"unit": "joule"},
+        a_display={"unit": "eV"},
     )
     wavelength_identifier = Quantity(
         type=str,
@@ -1049,7 +1049,7 @@ class DispersiveMaterialDispersionYDispersionFunction(DispersionFunction):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXdispersive_material.html#nxdispersive_material-entry-dispersion-y-dispersion-function-energy-unit-field"
         ],
         dimensionality="[mass] * [length] ** 2 / [time] ** 2",
-        unit="joule",
+        unit="eV",
         a_nexus_field=NeXusField(
             name="energy_unit",
             type="NX_NUMBER",
@@ -1060,7 +1060,7 @@ class DispersiveMaterialDispersionYDispersionFunction(DispersionFunction):
         a_eln=ELNAnnotation(
             component=ELNComponentEnum.NumberEditQuantity,
         ),
-        a_display={"unit": "joule"},
+        a_display={"unit": "eV"},
     )
     wavelength_identifier = Quantity(
         type=str,
@@ -1473,7 +1473,7 @@ class DispersiveMaterialDispersionZDispersionFunction(DispersionFunction):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXdispersive_material.html#nxdispersive_material-entry-dispersion-z-dispersion-function-energy-unit-field"
         ],
         dimensionality="[mass] * [length] ** 2 / [time] ** 2",
-        unit="joule",
+        unit="eV",
         a_nexus_field=NeXusField(
             name="energy_unit",
             type="NX_NUMBER",
@@ -1484,7 +1484,7 @@ class DispersiveMaterialDispersionZDispersionFunction(DispersionFunction):
         a_eln=ELNAnnotation(
             component=ELNComponentEnum.NumberEditQuantity,
         ),
-        a_display={"unit": "joule"},
+        a_display={"unit": "eV"},
     )
     wavelength_identifier = Quantity(
         type=str,

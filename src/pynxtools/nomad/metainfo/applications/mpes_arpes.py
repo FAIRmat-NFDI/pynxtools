@@ -1550,7 +1550,7 @@ class MpesArpesData(MpesData):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXmpes_arpes.html#nxmpes_arpes-entry-data-energy-field"
         ],
         dimensionality="[mass] * [length] ** 2 / [time] ** 2",
-        unit="joule",
+        unit="eV",
         description=("Values on the energy axis."),
         a_nexus_field=NeXusField(
             name="energy",
@@ -1562,7 +1562,7 @@ class MpesArpesData(MpesData):
         a_eln=ELNAnnotation(
             component=ELNComponentEnum.NumberEditQuantity,
         ),
-        a_display={"unit": "joule"},
+        a_display={"unit": "eV"},
     )
     energy__type = Quantity(
         type=MEnum(["kinetic", "binding"]),

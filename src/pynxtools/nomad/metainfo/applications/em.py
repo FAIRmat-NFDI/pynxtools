@@ -7803,7 +7803,7 @@ class EmMeasurementEventIDSpectrumIDSpectrum0d(Data):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXem.html#nxem-entry-measurement-eventid-spectrumid-spectrum-0d-axis-energy-field"
         ],
         dimensionality="[mass] * [length] ** 2 / [time] ** 2",
-        unit="joule",
+        unit="eV",
         shape=["*"],
         a_nexus_field=NeXusField(
             name="axis_energy",
@@ -7973,7 +7973,7 @@ class EmMeasurementEventIDSpectrumIDSpectrum1d(Data):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXem.html#nxem-entry-measurement-eventid-spectrumid-spectrum-1d-axis-energy-field"
         ],
         dimensionality="[mass] * [length] ** 2 / [time] ** 2",
-        unit="joule",
+        unit="eV",
         shape=["*"],
         a_nexus_field=NeXusField(
             name="axis_energy",
@@ -8175,7 +8175,7 @@ class EmMeasurementEventIDSpectrumIDSpectrum2d(Data):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXem.html#nxem-entry-measurement-eventid-spectrumid-spectrum-2d-axis-energy-field"
         ],
         dimensionality="[mass] * [length] ** 2 / [time] ** 2",
-        unit="joule",
+        unit="eV",
         shape=["*"],
         a_nexus_field=NeXusField(
             name="axis_energy",
@@ -8409,7 +8409,7 @@ class EmMeasurementEventIDSpectrumIDSpectrum3d(Data):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXem.html#nxem-entry-measurement-eventid-spectrumid-spectrum-3d-axis-energy-field"
         ],
         dimensionality="[mass] * [length] ** 2 / [time] ** 2",
-        unit="joule",
+        unit="eV",
         shape=["*"],
         a_nexus_field=NeXusField(
             name="axis_energy",
@@ -8579,7 +8579,7 @@ class EmMeasurementEventIDSpectrumIDStack0d(Data):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXem.html#nxem-entry-measurement-eventid-spectrumid-stack-0d-axis-energy-field"
         ],
         dimensionality="[mass] * [length] ** 2 / [time] ** 2",
-        unit="joule",
+        unit="eV",
         shape=["*"],
         a_nexus_field=NeXusField(
             name="axis_energy",
@@ -9011,7 +9011,7 @@ class EmMeasurementEventIDSpectrumIDStack2d(Data):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXem.html#nxem-entry-measurement-eventid-spectrumid-stack-2d-axis-energy-field"
         ],
         dimensionality="[mass] * [length] ** 2 / [time] ** 2",
-        unit="joule",
+        unit="eV",
         shape=["*"],
         a_nexus_field=NeXusField(
             name="axis_energy",
@@ -9277,7 +9277,7 @@ class EmMeasurementEventIDSpectrumIDStack3d(Data):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXem.html#nxem-entry-measurement-eventid-spectrumid-stack-3d-axis-energy-field"
         ],
         dimensionality="[mass] * [length] ** 2 / [time] ** 2",
-        unit="joule",
+        unit="eV",
         shape=["*"],
         a_nexus_field=NeXusField(
             name="axis_energy",
@@ -15061,7 +15061,7 @@ class EmRoiIDEdsIndexingElementSpecificMap(Image):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXem.html#nxem-entry-roiid-eds-indexing-element-specific-map-energy-range-field"
         ],
         dimensionality="[mass] * [length] ** 2 / [time] ** 2",
-        unit="joule",
+        unit="eV",
         shape=[2],
         a_nexus_field=NeXusField(
             name="energy_range",

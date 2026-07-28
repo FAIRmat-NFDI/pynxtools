@@ -309,7 +309,7 @@ class MonopdInstrumentCrystal(Crystal):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXmonopd.html#nxmonopd-entry-instrument-crystal-wavelength-field"
         ],
         dimensionality="[length]",
-        unit="m",
+        unit="angstrom",
         shape=["*"],
         description=("Optimum diffracted wavelength"),
         a_nexus_field=NeXusField(

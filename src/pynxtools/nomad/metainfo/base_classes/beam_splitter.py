@@ -227,7 +227,7 @@ class BeamSplitter(Component):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXbeam_splitter.html#nxbeam_splitter-wavelength-range-field"
         ],
         dimensionality="[length]",
-        unit="m",
+        unit="angstrom",
         shape=[2],
         description=(
             "Wavelength range for which the beam splitter is designed. Enter the "
@@ -660,7 +660,7 @@ class BeamSplitterCoating(Sample):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXbeam_splitter.html#nxbeam_splitter-coating-wavelength-range-coating-field"
         ],
         dimensionality="[length]",
-        unit="m",
+        unit="angstrom",
         shape=[2],
         description=(
             "Wavelength range for which the coating is designed. Enter the "

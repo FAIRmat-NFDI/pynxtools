@@ -1813,7 +1813,7 @@ class CansasInstrumentSource(Source):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXcanSAS.html#nxcansas-entry-instrument-source-incident-wavelength-field"
         ],
         dimensionality="[length]",
-        unit="m",
+        unit="angstrom",
         description=(
             "wavelength (:math:`\\lambda`) of radiation incident on the sample"
         ),
@@ -1827,7 +1827,7 @@ class CansasInstrumentSource(Source):
         a_eln=ELNAnnotation(
             component=ELNComponentEnum.NumberEditQuantity,
         ),
-        a_display={"unit": "m"},
+        a_display={"unit": "angstrom"},
     )
     wavelength_min = Quantity(
         type=np.float64,
@@ -1835,7 +1835,7 @@ class CansasInstrumentSource(Source):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXcanSAS.html#nxcansas-entry-instrument-source-wavelength-min-field"
         ],
         dimensionality="[length]",
-        unit="m",
+        unit="angstrom",
         description=(
             "Some facilities specify wavelength using a range. This is the "
             "lowest wavelength in such a range."
@@ -1850,7 +1850,7 @@ class CansasInstrumentSource(Source):
         a_eln=ELNAnnotation(
             component=ELNComponentEnum.NumberEditQuantity,
         ),
-        a_display={"unit": "m"},
+        a_display={"unit": "angstrom"},
     )
     wavelength_max = Quantity(
         type=np.float64,
@@ -1858,7 +1858,7 @@ class CansasInstrumentSource(Source):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXcanSAS.html#nxcansas-entry-instrument-source-wavelength-max-field"
         ],
         dimensionality="[length]",
-        unit="m",
+        unit="angstrom",
         description=(
             "Some facilities specify wavelength using a range. This is the "
             "highest wavelength in such a range."
@@ -1873,7 +1873,7 @@ class CansasInstrumentSource(Source):
         a_eln=ELNAnnotation(
             component=ELNComponentEnum.NumberEditQuantity,
         ),
-        a_display={"unit": "m"},
+        a_display={"unit": "angstrom"},
     )
     incident_wavelength_spread = Quantity(
         type=np.float64,
@@ -1881,7 +1881,7 @@ class CansasInstrumentSource(Source):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXcanSAS.html#nxcansas-entry-instrument-source-incident-wavelength-spread-field"
         ],
         dimensionality="[length]",
-        unit="m",
+        unit="angstrom",
         description=(
             "Some facilities specify wavelength using a range. This is the width "
             "(FWHM) of such a range."
@@ -1896,7 +1896,7 @@ class CansasInstrumentSource(Source):
         a_eln=ELNAnnotation(
             component=ELNComponentEnum.NumberEditQuantity,
         ),
-        a_display={"unit": "m"},
+        a_display={"unit": "angstrom"},
     )
     beam_size_x = Quantity(
         type=np.float64,
@@ -2527,7 +2527,7 @@ class CansasTransmissionSpectrum(Data):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXcanSAS.html#nxcansas-entry-transmission-spectrum-lambda-field"
         ],
         dimensionality="[length]",
-        unit="m",
+        unit="angstrom",
         description=(
             "Wavelength of the radiation. This array is of the same shape as "
             "``T`` and ``Tdev``."
@@ -2542,7 +2542,7 @@ class CansasTransmissionSpectrum(Data):
         a_eln=ELNAnnotation(
             component=ELNComponentEnum.NumberEditQuantity,
         ),
-        a_display={"unit": "m"},
+        a_display={"unit": "angstrom"},
     )
     T = Quantity(
         type=np.float64,

@@ -427,7 +427,7 @@ class IbeamColumnIonSource(Source):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXibeam_column.html#nxibeam_column-ion-source-ion-energy-profile-field"
         ],
         dimensionality="[mass] * [length] ** 2 / [time] ** 2",
-        unit="joule",
+        unit="eV",
         description=(
             "To be defined more specifically. Community suggestions are welcome."
         ),
@@ -441,7 +441,7 @@ class IbeamColumnIonSource(Source):
         a_eln=ELNAnnotation(
             component=ELNComponentEnum.NumberEditQuantity,
         ),
-        a_display={"unit": "joule"},
+        a_display={"unit": "eV"},
     )
 
     def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:

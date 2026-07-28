@@ -695,7 +695,7 @@ class TransmissionInstrumentSpectrometerSpectralResolution(Resolution):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXtransmission.html#nxtransmission-entry-instrument-spectrometer-spectral-resolution-resolution-field"
         ],
         dimensionality="1 / [length]",
-        unit="1 / m",
+        unit="1 / angstrom",
         a_nexus_field=NeXusField(
             name="resolution",
             type="NX_NUMBER",
@@ -706,7 +706,7 @@ class TransmissionInstrumentSpectrometerSpectralResolution(Resolution):
         a_eln=ELNAnnotation(
             component=ELNComponentEnum.NumberEditQuantity,
         ),
-        a_display={"unit": "1 / m"},
+        a_display={"unit": "1 / angstrom"},
     )
 
     def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
@@ -825,7 +825,7 @@ class TransmissionInstrumentSpectrometerGratingSpectralResolution(Resolution):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXtransmission.html#nxtransmission-entry-instrument-spectrometer-grating-spectral-resolution-resolution-field"
         ],
         dimensionality="1 / [length]",
-        unit="1 / m",
+        unit="1 / angstrom",
         a_nexus_field=NeXusField(
             name="resolution",
             type="NX_NUMBER",
@@ -836,7 +836,7 @@ class TransmissionInstrumentSpectrometerGratingSpectralResolution(Resolution):
         a_eln=ELNAnnotation(
             component=ELNComponentEnum.NumberEditQuantity,
         ),
-        a_display={"unit": "1 / m"},
+        a_display={"unit": "1 / angstrom"},
     )
 
     def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:

@@ -291,7 +291,7 @@ class VelocitySelector(Component):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXvelocity_selector.html#nxvelocity_selector-wavelength-field"
         ],
         dimensionality="[length]",
-        unit="m",
+        unit="angstrom",
         description=("wavelength"),
         a_nexus_field=NeXusField(
             name="wavelength",
@@ -303,7 +303,7 @@ class VelocitySelector(Component):
         a_eln=ELNAnnotation(
             component=ELNComponentEnum.NumberEditQuantity,
         ),
-        a_display={"unit": "m"},
+        a_display={"unit": "angstrom"},
     )
     wavelength_spread = Quantity(
         type=np.float64,
@@ -311,7 +311,7 @@ class VelocitySelector(Component):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXvelocity_selector.html#nxvelocity_selector-wavelength-spread-field"
         ],
         dimensionality="[length]",
-        unit="m",
+        unit="angstrom",
         description=("deviation FWHM /Wavelength"),
         a_nexus_field=NeXusField(
             name="wavelength_spread",
@@ -323,7 +323,7 @@ class VelocitySelector(Component):
         a_eln=ELNAnnotation(
             component=ELNComponentEnum.NumberEditQuantity,
         ),
-        a_display={"unit": "m"},
+        a_display={"unit": "angstrom"},
     )
     depends_on = Quantity(
         type=str,

@@ -419,7 +419,7 @@ class DiskChopper(Component):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXdisk_chopper.html#nxdisk_chopper-wavelength-range-field"
         ],
         dimensionality="[length]",
-        unit="m",
+        unit="angstrom",
         shape=[2],
         description=("Low and high values of wavelength range transmitted"),
         a_nexus_field=NeXusField(

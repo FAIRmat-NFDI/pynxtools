@@ -780,7 +780,7 @@ class XpsInstrumentElectronanalyzer(MpesInstrumentElectronanalyzer):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXxps.html#nxxps-entry-instrument-electronanalyzer-work-function-field"
         ],
         dimensionality="[mass] * [length] ** 2 / [time] ** 2",
-        unit="joule",
+        unit="eV",
         a_nexus_field=NeXusField(
             name="work_function",
             type="NX_FLOAT",
@@ -791,7 +791,7 @@ class XpsInstrumentElectronanalyzer(MpesInstrumentElectronanalyzer):
         a_eln=ELNAnnotation(
             component=ELNComponentEnum.NumberEditQuantity,
         ),
-        a_display={"unit": "joule"},
+        a_display={"unit": "eV"},
     )
     depends_on = Quantity(
         type=str,
@@ -1236,7 +1236,7 @@ class XpsFitData(Data):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXxps.html#nxxps-entry-fit-data-input-independent-field"
         ],
         dimensionality="[mass] * [length] ** 2 / [time] ** 2",
-        unit="joule",
+        unit="eV",
         description=(
             "Independent variable for this fit procedure. This could be a link "
             "to entry/data/energy."
@@ -1251,7 +1251,7 @@ class XpsFitData(Data):
         a_eln=ELNAnnotation(
             component=ELNComponentEnum.NumberEditQuantity,
         ),
-        a_display={"unit": "joule"},
+        a_display={"unit": "eV"},
     )
     fit_sum = Quantity(
         type=np.float64,
@@ -1397,7 +1397,7 @@ class XpsFitPeakPEAKData(Data):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXxps.html#nxxps-entry-fit-peakpeak-data-position-field"
         ],
         dimensionality="[mass] * [length] ** 2 / [time] ** 2",
-        unit="joule",
+        unit="eV",
         description=("This could be a link to entry/data/energy."),
         a_nexus_field=NeXusField(
             name="position",
@@ -1409,7 +1409,7 @@ class XpsFitPeakPEAKData(Data):
         a_eln=ELNAnnotation(
             component=ELNComponentEnum.NumberEditQuantity,
         ),
-        a_display={"unit": "joule"},
+        a_display={"unit": "eV"},
     )
     intensity = Quantity(
         type=np.float64,
@@ -1567,7 +1567,7 @@ class XpsFitPeakPEAKFunctionFitParameters(Parameters):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXxps.html#nxxps-entry-fit-peakpeak-function-fit-parameters-width-field"
         ],
         dimensionality="[mass] * [length] ** 2 / [time] ** 2",
-        unit="joule",
+        unit="eV",
         description=(
             "Width of a peak at a defined fraction of the peak height. Usually, "
             "this will be the Full Width at Half Maximum of the peak (FWHM). For "
@@ -1587,7 +1587,7 @@ class XpsFitPeakPEAKFunctionFitParameters(Parameters):
         a_eln=ELNAnnotation(
             component=ELNComponentEnum.NumberEditQuantity,
         ),
-        a_display={"unit": "joule"},
+        a_display={"unit": "eV"},
     )
     position = Quantity(
         type=np.float64,
@@ -1595,7 +1595,7 @@ class XpsFitPeakPEAKFunctionFitParameters(Parameters):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXxps.html#nxxps-entry-fit-peakpeak-function-fit-parameters-position-field"
         ],
         dimensionality="[mass] * [length] ** 2 / [time] ** 2",
-        unit="joule",
+        unit="eV",
         description=("Position of the peak on the energy axis."),
         a_nexus_field=NeXusField(
             name="position",
@@ -1607,7 +1607,7 @@ class XpsFitPeakPEAKFunctionFitParameters(Parameters):
         a_eln=ELNAnnotation(
             component=ELNComponentEnum.NumberEditQuantity,
         ),
-        a_display={"unit": "joule"},
+        a_display={"unit": "eV"},
     )
 
     def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
@@ -1685,7 +1685,7 @@ class XpsFitBackgroundBACKGROUNDData(Data):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXxps.html#nxxps-entry-fit-backgroundbackground-data-position-field"
         ],
         dimensionality="[mass] * [length] ** 2 / [time] ** 2",
-        unit="joule",
+        unit="eV",
         a_nexus_field=NeXusField(
             name="position",
             type="NX_NUMBER",
@@ -1696,7 +1696,7 @@ class XpsFitBackgroundBACKGROUNDData(Data):
         a_eln=ELNAnnotation(
             component=ELNComponentEnum.NumberEditQuantity,
         ),
-        a_display={"unit": "joule"},
+        a_display={"unit": "eV"},
     )
     intensity = Quantity(
         type=np.float64,
@@ -2222,7 +2222,7 @@ class XpsData(MpesData):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXxps.html#nxxps-entry-data-energy-field"
         ],
         dimensionality="[mass] * [length] ** 2 / [time] ** 2",
-        unit="joule",
+        unit="eV",
         a_nexus_field=NeXusField(
             name="energy",
             type="NX_NUMBER",
@@ -2233,7 +2233,7 @@ class XpsData(MpesData):
         a_eln=ELNAnnotation(
             component=ELNComponentEnum.NumberEditQuantity,
         ),
-        a_display={"unit": "joule"},
+        a_display={"unit": "eV"},
     )
     energy__type = Quantity(
         type=MEnum(["kinetic", "binding"]),

@@ -2551,7 +2551,7 @@ class OpticalSpectroscopyInstrumentWavelengthResolution(Resolution):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXoptical_spectroscopy.html#nxoptical_spectroscopy-entry-instrument-wavelength-resolution-resolution-field"
         ],
         dimensionality="[length]",
-        unit="m",
+        unit="angstrom",
         description=(
             "Minimum distinguishable wavelength separation of peaks in spectra."
         ),
@@ -2565,7 +2565,7 @@ class OpticalSpectroscopyInstrumentWavelengthResolution(Resolution):
         a_eln=ELNAnnotation(
             component=ELNComponentEnum.NumberEditQuantity,
         ),
-        a_display={"unit": "m"},
+        a_display={"unit": "angstrom"},
     )
 
     def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:

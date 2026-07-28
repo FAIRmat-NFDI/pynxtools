@@ -140,7 +140,7 @@ class Energydispersion(Component):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXenergydispersion.html#nxenergydispersion-pass-energy-field"
         ],
         dimensionality="[mass] * [length] ** 2 / [time] ** 2",
-        unit="joule",
+        unit="eV",
         description=(
             "Mean kinetic energy of the electrons in this energy-dispersive "
             "section of the analyzer. This term should be used for hemispherical "
@@ -158,7 +158,7 @@ class Energydispersion(Component):
         a_eln=ELNAnnotation(
             component=ELNComponentEnum.NumberEditQuantity,
         ),
-        a_display={"unit": "joule"},
+        a_display={"unit": "eV"},
     )
     kinetic_energy = Quantity(
         type=np.float64,
@@ -166,7 +166,7 @@ class Energydispersion(Component):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXenergydispersion.html#nxenergydispersion-kinetic-energy-field"
         ],
         dimensionality="[mass] * [length] ** 2 / [time] ** 2",
-        unit="joule",
+        unit="eV",
         description=(
             "Kinetic energy set for this dispersive section. Can be either the "
             "set kinetic energy, or the whole calibrated energy axis of a scan."
@@ -181,7 +181,7 @@ class Energydispersion(Component):
         a_eln=ELNAnnotation(
             component=ELNComponentEnum.NumberEditQuantity,
         ),
-        a_display={"unit": "joule"},
+        a_display={"unit": "eV"},
     )
     drift_energy = Quantity(
         type=np.float64,
@@ -189,7 +189,7 @@ class Energydispersion(Component):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXenergydispersion.html#nxenergydispersion-drift-energy-field"
         ],
         dimensionality="[mass] * [length] ** 2 / [time] ** 2",
-        unit="joule",
+        unit="eV",
         description=("Drift energy for time-of-flight energy dispersive elements."),
         a_nexus_field=NeXusField(
             name="drift_energy",
@@ -201,7 +201,7 @@ class Energydispersion(Component):
         a_eln=ELNAnnotation(
             component=ELNComponentEnum.NumberEditQuantity,
         ),
-        a_display={"unit": "joule"},
+        a_display={"unit": "eV"},
     )
     center_energy = Quantity(
         type=np.float64,
@@ -209,7 +209,7 @@ class Energydispersion(Component):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXenergydispersion.html#nxenergydispersion-center-energy-field"
         ],
         dimensionality="[mass] * [length] ** 2 / [time] ** 2",
-        unit="joule",
+        unit="eV",
         description=("Center of the energy window"),
         a_nexus_field=NeXusField(
             name="center_energy",
@@ -221,7 +221,7 @@ class Energydispersion(Component):
         a_eln=ELNAnnotation(
             component=ELNComponentEnum.NumberEditQuantity,
         ),
-        a_display={"unit": "joule"},
+        a_display={"unit": "eV"},
     )
     energy_interval = Quantity(
         type=np.float64,
@@ -229,7 +229,7 @@ class Energydispersion(Component):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXenergydispersion.html#nxenergydispersion-energy-interval-field"
         ],
         dimensionality="[mass] * [length] ** 2 / [time] ** 2",
-        unit="joule",
+        unit="eV",
         description=(
             "The interval of transmitted energies. It can be two different "
             "things depending on whether the scan is fixed or swept. With a "
@@ -248,7 +248,7 @@ class Energydispersion(Component):
         a_eln=ELNAnnotation(
             component=ELNComponentEnum.NumberEditQuantity,
         ),
-        a_display={"unit": "joule"},
+        a_display={"unit": "eV"},
     )
     diameter = Quantity(
         type=np.float64,

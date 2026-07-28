@@ -108,7 +108,7 @@ class BendingMagnet(Component):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXbending_magnet.html#nxbending_magnet-critical-energy-field"
         ],
         dimensionality="[mass] * [length] ** 2 / [time] ** 2",
-        unit="joule",
+        unit="eV",
         a_nexus_field=NeXusField(
             name="critical_energy",
             type="NX_FLOAT",
@@ -119,7 +119,7 @@ class BendingMagnet(Component):
         a_eln=ELNAnnotation(
             component=ELNComponentEnum.NumberEditQuantity,
         ),
-        a_display={"unit": "joule"},
+        a_display={"unit": "eV"},
     )
     bending_radius = Quantity(
         type=np.float64,

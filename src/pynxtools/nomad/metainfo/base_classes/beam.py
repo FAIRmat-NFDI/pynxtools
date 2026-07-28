@@ -141,7 +141,7 @@ class Beam(Object):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXbeam.html#nxbeam-incident-energy-field"
         ],
         dimensionality="[mass] * [length] ** 2 / [time] ** 2",
-        unit="joule",
+        unit="eV",
         shape=["*"],
         description=(
             "Energy carried by each particle of the beam on entering the given "
@@ -164,7 +164,7 @@ class Beam(Object):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXbeam.html#nxbeam-incident-energy-spread-field"
         ],
         dimensionality="[mass] * [length] ** 2 / [time] ** 2",
-        unit="joule",
+        unit="eV",
         description=(
             "The energy spread FWHM for the corresponding energy(ies) in "
             "incident_energy. The usage of this field should follow that of "
@@ -180,7 +180,7 @@ class Beam(Object):
         a_eln=ELNAnnotation(
             component=ELNComponentEnum.NumberEditQuantity,
         ),
-        a_display={"unit": "joule"},
+        a_display={"unit": "eV"},
     )
     incident_energy_weights = Quantity(
         type=np.float64,
@@ -188,7 +188,7 @@ class Beam(Object):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXbeam.html#nxbeam-incident-energy-weights-field"
         ],
         dimensionality="[mass] * [length] ** 2 / [time] ** 2",
-        unit="joule",
+        unit="eV",
         description=(
             "Relative weights of the corresponding energies in "
             "``incident_energy``. The usage of this field should follow that of "
@@ -204,7 +204,7 @@ class Beam(Object):
         a_eln=ELNAnnotation(
             component=ELNComponentEnum.NumberEditQuantity,
         ),
-        a_display={"unit": "joule"},
+        a_display={"unit": "eV"},
     )
     final_energy = Quantity(
         type=np.float64,
@@ -212,7 +212,7 @@ class Beam(Object):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXbeam.html#nxbeam-final-energy-field"
         ],
         dimensionality="[mass] * [length] ** 2 / [time] ** 2",
-        unit="joule",
+        unit="eV",
         shape=["*"],
         description=(
             "Energy carried by each particle of the beam on leaving the given location"
@@ -231,7 +231,7 @@ class Beam(Object):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXbeam.html#nxbeam-energy-transfer-field"
         ],
         dimensionality="[mass] * [length] ** 2 / [time] ** 2",
-        unit="joule",
+        unit="eV",
         shape=["*"],
         description=("Change in particle energy caused by the beamline component"),
         a_nexus_field=NeXusField(
@@ -248,7 +248,7 @@ class Beam(Object):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXbeam.html#nxbeam-incident-wavelength-field"
         ],
         dimensionality="[length]",
-        unit="m",
+        unit="angstrom",
         description=(
             "In the case of a monochromatic beam this is the scalar wavelength. "
             "Several other use cases are permitted, depending on the presence or "
@@ -280,7 +280,7 @@ class Beam(Object):
         a_eln=ELNAnnotation(
             component=ELNComponentEnum.NumberEditQuantity,
         ),
-        a_display={"unit": "m"},
+        a_display={"unit": "angstrom"},
     )
     incident_wavelength_weights = Quantity(
         type=np.float64,
@@ -311,7 +311,7 @@ class Beam(Object):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXbeam.html#nxbeam-incident-wavelength-spread-field"
         ],
         dimensionality="[length]",
-        unit="m",
+        unit="angstrom",
         shape=["*"],
         description=(
             "The wavelength spread FWHM for the corresponding wavelength(s) in "
@@ -383,7 +383,7 @@ class Beam(Object):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXbeam.html#nxbeam-final-wavelength-field"
         ],
         dimensionality="[length]",
-        unit="m",
+        unit="angstrom",
         shape=["*"],
         description=("Wavelength on leaving beamline component"),
         a_nexus_field=NeXusField(
@@ -485,7 +485,7 @@ class Beam(Object):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXbeam.html#nxbeam-final-wavelength-spread-field"
         ],
         dimensionality="[length]",
-        unit="m",
+        unit="angstrom",
         shape=["*"],
         description=("Wavelength spread FWHM of beam leaving this component"),
         a_nexus_field=NeXusField(
@@ -519,7 +519,7 @@ class Beam(Object):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXbeam.html#nxbeam-flux-field"
         ],
         dimensionality="1 / [time] / [length] ** 2",
-        unit="1 / second / m ** 2",
+        unit="1 / second / cm ** 2",
         shape=["*"],
         description=("flux incident on beam plane area"),
         a_nexus_field=NeXusField(
@@ -536,7 +536,7 @@ class Beam(Object):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXbeam.html#nxbeam-pulse-energy-field"
         ],
         dimensionality="[mass] * [length] ** 2 / [time] ** 2",
-        unit="joule",
+        unit="eV",
         description=("Energy of a single pulse at the given location."),
         a_nexus_field=NeXusField(
             name="pulse_energy",
@@ -548,7 +548,7 @@ class Beam(Object):
         a_eln=ELNAnnotation(
             component=ELNComponentEnum.NumberEditQuantity,
         ),
-        a_display={"unit": "joule"},
+        a_display={"unit": "eV"},
     )
     average_power = Quantity(
         type=np.float64,

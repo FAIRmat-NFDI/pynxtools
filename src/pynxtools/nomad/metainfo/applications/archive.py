@@ -832,7 +832,7 @@ class ArchiveSample(Sample):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXarchive.html#nxarchive-entry-sample-pressure-field"
         ],
         dimensionality="[mass] / [length] / [time] ** 2",
-        unit="pascal",
+        unit="mbar",
         shape=["*"],
         a_nexus_field=NeXusField(
             name="pressure",

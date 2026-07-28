@@ -305,7 +305,7 @@ class ArpesInstrumentMonochromator(Monochromator):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXarpes.html#nxarpes-entry-instrument-monochromator-energy-field"
         ],
         dimensionality="[mass] * [length] ** 2 / [time] ** 2",
-        unit="joule",
+        unit="eV",
         a_nexus_field=NeXusField(
             name="energy",
             type="NX_NUMBER",
@@ -316,7 +316,7 @@ class ArpesInstrumentMonochromator(Monochromator):
         a_eln=ELNAnnotation(
             component=ELNComponentEnum.NumberEditQuantity,
         ),
-        a_display={"unit": "joule"},
+        a_display={"unit": "eV"},
     )
 
     def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
@@ -443,7 +443,7 @@ class ArpesInstrumentAnalyser(Detector):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXarpes.html#nxarpes-entry-instrument-analyser-pass-energy-field"
         ],
         dimensionality="[mass] * [length] ** 2 / [time] ** 2",
-        unit="joule",
+        unit="eV",
         description=("energy of the electrons on the mean path of the analyser"),
         a_nexus_field=NeXusField(
             name="pass_energy",
@@ -455,7 +455,7 @@ class ArpesInstrumentAnalyser(Detector):
         a_eln=ELNAnnotation(
             component=ELNComponentEnum.NumberEditQuantity,
         ),
-        a_display={"unit": "joule"},
+        a_display={"unit": "eV"},
     )
     time_per_channel = Quantity(
         type=np.float64,
@@ -506,7 +506,7 @@ class ArpesInstrumentAnalyser(Detector):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXarpes.html#nxarpes-entry-instrument-analyser-energies-field"
         ],
         dimensionality="[mass] * [length] ** 2 / [time] ** 2",
-        unit="joule",
+        unit="eV",
         description=(
             "Energy axis of the analyser data which dimension the axis applies "
             "to is defined using the normal NXdata methods."
@@ -521,7 +521,7 @@ class ArpesInstrumentAnalyser(Detector):
         a_eln=ELNAnnotation(
             component=ELNComponentEnum.NumberEditQuantity,
         ),
-        a_display={"unit": "joule"},
+        a_display={"unit": "eV"},
     )
     sensor_size = Quantity(
         type=np.int64,

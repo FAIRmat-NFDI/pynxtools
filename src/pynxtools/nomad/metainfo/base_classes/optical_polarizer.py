@@ -166,7 +166,7 @@ class OpticalPolarizer(Component):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXoptical_polarizer.html#nxoptical_polarizer-wavelength-range-field"
         ],
         dimensionality="[length]",
-        unit="m",
+        unit="angstrom",
         shape=[2],
         description=(
             "Wavelength range for which the polarizer is designed. Enter the "

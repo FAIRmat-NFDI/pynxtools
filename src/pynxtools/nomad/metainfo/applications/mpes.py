@@ -604,7 +604,7 @@ class MpesInstrumentEnergyResolution(Resolution):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXmpes.html#nxmpes-entry-instrument-energy-resolution-resolution-field"
         ],
         dimensionality="[mass] * [length] ** 2 / [time] ** 2",
-        unit="joule",
+        unit="eV",
         description=(
             "Minimum distinguishable energy separation in the energy spectra. "
             "This concept is related to term `10.24`_ of the ISO 18115-1:2023 "
@@ -621,7 +621,7 @@ class MpesInstrumentEnergyResolution(Resolution):
         a_eln=ELNAnnotation(
             component=ELNComponentEnum.NumberEditQuantity,
         ),
-        a_display={"unit": "joule"},
+        a_display={"unit": "eV"},
     )
     relative_resolution = Quantity(
         type=np.float64,
@@ -1398,7 +1398,7 @@ class MpesInstrumentBeamProbe(Beam):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXmpes.html#nxmpes-entry-instrument-beam-probe-incident-energy-field"
         ],
         dimensionality="[mass] * [length] ** 2 / [time] ** 2",
-        unit="joule",
+        unit="eV",
         shape=["*"],
         a_nexus_field=NeXusField(
             name="incident_energy",
@@ -1414,7 +1414,7 @@ class MpesInstrumentBeamProbe(Beam):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXmpes.html#nxmpes-entry-instrument-beam-probe-incident-energy-spread-field"
         ],
         dimensionality="[mass] * [length] ** 2 / [time] ** 2",
-        unit="joule",
+        unit="eV",
         a_nexus_field=NeXusField(
             name="incident_energy_spread",
             type="NX_NUMBER",
@@ -1425,7 +1425,7 @@ class MpesInstrumentBeamProbe(Beam):
         a_eln=ELNAnnotation(
             component=ELNComponentEnum.NumberEditQuantity,
         ),
-        a_display={"unit": "joule"},
+        a_display={"unit": "eV"},
     )
     incident_polarization = Quantity(
         type=np.float64,
@@ -1537,7 +1537,7 @@ class MpesInstrumentBeamPump(Beam):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXmpes.html#nxmpes-entry-instrument-beam-pump-incident-energy-field"
         ],
         dimensionality="[mass] * [length] ** 2 / [time] ** 2",
-        unit="joule",
+        unit="eV",
         shape=["*"],
         a_nexus_field=NeXusField(
             name="incident_energy",
@@ -1553,7 +1553,7 @@ class MpesInstrumentBeamPump(Beam):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXmpes.html#nxmpes-entry-instrument-beam-pump-incident-energy-spread-field"
         ],
         dimensionality="[mass] * [length] ** 2 / [time] ** 2",
-        unit="joule",
+        unit="eV",
         a_nexus_field=NeXusField(
             name="incident_energy_spread",
             type="NX_NUMBER",
@@ -1564,7 +1564,7 @@ class MpesInstrumentBeamPump(Beam):
         a_eln=ELNAnnotation(
             component=ELNComponentEnum.NumberEditQuantity,
         ),
-        a_display={"unit": "joule"},
+        a_display={"unit": "eV"},
     )
     incident_polarization = Quantity(
         type=np.float64,
@@ -1680,7 +1680,7 @@ class MpesInstrumentBeamTYPE(Beam):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXmpes.html#nxmpes-entry-instrument-beam-type-incident-energy-field"
         ],
         dimensionality="[mass] * [length] ** 2 / [time] ** 2",
-        unit="joule",
+        unit="eV",
         shape=["*"],
         a_nexus_field=NeXusField(
             name="incident_energy",
@@ -1696,7 +1696,7 @@ class MpesInstrumentBeamTYPE(Beam):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXmpes.html#nxmpes-entry-instrument-beam-type-incident-energy-spread-field"
         ],
         dimensionality="[mass] * [length] ** 2 / [time] ** 2",
-        unit="joule",
+        unit="eV",
         a_nexus_field=NeXusField(
             name="incident_energy_spread",
             type="NX_NUMBER",
@@ -1707,7 +1707,7 @@ class MpesInstrumentBeamTYPE(Beam):
         a_eln=ELNAnnotation(
             component=ELNComponentEnum.NumberEditQuantity,
         ),
-        a_display={"unit": "joule"},
+        a_display={"unit": "eV"},
     )
     incident_polarization = Quantity(
         type=np.float64,
@@ -1826,7 +1826,7 @@ class MpesInstrumentElectronanalyzer(Electronanalyzer):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXmpes.html#nxmpes-entry-instrument-electronanalyzer-work-function-field"
         ],
         dimensionality="[mass] * [length] ** 2 / [time] ** 2",
-        unit="joule",
+        unit="eV",
         a_nexus_field=NeXusField(
             name="work_function",
             type="NX_FLOAT",
@@ -1837,7 +1837,7 @@ class MpesInstrumentElectronanalyzer(Electronanalyzer):
         a_eln=ELNAnnotation(
             component=ELNComponentEnum.NumberEditQuantity,
         ),
-        a_display={"unit": "joule"},
+        a_display={"unit": "eV"},
     )
     fast_axes = Quantity(
         type=str,
@@ -1985,7 +1985,7 @@ class MpesInstrumentElectronanalyzerEnergyResolution(Resolution):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXmpes.html#nxmpes-entry-instrument-electronanalyzer-energy-resolution-resolution-field"
         ],
         dimensionality="[mass] * [length] ** 2 / [time] ** 2",
-        unit="joule",
+        unit="eV",
         a_nexus_field=NeXusField(
             name="resolution",
             type="NX_FLOAT",
@@ -1996,7 +1996,7 @@ class MpesInstrumentElectronanalyzerEnergyResolution(Resolution):
         a_eln=ELNAnnotation(
             component=ELNComponentEnum.NumberEditQuantity,
         ),
-        a_display={"unit": "joule"},
+        a_display={"unit": "eV"},
     )
 
     def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
@@ -2322,7 +2322,7 @@ class MpesInstrumentElectronanalyzerEnergydispersion(Energydispersion):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXmpes.html#nxmpes-entry-instrument-electronanalyzer-energydispersion-pass-energy-field"
         ],
         dimensionality="[mass] * [length] ** 2 / [time] ** 2",
-        unit="joule",
+        unit="eV",
         description=(
             "Only one of ``pass_energy`` or ``drift_energy`` should be supplied. "
             "``pass_energy`` should be used when working with hemispherical "
@@ -2338,7 +2338,7 @@ class MpesInstrumentElectronanalyzerEnergydispersion(Energydispersion):
         a_eln=ELNAnnotation(
             component=ELNComponentEnum.NumberEditQuantity,
         ),
-        a_display={"unit": "joule"},
+        a_display={"unit": "eV"},
     )
     drift_energy = Quantity(
         type=np.float64,
@@ -2346,7 +2346,7 @@ class MpesInstrumentElectronanalyzerEnergydispersion(Energydispersion):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXmpes.html#nxmpes-entry-instrument-electronanalyzer-energydispersion-drift-energy-field"
         ],
         dimensionality="[mass] * [length] ** 2 / [time] ** 2",
-        unit="joule",
+        unit="eV",
         description=(
             "Only one of ``pass_energy`` or ``drift_energy`` should be supplied. "
             "``drift_energy`` should be used if a TOF is used in the energy "
@@ -2362,7 +2362,7 @@ class MpesInstrumentElectronanalyzerEnergydispersion(Energydispersion):
         a_eln=ELNAnnotation(
             component=ELNComponentEnum.NumberEditQuantity,
         ),
-        a_display={"unit": "joule"},
+        a_display={"unit": "eV"},
     )
     energy_scan_mode = Quantity(
         type=str,
@@ -2685,7 +2685,7 @@ class MpesInstrumentElectronanalyzerElectronDetectorRawData(Data):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXmpes.html#nxmpes-entry-instrument-electronanalyzer-electron-detector-raw-data-energy-field"
         ],
         dimensionality="[mass] * [length] ** 2 / [time] ** 2",
-        unit="joule",
+        unit="eV",
         description=("(Un)calibrated energy axis."),
         a_nexus_field=NeXusField(
             name="energy",
@@ -2697,7 +2697,7 @@ class MpesInstrumentElectronanalyzerElectronDetectorRawData(Data):
         a_eln=ELNAnnotation(
             component=ELNComponentEnum.NumberEditQuantity,
         ),
-        a_display={"unit": "joule"},
+        a_display={"unit": "eV"},
     )
     energy__type = Quantity(
         type=MEnum(["kinetic", "binding"]),
@@ -2725,7 +2725,7 @@ class MpesInstrumentElectronanalyzerElectronDetectorRawData(Data):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXmpes.html#nxmpes-entry-instrument-electronanalyzer-electron-detector-raw-data-photon-energy-field"
         ],
         dimensionality="[mass] * [length] ** 2 / [time] ** 2",
-        unit="joule",
+        unit="eV",
         description=(
             "(Un)calibrated photon energy of the incoming probe beam. Could be a "
             "link to /entry/instrument/beam_probe/incident_energy."
@@ -2740,7 +2740,7 @@ class MpesInstrumentElectronanalyzerElectronDetectorRawData(Data):
         a_eln=ELNAnnotation(
             component=ELNComponentEnum.NumberEditQuantity,
         ),
-        a_display={"unit": "joule"},
+        a_display={"unit": "eV"},
     )
     kx = Quantity(
         type=np.float64,
@@ -2748,7 +2748,7 @@ class MpesInstrumentElectronanalyzerElectronDetectorRawData(Data):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXmpes.html#nxmpes-entry-instrument-electronanalyzer-electron-detector-raw-data-kx-field"
         ],
         dimensionality="1 / [length]",
-        unit="1 / m",
+        unit="1 / angstrom",
         description=(
             "(Un)calibrated k-space coordinate in x direction. It is envisioned "
             "that the axes in momentum space are named ``kx``, ``ky``, and "
@@ -2769,7 +2769,7 @@ class MpesInstrumentElectronanalyzerElectronDetectorRawData(Data):
         a_eln=ELNAnnotation(
             component=ELNComponentEnum.NumberEditQuantity,
         ),
-        a_display={"unit": "1 / m"},
+        a_display={"unit": "1 / angstrom"},
     )
     ky = Quantity(
         type=np.float64,
@@ -2777,7 +2777,7 @@ class MpesInstrumentElectronanalyzerElectronDetectorRawData(Data):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXmpes.html#nxmpes-entry-instrument-electronanalyzer-electron-detector-raw-data-ky-field"
         ],
         dimensionality="1 / [length]",
-        unit="1 / m",
+        unit="1 / angstrom",
         description=(
             "(Un)calibrated k-space coordinate in y direction. For more "
             "information, see the definition of the :ref:`kx "
@@ -2794,7 +2794,7 @@ class MpesInstrumentElectronanalyzerElectronDetectorRawData(Data):
         a_eln=ELNAnnotation(
             component=ELNComponentEnum.NumberEditQuantity,
         ),
-        a_display={"unit": "1 / m"},
+        a_display={"unit": "1 / angstrom"},
     )
     kz = Quantity(
         type=np.float64,
@@ -2802,7 +2802,7 @@ class MpesInstrumentElectronanalyzerElectronDetectorRawData(Data):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXmpes.html#nxmpes-entry-instrument-electronanalyzer-electron-detector-raw-data-kz-field"
         ],
         dimensionality="1 / [length]",
-        unit="1 / m",
+        unit="1 / angstrom",
         description=(
             "(Un)calibrated k-space coordinate in z direction. For more "
             "information, see the definition of the :ref:`kx "
@@ -2819,7 +2819,7 @@ class MpesInstrumentElectronanalyzerElectronDetectorRawData(Data):
         a_eln=ELNAnnotation(
             component=ELNComponentEnum.NumberEditQuantity,
         ),
-        a_display={"unit": "1 / m"},
+        a_display={"unit": "1 / angstrom"},
     )
     k_parallel = Quantity(
         type=np.float64,
@@ -2827,7 +2827,7 @@ class MpesInstrumentElectronanalyzerElectronDetectorRawData(Data):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXmpes.html#nxmpes-entry-instrument-electronanalyzer-electron-detector-raw-data-k-parallel-field"
         ],
         dimensionality="1 / [length]",
-        unit="1 / m",
+        unit="1 / angstrom",
         description=(
             "(Un)calibrated parallel component in k-space. ``k_parallel`` and "
             ":ref:`k_perpendicular "
@@ -2850,7 +2850,7 @@ class MpesInstrumentElectronanalyzerElectronDetectorRawData(Data):
         a_eln=ELNAnnotation(
             component=ELNComponentEnum.NumberEditQuantity,
         ),
-        a_display={"unit": "1 / m"},
+        a_display={"unit": "1 / angstrom"},
     )
     k_perpendicular = Quantity(
         type=np.float64,
@@ -2858,7 +2858,7 @@ class MpesInstrumentElectronanalyzerElectronDetectorRawData(Data):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXmpes.html#nxmpes-entry-instrument-electronanalyzer-electron-detector-raw-data-k-perpendicular-field"
         ],
         dimensionality="1 / [length]",
-        unit="1 / m",
+        unit="1 / angstrom",
         description=(
             "(Un)calibrated perpendicular component in k-space. "
             "``k_perpendicular`` is the component that is normal (perpendicular) "
@@ -2880,7 +2880,7 @@ class MpesInstrumentElectronanalyzerElectronDetectorRawData(Data):
         a_eln=ELNAnnotation(
             component=ELNComponentEnum.NumberEditQuantity,
         ),
-        a_display={"unit": "1 / m"},
+        a_display={"unit": "1 / angstrom"},
     )
     angular0 = Quantity(
         type=np.float64,
@@ -3825,7 +3825,7 @@ class MpesInstrumentPressureGauge(Sensor):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXmpes.html#nxmpes-entry-instrument-pressure-gauge-value-field"
         ],
         dimensionality="[mass] / [length] / [time] ** 2",
-        unit="pascal",
+        unit="mbar",
         shape=["*"],
         description=(
             "In case of a single or averaged gas pressure measurement, this is "
@@ -3864,7 +3864,7 @@ class MpesInstrumentPressureGaugeValueLog(Log):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXmpes.html#nxmpes-entry-instrument-pressure-gauge-value-log-value-field"
         ],
         dimensionality="[mass] / [length] / [time] ** 2",
-        unit="pascal",
+        unit="mbar",
         description=(
             "In the case of an experiment in which the gas pressure changes and "
             "is recorded, this is an array of length m of gas pressures."
@@ -3879,7 +3879,7 @@ class MpesInstrumentPressureGaugeValueLog(Log):
         a_eln=ELNAnnotation(
             component=ELNComponentEnum.NumberEditQuantity,
         ),
-        a_display={"unit": "pascal"},
+        a_display={"unit": "mbar"},
     )
 
     def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
@@ -4052,7 +4052,7 @@ class MpesInstrumentMonochromatorTYPE(Monochromator):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXmpes.html#nxmpes-entry-instrument-monochromator-type-energy-field"
         ],
         dimensionality="[mass] * [length] ** 2 / [time] ** 2",
-        unit="joule",
+        unit="eV",
         a_nexus_field=NeXusField(
             name="energy",
             type="NX_FLOAT",
@@ -4063,7 +4063,7 @@ class MpesInstrumentMonochromatorTYPE(Monochromator):
         a_eln=ELNAnnotation(
             component=ELNComponentEnum.NumberEditQuantity,
         ),
-        a_display={"unit": "joule"},
+        a_display={"unit": "eV"},
     )
     associated_beam = Quantity(
         type=str,
@@ -4137,7 +4137,7 @@ class MpesEnergyAxisCalibration(Calibration):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXmpes.html#nxmpes-entry-energy-axis-calibration-calibrated-axis-field"
         ],
         dimensionality="[mass] * [length] ** 2 / [time] ** 2",
-        unit="joule",
+        unit="eV",
         shape=["*"],
         description=(
             "This is the calibrated energy axis to be used for data plotting."
@@ -4291,7 +4291,7 @@ class MpesEnergyReferencing(Calibration):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXmpes.html#nxmpes-entry-energy-referencing-binding-energy-field"
         ],
         dimensionality="[mass] * [length] ** 2 / [time] ** 2",
-        unit="joule",
+        unit="eV",
         description=(
             "The binding energy (in units of eV) that the specified emission "
             "line appeared at, after adjusting the binding energy scale. This "
@@ -4309,7 +4309,7 @@ class MpesEnergyReferencing(Calibration):
         a_eln=ELNAnnotation(
             component=ELNComponentEnum.NumberEditQuantity,
         ),
-        a_display={"unit": "joule"},
+        a_display={"unit": "eV"},
     )
     offset = Quantity(
         type=np.float64,
@@ -4317,7 +4317,7 @@ class MpesEnergyReferencing(Calibration):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXmpes.html#nxmpes-entry-energy-referencing-offset-field"
         ],
         dimensionality="[mass] * [length] ** 2 / [time] ** 2",
-        unit="joule",
+        unit="eV",
         description=(
             "Offset between measured binding energy and calibrated binding "
             "energy of the emission line."
@@ -4332,7 +4332,7 @@ class MpesEnergyReferencing(Calibration):
         a_eln=ELNAnnotation(
             component=ELNComponentEnum.NumberEditQuantity,
         ),
-        a_display={"unit": "joule"},
+        a_display={"unit": "eV"},
     )
     calibrated_axis = Quantity(
         type=np.float64,
@@ -4340,7 +4340,7 @@ class MpesEnergyReferencing(Calibration):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXmpes.html#nxmpes-entry-energy-referencing-calibrated-axis-field"
         ],
         dimensionality="[mass] * [length] ** 2 / [time] ** 2",
-        unit="joule",
+        unit="eV",
         shape=["*"],
         description=(
             "This is the calibrated energy axis to be used for data plotting. "
@@ -4449,7 +4449,7 @@ class MpesTransmissionCorrectionTransmissionFunction(Data):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXmpes.html#nxmpes-entry-transmission-correction-transmission-function-kinetic-energy-field"
         ],
         dimensionality="[mass] * [length] ** 2 / [time] ** 2",
-        unit="joule",
+        unit="eV",
         shape=["*"],
         description=("Kinetic energy values"),
         a_nexus_field=NeXusField(
@@ -4873,7 +4873,7 @@ class MpesSampleGasPressureEnv(Environment):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXmpes.html#nxmpes-entry-sample-gas-pressure-env-value-field"
         ],
         dimensionality="[mass] / [length] / [time] ** 2",
-        unit="pascal",
+        unit="mbar",
         description=(
             "This is to be used if there is no actuator/sensor that "
             "controls/measures the gas pressure around the sample. An example "
@@ -4892,7 +4892,7 @@ class MpesSampleGasPressureEnv(Environment):
         a_eln=ELNAnnotation(
             component=ELNComponentEnum.NumberEditQuantity,
         ),
-        a_display={"unit": "pascal"},
+        a_display={"unit": "mbar"},
     )
 
     def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
@@ -5186,7 +5186,7 @@ class MpesData(Data):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXmpes.html#nxmpes-entry-data-energy-field"
         ],
         dimensionality="[mass] * [length] ** 2 / [time] ** 2",
-        unit="joule",
+        unit="eV",
         description=("Calibrated axis for the energy of the measured electrons."),
         a_nexus_field=NeXusField(
             name="energy",
@@ -5198,7 +5198,7 @@ class MpesData(Data):
         a_eln=ELNAnnotation(
             component=ELNComponentEnum.NumberEditQuantity,
         ),
-        a_display={"unit": "joule"},
+        a_display={"unit": "eV"},
     )
     energy__type = Quantity(
         type=MEnum(["kinetic", "binding"]),
@@ -5241,7 +5241,7 @@ class MpesData(Data):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXmpes.html#nxmpes-entry-data-photon-energy-field"
         ],
         dimensionality="[mass] * [length] ** 2 / [time] ** 2",
-        unit="joule",
+        unit="eV",
         description=(
             "Calibrated photon energy of the incoming probe beam. Could be a "
             "link to /entry/instrument/beam_probe/incident_energy."
@@ -5256,7 +5256,7 @@ class MpesData(Data):
         a_eln=ELNAnnotation(
             component=ELNComponentEnum.NumberEditQuantity,
         ),
-        a_display={"unit": "joule"},
+        a_display={"unit": "eV"},
     )
     kx = Quantity(
         type=np.float64,
@@ -5264,7 +5264,7 @@ class MpesData(Data):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXmpes.html#nxmpes-entry-data-kx-field"
         ],
         dimensionality="1 / [length]",
-        unit="1 / m",
+        unit="1 / angstrom",
         description=(
             "Calibrated k-space coordinate in x direction. It is envisioned that "
             "the axes in momentum space are named ``kx``, ``ky``, and ``kz``. "
@@ -5284,7 +5284,7 @@ class MpesData(Data):
         a_eln=ELNAnnotation(
             component=ELNComponentEnum.NumberEditQuantity,
         ),
-        a_display={"unit": "1 / m"},
+        a_display={"unit": "1 / angstrom"},
     )
     ky = Quantity(
         type=np.float64,
@@ -5292,7 +5292,7 @@ class MpesData(Data):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXmpes.html#nxmpes-entry-data-ky-field"
         ],
         dimensionality="1 / [length]",
-        unit="1 / m",
+        unit="1 / angstrom",
         description=(
             "Calibrated k-space coordinate in y direction. For more information, "
             "see the definition of the :ref:`kx </NXmpes/ENTRY/DATA/kx-field>` "
@@ -5308,7 +5308,7 @@ class MpesData(Data):
         a_eln=ELNAnnotation(
             component=ELNComponentEnum.NumberEditQuantity,
         ),
-        a_display={"unit": "1 / m"},
+        a_display={"unit": "1 / angstrom"},
     )
     kz = Quantity(
         type=np.float64,
@@ -5316,7 +5316,7 @@ class MpesData(Data):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXmpes.html#nxmpes-entry-data-kz-field"
         ],
         dimensionality="1 / [length]",
-        unit="1 / m",
+        unit="1 / angstrom",
         description=(
             "Calibrated k-space coordinate in z direction. For more information, "
             "see the definition of the :ref:`kx </NXmpes/ENTRY/DATA/kx-field>` "
@@ -5332,7 +5332,7 @@ class MpesData(Data):
         a_eln=ELNAnnotation(
             component=ELNComponentEnum.NumberEditQuantity,
         ),
-        a_display={"unit": "1 / m"},
+        a_display={"unit": "1 / angstrom"},
     )
     k_parallel = Quantity(
         type=np.float64,
@@ -5340,7 +5340,7 @@ class MpesData(Data):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXmpes.html#nxmpes-entry-data-k-parallel-field"
         ],
         dimensionality="1 / [length]",
-        unit="1 / m",
+        unit="1 / angstrom",
         description=(
             "Calibrated parallel component in k-space. ``k_parallel`` and "
             ":ref:`k_perpendicular </NXmpes/ENTRY/DATA/k_perpendicular-field>` "
@@ -5362,7 +5362,7 @@ class MpesData(Data):
         a_eln=ELNAnnotation(
             component=ELNComponentEnum.NumberEditQuantity,
         ),
-        a_display={"unit": "1 / m"},
+        a_display={"unit": "1 / angstrom"},
     )
     k_perpendicular = Quantity(
         type=np.float64,
@@ -5370,7 +5370,7 @@ class MpesData(Data):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXmpes.html#nxmpes-entry-data-k-perpendicular-field"
         ],
         dimensionality="1 / [length]",
-        unit="1 / m",
+        unit="1 / angstrom",
         description=(
             "Calibrated perpendicular component in k-space. ``k_perpendicular`` "
             "is the component that is normal (perpendicular) to the surface. It "
@@ -5391,7 +5391,7 @@ class MpesData(Data):
         a_eln=ELNAnnotation(
             component=ELNComponentEnum.NumberEditQuantity,
         ),
-        a_display={"unit": "1 / m"},
+        a_display={"unit": "1 / angstrom"},
     )
     angular0 = Quantity(
         type=np.float64,

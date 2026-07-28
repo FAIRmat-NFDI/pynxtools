@@ -440,7 +440,7 @@ class Sample(Component, basesections.CompositeSystem):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXsample.html#nxsample-pressure-field"
         ],
         dimensionality="[mass] / [length] / [time] ** 2",
-        unit="pascal",
+        unit="mbar",
         shape=["*"],
         description=("Applied pressure"),
         a_nexus_field=NeXusField(
@@ -602,7 +602,7 @@ class Sample(Component, basesections.CompositeSystem):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXsample.html#nxsample-mass-field"
         ],
         dimensionality="[mass]",
-        unit="kilogram",
+        unit="gram",
         shape=["*"],
         description=("Mass of sample"),
         a_nexus_field=NeXusField(
@@ -619,7 +619,7 @@ class Sample(Component, basesections.CompositeSystem):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXsample.html#nxsample-density-field"
         ],
         dimensionality="[mass] / [length] ** 3",
-        unit="kilogram / m ** 3",
+        unit="gram / m ** 3",
         shape=["*"],
         description=("Density of sample"),
         a_nexus_field=NeXusField(
@@ -636,7 +636,7 @@ class Sample(Component, basesections.CompositeSystem):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXsample.html#nxsample-relative-molecular-mass-field"
         ],
         dimensionality="[mass]",
-        unit="kilogram",
+        unit="gram",
         shape=["*"],
         description=("Relative Molecular Mass of sample"),
         a_nexus_field=NeXusField(
@@ -793,7 +793,7 @@ class Sample(Component, basesections.CompositeSystem):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXsample.html#nxsample-concentration-field"
         ],
         dimensionality="[mass] / [length] ** 3",
-        unit="kilogram / m ** 3",
+        unit="gram / m ** 3",
         shape=["*"],
         description=("Concentration of each component"),
         a_nexus_field=NeXusField(

@@ -233,7 +233,7 @@ class EmEdsIndexingSummary(Data):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXem_eds.html#nxem_eds-indexing-summary-axis-energy-field"
         ],
         dimensionality="[mass] * [length] ** 2 / [time] ** 2",
-        unit="joule",
+        unit="eV",
         shape=["*"],
         description=("Energy axis"),
         a_nexus_field=NeXusField(
@@ -314,7 +314,7 @@ class EmEdsIndexingPeakAtom(Atom):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXem_eds.html#nxem_eds-indexing-peak-atom-energy-range-field"
         ],
         dimensionality="[mass] * [length] ** 2 / [time] ** 2",
-        unit="joule",
+        unit="eV",
         shape=[2],
         description=(
             "Associated lower :math:`[e_{min}, e_{max}]` bounds of the energy "
@@ -334,7 +334,7 @@ class EmEdsIndexingPeakAtom(Atom):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXem_eds.html#nxem_eds-indexing-peak-atom-energy-field"
         ],
         dimensionality="[mass] * [length] ** 2 / [time] ** 2",
-        unit="joule",
+        unit="eV",
         description=("Theoretical energy of the line according to IUPAC."),
         a_nexus_field=NeXusField(
             name="energy",
@@ -346,7 +346,7 @@ class EmEdsIndexingPeakAtom(Atom):
         a_eln=ELNAnnotation(
             component=ELNComponentEnum.NumberEditQuantity,
         ),
-        a_display={"unit": "joule"},
+        a_display={"unit": "eV"},
     )
     iupac_line_name = Quantity(
         type=str,
@@ -451,7 +451,7 @@ class EmEdsIndexingElementSpecificMap(Image):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXem_eds.html#nxem_eds-indexing-element-specific-map-energy-range-field"
         ],
         dimensionality="[mass] * [length] ** 2 / [time] ** 2",
-        unit="joule",
+        unit="eV",
         shape=[2],
         description=(
             "Associated :math:`[e_{min}, e_{max}]` bounds of the energy range "

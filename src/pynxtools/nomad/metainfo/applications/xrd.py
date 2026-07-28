@@ -214,7 +214,7 @@ class XrdInstrumentBeam(Beam):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXxrd.html#nxxrd-entry-instrument-beam-incident-energy-field"
         ],
         dimensionality="[mass] * [length] ** 2 / [time] ** 2",
-        unit="joule",
+        unit="eV",
         shape=["*"],
         a_nexus_field=NeXusField(
             name="incident_energy",

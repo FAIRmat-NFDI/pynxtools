@@ -252,7 +252,7 @@ class CxiPtychoInstrument1Source1(Source):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXcxi_ptycho.html#nxcxi_ptycho-entry-1-instrument-1-source-1-energy-field"
         ],
         dimensionality="[mass] * [length] ** 2 / [time] ** 2",
-        unit="joule",
+        unit="eV",
         description=("This is the energy of the machine, not the beamline."),
         a_nexus_field=NeXusField(
             name="energy",
@@ -264,7 +264,7 @@ class CxiPtychoInstrument1Source1(Source):
         a_eln=ELNAnnotation(
             component=ELNComponentEnum.NumberEditQuantity,
         ),
-        a_display={"unit": "joule"},
+        a_display={"unit": "eV"},
     )
     probe = Quantity(
         type=MEnum(
@@ -496,7 +496,7 @@ class CxiPtychoInstrument1Beam1(Beam):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXcxi_ptycho.html#nxcxi_ptycho-entry-1-instrument-1-beam-1-incident-energy-spread-field"
         ],
         dimensionality="[mass] * [length] ** 2 / [time] ** 2",
-        unit="joule",
+        unit="eV",
         a_nexus_field=NeXusField(
             name="incident_energy_spread",
             type="NX_FLOAT",
@@ -507,7 +507,7 @@ class CxiPtychoInstrument1Beam1(Beam):
         a_eln=ELNAnnotation(
             component=ELNComponentEnum.NumberEditQuantity,
         ),
-        a_display={"unit": "joule"},
+        a_display={"unit": "eV"},
     )
     incident_energy_spread__units = Quantity(
         type=str,
