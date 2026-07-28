@@ -1,0 +1,502 @@
+# SPDX-FileCopyrightText: NeXus International Advisory Committee (NIAC)
+# SPDX-FileCopyrightText: The pynxtools Authors
+#
+# SPDX-License-Identifier: LGPL-3.0-or-later
+#
+# This file is generated from the NeXus definition NXfit (see
+# https://github.com/nexusformat/definitions). It preserves that
+# definition's structure and content as NOMAD Metainfo
+# (Quantity/SubSection) objects. Accordingly, it is distributed under
+# LGPL-3.0-or-later, matching the license of the upstream NXDL
+# definitions, unlike the rest of this package (Apache-2.0).
+# During generation, pynxtools may add project-specific content (extra quantities,
+# annotations, normalize() logic, ...). See
+# docs/learn/pynxtools/licensing.md and
+# LICENSES/LGPL-3.0-or-later.txt.
+#
+# This file is AUTO-GENERATED from the NeXus definitions (NXDL).
+# Run `pynx nomad generate-metainfo --nxdl NXfit` to regenerate.
+# Additive-only: the generator will not remove or rename existing class members
+# (unless the `--force` flag is used).
+# Add normalize() logic directly; it will be preserved on regeneration.
+from __future__ import annotations
+
+from typing import TYPE_CHECKING
+
+import numpy as np
+from nomad.datamodel.metainfo.annotations import (
+    ELNAnnotation,
+    ELNComponentEnum,
+    SchemaAnnotation,
+)
+from nomad.metainfo import MEnum, Quantity, Section, SubSection
+from nomad.metainfo.data_type import Bytes, Datetime
+
+from pynxtools.nomad.annotations import (
+    NeXusAttribute,
+    NeXusChoice,
+    NeXusDefinition,
+    NeXusField,
+    NeXusGroup,
+    NeXusLink,
+)
+from pynxtools.nomad.metainfo.base_classes.data import Data
+from pynxtools.nomad.metainfo.base_classes.fit_function import FitFunction
+from pynxtools.nomad.metainfo.base_classes.peak import Peak
+from pynxtools.nomad.metainfo.base_classes.process import Process
+
+if TYPE_CHECKING:
+    from nomad.datamodel import EntryArchive
+    from structlog.stdlib import BoundLogger
+
+__all__ = ["Fit"]
+
+
+class Fit(Process):
+    """
+    Description of a fit procedure using a scalar valued global function
+    """
+
+    m_def = Section(
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXfit.html#nxfit"
+        ],
+        a_nexus_definition=NeXusDefinition(
+            nx_class="NXfit",
+            category="base",
+            symbols={
+                "dimRank": "Rank of the dependent and independent data arrays (for\n                multivariate scalar-valued fit.)"
+            },
+        ),
+    )
+
+    data = SubSection(
+        section_def="pynxtools.nomad.metainfo.base_classes.fit.FitData",
+        repeats=False,
+    )
+    peakPEAK = SubSection(
+        section_def="pynxtools.nomad.metainfo.base_classes.fit.FitPeakPEAK",
+        repeats=True,
+        variable=True,
+    )
+    backgroundBACKGROUND = SubSection(
+        section_def="pynxtools.nomad.metainfo.base_classes.peak.Peak",
+        repeats=True,
+        variable=True,
+        description=(
+            "One fitted background (functional form, position (see "
+            ":ref:`data/input_independent "
+            "</NXfit/data/input_independent-field>`), and intensities) of the "
+            "peak fit. If there is no characteristic name for each background "
+            "component, it is envisioned that backgrounds are labeled as "
+            "background_0, background_1, and so on."
+        ),
+        a_nexus_group=NeXusGroup(
+            nx_class="NXpeak",
+            name="backgroundBACKGROUND",
+            name_type="partial",
+            optionality="optional",
+        ),
+    )
+    global_fit_function = SubSection(
+        section_def="pynxtools.nomad.metainfo.base_classes.fit.FitGlobalFitFunction",
+        repeats=False,
+    )
+    error_function = SubSection(
+        section_def="pynxtools.nomad.metainfo.base_classes.fit.FitErrorFunction",
+        repeats=False,
+    )
+
+    label = Quantity(
+        type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXfit.html#nxfit-label-field"
+        ],
+        description=("Human-readable label for this fit procedure."),
+        a_nexus_field=NeXusField(
+            name="label",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="optional",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
+    )
+    figure_of_meritMETRIC = Quantity(
+        type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXfit.html#nxfit-figure-of-meritmetric-field"
+        ],
+        variable=True,
+        dimensionality="dimensionless",
+        unit="dimensionless",
+        description=(
+            "Figure-of-merit to determine the goodness of fit, i.e., how well "
+            "the fit model (i.e., the set of peaks and backgrounds) fits the "
+            "measured observations. This value (which is a single number) is "
+            "often used to guide adjustments to the fitting parameters in the "
+            "peak fitting process."
+        ),
+        a_nexus_field=NeXusField(
+            name="figure_of_meritMETRIC",
+            type="NX_NUMBER",
+            name_type="partial",
+            optionality="optional",
+            units="NX_UNITLESS",
+        ),
+    )
+    figure_of_meritMETRIC__metric = Quantity(
+        type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXfit.html#nxfit-figure-of-meritmetric-metric-attribute"
+        ],
+        description=(
+            "Metric used to determine the goodness of fit. Examples include: - "
+            ":math:`\\chi^2`, the squared sum of the sigma-weighted residuals - "
+            "reduced :math:`\\chi^2`:, :math:`\\chi^2`: per degree of freedom - "
+            ":math:`R^2`, the coefficient of determination"
+        ),
+        a_nexus_attribute=NeXusAttribute(
+            name="metric",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="optional",
+            parent_field="figure_of_meritMETRIC",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
+    )
+
+    def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
+        super().normalize(archive, logger)
+
+
+# =============================================================================
+# Named NeXus concept groups — only when the group element defines own
+# quantities that differ from the generic class (changed optionality, extra
+# fields, different type/units/enumeration). These inherit from the specific
+# generic class so all # base quantities are available.
+# Resolved lazily by NOMAD at __init_metainfo__() time via string FQNs.
+# =============================================================================
+
+
+class FitData(Data):
+    """
+    Data and results of the fit.
+    """
+
+    m_def = Section(
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXfit.html#nxfit-data-group"
+        ],
+        a_nexus_group=NeXusGroup(
+            nx_class="NXdata",
+            name="data",
+            name_type="specified",
+            optionality="optional",
+        ),
+    )
+
+    input_independent = Quantity(
+        type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXfit.html#nxfit-data-input-independent-field"
+        ],
+        flexible_unit=True,
+        description=(
+            "Independent variable(s) for this fit procedure, representing the "
+            "values to be fitted by the ``global_fit_function``."
+        ),
+        a_nexus_field=NeXusField(
+            name="input_independent",
+            type="NX_NUMBER",
+            name_type="specified",
+            optionality="optional",
+            units="NX_ANY",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+    )
+    input_dependent = Quantity(
+        type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXfit.html#nxfit-data-input-dependent-field"
+        ],
+        flexible_unit=True,
+        description=(
+            "Dependent variable(s) for this fit procedure (i.e., the observed data)."
+        ),
+        a_nexus_field=NeXusField(
+            name="input_dependent",
+            type="NX_NUMBER",
+            name_type="specified",
+            optionality="optional",
+            units="NX_ANY",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+    )
+    fit_sum = Quantity(
+        type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXfit.html#nxfit-data-fit-sum-field"
+        ],
+        flexible_unit=True,
+        description=(
+            "Resulting fit obtained by evaluating the ``global_fit_function`` at "
+            "the points specified in ``input_independent`` using the optimized "
+            "fit parameters. This represents the best-fit curve or surface "
+            "approximating the input_dependent data."
+        ),
+        a_nexus_field=NeXusField(
+            name="fit_sum",
+            type="NX_NUMBER",
+            name_type="specified",
+            optionality="optional",
+            units="NX_ANY",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+    )
+    residual = Quantity(
+        type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXfit.html#nxfit-data-residual-field"
+        ],
+        flexible_unit=True,
+        description=(
+            "The difference between the observed data (``input_dependent``) and "
+            "the predicted fit values (``fit_sum``). A lower magnitude of "
+            "residuals indicates a better fit."
+        ),
+        a_nexus_field=NeXusField(
+            name="residual",
+            type="NX_NUMBER",
+            name_type="specified",
+            optionality="optional",
+            units="NX_ANY",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+    )
+
+    def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
+        super().normalize(archive, logger)
+
+
+class FitPeakPEAK(Peak):
+    """
+    An instance of the peak model. If there is no characteristic name for each
+    peak component, the peaks could be labeled as peak_0, peak_1, and so on.
+    """
+
+    m_def = Section(
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXfit.html#nxfit-peakpeak-group"
+        ],
+        variable=True,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXpeak",
+            name="peakPEAK",
+            name_type="partial",
+            optionality="optional",
+        ),
+    )
+
+    total_area = Quantity(
+        type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXfit.html#nxfit-peakpeak-total-area-field"
+        ],
+        flexible_unit=True,
+        description=(
+            "Total area under the curve (can also be used for the total area "
+            "minus any background values)."
+        ),
+        a_nexus_field=NeXusField(
+            name="total_area",
+            type="NX_NUMBER",
+            name_type="specified",
+            optionality="optional",
+            units="NX_ANY",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+    )
+    relative_sensitivity_factor = Quantity(
+        type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXfit.html#nxfit-peakpeak-relative-sensitivity-factor-field"
+        ],
+        dimensionality="dimensionless",
+        unit="dimensionless",
+        description=(
+            "Relative sensitivity for this peak, to be used for quantification "
+            "in an NXprocess. As an example, in X-ray spectroscopy could depend "
+            "on the energy scale (see position), the ionization cross section, "
+            "and the element probed."
+        ),
+        a_nexus_field=NeXusField(
+            name="relative_sensitivity_factor",
+            type="NX_NUMBER",
+            name_type="specified",
+            optionality="optional",
+            units="NX_UNITLESS",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "dimensionless"},
+    )
+    relative_area = Quantity(
+        type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXfit.html#nxfit-peakpeak-relative-area-field"
+        ],
+        flexible_unit=True,
+        description=(
+            "Relative area of this peak compared to other peaks. The relative "
+            "area can simply be derived by dividing the total_area by the total "
+            "area of all peaks or by a more complicated method (e.g., by "
+            "additionally dividing by the relative sensitivity factors). Details "
+            "shall be given in `global_fit_function`."
+        ),
+        a_nexus_field=NeXusField(
+            name="relative_area",
+            type="NX_NUMBER",
+            name_type="specified",
+            optionality="optional",
+            units="NX_ANY",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+    )
+
+    def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
+        super().normalize(archive, logger)
+
+
+class FitGlobalFitFunction(FitFunction):
+    """
+    Function used to describe the overall fit to the data, taking into account
+    the parameters of the individual :ref:`NXpeak` components.
+    """
+
+    m_def = Section(
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXfit.html#nxfit-global-fit-function-group"
+        ],
+        a_nexus_group=NeXusGroup(
+            nx_class="NXfit_function",
+            name="global_fit_function",
+            name_type="specified",
+            optionality="optional",
+        ),
+    )
+
+    formula_description = Quantity(
+        type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXfit.html#nxfit-global-fit-function-formula-description-field"
+        ],
+        description=(
+            "Often, if the peaks and fit backgrounds are defined independently "
+            "(i.e, with their own parameter sets), the resulting global fit is a "
+            "function of the form :math:`model = peak_1(p_1) + peak2(p_2) + "
+            "backgr(p_3).`, where each :math:`p_x` describes the set of "
+            "parameters for one peak/background."
+        ),
+        a_nexus_field=NeXusField(
+            name="formula_description",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="optional",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.RichTextEditQuantity,
+        ),
+    )
+
+    def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
+        super().normalize(archive, logger)
+
+
+class FitErrorFunction(FitFunction):
+    """
+    Function used to optimize the parameters during peak fitting.
+    """
+
+    m_def = Section(
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXfit.html#nxfit-error-function-group"
+        ],
+        a_nexus_group=NeXusGroup(
+            nx_class="NXfit_function",
+            name="error_function",
+            name_type="specified",
+            optionality="optional",
+        ),
+    )
+
+    description = Quantity(
+        type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXfit.html#nxfit-error-function-description-field"
+        ],
+        description=(
+            "Description of the method used to optimize the parameters during "
+            "peak fitting. Examples: - least squares - nonlinear least squares - "
+            "Levenberg-Marquardt algorithm (damped least-squares) - linear "
+            "regression - Bayesian linear regression"
+        ),
+        a_nexus_field=NeXusField(
+            name="description",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="optional",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.RichTextEditQuantity,
+        ),
+    )
+    formula_description = Quantity(
+        type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXfit.html#nxfit-error-function-formula-description-field"
+        ],
+        description=(
+            "For the optimization, the formula is any optimization process on "
+            "the ``global_fit_function`` given above. As an example, for a least "
+            "squares algorithm on independent components, the formula of the "
+            "``error_function`` would be :math:`LLS(peak_1(p_1) + peak_2(p_2) + "
+            "backgr(p_3))`, where each :math:`p_i` describes the set of "
+            "parameters for one peak/background. In this case, the "
+            "``formula_description`` can be expressed as :math:`min(\\chi^2)`, "
+            "where :math:`\\chi^2` is the sum of squared residuals between the "
+            "model and the observed data: :math:`min(\\chi^2) = \\sum_{i=1}^{N} "
+            "\\left( y_i - \\left( \\text{peak}_1(p_1, x_i) + "
+            "\\text{peak}_2(p_2, x_i) + \\text{backgr}(p_3, x_i) \\right) "
+            "\\right)^2` It is however also possible to supply more involved "
+            "formulas (e.g., in the case of constrained fits)."
+        ),
+        a_nexus_field=NeXusField(
+            name="formula_description",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="optional",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.RichTextEditQuantity,
+        ),
+    )
+
+    def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
+        super().normalize(archive, logger)

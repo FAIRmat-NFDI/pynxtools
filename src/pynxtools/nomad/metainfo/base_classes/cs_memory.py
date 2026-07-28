@@ -1,0 +1,144 @@
+# SPDX-FileCopyrightText: NeXus International Advisory Committee (NIAC)
+# SPDX-FileCopyrightText: The pynxtools Authors
+#
+# SPDX-License-Identifier: LGPL-3.0-or-later
+#
+# This file is generated from the NeXus definition NXcs_memory (see
+# https://github.com/nexusformat/definitions). It preserves that
+# definition's structure and content as NOMAD Metainfo
+# (Quantity/SubSection) objects. Accordingly, it is distributed under
+# LGPL-3.0-or-later, matching the license of the upstream NXDL
+# definitions, unlike the rest of this package (Apache-2.0).
+# During generation, pynxtools may add project-specific content (extra quantities,
+# annotations, normalize() logic, ...). See
+# docs/learn/pynxtools/licensing.md and
+# LICENSES/LGPL-3.0-or-later.txt.
+#
+# This file is AUTO-GENERATED from the NeXus definitions (NXDL).
+# Run `pynx nomad generate-metainfo --nxdl NXcs_memory` to regenerate.
+# Additive-only: the generator will not remove or rename existing class members
+# (unless the `--force` flag is used).
+# Add normalize() logic directly; it will be preserved on regeneration.
+from __future__ import annotations
+
+from typing import TYPE_CHECKING
+
+import numpy as np
+from nomad.datamodel.metainfo.annotations import (
+    ELNAnnotation,
+    ELNComponentEnum,
+    SchemaAnnotation,
+)
+from nomad.metainfo import MEnum, Quantity, Section, SubSection
+from nomad.metainfo.data_type import Bytes, Datetime
+
+from pynxtools.nomad.annotations import (
+    NeXusAttribute,
+    NeXusChoice,
+    NeXusDefinition,
+    NeXusField,
+    NeXusGroup,
+    NeXusLink,
+)
+from pynxtools.nomad.metainfo.base_classes.circuit import Circuit
+from pynxtools.nomad.metainfo.base_classes.component import Component
+
+if TYPE_CHECKING:
+    from nomad.datamodel import EntryArchive
+    from structlog.stdlib import BoundLogger
+
+__all__ = ["CsMemory"]
+
+
+class CsMemory(Component):
+    """
+    Base class for reporting the description of the memory system of a
+    computer.
+    """
+
+    m_def = Section(
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXcs_memory.html#nxcs_memory"
+        ],
+        a_nexus_definition=NeXusDefinition(
+            nx_class="NXcs_memory",
+            category="base",
+        ),
+    )
+
+    circuit = SubSection(
+        section_def="pynxtools.nomad.metainfo.base_classes.cs_memory.CsMemoryCircuit",
+        repeats=True,
+        variable=True,
+    )
+
+    def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
+        super().normalize(archive, logger)
+
+
+# =============================================================================
+# Named NeXus concept groups — only when the group element defines own
+# quantities that differ from the generic class (changed optionality, extra
+# fields, different type/units/enumeration). These inherit from the specific
+# generic class so all # base quantities are available.
+# Resolved lazily by NOMAD at __init_metainfo__() time via string FQNs.
+# =============================================================================
+
+
+class CsMemoryCircuit(Circuit):
+    """
+    Typically, computers have multiple instances of memory.
+    """
+
+    m_def = Section(
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXcs_memory.html#nxcs_memory-circuit-group"
+        ],
+        variable=True,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXcircuit",
+            name=None,
+            name_type="any",
+            optionality="optional",
+        ),
+    )
+
+    type = Quantity(
+        type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXcs_memory.html#nxcs_memory-circuit-type-field"
+        ],
+        description=("Qualifier for the type of random access memory."),
+        a_nexus_field=NeXusField(
+            name="type",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="optional",
+            enumeration=["ddr4", "ddr5"],
+            open_enum=True,
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
+    )
+    max_physical_capacity = Quantity(
+        type=np.int64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXcs_memory.html#nxcs_memory-circuit-max-physical-capacity-field"
+        ],
+        flexible_unit=True,
+        description=("Total amount of data which the medium can hold."),
+        a_nexus_field=NeXusField(
+            name="max_physical_capacity",
+            type="NX_POSINT",
+            name_type="specified",
+            optionality="optional",
+            units="NX_ANY",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+    )
+
+    def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
+        super().normalize(archive, logger)

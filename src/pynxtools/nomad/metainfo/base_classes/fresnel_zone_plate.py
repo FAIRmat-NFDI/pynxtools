@@ -1,0 +1,341 @@
+# SPDX-FileCopyrightText: NeXus International Advisory Committee (NIAC)
+# SPDX-FileCopyrightText: The pynxtools Authors
+#
+# SPDX-License-Identifier: LGPL-3.0-or-later
+#
+# This file is generated from the NeXus definition NXfresnel_zone_plate (see
+# https://github.com/nexusformat/definitions). It preserves that
+# definition's structure and content as NOMAD Metainfo
+# (Quantity/SubSection) objects. Accordingly, it is distributed under
+# LGPL-3.0-or-later, matching the license of the upstream NXDL
+# definitions, unlike the rest of this package (Apache-2.0).
+# During generation, pynxtools may add project-specific content (extra quantities,
+# annotations, normalize() logic, ...). See
+# docs/learn/pynxtools/licensing.md and
+# LICENSES/LGPL-3.0-or-later.txt.
+#
+# This file is AUTO-GENERATED from the NeXus definitions (NXDL).
+# Run `pynx nomad generate-metainfo --nxdl NXfresnel_zone_plate` to regenerate.
+# Additive-only: the generator will not remove or rename existing class members
+# (unless the `--force` flag is used).
+# Add normalize() logic directly; it will be preserved on regeneration.
+from __future__ import annotations
+
+from typing import TYPE_CHECKING
+
+import numpy as np
+from nomad.datamodel.metainfo.annotations import (
+    ELNAnnotation,
+    ELNComponentEnum,
+    SchemaAnnotation,
+)
+from nomad.metainfo import MEnum, Quantity, Section, SubSection
+from nomad.metainfo.data_type import Bytes, Datetime
+
+from pynxtools.nomad.annotations import (
+    NeXusAttribute,
+    NeXusChoice,
+    NeXusDefinition,
+    NeXusField,
+    NeXusGroup,
+    NeXusLink,
+)
+from pynxtools.nomad.metainfo.base_classes.component import Component
+
+if TYPE_CHECKING:
+    from nomad.datamodel import EntryArchive
+    from structlog.stdlib import BoundLogger
+
+__all__ = ["FresnelZonePlate"]
+
+
+class FresnelZonePlate(Component):
+    """
+    A fresnel zone plate
+    """
+
+    m_def = Section(
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXfresnel_zone_plate.html#nxfresnel_zone_plate"
+        ],
+        a_nexus_definition=NeXusDefinition(
+            nx_class="NXfresnel_zone_plate",
+            category="base",
+        ),
+    )
+
+    focus_parameters = Quantity(
+        type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXfresnel_zone_plate.html#nxfresnel_zone_plate-focus-parameters-field"
+        ],
+        shape=["*"],
+        description=(
+            "list of polynomial coefficients describing the focal length of the "
+            "zone plate, in increasing powers of photon energy, that describes "
+            "the focal length of the zone plate (in microns) at an X-ray photon "
+            "energy (in electron volts)."
+        ),
+        a_nexus_field=NeXusField(
+            name="focus_parameters",
+            type="NX_FLOAT",
+            name_type="specified",
+            optionality="optional",
+        ),
+    )
+    outer_diameter = Quantity(
+        type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXfresnel_zone_plate.html#nxfresnel_zone_plate-outer-diameter-field"
+        ],
+        dimensionality="[length]",
+        unit="m",
+        a_nexus_field=NeXusField(
+            name="outer_diameter",
+            type="NX_FLOAT",
+            name_type="specified",
+            optionality="optional",
+            units="NX_LENGTH",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "m"},
+    )
+    outermost_zone_width = Quantity(
+        type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXfresnel_zone_plate.html#nxfresnel_zone_plate-outermost-zone-width-field"
+        ],
+        dimensionality="[length]",
+        unit="m",
+        a_nexus_field=NeXusField(
+            name="outermost_zone_width",
+            type="NX_FLOAT",
+            name_type="specified",
+            optionality="optional",
+            units="NX_LENGTH",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "m"},
+    )
+    central_stop_diameter = Quantity(
+        type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXfresnel_zone_plate.html#nxfresnel_zone_plate-central-stop-diameter-field"
+        ],
+        dimensionality="[length]",
+        unit="m",
+        a_nexus_field=NeXusField(
+            name="central_stop_diameter",
+            type="NX_FLOAT",
+            name_type="specified",
+            optionality="optional",
+            units="NX_LENGTH",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "m"},
+    )
+    fabrication_quantity = Quantity(
+        type=MEnum(["etched", "plated", "zone doubled", "other"]),
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXfresnel_zone_plate.html#nxfresnel_zone_plate-fabrication-field"
+        ],
+        description=("how the zone plate was manufactured"),
+        a_nexus_field=NeXusField(
+            name="fabrication",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="optional",
+            enumeration=["etched", "plated", "zone doubled", "other"],
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.EnumEditQuantity,
+        ),
+    )
+    zone_height = Quantity(
+        type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXfresnel_zone_plate.html#nxfresnel_zone_plate-zone-height-field"
+        ],
+        dimensionality="[length]",
+        unit="m",
+        a_nexus_field=NeXusField(
+            name="zone_height",
+            type="NX_FLOAT",
+            name_type="specified",
+            optionality="optional",
+            units="NX_LENGTH",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "m"},
+    )
+    zone_material = Quantity(
+        type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXfresnel_zone_plate.html#nxfresnel_zone_plate-zone-material-field"
+        ],
+        description=("Material of the zones themselves"),
+        a_nexus_field=NeXusField(
+            name="zone_material",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="optional",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
+    )
+    zone_support_material = Quantity(
+        type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXfresnel_zone_plate.html#nxfresnel_zone_plate-zone-support-material-field"
+        ],
+        description=(
+            "Material present between the zones. This is usually only present "
+            'for the "zone doubled" fabrication process'
+        ),
+        a_nexus_field=NeXusField(
+            name="zone_support_material",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="optional",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
+    )
+    central_stop_material = Quantity(
+        type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXfresnel_zone_plate.html#nxfresnel_zone_plate-central-stop-material-field"
+        ],
+        a_nexus_field=NeXusField(
+            name="central_stop_material",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="optional",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
+    )
+    central_stop_thickness = Quantity(
+        type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXfresnel_zone_plate.html#nxfresnel_zone_plate-central-stop-thickness-field"
+        ],
+        dimensionality="[length]",
+        unit="m",
+        a_nexus_field=NeXusField(
+            name="central_stop_thickness",
+            type="NX_FLOAT",
+            name_type="specified",
+            optionality="optional",
+            units="NX_LENGTH",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "m"},
+    )
+    mask_thickness = Quantity(
+        type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXfresnel_zone_plate.html#nxfresnel_zone_plate-mask-thickness-field"
+        ],
+        dimensionality="[length]",
+        unit="m",
+        a_nexus_field=NeXusField(
+            name="mask_thickness",
+            type="NX_FLOAT",
+            name_type="specified",
+            optionality="optional",
+            units="NX_LENGTH",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "m"},
+    )
+    mask_material = Quantity(
+        type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXfresnel_zone_plate.html#nxfresnel_zone_plate-mask-material-field"
+        ],
+        description=(
+            "If no mask is present, set mask_thickness to 0 and omit the "
+            "mask_material field"
+        ),
+        a_nexus_field=NeXusField(
+            name="mask_material",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="optional",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
+    )
+    support_membrane_material = Quantity(
+        type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXfresnel_zone_plate.html#nxfresnel_zone_plate-support-membrane-material-field"
+        ],
+        a_nexus_field=NeXusField(
+            name="support_membrane_material",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="optional",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
+    )
+    support_membrane_thickness = Quantity(
+        type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXfresnel_zone_plate.html#nxfresnel_zone_plate-support-membrane-thickness-field"
+        ],
+        dimensionality="[length]",
+        unit="m",
+        a_nexus_field=NeXusField(
+            name="support_membrane_thickness",
+            type="NX_FLOAT",
+            name_type="specified",
+            optionality="optional",
+            units="NX_LENGTH",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "m"},
+    )
+    depends_on = Quantity(
+        type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXfresnel_zone_plate.html#nxfresnel_zone_plate-depends-on-field"
+        ],
+        description=(
+            ".. todo:: Add a definition for the reference point of a fresnel "
+            "zone plate."
+        ),
+        a_nexus_field=NeXusField(
+            name="depends_on",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="optional",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
+    )
+
+    def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
+        super().normalize(archive, logger)

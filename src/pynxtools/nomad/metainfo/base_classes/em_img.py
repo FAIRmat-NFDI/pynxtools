@@ -1,0 +1,169 @@
+# SPDX-FileCopyrightText: NeXus International Advisory Committee (NIAC)
+# SPDX-FileCopyrightText: The pynxtools Authors
+#
+# SPDX-License-Identifier: LGPL-3.0-or-later
+#
+# This file is generated from the NeXus definition NXem_img (see
+# https://github.com/nexusformat/definitions). It preserves that
+# definition's structure and content as NOMAD Metainfo
+# (Quantity/SubSection) objects. Accordingly, it is distributed under
+# LGPL-3.0-or-later, matching the license of the upstream NXDL
+# definitions, unlike the rest of this package (Apache-2.0).
+# During generation, pynxtools may add project-specific content (extra quantities,
+# annotations, normalize() logic, ...). See
+# docs/learn/pynxtools/licensing.md and
+# LICENSES/LGPL-3.0-or-later.txt.
+#
+# This file is AUTO-GENERATED from the NeXus definitions (NXDL).
+# Run `pynx nomad generate-metainfo --nxdl NXem_img` to regenerate.
+# Additive-only: the generator will not remove or rename existing class members
+# (unless the `--force` flag is used).
+# Add normalize() logic directly; it will be preserved on regeneration.
+from __future__ import annotations
+
+from typing import TYPE_CHECKING
+
+import numpy as np
+from nomad.datamodel.metainfo.annotations import (
+    ELNAnnotation,
+    ELNComponentEnum,
+    SchemaAnnotation,
+)
+from nomad.metainfo import MEnum, Quantity, Section, SubSection
+from nomad.metainfo.data_type import Bytes, Datetime
+
+from pynxtools.nomad.annotations import (
+    NeXusAttribute,
+    NeXusChoice,
+    NeXusDefinition,
+    NeXusField,
+    NeXusGroup,
+    NeXusLink,
+)
+from pynxtools.nomad.metainfo.base_classes.image import Image
+from pynxtools.nomad.metainfo.base_classes.process import Process
+
+if TYPE_CHECKING:
+    from nomad.datamodel import EntryArchive
+    from structlog.stdlib import BoundLogger
+
+__all__ = ["EmImg"]
+
+
+class EmImg(Process):
+    """
+    Base class for method-specific generic imaging with electron microscopes.
+
+    In the majority of cases simple d-dimensional regular scan patterns are
+    used to probe regions-of-interest (ROIs). Examples can be single point aka
+    spot measurements, line profiles, or (rectangular) surface mappings. The
+    latter pattern is the most frequently used.
+
+    For now the base class provides for scans for which the settings, binning,
+    and energy resolution is the same for each scan point.
+    """
+
+    m_def = Section(
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXem_img.html#nxem_img"
+        ],
+        a_nexus_definition=NeXusDefinition(
+            nx_class="NXem_img",
+            category="base",
+        ),
+    )
+
+    image = SubSection(
+        section_def="pynxtools.nomad.metainfo.base_classes.em_img.EmImgImage",
+        repeats=True,
+        variable=True,
+    )
+
+    def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
+        super().normalize(archive, logger)
+
+
+# =============================================================================
+# Named NeXus concept groups — only when the group element defines own
+# quantities that differ from the generic class (changed optionality, extra
+# fields, different type/units/enumeration). These inherit from the specific
+# generic class so all # base quantities are available.
+# Resolved lazily by NOMAD at __init_metainfo__() time via string FQNs.
+# =============================================================================
+
+
+class EmImgImage(Image):
+    m_def = Section(
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXem_img.html#nxem_img-image-group"
+        ],
+        variable=True,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXimage",
+            name=None,
+            name_type="any",
+            optionality="optional",
+        ),
+    )
+
+    microstructure = SubSection(
+        section_def="pynxtools.nomad.metainfo.base_classes.microstructure.Microstructure",
+        repeats=True,
+        variable=True,
+        description=(
+            "A reconstruction of the microstructure or some of its features "
+            "based on image information in the parent class."
+        ),
+        a_nexus_group=NeXusGroup(
+            nx_class="NXmicrostructure",
+            name=None,
+            name_type="any",
+            optionality="optional",
+        ),
+    )
+
+    imaging_mode = Quantity(
+        type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXem_img.html#nxem_img-image-imaging-mode-field"
+        ],
+        description=("Which imaging mode was used?"),
+        a_nexus_field=NeXusField(
+            name="imaging_mode",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="optional",
+            enumeration=[
+                "secondary_electron",
+                "backscattered_electron",
+                "annular_dark_field",
+                "cathodoluminescence",
+            ],
+            open_enum=True,
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
+    )
+    half_angle_interval = Quantity(
+        type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXem_img.html#nxem_img-image-half-angle-interval-field"
+        ],
+        dimensionality="[angle]",
+        unit="radian",
+        shape=[2],
+        description=(
+            "Annulus inner (first value) and outer (second value) half angle."
+        ),
+        a_nexus_field=NeXusField(
+            name="half_angle_interval",
+            type="NX_NUMBER",
+            name_type="specified",
+            optionality="optional",
+            units="NX_ANGLE",
+        ),
+    )
+
+    def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
+        super().normalize(archive, logger)

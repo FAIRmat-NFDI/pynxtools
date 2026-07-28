@@ -89,15 +89,21 @@ The key quantities indexed by the NeXus normalizer depend on the application def
 
 ## Metainfo: NeXus definitions as a NOMAD schema
 
-NOMAD uses its own schema language (*Metainfo*) to describe data structures. When `pynxtools` is loaded as a plugin, all NeXus base classes and application definitions bundled with it are compiled into NOMAD Metainfo sections.
+NOMAD uses its own schema language (*Metainfo*) to describe data structures. When
+`pynxtools` is loaded as a plugin, all NeXus base classes and application definitions
+bundled with it are compiled from NXDL XML at import time and registered as NOMAD
+`Section` classes. This compilation is handled by `nomad/schema_packages/schema.py`.
 
-This means:
+The compiled schema makes every NeXus concept searchable in NOMAD:
 
-- Every NeXus field becomes a Metainfo quantity with the correct type and unit.
-- Every NeXus base class becomes a NOMAD section.
+- Every NeXus group becomes a `SubSection`.
+- Every NeXus field becomes a Metainfo `Quantity` with the correct Python type and unit.
+- Every NeXus attributes becomes a Metainfo `Quantity`.
+  - If it is the attribute of a field, it is separated from its parent with two underscores (e.g. ``AXISNAME__long_name``).
+  - If it is the attribute of a group, it gets added by its name (e.g. ``Data.axes``).
 - The application definition specifies which sections and quantities are required.
 
-The compiled Metainfo can be viewed in the NOMAD GUI at:
+The Metainfo can be browsed in the NOMAD GUI at:
 `Analyze → Metainfo → pynxtools`
 
 ---
@@ -151,11 +157,9 @@ print([p.name for p in config.plugins.entry_points])
 
 ## NOMAD OASIS — local deployment
 
-NOMAD OASIS is a self-hosted deployment that gives institutions full control over
-their data while retaining compatibility with the public NOMAD instance.
+NOMAD OASIS is a self-hosted deployment that gives institutions full control over their data while retaining compatibility with the public NOMAD instance.
 
-To include `pynxtools` in a NOMAD OASIS deployment, add it to the OASIS
-optional dependencies in `pyproject.toml`:
+To include `pynxtools` in a NOMAD OASIS deployment, add it to the OASIS optional dependencies in `pyproject.toml` (under `plugins`):
 
 ```toml
 [project.optional-dependencies]
@@ -177,3 +181,5 @@ For OASIS setup details see the
   programmatic upload, OASIS setup, debugging parser output
 - [NOMAD documentation](https://nomad-lab.eu/prod/v1/docs/)
 - [NOMAD Metainfo browser](https://nomad-lab.eu/prod/v1/gui/analyze/metainfo/pynxtools)
+- [Learn → pynxtools → NeXus Metainfo Generation](nexus-metainfo-generation.md) —
+  upcoming code-generation system (in development)

@@ -42,6 +42,7 @@ dependencies = [
     "cachetools",
     "structlog",
     "orjson",
+    "Jinja2",
 ]
 
 [project.urls]
@@ -49,7 +50,7 @@ dependencies = [
 "Bug Tracker" = "https://github.com/FAIRmat-NFDI/pynxtools/issues"
 
 [project.optional-dependencies]
-nomad = ["nomad-lab >= 1.4.0"]
+nomad = ["nomad-lab >= 1.4.0", "ruff>=0.15.0"]
 docs = [
     "mkdocs",
     "markdown-exec[ansi]",
@@ -110,6 +111,8 @@ nexus_schema = "pynxtools.nomad.schema_packages:nexus_schema"
 nexus_data_converter = "pynxtools.nomad.schema_packages:nexus_data_converter"
 nexus_app = "pynxtools.nomad.apps:nexus_app"
 simple_nexus_example = "pynxtools.nomad.example_uploads:simple_nexus_example"
+nexus_base_classes = "pynxtools.nomad.metainfo:nexus_base_classes"
+nexus_applications = "pynxtools.nomad.metainfo:nexus_applications"
 
 [project.scripts]
 pynx           = "pynxtools.cli:pynx"
@@ -132,7 +135,7 @@ version_scheme = "no-guess-dev"
 local_scheme = "node-and-date"
 
 [tool.ruff]
-include = ["src/*.py", "tests/*.py"]
+include = ["src/**/*.py", "tests/**/*.py"]
 exclude = ["src/pynxtools/definitions"]
 line-length = 88
 indent-width = 4
@@ -168,6 +171,14 @@ ignore = [
 fixable = ["ALL"]
 isort.split-on-trailing-comma = false
 isort.known-first-party = ["pynxtools"]
+
+[tool.ruff.lint.per-file-ignores]
+# Single-letter NXDL field names (h, k, l for Miller indices; I for intensity, etc.) — E741
+"src/pynxtools/nomad/metainfo/base_classes/reflections.py" = ["E741"]
+"src/pynxtools/nomad/metainfo/applications/azint1d.py" = ["E741"]
+"src/pynxtools/nomad/metainfo/applications/azint2d.py" = ["E741"]
+"src/pynxtools/nomad/metainfo/applications/cansas.py" = ["E741"]
+"src/pynxtools/nomad/metainfo/applications/stress.py" = ["E741"]
 
 [tool.ruff.format]
 quote-style = "double"
