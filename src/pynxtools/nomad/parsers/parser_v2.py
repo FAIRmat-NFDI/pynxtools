@@ -774,7 +774,14 @@ class NomadVisitorV2(NexusVisitor):
         shadow_value = value
 
         if qty.use_full_storage:
-            value = MQuantity.wrap(value, hdf_field_name)
+            # Only a variadic quantity's real name can legitimately differ per
+            # instance. use_full_storage can also be true for non-variadic
+            # quantities (e.g. flexible_unit=True, or having attributes), and
+            # for those the raw HDF5 field name may not match the Python
+            # name at all after collision-avoidance renaming (e.g. "data" ->
+            # "data_quantity"), which NOMAD's __set__ rejects.
+            wrap_name = hdf_field_name if qty.variable else qty.name
+            value = MQuantity.wrap(value, wrap_name)
 
         try:
             current.m_set(qty, value)
@@ -834,7 +841,9 @@ class NomadVisitorV2(NexusVisitor):
                 attribute = attr_value.decode("utf-8", errors="replace")
             elif isinstance(attr_value, np.ndarray):
                 lst = attr_value.tolist()
-                attribute = lst[0] if len(lst) == 1 else lst
+                # Only collapse a single-element array to a scalar when the
+                # quantity is itself scalar-shaped.
+                attribute = lst[0] if len(lst) == 1 and not qty.shape else lst
             else:
                 attribute = attr_value
 
