@@ -26,12 +26,7 @@ check, which required a literal "eventID"/"imageID" prefix — fixed to use the
 canonical ``get_nx_namefit()`` matcher instead.
 
 Asserts the FIELD_STATISTICS parallel quantities (`{name}__min/__max/__size/__ndim`) that
-NexusParserV2 populates for numeric array fields in NXdata-derived classes. No
-`{name}__mean` quantity exists — v1's parser intends the mean to be the bare field's own
-value, but the main `real` quantity here correctly keeps its NXDL array shape (and v1's
-own mean-into-bare-field write turns out to silently fail too, confirmed empirically: the
-bare field ends up unset there as well), so `real` stays unset and only the four other
-stats are asserted.
+NexusParserV2 populates for numeric array fields in NXdata-derived classes.
 """
 
 import os
@@ -188,7 +183,7 @@ def test_parse_file_array_statistics(storage_layout, data_type, tmp_path):
     stack_2d = archive.data.measurement.eventID[0].imageID[0].stack_2d
     assert stack_2d is not None
 
-    # FIELD_STATISTICS (Phase 4): `real` itself stays unset (it correctly keeps its
+    # FIELD_STATISTICS: `real` itself stays unset (it correctly keeps its
     # NXDL 3D shape and the parser has no path to populate full arrays), but the
     # parallel {name}__mean/__min/__max/__size/__ndim scalar quantities are populated.
     for stat in ("min", "max"):

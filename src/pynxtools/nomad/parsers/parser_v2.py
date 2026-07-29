@@ -699,18 +699,13 @@ class NomadVisitorV2(NexusVisitor):
     ) -> None:
         """Populate the {concept_name}__min/__max/__size/__ndim quantities.
 
-        No {concept_name}__mean quantity is written: v1's parser intends the mean
-        to be the bare field's own value, but the main quantity here correctly
-        keeps its NXDL array shape and cannot hold a reduced scalar (confirmed
-        empirically that v1's own mean-into-bare-field write silently fails too —
-        the bare field ends up unset there as well). __mean is still computed
+        No {concept_name}__mean quantity is written. __mean is still computed
         below purely as a finiteness check; it is not exposed as a quantity.
 
         When the main quantity is variadic (e.g. NXdata's DATA/AXISNAME, where
         multiple distinctly-named HDF5 datasets map to the same Python slot),
         the stat quantities are variadic too and each instance's stats are
-        wrapped via MQuantity.wrap(..., hdf_field_name) — mirroring how v1 keys
-        "intensity__min" separately from "errors__min" — instead of repeatedly
+        wrapped via MQuantity.wrap(..., hdf_field_name) instead of repeatedly
         overwriting one shared value across every named instance.
         """
         try:
@@ -798,10 +793,8 @@ class NomadVisitorV2(NexusVisitor):
                         return
                 else:
                     # No parallel __min/__max/__size/__ndim quantities exist for
-                    # this field (has_statistics was False at generation time,
-                    # e.g. the field isn't in an NXdata-derived class) — fall back
-                    # to writing the mean directly into the main quantity. This only
-                    # succeeds if that quantity happens to be scalar-shaped.
+                    # this field — fall back to writing the mean directly into
+                    # the main quantity.
                     value, _ = extract_iuf_scalar(hdf_node)
                     if not np.isfinite(float(value)):  # type: ignore[arg-type]
                         return
@@ -1002,7 +995,7 @@ def _archive_path_for(section: MSection) -> str:
 
 
 class NexusParserV2(MatchingParser):
-    """NOMAD parser for NeXus files using Phase 2 generated Python metainfo.
+    """NOMAD parser for NeXus files using generated Python Metainfo.
 
     Produces one NOMAD archive entry per NXentry group.  Single-NXentry files
     produce one archive (``archive.data = Arpes()``).  Multi-NXentry files use
