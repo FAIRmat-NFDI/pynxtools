@@ -52,7 +52,7 @@ class NexusParserV2EntryPoint(ParserEntryPoint):
 nexus_parser_v2 = NexusParserV2EntryPoint(
     name="pynxtools parser v2",
     description=(
-        "Annotation-based NeXus parser using generated Python metainfo (Phase 3). "
+        "Annotation-based NeXus parser using generated Python metainfo. "
         "Produces archives with new schema structure (no __field suffix, lowercase paths)."
     ),
     mainfile_name_re=r".*\.nxs",

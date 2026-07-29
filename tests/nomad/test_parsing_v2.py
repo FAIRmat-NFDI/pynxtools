@@ -16,7 +16,7 @@
 # limitations under the License.
 #
 """
-Acceptance gate tests for NexusParserV2 (Phase 3).
+Acceptance gate tests for NexusParserV2
 
 Architecture: archive.data = Arpes/Entry() directly (no Root wrapper).
 One NomadVisitorV2 per NXentry group; multi-NXentry files produce multiple archives.
