@@ -1633,7 +1633,7 @@ def build_context(nx_name: str) -> dict:
             base_import = _METAINFO_PACKAGE_ROOT + ".base_classes.entry"
             base_is_generated = True
             # Entry itself defaults to basesections.Activity (not every NXentry
-            # is a real measurement — see ADR-009 decision 6). Applications not
+            # is a real measurement). Applications not
             # explicitly reviewed as Activity-only keep mixing in Measurement,
             # to avoid silently changing semantics for anything unreviewed.
             nomad_extra_bases = (
@@ -1909,7 +1909,7 @@ def build_context(nx_name: str) -> dict:
     nomad_extra_bases_list = [_split_fqn(fqn) for fqn in nomad_extra_bases]
     # Qualify with "basesections." (rather than a bare per-class import) to
     # avoid name collisions with pynxtools's own generated classes of the same
-    # name (e.g. Instrument, Process, Activity) — see ADR-009.
+    # name (e.g. Instrument, Process, Activity).
     needs_basesections = "basesections." in base_class or any(
         mod == "nomad.datamodel.metainfo.basesections.v2"
         for mod, _ in nomad_extra_bases_list
