@@ -1098,7 +1098,7 @@ class Sample(Component, basesections.System):
         # Bridge NeXus's direct-containment sample_component list onto
         # System.sub_systems' reference/wrapper-based (NestedSubSystem) shape,
         # so generic NOMAD tooling built against sub_systems also sees NeXus
-        # samples' composition. See ADR-009 decision 8.
+        # samples' composition.
         # basesections.System.sub_systems is declared via SectionProxy (a
         # forward reference to 'SubSystem'), which mypy cannot resolve.
         if self.sample_component and not self.sub_systems:  # type: ignore[has-type]

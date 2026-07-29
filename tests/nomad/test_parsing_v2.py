@@ -355,8 +355,8 @@ def test_nexus_string_decode_to_utf8(tmp_path):
     ("cls", "expected_bases"),
     [
         # Entry defaults to Activity (not Measurement) — not every NXentry is a
-        # real measurement (e.g. simulation-only em/apm entries). See ADR-009
-        # decision 6; application definitions opt into Measurement explicitly.
+        # real measurement (e.g. simulation-only em/apm entries); application
+        # definitions opt into Measurement explicitly.
         pytest.param(Entry, (Object, Activity, EntryData), id="entry"),
         pytest.param(Root, (Object, Experiment, EntryData), id="root"),
     ],
@@ -453,7 +453,7 @@ def test_nexus_v2_root_nxroot_attributes(arpes_root_archive):
 
 
 # ---------------------------------------------------------------------------
-# Multi-entry files with subentries (ADR-009 decision 1: sub_activities)
+# Multi-entry files with subentries
 # ---------------------------------------------------------------------------
 
 
@@ -476,10 +476,10 @@ def multi_entry_with_subentries(tmp_path):
 
 
 def test_multi_entry_subentry_normalize(multi_entry_with_subentries):
-    """Each entry's own normalize() must run end-to-end without crashing, and a
-    populated subentry must show up as a nested task in the parent's workflow2 —
-    not silently dropped (the gap ADR-009 decision 1 flagged as needing a bridge,
-    same as ``Sample.normalize()``'s component -> sub_systems bridge)."""
+    """
+    Each entry's own normalize() must run end-to-end without crashing, and a
+    populated subentry must show up as a nested task in the parent's workflow2.
+    """
     logger = get_logger(__name__)
     archive = EntryArchive()
     entry2_archive = EntryArchive()
