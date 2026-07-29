@@ -1468,8 +1468,7 @@ def build_context(nx_name: str) -> dict:
         elif child.nx_type == "group":
             # Skip cross-category references whose target module has not been
             # generated yet — NOMAD's __init_metainfo__() would fail to resolve
-            # the string FQN.  Once Phase 2 generates all application modules,
-            # regenerate base classes with --force to capture these references.
+            # the string FQN.
             if not _target_module_exists(child.nx_class):
                 continue
 
