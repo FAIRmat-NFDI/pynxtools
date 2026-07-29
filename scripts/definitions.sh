@@ -1,5 +1,11 @@
 #!/usr/bin/env bash
 
+# SPDX-FileCopyrightText: The pynxtools Authors
+#
+# This file is part of pynxtools.
+#
+# SPDX-License-Identifier: Apache-2.0
+
 # This script manages the definitions submodule.
 # Usage:
 # ./scripts/definitions.sh update

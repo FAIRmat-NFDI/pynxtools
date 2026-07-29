@@ -1,5 +1,11 @@
 #!/bin/bash
 
+# SPDX-FileCopyrightText: The pynxtools Authors
+#
+# This file is part of pynxtools.
+#
+# SPDX-License-Identifier: Apache-2.0
+
 # Navigate to project root
 project_dir=$(dirname "$(dirname "$(realpath "$0")")")
 cd "$project_dir" || exit 1

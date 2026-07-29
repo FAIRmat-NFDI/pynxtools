@@ -1,3 +1,9 @@
+# SPDX-FileCopyrightText: The pynxtools Authors
+#
+# This file is part of pynxtools.
+#
+# SPDX-License-Identifier: Apache-2.0
+
 """Unit tests for pynxtools.nexus.nxdata — pure NXdata detection."""
 
 import h5py
