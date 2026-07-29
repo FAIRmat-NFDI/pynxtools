@@ -520,17 +520,10 @@ def multi_entry_with_subentries(tmp_path):
 
 
 def test_multi_entry_subentry_normalize(multi_entry_with_subentries):
-<<<<<<< HEAD
     """
     Each entry's own normalize() must run end-to-end without crashing, and a
     populated subentry must show up as a nested task in the parent's workflow2.
     """
-=======
-    """Each entry's own normalize() must run end-to-end without crashing, and a
-    populated subentry must show up as a nested task in the parent's workflow2 —
-    not silently dropped (the gap ADR-009 decision 1 flagged as needing a bridge,
-    same as ``Sample.normalize()``'s component -> sub_systems bridge)."""
->>>>>>> 9b0acb27 (bridge Entry.subentry into to_workflow() for nested workflow2 composition)
     logger = get_logger(__name__)
     archive = EntryArchive()
     entry2_archive = EntryArchive()
@@ -552,12 +545,8 @@ def test_multi_entry_subentry_normalize(multi_entry_with_subentries):
         for sub in entry_data.subentry:
             sub.normalize(arch, logger)
         entry_data.normalize(arch, logger)
-<<<<<<< HEAD
         assert arch.workflow2 is not None
         assert len(arch.workflow2.tasks) == 1
->>>>>>> c51112a2 (bridge Entry.subentry into to_workflow() for nested workflow2 composition)
-=======
 
         assert arch.workflow2 is not None
         assert len(arch.workflow2.tasks) == 1
->>>>>>> 9b0acb27 (bridge Entry.subentry into to_workflow() for nested workflow2 composition)
