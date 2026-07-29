@@ -96,4 +96,7 @@ abstract:
   [FAIRmat page](https://www.fairmat-nfdi.eu/fairmat/about-fairmat/consortium-fairmat) for more info.
 
 
-license: Apache-2.0
+license:
+  - Apache-2.0
+  - LGPL-3.0-or-later
+  - MIT

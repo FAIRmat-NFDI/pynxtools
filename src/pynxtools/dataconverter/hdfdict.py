@@ -1,4 +1,13 @@
-"""Taken from: https://github.com/SiggiGue/hdfdict/blob/master/hdfdict/hdfdict.py"""
+# SPDX-FileCopyrightText: 2018 Siegfried Gündert
+# SPDX-FileCopyrightText: The pynxtools Authors
+#
+# SPDX-License-Identifier: MIT
+
+"""Adapted from: https://github.com/SiggiGue/hdfdict/blob/master/hdfdict/hdfdict.py
+
+Vendored and modified from the MIT-licensed ``hdfdict`` project; see LICENSES/MIT.txt.
+Unlike the rest of pynxtools (Apache-2.0), this file remains MIT-licensed.
+"""
 
 from collections import UserDict
 from contextlib import contextmanager

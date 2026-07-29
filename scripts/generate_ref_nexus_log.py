@@ -1,3 +1,9 @@
+# SPDX-FileCopyrightText: The pynxtools Authors
+#
+# This file is part of pynxtools.
+#
+# SPDX-License-Identifier: Apache-2.0
+
 """Regenerate tests/data/nexus/Ref_nexus_test.log."""
 
 import logging

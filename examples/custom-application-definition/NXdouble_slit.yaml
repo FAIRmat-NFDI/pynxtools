@@ -1,3 +1,9 @@
+# SPDX-FileCopyrightText: The pynxtools Authors
+#
+# This file is part of pynxtools.
+#
+# SPDX-License-Identifier: Apache-2.0
+
 \category: application
 \doc: |
   Application definition for a double-slit interference experiment.
