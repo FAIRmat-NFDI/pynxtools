@@ -52,7 +52,7 @@ if TYPE_CHECKING:
 __all__ = ["Subentry"]
 
 
-class Subentry(Object, basesections.Measurement):
+class Subentry(Object, basesections.Activity):
     """
     Group of multiple application definitions for "multi-modal" (e.g.
     SAXS/WAXS) measurements.
