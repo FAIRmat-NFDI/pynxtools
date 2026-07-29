@@ -7,6 +7,7 @@
 ![](https://img.shields.io/pypi/v/pynxtools)
 [![Coverage Status](https://coveralls.io/repos/github/FAIRmat-NFDI/pynxtools/badge.svg?branch=master&kill_cache=1)](https://coveralls.io/github/FAIRmat-NFDI/pynxtools?branch=master)
 [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.1323437.svg)](https://doi.org/10.5281/zenodo.13862042)
+[![REUSE status](https://api.reuse.software/badge/github.com/FAIRmat-NFDI/pynxtools)](https://api.reuse.software/info/github.com/FAIRmat-NFDI/pynxtools)
 
 <table align="center">
 <tr><td align="center" width="10000">
@@ -26,3 +27,7 @@ Read more in the [official documentation page](https://fairmat-nfdi.github.io/py
 # How to cite this work
 
 Shabih, S., Pielsticker, L., Dobener, F., Albino, A., Chang, T., Emminger, C., Ginzburg, L., Hildebrandt, R., Kühbach, M., Mozumder, R., Pincelli, T., Aeschlimann, M., Grundmann, M., Hetaba, W., Palma, C.-A., Rettig, L., Scheidgen, M., Márquez, J. A., Draxl, C., Brockhauser, S., Koch, C. T. & Weber, H. B. (2025). Pynxtools: A Python Library for NeXus-Compliant Experimental Data Conversion and Integration with NOMAD Platform. Zenodo. https://doi.org/10.5281/zenodo.15341365
+
+# License
+
+`pynxtools` is primarily licensed under Apache-2.0, with the NeXus-derived generated metainfo classes under LGPL-3.0-or-later and a small vendored file under MIT. Full license texts are in [`LICENSES/`](LICENSES/); see [Licensing](https://fairmat-nfdi.github.io/pynxtools/learn/pynxtools/licensing.html) for details. The project follows the [REUSE Software specification](https://reuse.software/).

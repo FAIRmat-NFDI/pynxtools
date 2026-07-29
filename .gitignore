@@ -207,6 +207,7 @@ cython_debug/
 !src/pynxtools/remote_definitions_url.txt
 !src/pynxtools/units/constants_en.txt
 !src/pynxtools/units/default_en.txt
+!LICENSES/*.txt
 build/
 src/pynxtools/nomad/schema_packages/nxs_metainfo_*.json
 nexusparser.egg-info/PKG-INFO
