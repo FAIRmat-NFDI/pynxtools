@@ -31,6 +31,7 @@ from nomad.datamodel.metainfo.annotations import (
     SchemaAnnotation,
 )
 from nomad.datamodel.metainfo.basesections import v2 as basesections
+from nomad.datamodel.metainfo.workflow import Workflow
 from nomad.metainfo import MEnum, Quantity, Section, SubSection
 from nomad.metainfo.data_type import Bytes, Datetime
 
@@ -856,6 +857,19 @@ class Entry(Object, basesections.Activity, EntryData):
 
     def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
         super().normalize(archive, logger)
+
+    def to_workflow(self) -> Workflow:
+        """Include ``subentry`` (each a nested ``Measurement``) as sub-tasks.
+
+        ``basesections.Activity.to_workflow()`` only walks ``sub_activities``;
+        ``subentry`` is pynxtools's own NeXus-native containment field for the
+        same "activity nested inside an activity" case (NXsubentry), so it needs
+        its own bridge here, same as ``Sample.normalize()`` bridges ``component``
+        into ``sub_systems``.
+        """
+        workflow = super().to_workflow()
+        workflow.tasks = workflow.tasks + [sub.to_workflow() for sub in self.subentry]
+        return workflow
 
 
 # =============================================================================

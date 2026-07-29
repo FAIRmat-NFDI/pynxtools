@@ -450,3 +450,57 @@ def test_nexus_v2_root_nxroot_attributes(arpes_root_archive):
     assert root.file_name == "/home/tommaso/Desktop/NeXus/Test/201805_WSe2_arpes.nxs"
     assert root.HDF5_Version == "1.10.5"
     assert root.file_time is not None
+
+
+# ---------------------------------------------------------------------------
+# Multi-entry files with subentries (ADR-009 decision 1: sub_activities)
+# ---------------------------------------------------------------------------
+
+
+@pytest.fixture
+def multi_entry_with_subentries(tmp_path):
+    """A file with two top-level NXentry groups, each with one NXsubentry."""
+    nxs_file = tmp_path / "multi_entry_with_subentries.nxs"
+    shutil.copy(ARPES_FILE, nxs_file)
+
+    with h5py.File(nxs_file, "a") as f:
+        f.copy(f["entry"], f, name="entry2")
+        for entry_name in ("entry", "entry2"):
+            sub = f[entry_name].create_group("subentry1")
+            sub.attrs["NX_class"] = "NXsubentry"
+            sub.create_dataset("start_time", data="2020-01-01T00:00:00")
+            sub.create_dataset("end_time", data="2020-01-01T01:00:00")
+            sub.create_dataset("definition", data="NXmpes")
+
+    return str(nxs_file)
+
+
+def test_multi_entry_subentry_normalize(multi_entry_with_subentries):
+    """Each entry's own normalize() must run end-to-end without crashing, and a
+    populated subentry must show up as a nested task in the parent's workflow2 —
+    not silently dropped (the gap ADR-009 decision 1 flagged as needing a bridge,
+    same as ``Sample.normalize()``'s component -> sub_systems bridge)."""
+    logger = get_logger(__name__)
+    archive = EntryArchive()
+    entry2_archive = EntryArchive()
+    root_archive = EntryArchive()
+
+    NexusParserV2().parse(
+        multi_entry_with_subentries,
+        archive,
+        logger,
+        child_archives={"entry2": entry2_archive, "root": root_archive},
+    )
+
+    assert root_archive.data.m_entry_paths == ["entry", "entry2"]
+
+    for arch in (archive, entry2_archive):
+        entry_data = arch.data
+        assert len(entry_data.subentry) == 1
+
+        for sub in entry_data.subentry:
+            sub.normalize(arch, logger)
+        entry_data.normalize(arch, logger)
+
+        assert arch.workflow2 is not None
+        assert len(arch.workflow2.tasks) == 1
