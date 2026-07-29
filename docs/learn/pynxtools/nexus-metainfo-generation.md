@@ -547,14 +547,10 @@ exactly the `NX_ANY` case.
 
 ---
 
-## FIELD_STATISTICS
+## Field statistics
 
-Numeric array quantities inside an `NXdata`-derived class (`node.nx_class ==
-"NXdata"` at generation time — the generated class's `m_def` carries
-`a_nexus_group(nx_class="NXdata", ...)` or, for the top-level class, its own
-`a_nexus_definition(nx_class="NXdata")`) get four parallel scalar quantities
-generated automatically, so the array's summary statistics are searchable
-even though the array itself (JSON-stored in the archive) is not:
+Numeric array quantities inside an `NXdata`-derived class get four parallel
+scalar quantities generated automatically, so the array's summary statistics are searchable even though the array itself is not:
 
 ```python
 # NXDL: <field name="energy" type="NX_FLOAT" units="NX_ENERGY"> inside an NXdata group
@@ -576,45 +572,9 @@ energy__ndim = Quantity(
     description="Number of dimensions of energy in the HDF5 file.",
 )
 ```
-
-`__ndim` uses `np.int8`, not `np.uint8` — NOMAD has no real unsigned-integer
-type and silently downcasts `np.uint8` to signed `m_int8` in its type
-registry, so the generator uses the signed type directly rather than relying
-on that implicit downcast. No `{name}__mean` quantity is generated: v1's own
-mean-into-bare-field write already fails silently for the same class of
-field, so there is no working precedent to preserve — the main quantity's own
-value is still populated with the mean when it has no declared `shape`
-(matching existing behavior for signal/axis fields), and is only skipped when
-it has a real declared shape that can't hold a reduced scalar (e.g. a 3D
-`NXdata` signal).
-
-**Scope — any field inside an `NXdata`-derived class, not just variadic
-signal/axis fields.** Every field inside an `NXdata` group is either the
-signal or an axis, both array-valued by NeXus convention, whether the NXDL
-gives it a variadic name (`DATA`/`AXISNAME`, `name_type="any"`/`"partial"`)
-or a concrete one (e.g. NXmpes's `energy`/`kx`/`ky` inside its `DATA` group,
-`name_type="specified"`). An earlier, narrower version of this check only
-counted the variadic case as array-valued, missing every concretely-named
-axis field — this is why, for example, `energy__min`/`energy__max` only
-appeared on the `AXISNAME`-pattern fields at first and not on NXmpes's own
-`energy`/`kx`/`ky`/`delay`, until the check was widened to cover the whole
-`NXdata` group uniformly.
-
-This "is the field effectively an array" decision is intentionally kept
-separate from the quantity's own declared `shape`: `NXdata` signals/axes
-routinely have no `<dimensions>` element in NXDL at all (`node.shape is
-None`), so `has_statistics` can't be driven by `shape` alone — but declaring
-`shape=["*"]` on the quantity itself to work around that would change how the
-parser populates it, and previously broke real-file scalar-style population
-for fields like `AXISNAME`. So the generator computes "is this array-like for
-statistics purposes" independently of what `shape` gets declared on the
-Quantity.
-
-The parser (`parser_v2.py`) populates the four fields via
-`get_field_stats_iuf_chunked()`/`get_field_stats_iuf_contiguous()`
-(`nomad/parsers/_field_io.py`), wrapping each stat with `MQuantity.wrap()`
-when the underlying field is variadic so distinctly-named instances (e.g.
-`intensity__min` vs. `errors__min`) don't collide.
+Note that this applies only to fields in an ``NXdata`` group. Statistics are
+generated exclusively for data arrays, not for arbitrary quantities elsewhere
+in the schema.  Restricting statistics to data arrays keeps the generated schema manageable while covering the primary data intended for searching.
 
 ---
 
