@@ -18,6 +18,7 @@
 """CLI tests for the top-level ``pynx`` dispatcher."""
 
 import builtins
+import sys
 
 import pytest
 from click.testing import CliRunner
@@ -32,7 +33,13 @@ def runner():
 
 @pytest.fixture()
 def without_nomad_lab(monkeypatch):
-    """Simulate an environment where the ``nomad`` extra is not installed."""
+    """Simulate an environment where the ``nomad`` extra is not installed.
+
+    Blocking ``import nomad`` alone is not enough: earlier-collected test
+    modules (e.g. tests/nomad/*) already import ``pynxtools.nomad*``, so
+    without evicting those from ``sys.modules`` the cache hit would make the
+    block a no-op and this fixture would silently do nothing.
+    """
     real_import = builtins.__import__
 
     def fake_import(name, *args, **kwargs):
@@ -41,6 +48,15 @@ def without_nomad_lab(monkeypatch):
         return real_import(name, *args, **kwargs)
 
     monkeypatch.setattr(builtins, "__import__", fake_import)
+
+    for name in list(sys.modules):
+        if (
+            name == "nomad"
+            or name.startswith("nomad.")
+            or name == "pynxtools.nomad"
+            or name.startswith("pynxtools.nomad.")
+        ):
+            monkeypatch.delitem(sys.modules, name, raising=False)
 
 
 class TestPynxGroup:
