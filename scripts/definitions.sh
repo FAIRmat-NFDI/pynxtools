@@ -132,4 +132,3 @@ update_nexus_version
 }
 
 main "$@"
-python ./scripts/generate_package.py

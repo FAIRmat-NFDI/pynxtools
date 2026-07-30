@@ -143,38 +143,3 @@ def get_quantity_base_name(quantity_name):
         if quantity_name.endswith("__field") and quantity_name[-8] != "_"
         else quantity_name
     )
-
-
-PACKAGE_DIR = Path(__file__).resolve().parent / "schema_packages"
-CACHE_DIR = Path(config.fs.tmp) / "pynxtools"
-
-
-def get_package_filepath() -> Path:
-    """Return the path to the NeXus metainfo package JSON file.
-
-    Resolution order:
-
-    1. If ``PYNXTOOLS_BUILD_PACKAGE`` is ``"1"``, always return the path inside
-       ``PACKAGE_DIR`` (ensures inclusion in built distributions).
-    2. If the file already exists in ``PACKAGE_DIR``, return that path.
-    3. Otherwise, return the corresponding path inside ``CACHE_DIR`` for
-       development or first-time generation.
-
-    Returns:
-        Path: Resolved location for reading or writing the JSON file.
-    """
-    filename = f"nxs_metainfo_package_{get_nexus_version()}.json"
-
-    # 1. Build-mode override (forces packaging the file)
-    if os.environ.get("PYNXTOOLS_BUILD_PACKAGE") == "1":
-        return PACKAGE_DIR / filename
-
-    # 2. Use packaged file if it exists
-    packaged = PACKAGE_DIR / filename
-    if packaged.exists():
-        return packaged
-
-    # 3. Otherwise store in cache dir
-    # create parent directory only if we need to write
-    CACHE_DIR.mkdir(parents=True, exist_ok=True)
-    return CACHE_DIR / filename
