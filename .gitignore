@@ -208,6 +208,5 @@ cython_debug/
 !src/pynxtools/units/constants_en.txt
 !src/pynxtools/units/default_en.txt
 build/
-src/pynxtools/nomad/schema_packages/nxs_metainfo_*.json
 nexusparser.egg-info/PKG-INFO
 .python-version

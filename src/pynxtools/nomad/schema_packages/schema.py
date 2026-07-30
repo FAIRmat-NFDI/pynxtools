@@ -87,7 +87,6 @@ from pynxtools.nomad import (
     NX_TYPES,
     REPLACEMENT_FOR_NX,
     _rename_nx_for_nomad,
-    get_package_filepath,
     get_quantity_base_name,
 )
 from pynxtools.units import NXUnitSet, ureg
@@ -1094,32 +1093,6 @@ def create_package_from_nxdl_directories() -> Package:
 nexus_metainfo_package: Package | None = None  # pylint: disable=C0103
 
 
-def save_nexus_schema():
-    # global nexus_metainfo_package  # pylint: disable=global-statement
-    schema_dict = nexus_metainfo_package.m_to_dict()
-
-    nxs_filepath = get_package_filepath()
-    nxs_filepath.parent.mkdir(parents=True, exist_ok=True)
-
-    with open(nxs_filepath, "wb") as file:
-        file.write(orjson.dumps(schema_dict, option=orjson.OPT_INDENT_2))
-
-
-def load_nexus_schema():
-    global nexus_metainfo_package  # pylint: disable=global-statement
-
-    nxs_filepath = get_package_filepath()
-    if not os.path.exists(nxs_filepath):
-        raise Exception(
-            "NeXus schema could not be loaded because the JSON file does not exist yet."
-        )
-
-    with open(nxs_filepath, "rb") as file:
-        schema_dict = orjson.loads(file.read())
-
-    nexus_metainfo_package = Package().m_from_dict(schema_dict)
-
-
 def create_metainfo_package():
     """This creates the package to be saved."""
     nxs_metainfo_package = create_package_from_nxdl_directories()
@@ -1159,13 +1132,8 @@ def init_nexus_metainfo():
 
     if nexus_metainfo_package is not None:
         return
-    try:
-        # load_nexus_schema()
-        raise Exception("not loading cached schema for now")
 
-    except Exception:
-        nexus_metainfo_package = create_metainfo_package()
-        # save_nexus_schema()
+    nexus_metainfo_package = create_metainfo_package()
 
     # We need to initialize the metainfo definitions. This is usually done automatically,
     # when the metainfo schema is defined though MSection Python classes.
