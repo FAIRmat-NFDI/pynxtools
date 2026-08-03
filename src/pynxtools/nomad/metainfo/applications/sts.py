@@ -48,10 +48,10 @@ from pynxtools.nomad.metainfo._category import ExperimentCategory
 from pynxtools.nomad.metainfo.applications.spm import (
     Spm,
     SpmInstrument,
+    SpmInstrumentBiasSpectroscopyEnvironment,
     SpmReproducibilityIndicators,
     SpmResolutionIndicators,
 )
-from pynxtools.nomad.metainfo.base_classes.environment import Environment
 
 if TYPE_CHECKING:
     from nomad.datamodel import EntryArchive
@@ -354,7 +354,9 @@ class StsInstrument(SpmInstrument):
         super().normalize(archive, logger)
 
 
-class StsInstrumentBiasSpectroscopyEnvironment(Environment):
+class StsInstrumentBiasSpectroscopyEnvironment(
+    SpmInstrumentBiasSpectroscopyEnvironment
+):
     """
     To explain bias (sweep measurement) voltage applied to the sample.
     """

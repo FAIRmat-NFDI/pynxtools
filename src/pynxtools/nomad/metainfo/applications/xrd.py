@@ -45,9 +45,8 @@ from pynxtools.nomad.annotations import (
     NeXusLink,
 )
 from pynxtools.nomad.metainfo._category import ExperimentCategory
-from pynxtools.nomad.metainfo.applications.monopd import Monopd
+from pynxtools.nomad.metainfo.applications.monopd import Monopd, MonopdData
 from pynxtools.nomad.metainfo.base_classes.beam import Beam
-from pynxtools.nomad.metainfo.base_classes.data import Data
 from pynxtools.nomad.metainfo.base_classes.detector import Detector
 from pynxtools.nomad.metainfo.base_classes.instrument import Instrument
 
@@ -299,7 +298,7 @@ class XrdInstrumentDetector(Detector):
         super().normalize(archive, logger)
 
 
-class XrdData(Data):
+class XrdData(MonopdData):
     m_def = Section(
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXxrd.html#nxxrd-entry-data-group"

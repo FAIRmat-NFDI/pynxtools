@@ -653,52 +653,73 @@ _base_class_qty_cache: dict[str, dict[str, NXTreeField | NXTreeAttribute]] = {}
 _base_group_nx_classes_cache: dict[str, frozenset[str]] = {}
 
 
-def _parent_generates_concept(child: NXTreeGroup, parent_app_file: str) -> bool:
-    """Return True if the parent definition defines a named concept for ``child``.
-
-    Uses ``child.children_at_definition(parent_app_file)`` — the NexusNode API
-    that selects children defined at a specific NXDL level without re-parsing.
+def _parent_generates_concept_at(child: NXTreeGroup, idx: int) -> bool:
+    """Return True if ``child.inheritance[idx]`` (i.e., one specific ancestor
+    level's raw XML element) declares a field/attribute/link, or a child group
+    not already part of the generic base class for ``child.nx_class``.
     """
+    if idx >= len(child.inheritance):
+        return False
     base_group_nx = _base_class_group_nx_classes(child.nx_class)
-    for c in child.children_at_definition(parent_app_file):
-        if c.nx_type in ("field", "attribute", "link"):
+    for c in child.inheritance[idx]:
+        tag = c.tag.split("}")[-1] if "}" in c.tag else c.tag
+        if tag in ("field", "attribute", "link"):
             return True
-        if c.nx_type == "group" and getattr(c, "nx_class", None) not in base_group_nx:
+        if tag == "group" and c.attrib.get("type") not in base_group_nx:
             return True
     return False
 
 
 def _parent_app_concept_override(
     child: NXTreeGroup,
-    parent_app: tuple[str, str, str] | None,
-) -> tuple[tuple[str, str] | None, str | None, tuple[str, str, str] | None]:
-    """Return the parent-app concept override for a named group, else Nones.
+    parent_apps: list[tuple[str, str, str]] | None,
+) -> tuple[tuple[str, str] | None, str | None, list[tuple[str, str, str]] | None]:
+    """Determine whether a group's concept should inherit from a parent application.
 
-    ``parent_app`` bundles ``(app_file, app_module, naming_base)`` for the
-    application this one extends. When a derived app (NXxps) extends another
-    (NXmpes) and both declare the same group, the generated concept should
-    inherit the parent app's concept
-    (``XpsInstrumentElectronanalyzer(MpesInstrumentElectronanalyzer)``), not the
-    generic base — otherwise parent-app additions (NXmpes's ``electron_detector``)
-    are dropped. Returns ``(base_class_override, parent_concept_file,
-    child_parent_app)``; the last is the ``parent_app`` for deeper recursion.
+    When multiple applications in an inheritance chain declare the same group,
+    the generated concept should inherit from the nearest ancestor application
+    that actually generates a concept for that group, rather than from the
+    generic base class. This preserves concepts introduced by parent
+    applications (e.g. additional child groups).
+
+    Ancestors are checked in order from nearest to furthest. An ancestor that
+    does not declare the group, or declares it without generating a concept,
+    is skipped so that a further ancestor can still provide the base class.
+
+    Returns:
+        A tuple ``(base_class_override, parent_concept_file,
+        child_parent_apps)``. ``child_parent_apps`` updates the matched
+        ancestor's naming base to the generated concept name so nested groups
+        inherit from it recursively.
     """
-    if parent_app is None:
+    if not parent_apps:
         return None, None, None
-    parent_app_file, parent_app_module, parent_naming_base = parent_app
-    if child.definition_file_at(1) != parent_app_file or not _parent_generates_concept(
-        child, parent_app_file
+    child_files = [elem.base for elem in child.inheritance]
+    for i, (parent_app_file, parent_app_module, parent_naming_base) in enumerate(
+        parent_apps
     ):
-        return None, None, None
-    parent_naming = child.group_naming_at(1)
-    if parent_naming is None:
-        return None, None, None
-    p_name, p_name_type, _p_nx_class = parent_naming
-    parent_concept_name = _concept_class_name_from_parts(
-        parent_naming_base, p_name, p_name_type
-    )
-    child_parent_app = (parent_app_file, parent_app_module, parent_concept_name)
-    return (parent_concept_name, parent_app_module), parent_app_file, child_parent_app
+        try:
+            parent_idx = child_files.index(parent_app_file)
+        except ValueError:
+            continue  # this ancestor doesn't touch the group at all — try further back
+        if not _parent_generates_concept_at(child, parent_idx):
+            continue  # touches it but adds nothing new here — try further back
+        parent_naming = child.group_naming_at(parent_idx)
+        if parent_naming is None:
+            continue
+        p_name, p_name_type, _p_nx_class = parent_naming
+        parent_concept_name = _concept_class_name_from_parts(
+            parent_naming_base, p_name, p_name_type
+        )
+        child_parent_apps = [
+            (parent_app_file, parent_app_module, parent_concept_name)
+        ] + parent_apps[i + 1 :]
+        return (
+            (parent_concept_name, parent_app_module),
+            parent_app_file,
+            child_parent_apps,
+        )
+    return None, None, None
 
 
 def _base_class_group_nx_classes(nx_class: str) -> frozenset[str]:
@@ -833,7 +854,7 @@ def _build_named_concept(
     category: str | None = None,
     seen_concept: set[str] | None = None,
     naming_base: str | None = None,
-    parent_app: tuple[str, str, str] | None = None,
+    parent_apps: list[tuple[str, str, str]] | None = None,
 ) -> tuple[NamedConceptContext, list[NamedConceptContext]]:
     """Build a NamedConceptContext for a named group occurrence.
 
@@ -1042,10 +1063,10 @@ def _build_named_concept(
                 (
                     _child_override,
                     _child_parent_concept_file,
-                    _child_parent_app,
+                    _child_parent_apps,
                 ) = _parent_app_concept_override(
                     child,
-                    parent_app,
+                    parent_apps,
                 )
                 nested_concept, nested_extra = _build_named_concept(
                     child_concept_name,
@@ -1057,7 +1078,7 @@ def _build_named_concept(
                     category=category,
                     seen_concept=_seen_concept,
                     naming_base=child_naming_base,
-                    parent_app=_child_parent_app,
+                    parent_apps=_child_parent_apps,
                 )
                 if (
                     nested_concept.quantities
@@ -1312,12 +1333,13 @@ def build_context(nx_name: str) -> dict:
     class_name = nxdl_to_class_name(nx_name)
     parent_module = _class_module_name(nx_name)
 
-    # File path of the direct parent application definition, used to locate
-    # each child group's "parent version" in child.inheritance without re-parsing.
-    _parent_app_file: str | None = None
-    _parent_class_name: str | None = None
-    _parent_module: str | None = None
-    _parent_primary_nxdl: str | None = None  # nxdl_base of groups defined in parent
+    # Ordered chain of ancestor application definitions this one (transitively)
+    # extends, nearest first — used to locate each child group's "parent
+    # version(s)" in child.inheritance without re-parsing. Not just the direct
+    # parent: an intermediate ancestor that doesn't generate its own concept
+    # for a given nested group shouldn't block inheriting from a further one
+    # that does — see _parent_app_concept_override.
+    _parent_apps: list[tuple[str, str, str]] = []
 
     if _unwrapped_children is not None:
         # Use Entry as Python base (NXentry's generated class), not the extends chain.
@@ -1338,12 +1360,23 @@ def build_context(nx_name: str) -> dict:
                 base_is_generated,
                 nomad_extra_bases,
             ) = _base_from_extends(nx_name, root_node)
-            # root_node.inheritance[1] is the parent application's definition element
-            if len(root_node.inheritance) > 1:
-                _parent_app_file = root_node.inheritance[1].base
-                _parent_class_name = nxdl_to_class_name(_extends_nx_name)
-                _parent_module = _class_module_name(_extends_nx_name)
-                _parent_primary_nxdl = root_node.inheritance[1].base
+            # root_node.inheritance[1:] are the ancestor applications' own definition
+            # elements, in order, out to (but excluding) the first non-application
+            # ancestor (NXobject, always the eventual terminus for application defs).
+            for _ancestor_elem in root_node.inheritance[1:]:
+                _ancestor_name = _ancestor_elem.attrib.get("name")
+                if (
+                    not _ancestor_name
+                    or _nxdl_category(_ancestor_name) != "applications"
+                ):
+                    break
+                _parent_apps.append(
+                    (
+                        _ancestor_elem.base,
+                        _class_module_name(_ancestor_name),
+                        nxdl_to_class_name(_ancestor_name),
+                    )
+                )
         else:
             # Standard application: unwrap NXentry → base is Entry
             base_class = "Entry"
@@ -1502,15 +1535,8 @@ def build_context(nx_name: str) -> dict:
             (
                 _base_class_override,
                 _parent_concept_file,
-                _child_parent_app,
-            ) = _parent_app_concept_override(
-                child,
-                (_parent_app_file, _parent_module, _parent_class_name)
-                if _parent_app_file is not None
-                and _parent_module is not None
-                and _parent_class_name is not None
-                else None,
-            )
+                _child_parent_apps,
+            ) = _parent_app_concept_override(child, _parent_apps)
             _parent_category = _nxdl_category(nx_name)
             concept, extra_concepts = _build_named_concept(
                 concept_name,
@@ -1522,7 +1548,7 @@ def build_context(nx_name: str) -> dict:
                 category=_parent_category,
                 seen_concept=seen_concept,
                 naming_base=_naming_base,
-                parent_app=_child_parent_app,
+                parent_apps=_child_parent_apps,
             )
 
             if concept.quantities or concept.links or concept.subsections:
