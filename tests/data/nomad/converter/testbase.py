@@ -1,32 +1,34 @@
+# SPDX-FileCopyrightText: NeXus International Advisory Committee (NIAC)
+# SPDX-FileCopyrightText: The pynxtools Authors
 #
-# Copyright The NOMAD Authors.
+# SPDX-License-Identifier: LGPL-3.0-or-later
 #
-# This file is part of NOMAD. See https://nomad-lab.eu for further info.
-#
-# Licensed under the Apache License, Version 2.0 (the "License");
-# you may not use this file except in compliance with the License.
-# You may obtain a copy of the License at
-#
-#     http://www.apache.org/licenses/LICENSE-2.0
-#
-# Unless required by applicable law or agreed to in writing, software
-# distributed under the License is distributed on an "AS IS" BASIS,
-# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-# See the License for the specific language governing permissions and
-# limitations under the License.
-#
+# This file is generated from the NeXus definition NXtestBase (see
+# https://github.com/nexusformat/definitions). It preserves that
+# definition's structure and content as NOMAD Metainfo
+# (Quantity/SubSection) objects. Accordingly, it is distributed under
+# LGPL-3.0-or-later, matching the license of the upstream NXDL
+# definitions, unlike the rest of this package (Apache-2.0).
+# During generation, pynxtools may add project-specific content (extra quantities,
+# annotations, normalize() logic, ...). See
+# docs/learn/pynxtools/licensing.md and
+# LICENSES/LGPL-3.0-or-later.txt.
 #
 # This file is AUTO-GENERATED from the NeXus definitions (NXDL).
 # Run `pynx nomad generate-metainfo --nxdl NXtestBase` to regenerate.
-# Additive-only: the generator will never remove or rename existing members.
+# Additive-only: the generator will not remove or rename existing class members
+# (unless the `--force` flag is used).
 # Add normalize() logic directly; it will be preserved on regeneration.
 from __future__ import annotations
 
 from typing import TYPE_CHECKING
 
 import numpy as np
-from nomad.datamodel.metainfo import basesections
-from nomad.datamodel.metainfo.basesections import BaseSection
+from nomad.datamodel.metainfo.annotations import (
+    ELNAnnotation,
+    ELNComponentEnum,
+    SchemaAnnotation,
+)
 from nomad.metainfo import MEnum, Quantity, Section, SubSection
 from nomad.metainfo.data_type import Bytes, Datetime
 
@@ -58,7 +60,7 @@ class Testbase(Object):
 
     m_def = Section(
         links=[
-            "https://fairmat-nfdi.github.io/nexus_definitions/classes//home/rubel/NOMAD-FAIRmat/nomad-distro-dev-RM/packages/pynxtools/src/pynxtools/data/NXtestBase.html#nxtestbase"
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/src/pynxtools/data/NXtestBase.html#nxtestbase"
         ],
         a_nexus_definition=NeXusDefinition(
             nx_class="NXtestBase",
@@ -81,7 +83,7 @@ class Testbase(Object):
     label = Quantity(
         type=str,
         links=[
-            "https://fairmat-nfdi.github.io/nexus_definitions/classes//home/rubel/NOMAD-FAIRmat/nomad-distro-dev-RM/packages/pynxtools/src/pynxtools/data/NXtestBase.html#nxtestbase-label-field"
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/src/pynxtools/data/NXtestBase.html#nxtestbase-label-field"
         ],
         description=("A text label field (tests NX_CHAR → str mapping)."),
         a_nexus_field=NeXusField(
@@ -90,13 +92,17 @@ class Testbase(Object):
             name_type="specified",
             optionality="optional",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     energy = Quantity(
         type=np.float64,
         links=[
-            "https://fairmat-nfdi.github.io/nexus_definitions/classes//home/rubel/NOMAD-FAIRmat/nomad-distro-dev-RM/packages/pynxtools/src/pynxtools/data/NXtestBase.html#nxtestbase-energy-field"
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/src/pynxtools/data/NXtestBase.html#nxtestbase-energy-field"
         ],
         dimensionality="[mass] * [length] ** 2 / [time] ** 2",
+        unit="joule",
         description=("An energy value (tests NX_FLOAT + unit → np.float64 mapping)."),
         a_nexus_field=NeXusField(
             name="energy",
@@ -105,13 +111,18 @@ class Testbase(Object):
             optionality="optional",
             units="NX_ENERGY",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "joule"},
     )
     count = Quantity(
         type=np.int64,
         links=[
-            "https://fairmat-nfdi.github.io/nexus_definitions/classes//home/rubel/NOMAD-FAIRmat/nomad-distro-dev-RM/packages/pynxtools/src/pynxtools/data/NXtestBase.html#nxtestbase-count-field"
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/src/pynxtools/data/NXtestBase.html#nxtestbase-count-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         description=("An integer count (tests NX_INT → np.int64 mapping)."),
         a_nexus_field=NeXusField(
             name="count",
@@ -120,13 +131,18 @@ class Testbase(Object):
             optionality="optional",
             units="NX_UNITLESS",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "dimensionless"},
     )
     flag = Quantity(
         type=bool,
         links=[
-            "https://fairmat-nfdi.github.io/nexus_definitions/classes//home/rubel/NOMAD-FAIRmat/nomad-distro-dev-RM/packages/pynxtools/src/pynxtools/data/NXtestBase.html#nxtestbase-flag-field"
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/src/pynxtools/data/NXtestBase.html#nxtestbase-flag-field"
         ],
         dimensionality="dimensionless",
+        unit="dimensionless",
         description=("A boolean flag (tests NX_BOOLEAN → bool mapping)."),
         a_nexus_field=NeXusField(
             name="flag",
@@ -135,11 +151,14 @@ class Testbase(Object):
             optionality="optional",
             units="NX_UNITLESS",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.BoolEditQuantity,
+        ),
     )
     mode = Quantity(
         type=MEnum(["fast", "slow", "medium"]),
         links=[
-            "https://fairmat-nfdi.github.io/nexus_definitions/classes//home/rubel/NOMAD-FAIRmat/nomad-distro-dev-RM/packages/pynxtools/src/pynxtools/data/NXtestBase.html#nxtestbase-mode-field"
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/src/pynxtools/data/NXtestBase.html#nxtestbase-mode-field"
         ],
         description=("Operating mode (tests closed enumeration → MEnum mapping)."),
         a_nexus_field=NeXusField(
@@ -149,11 +168,14 @@ class Testbase(Object):
             optionality="optional",
             enumeration=["fast", "slow", "medium"],
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.EnumEditQuantity,
+        ),
     )
     version = Quantity(
         type=str,
         links=[
-            "https://fairmat-nfdi.github.io/nexus_definitions/classes//home/rubel/NOMAD-FAIRmat/nomad-distro-dev-RM/packages/pynxtools/src/pynxtools/data/NXtestBase.html#nxtestbase-version-attribute"
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/src/pynxtools/data/NXtestBase.html#nxtestbase-version-attribute"
         ],
         description=(
             "Schema version string (tests group-level attribute → Quantity mapping)."
@@ -163,6 +185,9 @@ class Testbase(Object):
             type="NX_CHAR",
             name_type="specified",
             optionality="optional",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
 
