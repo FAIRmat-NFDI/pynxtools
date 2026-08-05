@@ -802,6 +802,16 @@ def _declares_content_at(
             # of its own) invisible, so NXxeuler (which extends NXxbase)
             # fell through XbaseData straight to generic Data.
             return True
+        if c.nx_type == "choice":
+            # A <choice> block is always new content, for the same reason as
+            # <link> above: build_context's top-level loop (the "choice"
+            # branch) adds one SubSection per alternative unconditionally,
+            # with no base_lookup comparison. No current application
+            # definition declares its own <choice> (the one in this corpus,
+            # NXdetector's, lives on a base class only), so this can't fire
+            # today — kept for when one does, rather than waiting for the
+            # same class of bug to resurface a fourth time.
+            return True
         if isinstance(c, (NXTreeField, NXTreeAttribute)):
             if _quantity_differs_from_base(c, base_lookup):
                 return True
