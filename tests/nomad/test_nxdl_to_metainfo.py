@@ -16,7 +16,59 @@
 # limitations under the License.
 #
 
-"""Unit tests for the NXDL -> metainfo converter."""
+"""Tests for the NXDL -> NOMAD metainfo converter.
+
+Goal
+    Pin the converter's transformation rules: how an NXDL node becomes a
+    ``Quantity`` or ``SubSection``, how names are resolved when they collide,
+    and how a whole NXDL renders to Python source.
+
+Flow
+    Two layers, in file order.
+
+    1. Unit tests on single converter functions — ``_build_quantity_from_node``,
+       ``_build_subsection_from_node``, ``_base_from_extends``,
+       ``build_context``, ``write_base_class``, ``generate_all_base_classes``.
+       Input nodes are constructed directly rather than parsed.
+    2. Golden tests that render the fixture NXDLs end to end and compare the
+       result against stored output.
+
+Dependencies
+    - Fixture NXDLs in ``src/pynxtools/data/``: ``NXtestBase``, ``NXtest``,
+      ``NXtest_extended``. The golden tests reach the live NeXus definitions
+      only through these, so upstream definition changes cannot break them.
+    - Golden files in ``tests/data/nomad/converter/``. Its ``conftest.py`` sets
+      ``collect_ignore_glob`` because ``test.py`` and ``test_extended.py`` match
+      pytest's discovery pattern but are reference data, not tests.
+    - No test depends on another. Each builds its own input and asserts on its
+      own output, so they can run in any order or alone.
+
+Regenerating the golden files
+    Needed when a fixture NXDL or the Jinja2 template changes. Run from the
+    repository root::
+
+        python - <<'EOF'
+        import pathlib
+        import pynxtools.nomad.converters.nxdl_to_metainfo as c
+
+        repo = str(pathlib.Path.cwd()) + "/"
+        for nx, fname in (
+            ("NXtestBase", "testbase.py"),
+            ("NXtest", "test.py"),
+            ("NXtest_extended", "test_extended.py"),
+        ):
+            src = c.render(c.build_context(nx))
+            # The fixtures resolve through _NXDL_SPECIAL_NAMES to absolute paths.
+            # Without this replace, the generating machine's layout ends up in
+            # the doc links stored in the golden.
+            pathlib.Path("tests/data/nomad/converter", fname).write_text(
+                src.replace(repo, ""), encoding="utf-8"
+            )
+        EOF
+
+    Review the resulting diff before committing: a structural change there is
+    exactly what the golden tests exist to make visible.
+"""
 
 import ast
 import xml.etree.ElementTree as ET
@@ -111,22 +163,18 @@ def _class_bases(source: str) -> dict[str, list[str]]:
     return result
 
 
-_GOLDEN_DIR = (
-    Path(__file__).parents[2]
-    / "src"
-    / "pynxtools"
-    / "nomad"
-    / "metainfo"
-    / "base_classes"
-)
-
-# Golden files generated from controlled fixture NXDLs (NXtestBase, NXtest,
+# Golden files generated from the fixture NXDLs (NXtestBase, NXtest,
 # NXtest_extended) — independent of the live NeXus definitions repo.
 _CONVERTER_GOLDEN_DIR = Path(__file__).parent.parent / "data" / "nomad" / "converter"
 
 
 def test_build_quantity_from_field_maps_transformation_unit(monkeypatch):
-    """Verify field quantities keep unit semantics and enum/type conversions."""
+    """Field nodes carry unit, shape and enum semantics onto a QuantityContext.
+
+    ``NX_TRANSFORMATION`` collapses to ``NX_ANY`` and a closed enum becomes
+    ``MEnum``; both reach the template verbatim, so a wrong mapping corrupts
+    every generated Quantity silently.
+    """
     # NXUnitSet.get_dimensionality requires the full NOMAD unit database at runtime.
     # The lambda isolates this test from that external dependency.
     monkeypatch.setattr(converter.NXUnitSet, "get_dimensionality", lambda unit: "[]")
@@ -149,7 +197,11 @@ def test_build_quantity_from_field_maps_transformation_unit(monkeypatch):
 
 
 def test_build_quantity_from_attribute_uses_dtype_mapping():
-    """Verify attribute quantities skip field-only metadata and map dtype."""
+    """Attribute nodes keep the parent-field link and carry no unit metadata.
+
+    Attributes have no NXDL unit, so ``unit`` and ``dimensionality`` must stay
+    None while ``shape`` still converts ``(None, 1)`` to ``["*", 1]``.
+    """
     node = NexusAttribute(name="status")
     node.dtype = "NX_BOOLEAN"
     node.shape = (None, 1)  # multi-dim: exercises (None, 1) → ["*", 1] conversion
@@ -198,7 +250,13 @@ def test_build_subsection_from_node_by_name_type(
     expected_literal,
     expected_variable,
 ):
-    """Validate subsection naming and flags for specified, partial, and any groups."""
+    """SubSection naming and flags follow the group's nameType.
+
+    ``specified`` keeps a fixed name; ``partial`` stays variable with the NXDL
+    literal preserved; ``any`` lowercases the class stem and leaves
+    ``nx_name_literal`` None, recording that NXDL declared no name at all.
+    ``repeats`` tracks variadic independently of naming.
+    """
     node = NexusGroup(
         nx_class="NXdetector",
         name=node_name,
@@ -222,12 +280,11 @@ def test_build_subsection_from_node_by_name_type(
 
 
 def test_base_from_extends_for_direct_child_with_nomad_base():
-    """Check inheritance tuple for direct NXobject children with NOMAD semantic base.
+    """A direct NXobject child gets generated ``Object`` plus its NOMAD semantic bases.
 
-    Uses a real ``NexusDefinition`` from ``generate_tree_from("NXentry")`` so the
-    XML inheritance chain is exercised without any mocking.  NXentry extends
-    NXobject directly, so the primary base is the generated ``Object`` class and
-    the NOMAD semantic bases from ``BASESECTIONS_MAP`` are added alongside it.
+    Runs on the real ``NXentry`` tree, so the XML inheritance chain is exercised
+    unmocked and the expected NOMAD bases are read from ``BASESECTIONS_MAP``
+    rather than hard-coded.
     """
     root = generate_tree_from("NXentry")
 
@@ -248,13 +305,12 @@ def test_base_from_extends_for_direct_child_with_nomad_base():
 def _patch_isolated_build_context(monkeypatch, root, ancestor_members):
     """Point build_context at ``root`` with a fixed ancestor member set.
 
-    ``build_context`` reaches outside the node tree in exactly two places that a
-    synthetic ``NexusDefinition`` cannot satisfy: it resolves the Python base via
-    ``_base_from_extends`` (which parses the real NXDL of whatever ``extends``
-    names) and it collects inherited member names via ``_all_ancestor_member_names``
-    (which walks the real inheritance chain).  Both are replaced with fixed values
-    so the assertions isolate the conflict-renaming rules themselves.  Everything
-    else — node traversal, quantity building, subsection building — runs for real.
+    ``build_context`` reaches outside the node tree in exactly two places a
+    synthetic definition cannot satisfy: ``_base_from_extends`` parses the real
+    NXDL named by ``extends``, and ``_all_ancestor_member_names`` walks the real
+    inheritance chain. Both are stubbed so the assertions isolate the
+    conflict-renaming rules; node traversal, quantity and subsection building
+    all still run for real.
 
     ``ancestor_members`` is the ``(quantity_names, subsection_names)`` pair the
     ancestor chain is taken to expose.
@@ -276,18 +332,14 @@ def _patch_isolated_build_context(monkeypatch, root, ancestor_members):
 
 
 def test_build_context_suffixes_field_conflicting_with_subsection(monkeypatch):
-    """Fields are renamed ``<name>_quantity`` when a SubSection owns the name.
+    """A Quantity is renamed ``<name>_quantity`` when a SubSection owns the name.
 
-    NOMAD raises MetainfoError rather than silently replacing when a SubSection
+    NOMAD raises MetainfoError instead of silently replacing when a SubSection
     and a Quantity of the same name meet in an inheritance chain, so the
-    generator renames the Quantity.  Two independent sources feed the same
-    rename and both are covered in one build:
-
-    - ``parent_sub_names`` — a SubSection inherited from an ancestor class
-    - ``own_sub_names`` — a group declared in this very class
-
-    A field's own attributes are keyed off the *renamed* quantity, so the
-    attribute quantity name must carry the suffix too.
+    generator renames the Quantity. Both sources of the clash are covered in one
+    build: a SubSection inherited from an ancestor, and a group declared by this
+    class. A field's attributes key off the renamed quantity, so they carry the
+    suffix too.
     """
     inherited_conflict = NexusField(name="inherited_conflict")
     inherited_conflict.dtype = "NX_FLOAT"
@@ -339,12 +391,10 @@ def test_build_context_suffixes_field_conflicting_with_subsection(monkeypatch):
 def test_build_context_suffixes_subsection_conflicting_with_ancestor_quantity(
     monkeypatch,
 ):
-    """Groups are renamed ``<name>_group`` when an ancestor Quantity owns the name.
+    """A group is renamed ``<name>_group`` when an ancestor Quantity owns the name.
 
-    This is the mirror image of the rename above.  The symmetric inheritance rule
-    is that whichever concept sits *higher* in the NeXus chain keeps the
-    unqualified name; here the ancestor's Quantity wins and the group declared in
-    this class is suffixed.
+    Mirror image of the rename above: whichever concept sits higher in the NeXus
+    chain keeps the unqualified name, so here the ancestor's Quantity wins.
     """
     root = _make_definition("NXentry", extends="NXancestor", doc="Doc.")
     conflicting_group = NexusGroup(
@@ -376,14 +426,12 @@ def test_build_context_suffixes_subsection_conflicting_with_ancestor_quantity(
 
 @pytest.mark.parametrize("reserved_name", ("name", "lab_id", "description"))
 def test_build_context_reserved_quantity_names_are_suffixed(monkeypatch, reserved_name):
-    """Ensure reserved quantity names are rewritten with ``_quantity`` in build output.
+    """Array fields named like a BaseSection attribute get a ``_quantity`` suffix.
 
-    Covers the names in ``_BASESECTION_RESERVED_NAMES`` (name, lab_id,
-    description) which shadow ``BaseSection`` attributes.  The suffix applies to
-    *array-shaped* fields: a scalar of the same name may safely override the
-    inherited quantity, but an array cannot, because ``BaseSection.normalize()``
-    and related logic treat those attributes as scalars throughout.  The field
-    here is therefore given a shape.
+    ``name``, ``lab_id`` and ``description`` (``_BASESECTION_RESERVED_NAMES``)
+    shadow ``BaseSection``. A scalar of the same name may override safely, an
+    array may not — ``BaseSection.normalize()`` treats them as scalars — so the
+    field under test is given a shape.
     """
     reserved_field = NexusField(name=reserved_name)
     reserved_field.dtype = "NX_CHAR"
@@ -404,10 +452,10 @@ def test_build_context_reserved_quantity_names_are_suffixed(monkeypatch, reserve
 
 
 def test_write_base_class_dry_run_detects_content_change(monkeypatch, tmp_path):
-    """Dry-run should report changes without touching existing files.
+    """Dry-run reports a content difference without writing the file.
 
-    ``output_dir`` is the *parent* of ``base_classes/``; write_class appends the
-    category subfolder itself based on the NXDL's category.
+    ``output_dir`` is the *parent* of ``base_classes/`` — ``write_class`` appends
+    the category folder itself from the NXDL's category.
     """
     out_dir = tmp_path / "base_classes"
     out_dir.mkdir(parents=True)
@@ -427,7 +475,11 @@ def test_write_base_class_dry_run_detects_content_change(monkeypatch, tmp_path):
 
 
 def test_generate_all_base_classes_counts_only_changed(monkeypatch, tmp_path):
-    """Generation count should include only classes reported as changed."""
+    """The returned count includes only the classes reported as changed.
+
+    ``write_class`` is the seam to replace: ``_generate_nx_classes`` calls it,
+    and ``write_base_class`` is a thin alias over it.
+    """
     monkeypatch.setattr(converter, "_discover_base_classes", lambda: ["NXa", "NXb"])
     monkeypatch.setattr(
         converter,
@@ -456,13 +508,12 @@ def test_generate_all_base_classes_counts_only_changed(monkeypatch, tmp_path):
 
 
 def test_write_base_class_nxtestbase_full_pipeline(tmp_path):
-    """Full-pipeline: NXtestBase generates valid Python covering key converter features.
+    """NXtestBase renders through the whole pipeline to compilable Python.
 
-    NXtestBase (src/pynxtools/data/NXtestBase.nxdl.xml) is a controlled fixture that
-    covers: NX_CHAR, NX_FLOAT with units, NX_INT, NX_BOOLEAN, closed enum, group
-    reference, and group-level attribute.  Using a fixture NXDL keeps this test
-    independent of live NeXus definition changes while still exercising the full
-    generate_tree_from → build_context → render → write pipeline.
+    Runs ``generate_tree_from`` → ``build_context`` → ``render`` → write with no
+    stubs. The fixture covers NX_CHAR, NX_FLOAT with units, NX_INT, NX_BOOLEAN, a
+    closed enum, a group reference and a group-level attribute in one pass, and
+    keeps the test independent of live NeXus definition changes.
     """
     converter.write_base_class("NXtestBase", output_dir=tmp_path, force=True)
 
@@ -483,16 +534,11 @@ def test_write_base_class_nxtestbase_full_pipeline(tmp_path):
 
 
 def test_write_base_class_nxtestbase_matches_golden():
-    """Generated NXtestBase class structure must match the stored golden file.
+    """NXtestBase's class structure matches its stored golden, rendered in memory.
 
-    The golden file lives in tests/data/nomad/converter/testbase.py and was produced
-    by running the converter against NXtestBase.nxdl.xml.  Compares class inheritance
-    and member names/kinds (Quantity, SubSection) for every class; formatting,
-    docstring text, and annotation keyword ordering do not affect the result.  A
-    failure here means the converter template or NXtestBase.nxdl.xml changed without
-    regenerating the golden file.  Fix with the snippet in
-    ``test_nxtest_fixture_sections_match_golden`` below, which covers this class
-    too.
+    Same assertions as the parametrized golden test below, which also covers
+    NXtestBase; this one is kept separate because it renders without touching the
+    filesystem, isolating a structural drift from a write-path failure.
     """
     golden = (_CONVERTER_GOLDEN_DIR / "testbase.py").read_text(encoding="utf-8")
     generated = converter.render(converter.build_context("NXtestBase"))
@@ -518,38 +564,16 @@ def test_write_base_class_nxtestbase_matches_golden():
     ],
 )
 def test_nxtest_fixture_sections_match_golden(nx_class, golden_file):
-    """Generated classes from NXtest fixtures match the stored golden section structure.
+    """Each fixture NXDL renders to the class structure stored in its golden.
 
-    Compares class inheritance and member names/kinds (Quantity, SubSection) for
-    every class in the generated file against the golden stored in
-    tests/data/nomad/converter/.  The comparison is structural — formatting,
-    docstring text, and annotation keyword ordering do not affect the result.
-    NXtest and NXtest_extended are application definitions used here as controlled
-    fixtures; they cover the full converter path including named concept groups,
-    inheritance from base classes, and multi-class output files.
+    Compares class bases and member names/kinds per class. The comparison is
+    structural, so formatting, docstring text and keyword order cannot fail it —
+    only a real change in what the schema declares. NXtest and NXtest_extended
+    are application definitions and add named-concept groups, base-class
+    inheritance and multi-class output on top of what NXtestBase covers.
 
-    A failure here means the NXtest*.nxdl.xml fixture or the Jinja2 template
-    changed without regenerating the golden.  Regenerate from the repository
-    root with::
-
-        python - <<'EOF'
-        import pathlib
-        import pynxtools.nomad.converters.nxdl_to_metainfo as c
-
-        repo = str(pathlib.Path.cwd()) + "/"
-        for nx, fname in (
-            ("NXtestBase", "testbase.py"),
-            ("NXtest", "test.py"),
-            ("NXtest_extended", "test_extended.py"),
-        ):
-            src = c.render(c.build_context(nx))
-            # These fixtures resolve through _NXDL_SPECIAL_NAMES to absolute
-            # paths, which would otherwise leak the generating machine's layout
-            # into the doc links stored in the golden.
-            pathlib.Path("tests/data/nomad/converter", fname).write_text(
-                src.replace(repo, ""), encoding="utf-8"
-            )
-        EOF
+    A failure means a fixture NXDL or the Jinja2 template changed; regenerate the
+    golden files as described in this module's docstring.
     """
     golden = (_CONVERTER_GOLDEN_DIR / golden_file).read_text(encoding="utf-8")
     generated = converter.render(converter.build_context(nx_class))
