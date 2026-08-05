@@ -47,9 +47,7 @@ from pynxtools.nomad.annotations import (
 from pynxtools.nomad.metainfo._category import ExperimentCategory
 from pynxtools.nomad.metainfo.applications.apm_paraprobe_tool_results import (
     ApmParaprobeToolResults,
-)
-from pynxtools.nomad.metainfo.base_classes.apm_paraprobe_tool_process import (
-    ApmParaprobeToolProcess,
+    ApmParaprobeToolResultsTaskprocessed,
 )
 from pynxtools.nomad.metainfo.base_classes.cs_filter_boolean_mask import (
     CsFilterBooleanMask,
@@ -146,7 +144,9 @@ class ApmParaprobeDistancerResults(ApmParaprobeToolResults):
 # =============================================================================
 
 
-class ApmParaprobeDistancerResultsPointToTriangleID(ApmParaprobeToolProcess):
+class ApmParaprobeDistancerResultsPointToTriangleID(
+    ApmParaprobeToolResultsTaskprocessed
+):
     m_def = Section(
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_distancer_results.html#nxapm_paraprobe_distancer_results-entry-point-to-triangleid-group"

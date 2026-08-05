@@ -761,6 +761,18 @@ class SensorScanSample(Sample):
         ),
     )
 
+    history = SubSection(
+        section_def="pynxtools.nomad.metainfo.base_classes.history.History",
+        repeats=True,
+        variable=True,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXhistory",
+            name=None,
+            name_type="any",
+            optionality="optional",
+        ),
+    )
+
     name = Quantity(
         type=str,
         links=[

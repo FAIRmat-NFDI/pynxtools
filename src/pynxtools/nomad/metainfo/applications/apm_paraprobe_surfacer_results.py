@@ -47,9 +47,7 @@ from pynxtools.nomad.annotations import (
 from pynxtools.nomad.metainfo._category import ExperimentCategory
 from pynxtools.nomad.metainfo.applications.apm_paraprobe_tool_results import (
     ApmParaprobeToolResults,
-)
-from pynxtools.nomad.metainfo.base_classes.apm_paraprobe_tool_process import (
-    ApmParaprobeToolProcess,
+    ApmParaprobeToolResultsTaskprocessed,
 )
 from pynxtools.nomad.metainfo.base_classes.cg_alpha_complex import CgAlphaComplex
 from pynxtools.nomad.metainfo.base_classes.cg_face_list_data_structure import (
@@ -144,7 +142,9 @@ class ApmParaprobeSurfacerResults(ApmParaprobeToolResults):
 # =============================================================================
 
 
-class ApmParaprobeSurfacerResultsPointSetWrappingID(ApmParaprobeToolProcess):
+class ApmParaprobeSurfacerResultsPointSetWrappingID(
+    ApmParaprobeToolResultsTaskprocessed
+):
     """
     Paraprobe-surfacer can be used to load a ROI that is the entire or a
     sub-set of the ion point cloud. In the point_cloud_wrapping process the

@@ -602,15 +602,7 @@ def _build_subsection_from_node(
       ``a_nexus_group`` is on the concept's ``m_def``, SubSection is clean.
     """
     nx_name_type = node.name_type or "specified"
-
-    # Repeatability rules (mirrors the old schema's _if_repeats logic):
-    # - variadic (nameType any/partial): repeatable unless maxOccurs is explicitly 1
-    # - specified: not repeatable by default, but repeatable if maxOccurs > 1 explicitly
-    max_occurs = node.occurrence_limits[1]  # None means unbounded
-    if node.variadic:
-        repeats = max_occurs is None or max_occurs > 1
-    else:
-        repeats = max_occurs is not None and max_occurs > 1
+    repeats = _repeats_from_node(node)
     variable = nx_name_type in ("any", "partial")
 
     if nx_name_type == "any":
@@ -653,20 +645,85 @@ _base_class_qty_cache: dict[str, dict[str, NXTreeField | NXTreeAttribute]] = {}
 _base_group_nx_classes_cache: dict[str, frozenset[str]] = {}
 
 
+def _quantity_differs_from_base(
+    node: NXTreeField | NXTreeAttribute,
+    base_lookup: dict[str, NXTreeField | NXTreeAttribute],
+) -> bool:
+    """Return True if ``node`` is new or has different dtype/items/unit in the
+    base class — the subset of ``_qty_differs_from_base``'s checks that make
+    sense without a ``QuantityContext`` wrapper. Requiredness and doc are
+    deliberately excluded, matching ``_requiredness_or_doc_differs``'s own
+    scope: those alone don't warrant a class of their own.
+    """
+    base_node = base_lookup.get(node.name)
+    if base_node is None:
+        return True
+    if node.dtype != base_node.dtype or node.items != base_node.items:
+        return True
+    return (
+        isinstance(node, NXTreeField)
+        and isinstance(base_node, NXTreeField)
+        and node.unit != base_node.unit
+    )
+
+
 def _parent_generates_concept_at(child: NXTreeGroup, idx: int) -> bool:
-    """Return True if ``child.inheritance[idx]`` (i.e., one specific ancestor
-    level's raw XML element) declares a field/attribute/link, or a child group
-    not already part of the generic base class for ``child.nx_class``.
+    """Return whether the ancestor at ``idx`` generates its own concept.
+
+    An ancestor generates a concept if it declares, at that specific level,
+    a field/attribute that differs from the generic base's (dtype, items,
+    unit — see ``_quantity_differs_from_base``), a child group not already
+    part of the base class for ``child.nx_class``, or a nested group (already
+    a generic type) that itself adds such content one or more levels down.
+
+    Presence alone isn't enough: an ancestor can redeclare a field purely for
+    documentation, with values identical to the generic default (e.g.
+    NXxbase's ``source`` redeclares ``type``/``name``/``probe`` unchanged). A
+    presence-only check would claim NXxbase generates its own ``source``
+    concept when ``_build_named_concept`` — using this same precise
+    comparison — never actually emits one, producing a class reference that
+    does not exist. Occurrence limits, optionality, and doc are excluded for
+    the same reason ``_build_named_concept``'s ``slot_overridden`` excludes
+    doc: see that function's docstring.
+
+    The recursion into nested groups matters because ``_parent_app_concept_override``
+    only descends into a group's own children (e.g. ``detector`` inside
+    ``instrument``) once the enclosing group's own override succeeds — so
+    ``instrument`` itself must be able to see that ``detector``, though
+    itself a generic type, adds real fields several levels down (e.g.
+    NXxbase's ``instrument`` only has directly generic children, but its own
+    ``detector`` gives it fields no generic ``NXdetector`` has).
     """
     if idx >= len(child.inheritance):
         return False
-    base_group_nx = _base_class_group_nx_classes(child.nx_class)
-    for c in child.inheritance[idx]:
-        tag = c.tag.split("}")[-1] if "}" in c.tag else c.tag
-        if tag in ("field", "attribute", "link"):
-            return True
-        if tag == "group" and c.attrib.get("type") not in base_group_nx:
-            return True
+    ancestor_file = child.inheritance[idx].base
+    return _declares_content_at(child, ancestor_file)
+
+
+def _declares_content_at(
+    node: NXTreeGroup, ancestor_file: str, _depth: int = 0
+) -> bool:
+    """Return True if ``node``'s declaration at ``ancestor_file`` differs from
+    the generic definition of ``node.nx_class``, checking own fields/
+    attributes precisely and recursing into nested groups. Depth-capped
+    against pathological self-referential NXDL structures (e.g. NXnote
+    containing NXnote); real NXDL nesting never comes close to this depth.
+    """
+    if _depth > 10:
+        return False
+    base_group_nx = _base_class_group_nx_classes(node.nx_class)
+    base_lookup = _base_class_quantities(node.nx_class)
+    for c in node.children_at_definition(ancestor_file):
+        if isinstance(c, (NXTreeField, NXTreeAttribute)):
+            if _quantity_differs_from_base(c, base_lookup):
+                return True
+        elif isinstance(c, NXTreeGroup):
+            if c.nx_class not in base_group_nx:
+                return True
+            if ancestor_file in (elem.base for elem in c.inheritance) and (
+                _declares_content_at(c, ancestor_file, _depth + 1)
+            ):
+                return True
     return False
 
 
@@ -688,13 +745,38 @@ def _parent_app_concept_override(
 
     Returns:
         A tuple ``(base_class_override, parent_concept_file,
-        child_parent_apps)``. ``child_parent_apps`` updates the matched
-        ancestor's naming base to the generated concept name so nested groups
-        inherit from it recursively.
+        child_parent_apps)``. ``child_parent_apps`` updates every remaining
+        candidate's naming base to what *it* calls this enclosing concept
+        (not just the matched one) so nested groups inherit correctly even
+        when a fallback candidate ends up providing their base a level
+        further down — e.g. for ``source`` nested in ``instrument``, where
+        ``instrument`` itself resolved to ``XrotInstrument`` but ``source``
+        isn't declared by Xrot at all: the fallback candidate for Xbase must
+        already be named "XbaseInstrument", not bare "Xbase", or the nested
+        concept ends up misnamed "XbaseSource" instead of
+        "XbaseInstrumentSource".
     """
     if not parent_apps:
         return None, None, None
     child_files = [elem.base for elem in child.inheritance]
+
+    def _renamed_for_this_level(
+        app_file: str, app_module: str, naming_base: str
+    ) -> tuple[str, str, str]:
+        try:
+            idx = child_files.index(app_file)
+        except ValueError:
+            return app_file, app_module, naming_base
+        naming = child.group_naming_at(idx)
+        if naming is None:
+            return app_file, app_module, naming_base
+        name, name_type, _ = naming
+        return (
+            app_file,
+            app_module,
+            _concept_class_name_from_parts(naming_base, name, name_type),
+        )
+
     for i, (parent_app_file, parent_app_module, parent_naming_base) in enumerate(
         parent_apps
     ):
@@ -713,7 +795,7 @@ def _parent_app_concept_override(
         )
         child_parent_apps = [
             (parent_app_file, parent_app_module, parent_concept_name)
-        ] + parent_apps[i + 1 :]
+        ] + [_renamed_for_this_level(*candidate) for candidate in parent_apps[i + 1 :]]
         return (
             (parent_concept_name, parent_app_module),
             parent_app_file,
@@ -748,12 +830,14 @@ def _base_class_group_nx_classes(nx_class: str) -> frozenset[str]:
 def _group_python_name(node: NXTreeGroup) -> str:
     """Return the Python attribute name a SubSection for ``node`` would get.
 
-    Mirrors the naming rule in ``_build_subsection_from_node``: ``node.name``
-    is always populated (NXDL's explicit name, or the uppercase NX class stem
-    when absent), so variadic (``name_type="any"``) groups just lowercase it
-    (e.g. ``"detector"`` for any ``NXdetector``, ``"bias_sweep"`` for an
-    explicitly-named ``name="BIAS_SWEEP"`` variadic group); other groups use
-    it as-is (e.g. ``"analyser"``).
+    Mirrors the naming rule in ``_build_subsection_from_node``: variadic
+    (``name_type="any"``) groups are lowercased; other groups use
+    ``node.name`` as-is.
+
+    For example, a variadic ``NXdetector`` with no explicit name becomes
+    ``"detector"``; one explicitly named ``"BIAS_SWEEP"`` becomes
+    ``"bias_sweep"``; a specified group named ``"analyser"`` stays
+    ``"analyser"``.
     """
     nx_name_type = node.name_type or "specified"
     if nx_name_type == "any":
@@ -761,33 +845,47 @@ def _group_python_name(node: NXTreeGroup) -> str:
     return nxdl_to_subsection_name(node.name)
 
 
-_base_group_python_names_cache: dict[str, frozenset[str]] = {}
+def _repeats_from_node(node: NXTreeGroup) -> bool:
+    """Return whether a SubSection for ``node`` should be repeatable.
 
-
-def _base_class_group_python_names(nx_class: str) -> frozenset[str]:
-    """Return the SubSection python_names of direct group children in the generic class.
-
-    Used to detect whether a child group occurrence inside an application-specific
-    group element (e.g. ``analyser`` inside NXarpes's ``instrument``) is genuinely
-    new — i.e. the generic class has no SubSection under that Python name — versus
-    one that merely re-specifies a slot the generic class already exposes under the
-    same name (e.g. a ``source`` group named "source" where the generic class
-    already has a variadic ``source`` SubSection).
+    Mirrors the rule in ``_build_subsection_from_node``: variadic (nameType
+    any/partial) groups repeat unless ``maxOccurs`` is explicitly 1;
+    specified groups don't repeat unless ``maxOccurs`` is explicitly > 1.
     """
-    if nx_class in _base_group_python_names_cache:
-        return _base_group_python_names_cache[nx_class]
+    max_occurs = node.occurrence_limits[1]  # None means unbounded
+    if node.variadic:
+        return max_occurs is None or max_occurs > 1
+    return max_occurs is not None and max_occurs > 1
+
+
+_base_group_nodes_cache: dict[str, dict[str, NXTreeGroup]] = {}
+
+
+def _base_class_group_nodes(nx_class: str) -> dict[str, NXTreeGroup]:
+    """Return a python_name → node lookup of direct group children in the generic class.
+
+    Used to tell a new child group apart from one that merely re-specifies a
+    slot the generic class already exposes under the same name, and — via
+    the node — to compare occurrence limits between the two.
+
+    For example, ``analyser`` inside NXarpes's ``instrument`` is new — the
+    generic class has no SubSection under that name. A ``source`` group named
+    "source" is not new — the generic class already has a variadic
+    ``source`` SubSection.
+    """
+    if nx_class in _base_group_nodes_cache:
+        return _base_group_nodes_cache[nx_class]
     try:
         base_root = generate_tree_from(nx_class)
     except Exception:
-        _base_group_python_names_cache[nx_class] = frozenset()
-        return frozenset()
-    names: set[str] = set()
+        _base_group_nodes_cache[nx_class] = {}
+        return {}
+    lookup: dict[str, NXTreeGroup] = {}
     for child in base_root.children:
         if isinstance(child, NXTreeGroup) and child.nx_class:
-            names.add(_group_python_name(child))
-    result = frozenset(names)
-    _base_group_python_names_cache[nx_class] = result
-    return result
+            lookup[_group_python_name(child)] = child
+    _base_group_nodes_cache[nx_class] = lookup
+    return lookup
 
 
 def _base_class_quantities(nx_class: str) -> dict[str, NXTreeField | NXTreeAttribute]:
@@ -807,22 +905,36 @@ def _base_class_quantities(nx_class: str) -> dict[str, NXTreeField | NXTreeAttri
     return lookup
 
 
+def _own_doc(node: NXTreeGroup | NXTreeField | NXTreeAttribute) -> str:
+    """Return this node's own doc text (not its ancestors'), stripped."""
+    return (next(iter(node.get_docstring(depth=1).values()), None) or "").strip()
+
+
+def _requiredness_or_doc_differs(
+    node: NXTreeGroup | NXTreeField | NXTreeAttribute,
+    base_node: NXTreeGroup | NXTreeField | NXTreeAttribute,
+) -> bool:
+    """Return True if optionality or own doc text differs from the base node.
+
+    Shared by fields and groups. Requiredness counts as a difference:
+    tightening from "optional"/"recommended" to "required" is itself a
+    meaningful constraint, and the round-trip exporter needs a concrete
+    declaration to recover it. So does a more specific doc — e.g.
+    NXspm_bias_spectroscopy's ``acquisition_time`` vs NXcircuit's generic one.
+    """
+    if node.optionality != base_node.optionality:
+        return True
+    return _own_doc(node) != _own_doc(base_node)
+
+
 def _qty_differs_from_base(
     qty: QuantityContext, base_lookup: dict[str, NXTreeField | NXTreeAttribute]
 ) -> bool:
-    """Return True if this quantity is new or has different properties in the base class.
-
-    Requiredness (optionality) counts as a difference: an application
-    definition tightening a field from "optional"/"recommended" to "required"
-    is itself a meaningful constraint, and the round-trip exporter
-    needs a concrete Quantity declaration to recover it.
-    """
+    """Return True if this quantity is new or has different properties in the base class."""
     base_node = base_lookup.get(qty.node.name)
     if base_node is None:
-        return True  # quantity not in generic class — genuinely new
+        return True  # quantity not in generic class — new
     if qty.node.dtype != base_node.dtype:
-        return True
-    if qty.node.optionality != base_node.optionality:
         return True
     if qty.node.items != base_node.items:
         return True
@@ -832,16 +944,7 @@ def _qty_differs_from_base(
         and qty.node.unit != base_node.unit
     ):
         return True
-    # Description-only changes: include in the named concept so the more
-    # specific app doc reaches the user (e.g. NXspm_bias_spectroscopy's
-    # acquisition_time vs NXcircuit's generic one).
-    qty_doc = (next(iter(qty.node.get_docstring(depth=1).values()), None) or "").strip()
-    base_doc = (
-        next(iter(base_node.get_docstring(depth=1).values()), None) or ""
-    ).strip()
-    if qty_doc != base_doc:
-        return True
-    return False
+    return _requiredness_or_doc_differs(qty.node, base_node)
 
 
 def _build_named_concept(
@@ -892,7 +995,7 @@ def _build_named_concept(
     nx_name_type = node.name_type or "specified"
     variable = nx_name_type in ("any", "partial")
 
-    # None for a genuinely anonymous group (no name= attribute at all — NXDL
+    # None for a fully anonymous group (no name= attribute at all — NXDL
     # gives no template name); the literal name otherwise, even for "any"
     # groups that do have an explicit template name (e.g. "BIAS_SWEEP"). For
     # partial groups this preserves the full name (e.g. "peakPEAK") so the
@@ -917,7 +1020,7 @@ def _build_named_concept(
     )
 
     # Own quantities: fields and attributes defined inside the group in NXDL
-    # that genuinely differ from the parent class (new field, different
+    # that differ from the parent class (new field, different
     # optionality, different type/units/enumeration).
     own_quantities: list[QuantityContext] = []
     own_links: list[LinkContext] = []
@@ -993,18 +1096,18 @@ def _build_named_concept(
                 if _qty_differs_from_base(attr_qty, base_lookup):
                     own_quantities.append(attr_qty)
 
-    # Application-specific sub-groups: group children whose Python SubSection
-    # name is NOT already provided by the parent class (a genuinely new,
-    # specifically-named slot — e.g. "analyser" inside NXarpes's "instrument",
-    # where parent NXinstrument only has a variadic "detector") AND not already
-    # declared by the parent concept class (if one exists, e.g. MpesInstrument
-    # for XpsInstrument).
-    base_group_python_names = _base_class_group_python_names(node.nx_class)
-    # Sub-groups already covered by the parent concept class (to avoid duplication).
-    # Compared by python_name (slot identity), not nx_class (type) — two groups of
-    # the same NX class but different explicit names (e.g. the parent's generic,
-    # unnamed "ENVIRONMENT" slot vs. this class's distinctly-named "SCAN_ENVIRONMENT"
-    # slot) are different slots, not a duplicate of each other.
+    # Application-specific sub-groups: children whose Python SubSection name
+    # isn't already provided by the parent class, and isn't already declared
+    # by the parent concept class either (if one exists).
+    #
+    # E.g. "analyser" inside NXarpes's "instrument" is new — NXinstrument only
+    # has a variadic "detector". MpesInstrument already declaring a slot means
+    # XpsInstrument doesn't need to redeclare it.
+    base_group_nodes = _base_class_group_nodes(node.nx_class)
+    # Compared by python_name (slot identity), not nx_class (type): two
+    # groups of the same NX class but different explicit names are different
+    # slots, not duplicates of each other (e.g. a generic "environment" vs.
+    # a distinctly-named "scan_environment").
     parent_concept_group_names: frozenset[str] = (
         frozenset(
             _group_python_name(c)
@@ -1025,14 +1128,24 @@ def _build_named_concept(
             continue  # already declared in parent concept class
         if sub_python_name in seen_sub:
             continue
-        # If the python_name collides with a SubSection the generic class
-        # already exposes (e.g. "source"/"monochromator" on NXinstrument),
-        # this group is only worth a nested named concept (and an overriding
-        # SubSection) when it genuinely redefines its own quantities/links/
-        # subsections — e.g. NXarpes's instrument/source narrows `probe` to
-        # `["x-ray"]`, warranting ArpesInstrumentSource(Source). Otherwise the
-        # inherited SubSection already covers it and nothing is emitted here.
-        is_collision = sub_python_name in base_group_python_names
+        # A collision with a SubSection the generic class already exposes
+        # (e.g. "source" on NXinstrument) is only worth its own nested
+        # concept when it actually redefines something — e.g. NXarpes
+        # narrows `probe` to `["x-ray"]` on its instrument/source, warranting
+        # ArpesInstrumentSource(Source). Otherwise the inherited SubSection
+        # already covers it and nothing is emitted here.
+        base_group_node = base_group_nodes.get(sub_python_name)
+        is_collision = base_group_node is not None
+        # A collision can still narrow/widen occurrence limits or differ in
+        # requiredness/doc (via the same _requiredness_or_doc_differs used
+        # for fields) without adding any fields of its own — that has no own
+        # content either, but still needs its own SubSection (still pointing
+        # at the generic class) to carry the child's own values, rather than
+        # being dropped in favor of the inherited one.
+        slot_overridden = is_collision and (
+            _repeats_from_node(child) != _repeats_from_node(base_group_node)
+            or _requiredness_or_doc_differs(child, base_group_node)
+        )
 
         # Symmetric inheritance rule: if the ancestor chain defines a field/
         # attribute with this name, the group introduced at this level is the
@@ -1095,7 +1208,7 @@ def _build_named_concept(
                         child, section_fqn=target_fqn, is_named_concept=True
                     )
         if sub_section is None:
-            if is_collision:
+            if is_collision and not slot_overridden:
                 continue  # no own content — inherited SubSection already covers this
             sub_section = _build_subsection_from_node(
                 child, section_fqn=_section_fqn(child.nx_class)
@@ -1334,11 +1447,8 @@ def build_context(nx_name: str) -> dict:
     parent_module = _class_module_name(nx_name)
 
     # Ordered chain of ancestor application definitions this one (transitively)
-    # extends, nearest first — used to locate each child group's "parent
-    # version(s)" in child.inheritance without re-parsing. Not just the direct
-    # parent: an intermediate ancestor that doesn't generate its own concept
-    # for a given nested group shouldn't block inheriting from a further one
-    # that does — see _parent_app_concept_override.
+    # extends, nearest first. Passed to _parent_app_concept_override, which
+    # tries each in turn rather than only the direct parent.
     _parent_apps: list[tuple[str, str, str]] = []
 
     if _unwrapped_children is not None:

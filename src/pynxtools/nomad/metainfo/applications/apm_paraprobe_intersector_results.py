@@ -47,9 +47,7 @@ from pynxtools.nomad.annotations import (
 from pynxtools.nomad.metainfo._category import ExperimentCategory
 from pynxtools.nomad.metainfo.applications.apm_paraprobe_tool_results import (
     ApmParaprobeToolResults,
-)
-from pynxtools.nomad.metainfo.base_classes.apm_paraprobe_tool_process import (
-    ApmParaprobeToolProcess,
+    ApmParaprobeToolResultsTaskprocessed,
 )
 from pynxtools.nomad.metainfo.base_classes.process import Process
 
@@ -137,7 +135,9 @@ class ApmParaprobeIntersectorResults(ApmParaprobeToolResults):
 # =============================================================================
 
 
-class ApmParaprobeIntersectorResultsVVSpatialCorrelationID(ApmParaprobeToolProcess):
+class ApmParaprobeIntersectorResultsVVSpatialCorrelationID(
+    ApmParaprobeToolResultsTaskprocessed
+):
     """
     The results of an overlap/intersection analysis.
     """

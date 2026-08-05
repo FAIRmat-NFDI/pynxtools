@@ -559,6 +559,16 @@ class ApmInstrumentPulser(Component):
         ),
     )
 
+    fabrication = SubSection(
+        section_def="pynxtools.nomad.metainfo.base_classes.fabrication.Fabrication",
+        repeats=False,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXfabrication",
+            name="fabrication",
+            name_type="specified",
+            optionality="optional",
+        ),
+    )
     sourceID = SubSection(
         section_def="pynxtools.nomad.metainfo.base_classes.apm_instrument.ApmInstrumentPulserSourceID",
         repeats=True,

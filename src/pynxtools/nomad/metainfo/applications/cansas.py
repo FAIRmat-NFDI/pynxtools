@@ -2206,6 +2206,24 @@ class CansasProcess(Process):
         ),
     )
 
+    note = SubSection(
+        section_def="pynxtools.nomad.metainfo.base_classes.note.Note",
+        repeats=True,
+        variable=True,
+        description=(
+            "Any additional notes or subprocessing steps will be documented "
+            "here. An **NXnote** group can be added to any NeXus group at or "
+            "below the **NXentry** group. It is shown here as a suggestion of a "
+            "good place to *consider* its use."
+        ),
+        a_nexus_group=NeXusGroup(
+            nx_class="NXnote",
+            name=None,
+            name_type="any",
+            optionality="optional",
+            min_occurs=0,
+        ),
+    )
     collection = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.cansas.CansasProcessCollection",
         repeats=True,

@@ -47,9 +47,7 @@ from pynxtools.nomad.annotations import (
 from pynxtools.nomad.metainfo._category import ExperimentCategory
 from pynxtools.nomad.metainfo.applications.apm_paraprobe_tool_results import (
     ApmParaprobeToolResults,
-)
-from pynxtools.nomad.metainfo.base_classes.apm_paraprobe_tool_process import (
-    ApmParaprobeToolProcess,
+    ApmParaprobeToolResultsTaskprocessed,
 )
 
 if TYPE_CHECKING:
@@ -132,7 +130,7 @@ class ApmParaprobeRangerResults(ApmParaprobeToolResults):
 # =============================================================================
 
 
-class ApmParaprobeRangerResultsIontypesID(ApmParaprobeToolProcess):
+class ApmParaprobeRangerResultsIontypesID(ApmParaprobeToolResultsTaskprocessed):
     """
     The tool loads ranging definitions from the configuration file and
     evaluates for each ion to which iontype it matches. If an ion matches on no

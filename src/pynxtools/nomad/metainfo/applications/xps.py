@@ -298,6 +298,41 @@ class XpsCoordinateSystem(CoordinateSystem):
         ),
     )
 
+    transformations = SubSection(
+        section_def="pynxtools.nomad.metainfo.base_classes.transformations.Transformations",
+        repeats=True,
+        variable=True,
+        description=(
+            "Set of transformations, describing the orientation of the XPS "
+            "coordinate system with respect to the beam coordinate system (.) or "
+            "another coordinate system. The transformations in the "
+            "``NXtransformations`` group depend on the actual instrument "
+            "geometry. If the z-axis is pointing in the direction of gravity "
+            "(i.e., if the sample is mounted horizontally), the following "
+            "transformations can be used for describing the XPS coordinate "
+            "system with respect to the beam coordinate system (.): .. "
+            "code-block:: xps_coordinate_system:NXcoordinate_system "
+            "depends_on=coordinate_transformations/sample_stage_to_source_azimuth "
+            "coordinate_transformations:NXtransformations "
+            "sample_stage_to_source_azimuth=beam_azimuth_angle "
+            "@depends_on=sample_stage_to_source_polar "
+            "@transformation_type=rotation @vector=[0, 0, -1] @units=degree "
+            "sample_stage_to_source_polar=beam_polar_angle_of_incidence "
+            "@depends_on=. @transformation_type=rotation @vector=[1, 0, 0] "
+            "@units=degree Note that this ``NXtransformations`` group is not "
+            "needed when the defined :ref:`transformations in beam_probe "
+            "</NXxps/ENTRY/INSTRUMENT/beam_probe/transformations-group>` are "
+            "used. In this case, this group shall not be written here to avoid "
+            "circular references in the transformations chain."
+        ),
+        a_nexus_group=NeXusGroup(
+            nx_class="NXtransformations",
+            name=None,
+            name_type="any",
+            optionality="optional",
+        ),
+    )
+
     origin = Quantity(
         type=MEnum(["sample stage"]),
         links=[
@@ -759,6 +794,16 @@ class XpsInstrumentElectronanalyzer(MpesInstrumentElectronanalyzer):
         ),
     )
 
+    transmission_function = SubSection(
+        section_def="pynxtools.nomad.metainfo.base_classes.data.Data",
+        repeats=False,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXdata",
+            name="transmission_function",
+            name_type="specified",
+            optionality="recommended",
+        ),
+    )
     collectioncolumn = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.xps.XpsInstrumentElectronanalyzerCollectioncolumn",
         repeats=True,

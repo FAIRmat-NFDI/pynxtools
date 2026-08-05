@@ -286,6 +286,22 @@ class MpesArpesArpesGeometry(CoordinateSystem):
         ),
     )
 
+    transformations = SubSection(
+        section_def="pynxtools.nomad.metainfo.base_classes.transformations.Transformations",
+        repeats=True,
+        variable=True,
+        description=(
+            "Set of transformations, describing the orientation of the ARPES "
+            "coordinate system with respect to the beam coordinate system (.)."
+        ),
+        a_nexus_group=NeXusGroup(
+            nx_class="NXtransformations",
+            name=None,
+            name_type="any",
+            optionality="required",
+        ),
+    )
+
     depends_on = Quantity(
         type=str,
         links=[

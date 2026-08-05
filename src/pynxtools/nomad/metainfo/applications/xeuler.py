@@ -41,9 +41,13 @@ from pynxtools.nomad.annotations import (
     NeXusLink,
 )
 from pynxtools.nomad.metainfo._category import ExperimentCategory
-from pynxtools.nomad.metainfo.applications.xbase import Xbase, XbaseData, XbaseSample
-from pynxtools.nomad.metainfo.base_classes.detector import Detector
-from pynxtools.nomad.metainfo.base_classes.instrument import Instrument
+from pynxtools.nomad.metainfo.applications.xbase import (
+    Xbase,
+    XbaseInstrument,
+    XbaseInstrumentDetector,
+    XbaseSample,
+)
+from pynxtools.nomad.metainfo.base_classes.data import Data
 
 if TYPE_CHECKING:
     from nomad.datamodel import EntryArchive
@@ -149,7 +153,7 @@ class Xeuler(Xbase):
 # =============================================================================
 
 
-class XeulerInstrument(Instrument):
+class XeulerInstrument(XbaseInstrument):
     m_def = Section(
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXxeuler.html#nxxeuler-entry-instrument-group"
@@ -171,7 +175,7 @@ class XeulerInstrument(Instrument):
         super().normalize(archive, logger)
 
 
-class XeulerInstrumentDetector(Detector):
+class XeulerInstrumentDetector(XbaseInstrumentDetector):
     m_def = Section(
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXxeuler.html#nxxeuler-entry-instrument-detector-group"
@@ -286,7 +290,7 @@ class XeulerSample(XbaseSample):
         super().normalize(archive, logger)
 
 
-class XeulerName(XbaseData):
+class XeulerName(Data):
     m_def = Section(
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXxeuler.html#nxxeuler-entry-name-group"

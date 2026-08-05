@@ -47,9 +47,7 @@ from pynxtools.nomad.annotations import (
 from pynxtools.nomad.metainfo._category import ExperimentCategory
 from pynxtools.nomad.metainfo.applications.apm_paraprobe_tool_results import (
     ApmParaprobeToolResults,
-)
-from pynxtools.nomad.metainfo.base_classes.apm_paraprobe_tool_process import (
-    ApmParaprobeToolProcess,
+    ApmParaprobeToolResultsTaskprocessed,
 )
 from pynxtools.nomad.metainfo.base_classes.cg_face_list_data_structure import (
     CgFaceListDataStructure,
@@ -145,7 +143,9 @@ class ApmParaprobeTessellatorResults(ApmParaprobeToolResults):
 # =============================================================================
 
 
-class ApmParaprobeTessellatorResultsTessellationID(ApmParaprobeToolProcess):
+class ApmParaprobeTessellatorResultsTessellationID(
+    ApmParaprobeToolResultsTaskprocessed
+):
     """
     The tool can be used to compute a Voronoi tessellation the entire or of a
     sub-set of the reconstructed volume. Each point (ion) is wrapped in one

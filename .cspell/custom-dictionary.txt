@@ -76,7 +76,9 @@ Vamas
 Walid
 Welford
 Welford's
+Xbase
 Xclass
+Xrot
 Zenodo
 allclose
 alphabetagamma

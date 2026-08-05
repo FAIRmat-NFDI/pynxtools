@@ -62,6 +62,9 @@ from pynxtools.nomad.metainfo.base_classes.em_eds import EmEds
 from pynxtools.nomad.metainfo.base_classes.em_event_data import EmEventData
 from pynxtools.nomad.metainfo.base_classes.em_img import EmImg
 from pynxtools.nomad.metainfo.base_classes.em_instrument import EmInstrument
+from pynxtools.nomad.metainfo.base_classes.em_interaction_volume import (
+    EmInteractionVolume,
+)
 from pynxtools.nomad.metainfo.base_classes.em_measurement import EmMeasurement
 from pynxtools.nomad.metainfo.base_classes.em_simulation import EmSimulation
 from pynxtools.nomad.metainfo.base_classes.entry import Entry
@@ -9349,6 +9352,28 @@ class EmMeasurementEventIDInstrument(EmInstrument):
         repeats=True,
         variable=True,
     )
+    nanoprobeID = SubSection(
+        section_def="pynxtools.nomad.metainfo.base_classes.manipulator.Manipulator",
+        repeats=True,
+        variable=True,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXmanipulator",
+            name="nanoprobeID",
+            name_type="partial",
+            optionality="optional",
+            min_occurs=0,
+        ),
+    )
+    gas_injector = SubSection(
+        section_def="pynxtools.nomad.metainfo.base_classes.component.Component",
+        repeats=False,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXcomponent",
+            name="gas_injector",
+            name_type="specified",
+            optionality="optional",
+        ),
+    )
     pumpID = SubSection(
         section_def="pynxtools.nomad.metainfo.base_classes.pump.Pump",
         repeats=True,
@@ -9429,6 +9454,18 @@ class EmMeasurementEventIDInstrumentEbeamColumn(EbeamColumn):
             min_occurs=0,
         ),
     )
+    blankerID = SubSection(
+        section_def="pynxtools.nomad.metainfo.base_classes.deflector.Deflector",
+        repeats=True,
+        variable=True,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXdeflector",
+            name="blankerID",
+            name_type="partial",
+            optionality="optional",
+            min_occurs=0,
+        ),
+    )
     monochromatorID = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.em.EmMeasurementEventIDInstrumentEbeamColumnMonochromatorID",
         repeats=True,
@@ -9442,6 +9479,28 @@ class EmMeasurementEventIDInstrumentEbeamColumn(EbeamColumn):
     corrector_ax = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.em.EmMeasurementEventIDInstrumentEbeamColumnCorrectorAx",
         repeats=False,
+    )
+    biprismID = SubSection(
+        section_def="pynxtools.nomad.metainfo.base_classes.component.Component",
+        repeats=True,
+        variable=True,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXcomponent",
+            name="biprismID",
+            name_type="partial",
+            optionality="optional",
+        ),
+    )
+    phaseplateID = SubSection(
+        section_def="pynxtools.nomad.metainfo.base_classes.component.Component",
+        repeats=True,
+        variable=True,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXcomponent",
+            name="phaseplateID",
+            name_type="partial",
+            optionality="optional",
+        ),
     )
     sensorID = SubSection(
         section_def="pynxtools.nomad.metainfo.base_classes.sensor.Sensor",
@@ -11487,6 +11546,18 @@ class EmMeasurementEventIDInstrumentIbeamColumn(IbeamColumn):
             min_occurs=0,
         ),
     )
+    blankerID = SubSection(
+        section_def="pynxtools.nomad.metainfo.base_classes.deflector.Deflector",
+        repeats=True,
+        variable=True,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXdeflector",
+            name="blankerID",
+            name_type="partial",
+            optionality="optional",
+            min_occurs=0,
+        ),
+    )
     monochromatorID = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.em.EmMeasurementEventIDInstrumentIbeamColumnMonochromatorID",
         repeats=True,
@@ -12246,8 +12317,20 @@ class EmSimulationResults(Process):
         ),
     )
     interaction_volumeID = SubSection(
-        section_def="pynxtools.nomad.metainfo.base_classes.em_interaction_volume.EmInteractionVolume",
+        section_def="pynxtools.nomad.metainfo.applications.em.EmSimulationResultsInteractionVolumeID",
         repeats=True,
+        variable=True,
+    )
+
+    def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
+        super().normalize(archive, logger)
+
+
+class EmSimulationResultsInteractionVolumeID(EmInteractionVolume):
+    m_def = Section(
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXem.html#nxem-entry-simulation-results-interaction-volumeid-group"
+        ],
         variable=True,
         a_nexus_group=NeXusGroup(
             nx_class="NXem_interaction_volume",
@@ -12255,6 +12338,29 @@ class EmSimulationResults(Process):
             name_type="partial",
             optionality="optional",
             min_occurs=0,
+        ),
+    )
+
+    data = SubSection(
+        section_def="pynxtools.nomad.metainfo.base_classes.data.Data",
+        repeats=True,
+        variable=True,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXdata",
+            name=None,
+            name_type="any",
+            optionality="recommended",
+        ),
+    )
+    process = SubSection(
+        section_def="pynxtools.nomad.metainfo.base_classes.process.Process",
+        repeats=True,
+        variable=True,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXprocess",
+            name=None,
+            name_type="any",
+            optionality="recommended",
         ),
     )
 
@@ -12422,6 +12528,16 @@ class EmRoiIDEbsd(EmEbsd):
     simulation = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.em.EmRoiIDEbsdSimulation",
         repeats=False,
+    )
+    calibration = SubSection(
+        section_def="pynxtools.nomad.metainfo.base_classes.process.Process",
+        repeats=False,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXprocess",
+            name="calibration",
+            name_type="specified",
+            optionality="recommended",
+        ),
     )
     indexing = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.em.EmRoiIDEbsdIndexing",

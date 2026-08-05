@@ -42,6 +42,7 @@ from pynxtools.nomad.annotations import (
 )
 from pynxtools.nomad.metainfo.base_classes.actuator import Actuator
 from pynxtools.nomad.metainfo.base_classes.component import Component
+from pynxtools.nomad.metainfo.base_classes.pid_controller import PidController
 
 if TYPE_CHECKING:
     from nomad.datamodel import EntryArchive
@@ -309,12 +310,41 @@ class PositionerActuator(Actuator):
     )
 
     feedback = SubSection(
-        section_def="pynxtools.nomad.metainfo.base_classes.pid_controller.PidController",
+        section_def="pynxtools.nomad.metainfo.base_classes.positioner.PositionerActuatorFeedback",
         repeats=False,
-        description=("The feedback of the actual position of the positioner."),
+    )
+
+    def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
+        super().normalize(archive, logger)
+
+
+class PositionerActuatorFeedback(PidController):
+    """
+    The feedback of the actual position of the positioner.
+    """
+
+    m_def = Section(
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXpositioner.html#nxpositioner-actuator-feedback-group"
+        ],
         a_nexus_group=NeXusGroup(
             nx_class="NXpid_controller",
             name="feedback",
+            name_type="specified",
+            optionality="optional",
+        ),
+    )
+
+    pv_sensor = SubSection(
+        section_def="pynxtools.nomad.metainfo.base_classes.sensor.Sensor",
+        repeats=False,
+        description=(
+            "If present, the value and the value_log of this pv_sensor is the "
+            "same as the value and raw_value of the position itself."
+        ),
+        a_nexus_group=NeXusGroup(
+            nx_class="NXsensor",
+            name="pv_sensor",
             name_type="specified",
             optionality="optional",
         ),

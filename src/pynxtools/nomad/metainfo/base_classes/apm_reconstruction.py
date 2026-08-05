@@ -654,6 +654,28 @@ class ApmReconstructionNaiveDiscretization(Process):
             optionality="optional",
         ),
     )
+    data = SubSection(
+        section_def="pynxtools.nomad.metainfo.base_classes.data.Data",
+        repeats=True,
+        variable=True,
+        description=(
+            "Visual overview of the reconstructed dataset via a "
+            "three-dimensional histogram of ion counts. Ion counts are "
+            "characterized using one nanometer cubic bins without applying any "
+            "smoothening of reconstructed positions during the histogram "
+            "computation. Such preview is useful to get an impression of the "
+            "macroscopic shape of the reconstructed volume. Visualizing by ion "
+            "counts highlights density variations the reconstructed volume that "
+            "are signatures of features such as poles, interfaces or "
+            "irregularities of the specimen shape."
+        ),
+        a_nexus_group=NeXusGroup(
+            nx_class="NXdata",
+            name=None,
+            name_type="any",
+            optionality="optional",
+        ),
+    )
 
     def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
         super().normalize(archive, logger)

@@ -444,6 +444,28 @@ class AfmInstrumentSpmCantilever(SpmCantilever):
         section_def="pynxtools.nomad.metainfo.applications.afm.AfmInstrumentSpmCantileverCantileverOscillator",
         repeats=False,
     )
+    phase_positioner = SubSection(
+        section_def="pynxtools.nomad.metainfo.base_classes.positioner.Positioner",
+        repeats=False,
+        description=("The phase positioner of the cantilever."),
+        a_nexus_group=NeXusGroup(
+            nx_class="NXpositioner",
+            name="phase_positioner",
+            name_type="specified",
+            optionality="recommended",
+        ),
+    )
+    amplitude_positioner = SubSection(
+        section_def="pynxtools.nomad.metainfo.base_classes.positioner.Positioner",
+        repeats=False,
+        description=("The amplitude positioner of the cantilever."),
+        a_nexus_group=NeXusGroup(
+            nx_class="NXpositioner",
+            name="amplitude_positioner",
+            name_type="specified",
+            optionality="recommended",
+        ),
+    )
 
     def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
         super().normalize(archive, logger)

@@ -49,7 +49,6 @@ from pynxtools.nomad.metainfo.applications.sensor_scan import (
     SensorScan,
     SensorScanInstrument,
     SensorScanInstrumentEnvironment,
-    SensorScanSample,
 )
 from pynxtools.nomad.metainfo.base_classes.amplifier import Amplifier
 from pynxtools.nomad.metainfo.base_classes.calibration import Calibration
@@ -59,11 +58,13 @@ from pynxtools.nomad.metainfo.base_classes.environment import Environment
 from pynxtools.nomad.metainfo.base_classes.fabrication import Fabrication
 from pynxtools.nomad.metainfo.base_classes.lockin import Lockin
 from pynxtools.nomad.metainfo.base_classes.parameters import Parameters
+from pynxtools.nomad.metainfo.base_classes.sample import Sample
 from pynxtools.nomad.metainfo.base_classes.sensor import Sensor
 from pynxtools.nomad.metainfo.base_classes.spm_bias_spectroscopy import (
     SpmBiasSpectroscopy,
 )
 from pynxtools.nomad.metainfo.base_classes.spm_piezo_sensor import SpmPiezoSensor
+from pynxtools.nomad.metainfo.base_classes.spm_positioner import SpmPositioner
 from pynxtools.nomad.metainfo.base_classes.spm_scan_control import SpmScanControl
 from pynxtools.nomad.metainfo.base_classes.spm_scan_pattern import SpmScanPattern
 from pynxtools.nomad.metainfo.base_classes.spm_scan_region import SpmScanRegion
@@ -1826,10 +1827,54 @@ class SpmInstrumentBiasSpectroscopyEnvironmentSpmBiasSpectroscopy(SpmBiasSpectro
         ),
     )
 
+    spm_positioner = SubSection(
+        section_def="pynxtools.nomad.metainfo.applications.spm.SpmInstrumentBiasSpectroscopyEnvironmentSpmBiasSpectroscopySpmPositioner",
+        repeats=True,
+        variable=True,
+    )
     bias_sweep = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.spm.SpmInstrumentBiasSpectroscopyEnvironmentSpmBiasSpectroscopyBiasSweep",
         repeats=True,
         variable=True,
+    )
+
+    def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
+        super().normalize(archive, logger)
+
+
+class SpmInstrumentBiasSpectroscopyEnvironmentSpmBiasSpectroscopySpmPositioner(
+    SpmPositioner
+):
+    """
+    Information about positioner used in STS scan settings, like PID controller
+    and offset.
+
+    Reuse, if needed, this group for positioners for multiple scans at
+    different points on sample.
+    """
+
+    m_def = Section(
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXspm.html#nxspm-entry-instrument-bias-spectroscopy-environment-spm-bias-spectroscopy-spm-positioner-group"
+        ],
+        variable=True,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXspm_positioner",
+            name=None,
+            name_type="any",
+            optionality="recommended",
+        ),
+    )
+
+    z_controller = SubSection(
+        section_def="pynxtools.nomad.metainfo.base_classes.pid_controller.PidController",
+        repeats=False,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXpid_controller",
+            name="z_controller",
+            name_type="specified",
+            optionality="recommended",
+        ),
     )
 
     def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
@@ -2163,7 +2208,7 @@ class SpmInstrumentSampleBiasVoltageCalibrationCalibrationParameters(Parameters)
         super().normalize(archive, logger)
 
 
-class SpmSample(SensorScanSample):
+class SpmSample(Sample):
     """
     The sample information.
     """
@@ -2181,6 +2226,20 @@ class SpmSample(SensorScanSample):
         ),
     )
 
+    history = SubSection(
+        section_def="pynxtools.nomad.metainfo.base_classes.history.History",
+        repeats=False,
+        description=(
+            "A set of physical processes that occurred to the sample "
+            "prior/during experiment."
+        ),
+        a_nexus_group=NeXusGroup(
+            nx_class="NXhistory",
+            name="history",
+            name_type="specified",
+            optionality="recommended",
+        ),
+    )
     sample_environment = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.spm.SpmSampleSampleEnvironment",
         repeats=False,

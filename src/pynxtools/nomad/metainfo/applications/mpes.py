@@ -543,6 +543,37 @@ class MpesInstrument(Instrument):
         repeats=True,
         variable=True,
     )
+    insertion_device = SubSection(
+        section_def="pynxtools.nomad.metainfo.base_classes.insertion_device.InsertionDevice",
+        repeats=True,
+        variable=True,
+        description=(
+            "Insertion device if synchrotron radiation is used for the MPES experiment."
+        ),
+        a_nexus_group=NeXusGroup(
+            nx_class="NXinsertion_device",
+            name=None,
+            name_type="any",
+            optionality="optional",
+        ),
+    )
+    history = SubSection(
+        section_def="pynxtools.nomad.metainfo.base_classes.history.History",
+        repeats=False,
+        description=(
+            "A set of activities that occurred to the instrument prior to/during "
+            "the photoemission experiment, including any activities performed on "
+            "the individual instrument parts. This group can be used to describe "
+            "the preparation of the instrument prior to the experiment, e.g. the "
+            "cleaning procedure for a spin filter crystal."
+        ),
+        a_nexus_group=NeXusGroup(
+            nx_class="NXhistory",
+            name="history",
+            name_type="specified",
+            optionality="optional",
+        ),
+    )
 
     def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
         super().normalize(archive, logger)
@@ -1788,6 +1819,16 @@ class MpesInstrumentElectronanalyzer(Electronanalyzer):
     energy_resolution = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.mpes.MpesInstrumentElectronanalyzerEnergyResolution",
         repeats=False,
+    )
+    transmission_function = SubSection(
+        section_def="pynxtools.nomad.metainfo.base_classes.data.Data",
+        repeats=False,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXdata",
+            name="transmission_function",
+            name_type="specified",
+            optionality="optional",
+        ),
     )
     collectioncolumn = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.mpes.MpesInstrumentElectronanalyzerCollectioncolumn",

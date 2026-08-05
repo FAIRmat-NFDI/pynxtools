@@ -47,9 +47,7 @@ from pynxtools.nomad.annotations import (
 from pynxtools.nomad.metainfo._category import ExperimentCategory
 from pynxtools.nomad.metainfo.applications.apm_paraprobe_tool_results import (
     ApmParaprobeToolResults,
-)
-from pynxtools.nomad.metainfo.base_classes.apm_paraprobe_tool_process import (
-    ApmParaprobeToolProcess,
+    ApmParaprobeToolResultsTaskprocessed,
 )
 from pynxtools.nomad.metainfo.base_classes.process import Process
 
@@ -136,7 +134,9 @@ class ApmParaprobeSpatstatResults(ApmParaprobeToolResults):
 # =============================================================================
 
 
-class ApmParaprobeSpatstatResultsSpatialStatisticsID(ApmParaprobeToolProcess):
+class ApmParaprobeSpatstatResultsSpatialStatisticsID(
+    ApmParaprobeToolResultsTaskprocessed
+):
     m_def = Section(
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_spatstat_results.html#nxapm_paraprobe_spatstat_results-entry-spatial-statisticsid-group"

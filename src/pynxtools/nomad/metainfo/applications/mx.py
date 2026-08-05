@@ -709,10 +709,46 @@ class MxInstrumentDetector(Detector):
             min_occurs=0,
         ),
     )
+    collection = SubSection(
+        section_def="pynxtools.nomad.metainfo.base_classes.collection.Collection",
+        repeats=True,
+        variable=True,
+        description=(
+            "Suggested container for detailed non-standard detector information "
+            "like corrections applied automatically or performance settings."
+        ),
+        a_nexus_group=NeXusGroup(
+            nx_class="NXcollection",
+            name=None,
+            name_type="any",
+            optionality="optional",
+            min_occurs=0,
+        ),
+    )
     detector_module = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.mx.MxInstrumentDetectorDetectorModule",
         repeats=True,
         variable=True,
+    )
+    CHANNELNAME_channel = SubSection(
+        section_def="pynxtools.nomad.metainfo.base_classes.detector_channel.DetectorChannel",
+        repeats=True,
+        variable=True,
+        description=(
+            "Group containing the description and metadata for a single channel "
+            "from a multi-channel detector. Given an :ref:`NXdata` group linked "
+            "as part of an NXdetector group that has an axis with named channels "
+            "(see the example in :ref:`NXdata "
+            "</NXdata@default_slice-attribute>`), the NXdetector will have a "
+            "series of NXdetector_channel groups, one for each channel, named "
+            "CHANNELNAME_channel."
+        ),
+        a_nexus_group=NeXusGroup(
+            nx_class="NXdetector_channel",
+            name="CHANNELNAME_channel",
+            name_type="partial",
+            optionality="optional",
+        ),
     )
 
     depends_on = Quantity(
