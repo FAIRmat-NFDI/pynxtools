@@ -801,6 +801,10 @@ def _declares_content_at(
             # the detector's data field, no fields/attributes/nested groups
             # of its own) invisible, so NXxeuler (which extends NXxbase)
             # fell through XbaseData straight to generic Data.
+            #
+            # Still can't see a link shadowed by a same-named field at a
+            # more-derived level (NXxrd vs. NXmonopd) — known, not fixed;
+            # NXxrd is expected to change once nomad-measurements lands.
             return True
         if c.nx_type == "choice":
             # A <choice> block is always new content, for the same reason as
