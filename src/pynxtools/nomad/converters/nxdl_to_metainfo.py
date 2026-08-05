@@ -649,22 +649,35 @@ def _quantity_differs_from_base(
     node: NXTreeField | NXTreeAttribute,
     base_lookup: dict[str, NXTreeField | NXTreeAttribute],
 ) -> bool:
-    """Return True if ``node`` is new or has different dtype/items/unit in the
-    base class — the subset of ``_qty_differs_from_base``'s checks that make
-    sense without a ``QuantityContext`` wrapper. Requiredness and doc are
-    deliberately excluded, matching ``_requiredness_or_doc_differs``'s own
-    scope: those alone don't warrant a class of their own.
+    """Return True if ``node`` is new, has a different dtype/items/unit, or a
+    different requiredness than the generic base class — the same checks
+    ``_qty_differs_from_base`` makes, minus doc (that alone doesn't warrant a
+    class of its own; see ``_build_named_concept``'s ``slot_overridden``).
+
+    Requiredness is included deliberately, not excluded: per
+    ``_requiredness_or_doc_differs``, tightening from optional/recommended to
+    required is itself a meaningful constraint, and it can be the *only*
+    thing an ancestor changes — e.g. NXxrot's own ``polar_angle`` /
+    ``beam_center_x`` / ``beam_center_y`` on ``detector`` match generic
+    NXdetector's dtype/unit exactly, but NXxrot (an application definition)
+    declares them without an explicit ``optional`` attribute, which defaults
+    to required, unlike generic NXdetector's own "optional". Dropping
+    requiredness here made ``NXxlaueplate`` (which extends NXxrot) skip
+    straight past ``XrotInstrumentDetector`` to ``XbaseInstrumentDetector``,
+    silently losing the override.
     """
     base_node = base_lookup.get(node.name)
     if base_node is None:
         return True
     if node.dtype != base_node.dtype or node.items != base_node.items:
         return True
-    return (
+    if (
         isinstance(node, NXTreeField)
         and isinstance(base_node, NXTreeField)
         and node.unit != base_node.unit
-    )
+    ):
+        return True
+    return node.optionality != base_node.optionality
 
 
 def _optionality_from_attrib(attrib: dict) -> str | None:
@@ -778,6 +791,17 @@ def _declares_content_at(
         )
         if own_elem is None:
             continue
+        if c.nx_type == "link":
+            # A <link> at this level is always new content: matching
+            # _build_named_concept's own_links, which adds every link
+            # unconditionally (no base_lookup comparison — generic base
+            # classes essentially never declare links to sibling groups,
+            # since a link's whole purpose is app-specific entry wiring).
+            # Missing this made e.g. NXxbase's own "data" (a bare link to
+            # the detector's data field, no fields/attributes/nested groups
+            # of its own) invisible, so NXxeuler (which extends NXxbase)
+            # fell through XbaseData straight to generic Data.
+            return True
         if isinstance(c, (NXTreeField, NXTreeAttribute)):
             if _quantity_differs_from_base(c, base_lookup):
                 return True

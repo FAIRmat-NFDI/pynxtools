@@ -43,11 +43,11 @@ from pynxtools.nomad.annotations import (
 from pynxtools.nomad.metainfo._category import ExperimentCategory
 from pynxtools.nomad.metainfo.applications.xbase import (
     Xbase,
+    XbaseData,
     XbaseInstrument,
     XbaseInstrumentDetector,
     XbaseSample,
 )
-from pynxtools.nomad.metainfo.base_classes.data import Data
 
 if TYPE_CHECKING:
     from nomad.datamodel import EntryArchive
@@ -268,7 +268,7 @@ class XnbSample(XbaseSample):
         super().normalize(archive, logger)
 
 
-class XnbName(Data):
+class XnbName(XbaseData):
     m_def = Section(
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXxnb.html#nxxnb-entry-name-group"

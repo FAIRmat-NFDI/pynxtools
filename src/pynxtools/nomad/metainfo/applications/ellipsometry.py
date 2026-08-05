@@ -43,11 +43,11 @@ from pynxtools.nomad.annotations import (
 from pynxtools.nomad.metainfo._category import ExperimentCategory
 from pynxtools.nomad.metainfo.applications.optical_spectroscopy import (
     OpticalSpectroscopy,
+    OpticalSpectroscopyData,
     OpticalSpectroscopyInstrument,
     OpticalSpectroscopyInstrumentOpticalLens,
     OpticalSpectroscopySample,
 )
-from pynxtools.nomad.metainfo.base_classes.data import Data
 from pynxtools.nomad.metainfo.base_classes.program import Program
 from pynxtools.nomad.metainfo.base_classes.waveplate import Waveplate
 
@@ -680,7 +680,7 @@ class EllipsometrySample(OpticalSpectroscopySample):
         super().normalize(archive, logger)
 
 
-class EllipsometryDataCollection(Data):
+class EllipsometryDataCollection(OpticalSpectroscopyData):
     """
     Measured data, data errors, and varied parameters. This may be used to
     describe indirectly derived data or data transformed between different

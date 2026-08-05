@@ -45,7 +45,10 @@ from pynxtools.nomad.annotations import (
     NeXusLink,
 )
 from pynxtools.nomad.metainfo._category import ExperimentCategory
-from pynxtools.nomad.metainfo.applications.monopd import MonopdInstrumentSource
+from pynxtools.nomad.metainfo.applications.monopd import (
+    MonopdInstrumentSource,
+    MonopdSample,
+)
 from pynxtools.nomad.metainfo.applications.xrd import (
     Xrd,
     XrdData,
@@ -53,7 +56,6 @@ from pynxtools.nomad.metainfo.applications.xrd import (
     XrdInstrumentDetector,
 )
 from pynxtools.nomad.metainfo.base_classes.object import Object
-from pynxtools.nomad.metainfo.base_classes.sample import Sample
 
 if TYPE_CHECKING:
     from nomad.datamodel import EntryArchive
@@ -1109,7 +1111,7 @@ class XrdPanQData(XrdData):
         super().normalize(archive, logger)
 
 
-class XrdPanSample(Sample):
+class XrdPanSample(MonopdSample):
     """
     Description on sample.
     """

@@ -43,12 +43,12 @@ from pynxtools.nomad.annotations import (
 from pynxtools.nomad.metainfo._category import ExperimentCategory
 from pynxtools.nomad.metainfo.applications.xbase import (
     Xbase,
+    XbaseData,
     XbaseInstrument,
     XbaseInstrumentDetector,
     XbaseSample,
 )
 from pynxtools.nomad.metainfo.base_classes.attenuator import Attenuator
-from pynxtools.nomad.metainfo.base_classes.data import Data
 
 if TYPE_CHECKING:
     from nomad.datamodel import EntryArchive
@@ -355,7 +355,7 @@ class XrotSample(XbaseSample):
         super().normalize(archive, logger)
 
 
-class XrotName(Data):
+class XrotName(XbaseData):
     m_def = Section(
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXxrot.html#nxxrot-entry-name-group"
