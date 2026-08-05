@@ -360,7 +360,7 @@ class SasInstrumentMonochromator(Monochromator):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXsas.html#nxsas-entry-instrument-monochromator-wavelength-field"
         ],
         dimensionality="[length]",
-        unit="m",
+        unit="angstrom",
         description=("The wavelength (:math:`\\lambda`) of the radiation."),
         a_nexus_field=NeXusField(
             name="wavelength",
@@ -372,7 +372,7 @@ class SasInstrumentMonochromator(Monochromator):
         a_eln=ELNAnnotation(
             component=ELNComponentEnum.NumberEditQuantity,
         ),
-        a_display={"unit": "m"},
+        a_display={"unit": "angstrom"},
     )
     wavelength_spread = Quantity(
         type=np.float64,

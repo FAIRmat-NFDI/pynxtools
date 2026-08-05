@@ -709,10 +709,46 @@ class MxInstrumentDetector(Detector):
             min_occurs=0,
         ),
     )
+    collection = SubSection(
+        section_def="pynxtools.nomad.metainfo.base_classes.collection.Collection",
+        repeats=True,
+        variable=True,
+        description=(
+            "Suggested container for detailed non-standard detector information "
+            "like corrections applied automatically or performance settings."
+        ),
+        a_nexus_group=NeXusGroup(
+            nx_class="NXcollection",
+            name=None,
+            name_type="any",
+            optionality="optional",
+            min_occurs=0,
+        ),
+    )
     detector_module = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.mx.MxInstrumentDetectorDetectorModule",
         repeats=True,
         variable=True,
+    )
+    CHANNELNAME_channel = SubSection(
+        section_def="pynxtools.nomad.metainfo.base_classes.detector_channel.DetectorChannel",
+        repeats=True,
+        variable=True,
+        description=(
+            "Group containing the description and metadata for a single channel "
+            "from a multi-channel detector. Given an :ref:`NXdata` group linked "
+            "as part of an NXdetector group that has an axis with named channels "
+            "(see the example in :ref:`NXdata "
+            "</NXdata@default_slice-attribute>`), the NXdetector will have a "
+            "series of NXdetector_channel groups, one for each channel, named "
+            "CHANNELNAME_channel."
+        ),
+        a_nexus_group=NeXusGroup(
+            nx_class="NXdetector_channel",
+            name="CHANNELNAME_channel",
+            name_type="partial",
+            optionality="optional",
+        ),
     )
 
     depends_on = Quantity(
@@ -1335,7 +1371,7 @@ class MxInstrumentDetector(Detector):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXmx.html#nxmx-entry-instrument-detector-threshold-energy-field"
         ],
         dimensionality="[mass] * [length] ** 2 / [time] ** 2",
-        unit="joule",
+        unit="eV",
         description=(
             "Single photon counter detectors can be adjusted for a certain "
             "energy range in which they work optimally. This is the energy "
@@ -1352,7 +1388,7 @@ class MxInstrumentDetector(Detector):
         a_eln=ELNAnnotation(
             component=ELNComponentEnum.NumberEditQuantity,
         ),
-        a_display={"unit": "joule"},
+        a_display={"unit": "eV"},
     )
     type = Quantity(
         type=str,
@@ -1812,7 +1848,7 @@ class MxInstrumentBeam(Beam):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXmx.html#nxmx-entry-instrument-beam-incident-wavelength-field"
         ],
         dimensionality="[length]",
-        unit="m",
+        unit="angstrom",
         description=(
             "In the case of a monochromatic beam this is the scalar wavelength. "
             "Several other use cases are permitted, depending on the presence or "
@@ -1844,7 +1880,7 @@ class MxInstrumentBeam(Beam):
         a_eln=ELNAnnotation(
             component=ELNComponentEnum.NumberEditQuantity,
         ),
-        a_display={"unit": "m"},
+        a_display={"unit": "angstrom"},
     )
     incident_wavelength_weight = Quantity(
         type=np.float64,
@@ -1899,7 +1935,7 @@ class MxInstrumentBeam(Beam):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXmx.html#nxmx-entry-instrument-beam-incident-wavelength-spread-field"
         ],
         dimensionality="[length]",
-        unit="m",
+        unit="angstrom",
         shape=["*"],
         description=(
             "The wavelength spread FWHM for the corresponding wavelength(s) in "

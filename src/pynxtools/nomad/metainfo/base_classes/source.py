@@ -351,7 +351,7 @@ class Source(Component):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXsource.html#nxsource-emittance-x-field"
         ],
         dimensionality="[length] * [angle]",
-        unit="m * radian",
+        unit="nm * rad",
         description=("Source emittance (nm-rad) in X (horizontal) direction."),
         a_nexus_field=NeXusField(
             name="emittance_x",
@@ -363,7 +363,7 @@ class Source(Component):
         a_eln=ELNAnnotation(
             component=ELNComponentEnum.NumberEditQuantity,
         ),
-        a_display={"unit": "m * radian"},
+        a_display={"unit": "nm * rad"},
     )
     emittance_y = Quantity(
         type=np.float64,
@@ -371,7 +371,7 @@ class Source(Component):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXsource.html#nxsource-emittance-y-field"
         ],
         dimensionality="[length] * [angle]",
-        unit="m * radian",
+        unit="nm * rad",
         description=("Source emittance (nm-rad) in Y (horizontal) direction."),
         a_nexus_field=NeXusField(
             name="emittance_y",
@@ -383,7 +383,7 @@ class Source(Component):
         a_eln=ELNAnnotation(
             component=ELNComponentEnum.NumberEditQuantity,
         ),
-        a_display={"unit": "m * radian"},
+        a_display={"unit": "nm * rad"},
     )
     sigma_x = Quantity(
         type=np.float64,
@@ -431,7 +431,7 @@ class Source(Component):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXsource.html#nxsource-flux-field"
         ],
         dimensionality="1 / [time] / [length] ** 2",
-        unit="1 / second / m ** 2",
+        unit="1 / second / cm ** 2",
         description=("Source intensity/area (example: s-1 cm-2)"),
         a_nexus_field=NeXusField(
             name="flux",
@@ -443,7 +443,7 @@ class Source(Component):
         a_eln=ELNAnnotation(
             component=ELNComponentEnum.NumberEditQuantity,
         ),
-        a_display={"unit": "1 / second / m ** 2"},
+        a_display={"unit": "1 / second / cm ** 2"},
     )
     energy = Quantity(
         type=np.float64,
@@ -451,7 +451,7 @@ class Source(Component):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXsource.html#nxsource-energy-field"
         ],
         dimensionality="[mass] * [length] ** 2 / [time] ** 2",
-        unit="joule",
+        unit="eV",
         description=(
             "Source energy. Typically, this would be the energy of the emitted "
             "beam. For storage rings, this would be the particle beam energy."
@@ -466,7 +466,7 @@ class Source(Component):
         a_eln=ELNAnnotation(
             component=ELNComponentEnum.NumberEditQuantity,
         ),
-        a_display={"unit": "joule"},
+        a_display={"unit": "eV"},
     )
     current = Quantity(
         type=np.float64,
@@ -720,7 +720,7 @@ class Source(Component):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXsource.html#nxsource-wavelength-field"
         ],
         dimensionality="[length]",
-        unit="m",
+        unit="angstrom",
         description=("The wavelength of the radiation emitted by the source."),
         a_nexus_field=NeXusField(
             name="wavelength",
@@ -732,7 +732,7 @@ class Source(Component):
         a_eln=ELNAnnotation(
             component=ELNComponentEnum.NumberEditQuantity,
         ),
-        a_display={"unit": "m"},
+        a_display={"unit": "angstrom"},
     )
     pulse_energy = Quantity(
         type=np.float64,
@@ -740,7 +740,7 @@ class Source(Component):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXsource.html#nxsource-pulse-energy-field"
         ],
         dimensionality="[mass] * [length] ** 2 / [time] ** 2",
-        unit="joule",
+        unit="eV",
         description=("For pulsed sources, the energy of a single pulse."),
         a_nexus_field=NeXusField(
             name="pulse_energy",
@@ -752,7 +752,7 @@ class Source(Component):
         a_eln=ELNAnnotation(
             component=ELNComponentEnum.NumberEditQuantity,
         ),
-        a_display={"unit": "joule"},
+        a_display={"unit": "eV"},
     )
     peak_power = Quantity(
         type=np.float64,
@@ -838,7 +838,7 @@ class Source(Component):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXsource.html#nxsource-gas-pressure-field"
         ],
         dimensionality="[mass] / [length] / [time] ** 2",
-        unit="pascal",
+        unit="mbar",
         description=("Gas pressure inside ionization source."),
         a_nexus_field=NeXusField(
             name="gas_pressure",
@@ -850,7 +850,7 @@ class Source(Component):
         a_eln=ELNAnnotation(
             component=ELNComponentEnum.NumberEditQuantity,
         ),
-        a_display={"unit": "pascal"},
+        a_display={"unit": "mbar"},
     )
     previous_source = Quantity(
         type=str,

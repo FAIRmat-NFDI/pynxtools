@@ -97,7 +97,7 @@ class Pump(Component):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXpump.html#nxpump-base-pressure-field"
         ],
         dimensionality="[mass] / [length] / [time] ** 2",
-        unit="pascal",
+        unit="mbar",
         description=(
             "The minimum pressure achievable in a chamber after it has been "
             "pumped down for an extended period."
@@ -112,7 +112,7 @@ class Pump(Component):
         a_eln=ELNAnnotation(
             component=ELNComponentEnum.NumberEditQuantity,
         ),
-        a_display={"unit": "pascal"},
+        a_display={"unit": "mbar"},
     )
     medium = Quantity(
         type=MEnum(["vacuum", "liquid", "gas", "slurry", "powder"]),

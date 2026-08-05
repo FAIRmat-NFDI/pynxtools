@@ -45,19 +45,19 @@ from pynxtools.nomad.metainfo.applications.mpes import (
     Mpes,
     MpesData,
     MpesInstrument,
+    MpesInstrumentBeamProbe,
+    MpesInstrumentElectronanalyzer,
+    MpesInstrumentElectronanalyzerCollectioncolumn,
+    MpesInstrumentElectronanalyzerEnergydispersion,
+    MpesInstrumentSourceProbe,
     MpesSample,
 )
-from pynxtools.nomad.metainfo.base_classes.beam import Beam
-from pynxtools.nomad.metainfo.base_classes.collectioncolumn import Collectioncolumn
 from pynxtools.nomad.metainfo.base_classes.coordinate_system import CoordinateSystem
 from pynxtools.nomad.metainfo.base_classes.data import Data
-from pynxtools.nomad.metainfo.base_classes.electronanalyzer import Electronanalyzer
-from pynxtools.nomad.metainfo.base_classes.energydispersion import Energydispersion
 from pynxtools.nomad.metainfo.base_classes.fit import Fit
 from pynxtools.nomad.metainfo.base_classes.fit_function import FitFunction
 from pynxtools.nomad.metainfo.base_classes.parameters import Parameters
 from pynxtools.nomad.metainfo.base_classes.peak import Peak
-from pynxtools.nomad.metainfo.base_classes.source import Source
 from pynxtools.nomad.metainfo.base_classes.transformations import Transformations
 
 if TYPE_CHECKING:
@@ -298,6 +298,41 @@ class XpsCoordinateSystem(CoordinateSystem):
         ),
     )
 
+    transformations = SubSection(
+        section_def="pynxtools.nomad.metainfo.base_classes.transformations.Transformations",
+        repeats=True,
+        variable=True,
+        description=(
+            "Set of transformations, describing the orientation of the XPS "
+            "coordinate system with respect to the beam coordinate system (.) or "
+            "another coordinate system. The transformations in the "
+            "``NXtransformations`` group depend on the actual instrument "
+            "geometry. If the z-axis is pointing in the direction of gravity "
+            "(i.e., if the sample is mounted horizontally), the following "
+            "transformations can be used for describing the XPS coordinate "
+            "system with respect to the beam coordinate system (.): .. "
+            "code-block:: xps_coordinate_system:NXcoordinate_system "
+            "depends_on=coordinate_transformations/sample_stage_to_source_azimuth "
+            "coordinate_transformations:NXtransformations "
+            "sample_stage_to_source_azimuth=beam_azimuth_angle "
+            "@depends_on=sample_stage_to_source_polar "
+            "@transformation_type=rotation @vector=[0, 0, -1] @units=degree "
+            "sample_stage_to_source_polar=beam_polar_angle_of_incidence "
+            "@depends_on=. @transformation_type=rotation @vector=[1, 0, 0] "
+            "@units=degree Note that this ``NXtransformations`` group is not "
+            "needed when the defined :ref:`transformations in beam_probe "
+            "</NXxps/ENTRY/INSTRUMENT/beam_probe/transformations-group>` are "
+            "used. In this case, this group shall not be written here to avoid "
+            "circular references in the transformations chain."
+        ),
+        a_nexus_group=NeXusGroup(
+            nx_class="NXtransformations",
+            name=None,
+            name_type="any",
+            optionality="optional",
+        ),
+    )
+
     origin = Quantity(
         type=MEnum(["sample stage"]),
         links=[
@@ -447,7 +482,7 @@ class XpsInstrument(MpesInstrument):
         super().normalize(archive, logger)
 
 
-class XpsInstrumentSourceProbe(Source):
+class XpsInstrumentSourceProbe(MpesInstrumentSourceProbe):
     m_def = Section(
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXxps.html#nxxps-entry-instrument-source-probe-group"
@@ -484,7 +519,7 @@ class XpsInstrumentSourceProbe(Source):
         super().normalize(archive, logger)
 
 
-class XpsInstrumentBeamProbe(Beam):
+class XpsInstrumentBeamProbe(MpesInstrumentBeamProbe):
     m_def = Section(
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXxps.html#nxxps-entry-instrument-beam-probe-group"
@@ -745,7 +780,7 @@ class XpsInstrumentBeamProbeTransformations(Transformations):
         super().normalize(archive, logger)
 
 
-class XpsInstrumentElectronanalyzer(Electronanalyzer):
+class XpsInstrumentElectronanalyzer(MpesInstrumentElectronanalyzer):
     m_def = Section(
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXxps.html#nxxps-entry-instrument-electronanalyzer-group"
@@ -759,6 +794,16 @@ class XpsInstrumentElectronanalyzer(Electronanalyzer):
         ),
     )
 
+    transmission_function = SubSection(
+        section_def="pynxtools.nomad.metainfo.base_classes.data.Data",
+        repeats=False,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXdata",
+            name="transmission_function",
+            name_type="specified",
+            optionality="recommended",
+        ),
+    )
     collectioncolumn = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.xps.XpsInstrumentElectronanalyzerCollectioncolumn",
         repeats=True,
@@ -780,7 +825,7 @@ class XpsInstrumentElectronanalyzer(Electronanalyzer):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXxps.html#nxxps-entry-instrument-electronanalyzer-work-function-field"
         ],
         dimensionality="[mass] * [length] ** 2 / [time] ** 2",
-        unit="joule",
+        unit="eV",
         a_nexus_field=NeXusField(
             name="work_function",
             type="NX_FLOAT",
@@ -791,7 +836,7 @@ class XpsInstrumentElectronanalyzer(Electronanalyzer):
         a_eln=ELNAnnotation(
             component=ELNComponentEnum.NumberEditQuantity,
         ),
-        a_display={"unit": "joule"},
+        a_display={"unit": "eV"},
     )
     depends_on = Quantity(
         type=str,
@@ -817,7 +862,9 @@ class XpsInstrumentElectronanalyzer(Electronanalyzer):
         super().normalize(archive, logger)
 
 
-class XpsInstrumentElectronanalyzerCollectioncolumn(Collectioncolumn):
+class XpsInstrumentElectronanalyzerCollectioncolumn(
+    MpesInstrumentElectronanalyzerCollectioncolumn
+):
     m_def = Section(
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXxps.html#nxxps-entry-instrument-electronanalyzer-collectioncolumn-group"
@@ -855,7 +902,9 @@ class XpsInstrumentElectronanalyzerCollectioncolumn(Collectioncolumn):
         super().normalize(archive, logger)
 
 
-class XpsInstrumentElectronanalyzerEnergydispersion(Energydispersion):
+class XpsInstrumentElectronanalyzerEnergydispersion(
+    MpesInstrumentElectronanalyzerEnergydispersion
+):
     m_def = Section(
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXxps.html#nxxps-entry-instrument-electronanalyzer-energydispersion-group"
@@ -1232,7 +1281,7 @@ class XpsFitData(Data):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXxps.html#nxxps-entry-fit-data-input-independent-field"
         ],
         dimensionality="[mass] * [length] ** 2 / [time] ** 2",
-        unit="joule",
+        unit="eV",
         description=(
             "Independent variable for this fit procedure. This could be a link "
             "to entry/data/energy."
@@ -1247,7 +1296,7 @@ class XpsFitData(Data):
         a_eln=ELNAnnotation(
             component=ELNComponentEnum.NumberEditQuantity,
         ),
-        a_display={"unit": "joule"},
+        a_display={"unit": "eV"},
     )
     fit_sum = Quantity(
         type=np.float64,
@@ -1393,7 +1442,7 @@ class XpsFitPeakPEAKData(Data):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXxps.html#nxxps-entry-fit-peakpeak-data-position-field"
         ],
         dimensionality="[mass] * [length] ** 2 / [time] ** 2",
-        unit="joule",
+        unit="eV",
         description=("This could be a link to entry/data/energy."),
         a_nexus_field=NeXusField(
             name="position",
@@ -1405,7 +1454,7 @@ class XpsFitPeakPEAKData(Data):
         a_eln=ELNAnnotation(
             component=ELNComponentEnum.NumberEditQuantity,
         ),
-        a_display={"unit": "joule"},
+        a_display={"unit": "eV"},
     )
     intensity = Quantity(
         type=np.float64,
@@ -1563,7 +1612,7 @@ class XpsFitPeakPEAKFunctionFitParameters(Parameters):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXxps.html#nxxps-entry-fit-peakpeak-function-fit-parameters-width-field"
         ],
         dimensionality="[mass] * [length] ** 2 / [time] ** 2",
-        unit="joule",
+        unit="eV",
         description=(
             "Width of a peak at a defined fraction of the peak height. Usually, "
             "this will be the Full Width at Half Maximum of the peak (FWHM). For "
@@ -1583,7 +1632,7 @@ class XpsFitPeakPEAKFunctionFitParameters(Parameters):
         a_eln=ELNAnnotation(
             component=ELNComponentEnum.NumberEditQuantity,
         ),
-        a_display={"unit": "joule"},
+        a_display={"unit": "eV"},
     )
     position = Quantity(
         type=np.float64,
@@ -1591,7 +1640,7 @@ class XpsFitPeakPEAKFunctionFitParameters(Parameters):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXxps.html#nxxps-entry-fit-peakpeak-function-fit-parameters-position-field"
         ],
         dimensionality="[mass] * [length] ** 2 / [time] ** 2",
-        unit="joule",
+        unit="eV",
         description=("Position of the peak on the energy axis."),
         a_nexus_field=NeXusField(
             name="position",
@@ -1603,7 +1652,7 @@ class XpsFitPeakPEAKFunctionFitParameters(Parameters):
         a_eln=ELNAnnotation(
             component=ELNComponentEnum.NumberEditQuantity,
         ),
-        a_display={"unit": "joule"},
+        a_display={"unit": "eV"},
     )
 
     def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
@@ -1681,7 +1730,7 @@ class XpsFitBackgroundBACKGROUNDData(Data):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXxps.html#nxxps-entry-fit-backgroundbackground-data-position-field"
         ],
         dimensionality="[mass] * [length] ** 2 / [time] ** 2",
-        unit="joule",
+        unit="eV",
         a_nexus_field=NeXusField(
             name="position",
             type="NX_NUMBER",
@@ -1692,7 +1741,7 @@ class XpsFitBackgroundBACKGROUNDData(Data):
         a_eln=ELNAnnotation(
             component=ELNComponentEnum.NumberEditQuantity,
         ),
-        a_display={"unit": "joule"},
+        a_display={"unit": "eV"},
     )
     intensity = Quantity(
         type=np.float64,
@@ -2218,7 +2267,7 @@ class XpsData(MpesData):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXxps.html#nxxps-entry-data-energy-field"
         ],
         dimensionality="[mass] * [length] ** 2 / [time] ** 2",
-        unit="joule",
+        unit="eV",
         a_nexus_field=NeXusField(
             name="energy",
             type="NX_NUMBER",
@@ -2229,7 +2278,7 @@ class XpsData(MpesData):
         a_eln=ELNAnnotation(
             component=ELNComponentEnum.NumberEditQuantity,
         ),
-        a_display={"unit": "joule"},
+        a_display={"unit": "eV"},
     )
     energy__type = Quantity(
         type=MEnum(["kinetic", "binding"]),

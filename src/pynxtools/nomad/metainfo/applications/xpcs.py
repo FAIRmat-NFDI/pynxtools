@@ -968,7 +968,7 @@ class XpcsInstrumentIncidentBeam(Beam):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXxpcs.html#nxxpcs-entry-instrument-incident-beam-incident-energy-field"
         ],
         dimensionality="[mass] * [length] ** 2 / [time] ** 2",
-        unit="joule",
+        unit="eV",
         shape=["*"],
         description=("Incident beam line energy (either keV or eV)."),
         a_nexus_field=NeXusField(
@@ -985,7 +985,7 @@ class XpcsInstrumentIncidentBeam(Beam):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXxpcs.html#nxxpcs-entry-instrument-incident-beam-incident-energy-spread-field"
         ],
         dimensionality="[mass] * [length] ** 2 / [time] ** 2",
-        unit="joule",
+        unit="eV",
         description=(
             "Spread of incident beam line energy (either keV or eV). This "
             "quantity is otherwise known as the energy resolution, which is "
@@ -1001,7 +1001,7 @@ class XpcsInstrumentIncidentBeam(Beam):
         a_eln=ELNAnnotation(
             component=ELNComponentEnum.NumberEditQuantity,
         ),
-        a_display={"unit": "joule"},
+        a_display={"unit": "eV"},
     )
     incident_polarization_type = Quantity(
         type=str,

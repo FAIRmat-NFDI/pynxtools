@@ -44,8 +44,8 @@ from pynxtools.nomad.metainfo._category import ExperimentCategory
 from pynxtools.nomad.metainfo.applications.optical_spectroscopy import (
     OpticalSpectroscopy,
     OpticalSpectroscopyInstrument,
+    OpticalSpectroscopyInstrumentBeamTYPE,
 )
-from pynxtools.nomad.metainfo.base_classes.beam import Beam
 
 if TYPE_CHECKING:
     from nomad.datamodel import EntryArchive
@@ -450,7 +450,7 @@ class RamanInstrument(OpticalSpectroscopyInstrument):
         super().normalize(archive, logger)
 
 
-class RamanInstrumentBeamIncident(Beam):
+class RamanInstrumentBeamIncident(OpticalSpectroscopyInstrumentBeamTYPE):
     """
     Beam which is incident to the sample.
     """

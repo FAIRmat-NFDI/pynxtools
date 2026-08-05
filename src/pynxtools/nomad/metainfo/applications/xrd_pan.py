@@ -45,12 +45,17 @@ from pynxtools.nomad.annotations import (
     NeXusLink,
 )
 from pynxtools.nomad.metainfo._category import ExperimentCategory
-from pynxtools.nomad.metainfo.applications.xrd import Xrd, XrdData
-from pynxtools.nomad.metainfo.base_classes.detector import Detector
-from pynxtools.nomad.metainfo.base_classes.instrument import Instrument
+from pynxtools.nomad.metainfo.applications.monopd import (
+    MonopdInstrumentSource,
+    MonopdSample,
+)
+from pynxtools.nomad.metainfo.applications.xrd import (
+    Xrd,
+    XrdData,
+    XrdInstrument,
+    XrdInstrumentDetector,
+)
 from pynxtools.nomad.metainfo.base_classes.object import Object
-from pynxtools.nomad.metainfo.base_classes.sample import Sample
-from pynxtools.nomad.metainfo.base_classes.source import Source
 
 if TYPE_CHECKING:
     from nomad.datamodel import EntryArchive
@@ -213,7 +218,7 @@ class XrdPan(Xrd):
 # =============================================================================
 
 
-class XrdPanInstrument(Instrument):
+class XrdPanInstrument(XrdInstrument):
     m_def = Section(
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXxrd_pan.html#nxxrd_pan-entry-instrument-group"
@@ -242,7 +247,7 @@ class XrdPanInstrument(Instrument):
         super().normalize(archive, logger)
 
 
-class XrdPanInstrumentSource(Source):
+class XrdPanInstrumentSource(MonopdInstrumentSource):
     m_def = Section(
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXxrd_pan.html#nxxrd_pan-entry-instrument-source-group"
@@ -320,7 +325,7 @@ class XrdPanInstrumentSource(Source):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXxrd_pan.html#nxxrd_pan-entry-instrument-source-k-alpha-one-field"
         ],
         dimensionality="[length]",
-        unit="m",
+        unit="angstrom",
         description=("Wavelength of the K\\u03b1 1 line."),
         a_nexus_field=NeXusField(
             name="k_alpha_one",
@@ -332,7 +337,7 @@ class XrdPanInstrumentSource(Source):
         a_eln=ELNAnnotation(
             component=ELNComponentEnum.NumberEditQuantity,
         ),
-        a_display={"unit": "m"},
+        a_display={"unit": "angstrom"},
     )
     k_alpha_one__units = Quantity(
         type=str,
@@ -358,7 +363,7 @@ class XrdPanInstrumentSource(Source):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXxrd_pan.html#nxxrd_pan-entry-instrument-source-k-alpha-two-field"
         ],
         dimensionality="[length]",
-        unit="m",
+        unit="angstrom",
         description=("Wavelength of the K\\u03b1 2 line."),
         a_nexus_field=NeXusField(
             name="k_alpha_two",
@@ -370,7 +375,7 @@ class XrdPanInstrumentSource(Source):
         a_eln=ELNAnnotation(
             component=ELNComponentEnum.NumberEditQuantity,
         ),
-        a_display={"unit": "m"},
+        a_display={"unit": "angstrom"},
     )
     k_alpha_two__units = Quantity(
         type=str,
@@ -416,7 +421,7 @@ class XrdPanInstrumentSource(Source):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXxrd_pan.html#nxxrd_pan-entry-instrument-source-kbeta-field"
         ],
         dimensionality="[length]",
-        unit="m",
+        unit="angstrom",
         description=("Wavelength of the K\\u00df line."),
         a_nexus_field=NeXusField(
             name="kbeta",
@@ -428,7 +433,7 @@ class XrdPanInstrumentSource(Source):
         a_eln=ELNAnnotation(
             component=ELNComponentEnum.NumberEditQuantity,
         ),
-        a_display={"unit": "m"},
+        a_display={"unit": "angstrom"},
     )
     kbeta__units = Quantity(
         type=str,
@@ -454,7 +459,7 @@ class XrdPanInstrumentSource(Source):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXxrd_pan.html#nxxrd_pan-entry-instrument-source-source-peak-wavelength-field"
         ],
         dimensionality="[length]",
-        unit="m",
+        unit="angstrom",
         description=(
             "Wavelength of the X-ray source. Used to convert from 2-theta to Q."
         ),
@@ -468,14 +473,14 @@ class XrdPanInstrumentSource(Source):
         a_eln=ELNAnnotation(
             component=ELNComponentEnum.NumberEditQuantity,
         ),
-        a_display={"unit": "m"},
+        a_display={"unit": "angstrom"},
     )
 
     def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
         super().normalize(archive, logger)
 
 
-class XrdPanInstrumentDetector(Detector):
+class XrdPanInstrumentDetector(XrdInstrumentDetector):
     m_def = Section(
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXxrd_pan.html#nxxrd_pan-entry-instrument-detector-group"
@@ -1106,7 +1111,7 @@ class XrdPanQData(XrdData):
         super().normalize(archive, logger)
 
 
-class XrdPanSample(Sample):
+class XrdPanSample(MonopdSample):
     """
     Description on sample.
     """

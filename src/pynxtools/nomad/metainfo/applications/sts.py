@@ -48,10 +48,12 @@ from pynxtools.nomad.metainfo._category import ExperimentCategory
 from pynxtools.nomad.metainfo.applications.spm import (
     Spm,
     SpmInstrument,
+    SpmInstrumentBiasSpectroscopyEnvironment,
+    SpmInstrumentBiasSpectroscopyEnvironmentSpmBiasSpectroscopy,
+    SpmInstrumentBiasSpectroscopyEnvironmentSpmBiasSpectroscopySpmPositioner,
     SpmReproducibilityIndicators,
     SpmResolutionIndicators,
 )
-from pynxtools.nomad.metainfo.base_classes.environment import Environment
 
 if TYPE_CHECKING:
     from nomad.datamodel import EntryArchive
@@ -354,7 +356,9 @@ class StsInstrument(SpmInstrument):
         super().normalize(archive, logger)
 
 
-class StsInstrumentBiasSpectroscopyEnvironment(Environment):
+class StsInstrumentBiasSpectroscopyEnvironment(
+    SpmInstrumentBiasSpectroscopyEnvironment
+):
     """
     To explain bias (sweep measurement) voltage applied to the sample.
     """
@@ -372,18 +376,70 @@ class StsInstrumentBiasSpectroscopyEnvironment(Environment):
     )
 
     spm_bias_spectroscopy = SubSection(
-        section_def="pynxtools.nomad.metainfo.base_classes.spm_bias_spectroscopy.SpmBiasSpectroscopy",
+        section_def="pynxtools.nomad.metainfo.applications.sts.StsInstrumentBiasSpectroscopyEnvironmentSpmBiasSpectroscopy",
         repeats=True,
         variable=True,
-        description=(
-            "Setup and scan data for continuous measurement of bias-voltage on "
-            "the subject of experiment vs tunneling current from probe."
-        ),
+    )
+
+    def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
+        super().normalize(archive, logger)
+
+
+class StsInstrumentBiasSpectroscopyEnvironmentSpmBiasSpectroscopy(
+    SpmInstrumentBiasSpectroscopyEnvironmentSpmBiasSpectroscopy
+):
+    """
+    Setup and scan data for continuous measurement of bias-voltage on the
+    subject of experiment vs tunneling current from probe.
+    """
+
+    m_def = Section(
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXsts.html#nxsts-entry-instrument-bias-spectroscopy-environment-spm-bias-spectroscopy-group"
+        ],
+        variable=True,
         a_nexus_group=NeXusGroup(
             nx_class="NXspm_bias_spectroscopy",
             name=None,
             name_type="any",
             optionality="required",
+        ),
+    )
+
+    spm_positioner = SubSection(
+        section_def="pynxtools.nomad.metainfo.applications.sts.StsInstrumentBiasSpectroscopyEnvironmentSpmBiasSpectroscopySpmPositioner",
+        repeats=True,
+        variable=True,
+    )
+
+    def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
+        super().normalize(archive, logger)
+
+
+class StsInstrumentBiasSpectroscopyEnvironmentSpmBiasSpectroscopySpmPositioner(
+    SpmInstrumentBiasSpectroscopyEnvironmentSpmBiasSpectroscopySpmPositioner
+):
+    m_def = Section(
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXsts.html#nxsts-entry-instrument-bias-spectroscopy-environment-spm-bias-spectroscopy-spm-positioner-group"
+        ],
+        variable=True,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXspm_positioner",
+            name=None,
+            name_type="any",
+            optionality="recommended",
+        ),
+    )
+
+    z_controller = SubSection(
+        section_def="pynxtools.nomad.metainfo.base_classes.pid_controller.PidController",
+        repeats=False,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXpid_controller",
+            name="z_controller",
+            name_type="specified",
+            optionality="recommended",
         ),
     )
 

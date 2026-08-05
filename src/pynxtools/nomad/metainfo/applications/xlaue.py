@@ -41,10 +41,9 @@ from pynxtools.nomad.annotations import (
     NeXusLink,
 )
 from pynxtools.nomad.metainfo._category import ExperimentCategory
-from pynxtools.nomad.metainfo.applications.xrot import Xrot
+from pynxtools.nomad.metainfo.applications.xbase import XbaseInstrumentSource
+from pynxtools.nomad.metainfo.applications.xrot import Xrot, XrotInstrument
 from pynxtools.nomad.metainfo.base_classes.data import Data
-from pynxtools.nomad.metainfo.base_classes.instrument import Instrument
-from pynxtools.nomad.metainfo.base_classes.source import Source
 
 if TYPE_CHECKING:
     from nomad.datamodel import EntryArchive
@@ -140,7 +139,7 @@ class Xlaue(Xrot):
 # =============================================================================
 
 
-class XlaueInstrument(Instrument):
+class XlaueInstrument(XrotInstrument):
     m_def = Section(
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXxlaue.html#nxxlaue-entry-instrument-group"
@@ -162,7 +161,7 @@ class XlaueInstrument(Instrument):
         super().normalize(archive, logger)
 
 
-class XlaueInstrumentSource(Source):
+class XlaueInstrumentSource(XbaseInstrumentSource):
     m_def = Section(
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXxlaue.html#nxxlaue-entry-instrument-source-group"
@@ -221,7 +220,7 @@ class XlaueInstrumentSourceDistribution(Data):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXxlaue.html#nxxlaue-entry-instrument-source-distribution-wavelength-field"
         ],
         dimensionality="[length]",
-        unit="m",
+        unit="angstrom",
         shape=["*"],
         a_nexus_field=NeXusField(
             name="wavelength",

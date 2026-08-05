@@ -227,7 +227,7 @@ class Container(Component):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXcontainer.html#nxcontainer-density-field"
         ],
         dimensionality="[mass] / [length] ** 3",
-        unit="kilogram / m ** 3",
+        unit="gram / m ** 3",
         shape=["*"],
         description=("Density of the material the container is made from."),
         a_nexus_field=NeXusField(
@@ -264,7 +264,7 @@ class Container(Component):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXcontainer.html#nxcontainer-relative-molecular-mass-field"
         ],
         dimensionality="[mass]",
-        unit="kilogram",
+        unit="gram",
         shape=["*"],
         description=("Relative molecular mass of container."),
         a_nexus_field=NeXusField(

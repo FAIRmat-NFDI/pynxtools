@@ -45,13 +45,13 @@ from pynxtools.nomad.metainfo.applications.mpes import (
     Mpes,
     MpesData,
     MpesInstrument,
+    MpesInstrumentElectronanalyzer,
+    MpesInstrumentElectronanalyzerCollectioncolumn,
+    MpesInstrumentElectronanalyzerEnergydispersion,
     MpesSample,
 )
 from pynxtools.nomad.metainfo.base_classes.aperture import Aperture
-from pynxtools.nomad.metainfo.base_classes.collectioncolumn import Collectioncolumn
 from pynxtools.nomad.metainfo.base_classes.coordinate_system import CoordinateSystem
-from pynxtools.nomad.metainfo.base_classes.electronanalyzer import Electronanalyzer
-from pynxtools.nomad.metainfo.base_classes.energydispersion import Energydispersion
 from pynxtools.nomad.metainfo.base_classes.resolution import Resolution
 from pynxtools.nomad.metainfo.base_classes.transformations import Transformations
 
@@ -286,6 +286,22 @@ class MpesArpesArpesGeometry(CoordinateSystem):
         ),
     )
 
+    transformations = SubSection(
+        section_def="pynxtools.nomad.metainfo.base_classes.transformations.Transformations",
+        repeats=True,
+        variable=True,
+        description=(
+            "Set of transformations, describing the orientation of the ARPES "
+            "coordinate system with respect to the beam coordinate system (.)."
+        ),
+        a_nexus_group=NeXusGroup(
+            nx_class="NXtransformations",
+            name=None,
+            name_type="any",
+            optionality="required",
+        ),
+    )
+
     depends_on = Quantity(
         type=str,
         links=[
@@ -419,7 +435,7 @@ class MpesArpesInstrumentAngularN_resolution(Resolution):
         super().normalize(archive, logger)
 
 
-class MpesArpesInstrumentElectronanalyzer(Electronanalyzer):
+class MpesArpesInstrumentElectronanalyzer(MpesInstrumentElectronanalyzer):
     m_def = Section(
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXmpes_arpes.html#nxmpes_arpes-entry-instrument-electronanalyzer-group"
@@ -804,7 +820,9 @@ class MpesArpesInstrumentElectronanalyzerTransformations(Transformations):
         super().normalize(archive, logger)
 
 
-class MpesArpesInstrumentElectronanalyzerCollectioncolumn(Collectioncolumn):
+class MpesArpesInstrumentElectronanalyzerCollectioncolumn(
+    MpesInstrumentElectronanalyzerCollectioncolumn
+):
     m_def = Section(
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXmpes_arpes.html#nxmpes_arpes-entry-instrument-electronanalyzer-collectioncolumn-group"
@@ -859,7 +877,9 @@ class MpesArpesInstrumentElectronanalyzerCollectioncolumn(Collectioncolumn):
         super().normalize(archive, logger)
 
 
-class MpesArpesInstrumentElectronanalyzerEnergydispersion(Energydispersion):
+class MpesArpesInstrumentElectronanalyzerEnergydispersion(
+    MpesInstrumentElectronanalyzerEnergydispersion
+):
     m_def = Section(
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXmpes_arpes.html#nxmpes_arpes-entry-instrument-electronanalyzer-energydispersion-group"
@@ -1546,7 +1566,7 @@ class MpesArpesData(MpesData):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXmpes_arpes.html#nxmpes_arpes-entry-data-energy-field"
         ],
         dimensionality="[mass] * [length] ** 2 / [time] ** 2",
-        unit="joule",
+        unit="eV",
         description=("Values on the energy axis."),
         a_nexus_field=NeXusField(
             name="energy",
@@ -1558,7 +1578,7 @@ class MpesArpesData(MpesData):
         a_eln=ELNAnnotation(
             component=ELNComponentEnum.NumberEditQuantity,
         ),
-        a_display={"unit": "joule"},
+        a_display={"unit": "eV"},
     )
     energy__type = Quantity(
         type=MEnum(["kinetic", "binding"]),

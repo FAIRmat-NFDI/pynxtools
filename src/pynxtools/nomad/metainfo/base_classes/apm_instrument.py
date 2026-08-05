@@ -559,6 +559,16 @@ class ApmInstrumentPulser(Component):
         ),
     )
 
+    fabrication = SubSection(
+        section_def="pynxtools.nomad.metainfo.base_classes.fabrication.Fabrication",
+        repeats=False,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXfabrication",
+            name="fabrication",
+            name_type="specified",
+            optionality="optional",
+        ),
+    )
     sourceID = SubSection(
         section_def="pynxtools.nomad.metainfo.base_classes.apm_instrument.ApmInstrumentPulserSourceID",
         repeats=True,
@@ -782,7 +792,7 @@ class ApmInstrumentPulserSourceID(Source):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXapm_instrument.html#nxapm_instrument-pulser-sourceid-pulse-energy-field"
         ],
         dimensionality="[mass] * [length] ** 2 / [time] ** 2",
-        unit="joule",
+        unit="eV",
         description=("Average energy of the laser at peak of each pulse."),
         a_nexus_field=NeXusField(
             name="pulse_energy",
@@ -794,7 +804,7 @@ class ApmInstrumentPulserSourceID(Source):
         a_eln=ELNAnnotation(
             component=ELNComponentEnum.NumberEditQuantity,
         ),
-        a_display={"unit": "joule"},
+        a_display={"unit": "eV"},
     )
     pulse_energy__logged_against = Quantity(
         type=str,
@@ -1055,7 +1065,7 @@ class ApmInstrumentAnalysisChamberPressureSensor(Sensor):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXapm_instrument.html#nxapm_instrument-analysis-chamber-pressure-sensor-value-field"
         ],
         dimensionality="[mass] / [length] / [time] ** 2",
-        unit="pascal",
+        unit="mbar",
         shape=["*"],
         description=(
             "The value can be extracted from the "

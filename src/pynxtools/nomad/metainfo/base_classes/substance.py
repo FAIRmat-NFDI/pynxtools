@@ -106,7 +106,7 @@ class Substance(Object):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXsubstance.html#nxsubstance-molecular-mass-field"
         ],
         dimensionality="[mass] / [substance]",
-        unit="kilogram / mol",
+        unit="gram / mol",
         description=("Molecular mass of the substance"),
         a_nexus_field=NeXusField(
             name="molecular_mass",
@@ -118,7 +118,7 @@ class Substance(Object):
         a_eln=ELNAnnotation(
             component=ELNComponentEnum.NumberEditQuantity,
         ),
-        a_display={"unit": "kilogram / mol"},
+        a_display={"unit": "gram / mol"},
     )
     molecular_formula_hill = Quantity(
         type=str,

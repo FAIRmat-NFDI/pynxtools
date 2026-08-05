@@ -519,7 +519,7 @@ class MicrostructureScoreConfigMaterial(Parameters):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXmicrostructure_score_config.html#nxmicrostructure_score_config-entry-material-shear-modulus-zero-field"
         ],
         dimensionality="[mass] / [length] / [time] ** 2",
-        unit="pascal",
+        unit="mbar",
         description=("Shear modulus at zero Kelvin."),
         a_nexus_field=NeXusField(
             name="shear_modulus_zero",
@@ -531,7 +531,7 @@ class MicrostructureScoreConfigMaterial(Parameters):
         a_eln=ELNAnnotation(
             component=ELNComponentEnum.NumberEditQuantity,
         ),
-        a_display={"unit": "pascal"},
+        a_display={"unit": "mbar"},
     )
     nadal_lepoac_a = Quantity(
         type=np.float64,

@@ -41,9 +41,13 @@ from pynxtools.nomad.annotations import (
     NeXusLink,
 )
 from pynxtools.nomad.metainfo._category import ExperimentCategory
-from pynxtools.nomad.metainfo.applications.xbase import Xbase, XbaseData, XbaseSample
-from pynxtools.nomad.metainfo.base_classes.detector import Detector
-from pynxtools.nomad.metainfo.base_classes.instrument import Instrument
+from pynxtools.nomad.metainfo.applications.xbase import (
+    Xbase,
+    XbaseData,
+    XbaseInstrument,
+    XbaseInstrumentDetector,
+    XbaseSample,
+)
 
 if TYPE_CHECKING:
     from nomad.datamodel import EntryArchive
@@ -150,7 +154,7 @@ class Xnb(Xbase):
 # =============================================================================
 
 
-class XnbInstrument(Instrument):
+class XnbInstrument(XbaseInstrument):
     m_def = Section(
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXxnb.html#nxxnb-entry-instrument-group"
@@ -172,7 +176,7 @@ class XnbInstrument(Instrument):
         super().normalize(archive, logger)
 
 
-class XnbInstrumentDetector(Detector):
+class XnbInstrumentDetector(XbaseInstrumentDetector):
     m_def = Section(
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXxnb.html#nxxnb-entry-instrument-detector-group"

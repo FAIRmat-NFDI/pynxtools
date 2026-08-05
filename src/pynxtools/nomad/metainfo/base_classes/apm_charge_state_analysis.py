@@ -138,7 +138,7 @@ class ApmChargeStateAnalysis(Process):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXapm_charge_state_analysis.html#nxapm_charge_state_analysis-mass-field"
         ],
         dimensionality="[mass]",
-        unit="kilogram",
+        unit="gram",
         shape=["*"],
         description=(
             "Accumulated mass of the nuclides in each candidate. Not corrected "

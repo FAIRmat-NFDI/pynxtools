@@ -3768,7 +3768,7 @@ class ApmMeasurementEventIDInstrumentPulserSourceID(Source):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-measurement-eventid-instrument-pulser-sourceid-wavelength-field"
         ],
         dimensionality="[length]",
-        unit="m",
+        unit="angstrom",
         a_nexus_field=NeXusField(
             name="wavelength",
             type="NX_FLOAT",
@@ -3779,7 +3779,7 @@ class ApmMeasurementEventIDInstrumentPulserSourceID(Source):
         a_eln=ELNAnnotation(
             component=ELNComponentEnum.NumberEditQuantity,
         ),
-        a_display={"unit": "m"},
+        a_display={"unit": "angstrom"},
     )
     power = Quantity(
         type=np.float64,
@@ -3806,7 +3806,7 @@ class ApmMeasurementEventIDInstrumentPulserSourceID(Source):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-measurement-eventid-instrument-pulser-sourceid-pulse-energy-field"
         ],
         dimensionality="[mass] * [length] ** 2 / [time] ** 2",
-        unit="joule",
+        unit="eV",
         shape=["*"],
         a_nexus_field=NeXusField(
             name="pulse_energy",
@@ -3952,7 +3952,7 @@ class ApmMeasurementEventIDInstrumentAnalysisChamberPressureSensor(Sensor):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-measurement-eventid-instrument-analysis-chamber-pressure-sensor-value-field"
         ],
         dimensionality="[mass] / [length] / [time] ** 2",
-        unit="pascal",
+        unit="mbar",
         shape=["*"],
         a_nexus_field=NeXusField(
             name="value",
@@ -12504,7 +12504,7 @@ class ApmAtomProbeIDRangingPeakIdentificationIonIDChargeStateAnalysis(
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-atom-probeid-ranging-peak-identification-ionid-charge-state-analysis-mass-field"
         ],
         dimensionality="[mass]",
-        unit="kilogram",
+        unit="gram",
         shape=["*"],
         a_nexus_field=NeXusField(
             name="mass",

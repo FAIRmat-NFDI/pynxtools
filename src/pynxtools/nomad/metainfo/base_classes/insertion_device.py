@@ -212,7 +212,7 @@ class InsertionDevice(Component):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXinsertion_device.html#nxinsertion_device-magnetic-wavelength-field"
         ],
         dimensionality="[length]",
-        unit="m",
+        unit="angstrom",
         a_nexus_field=NeXusField(
             name="magnetic_wavelength",
             type="NX_FLOAT",
@@ -223,7 +223,7 @@ class InsertionDevice(Component):
         a_eln=ELNAnnotation(
             component=ELNComponentEnum.NumberEditQuantity,
         ),
-        a_display={"unit": "m"},
+        a_display={"unit": "angstrom"},
     )
     k = Quantity(
         type=np.float64,
@@ -291,7 +291,7 @@ class InsertionDevice(Component):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXinsertion_device.html#nxinsertion_device-energy-field"
         ],
         dimensionality="[mass] * [length] ** 2 / [time] ** 2",
-        unit="joule",
+        unit="eV",
         description=("energy of peak intensity in output spectrum"),
         a_nexus_field=NeXusField(
             name="energy",
@@ -303,7 +303,7 @@ class InsertionDevice(Component):
         a_eln=ELNAnnotation(
             component=ELNComponentEnum.NumberEditQuantity,
         ),
-        a_display={"unit": "joule"},
+        a_display={"unit": "eV"},
     )
     bandwidth = Quantity(
         type=np.float64,
@@ -311,7 +311,7 @@ class InsertionDevice(Component):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXinsertion_device.html#nxinsertion_device-bandwidth-field"
         ],
         dimensionality="[mass] * [length] ** 2 / [time] ** 2",
-        unit="joule",
+        unit="eV",
         description=("bandwidth of peak energy"),
         a_nexus_field=NeXusField(
             name="bandwidth",
@@ -323,7 +323,7 @@ class InsertionDevice(Component):
         a_eln=ELNAnnotation(
             component=ELNComponentEnum.NumberEditQuantity,
         ),
-        a_display={"unit": "joule"},
+        a_display={"unit": "eV"},
     )
     harmonic = Quantity(
         type=np.int64,

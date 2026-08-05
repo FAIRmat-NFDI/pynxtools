@@ -246,7 +246,7 @@ class SampleComponent(Component, basesections.Component):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXsample_component.html#nxsample_component-mass-field"
         ],
         dimensionality="[mass]",
-        unit="kilogram",
+        unit="gram",
         description=("Mass of sample component"),
         a_nexus_field=NeXusField(
             name="mass",
@@ -258,7 +258,7 @@ class SampleComponent(Component, basesections.Component):
         a_eln=ELNAnnotation(
             component=ELNComponentEnum.NumberEditQuantity,
         ),
-        a_display={"unit": "kilogram"},
+        a_display={"unit": "gram"},
     )
     density = Quantity(
         type=np.float64,
@@ -266,7 +266,7 @@ class SampleComponent(Component, basesections.Component):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXsample_component.html#nxsample_component-density-field"
         ],
         dimensionality="[mass] / [length] ** 3",
-        unit="kilogram / m ** 3",
+        unit="gram / m ** 3",
         description=("Density of sample component"),
         a_nexus_field=NeXusField(
             name="density",
@@ -278,7 +278,7 @@ class SampleComponent(Component, basesections.Component):
         a_eln=ELNAnnotation(
             component=ELNComponentEnum.NumberEditQuantity,
         ),
-        a_display={"unit": "kilogram / m ** 3"},
+        a_display={"unit": "gram / m ** 3"},
     )
     relative_molecular_mass = Quantity(
         type=np.float64,
@@ -286,7 +286,7 @@ class SampleComponent(Component, basesections.Component):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXsample_component.html#nxsample_component-relative-molecular-mass-field"
         ],
         dimensionality="[mass]",
-        unit="kilogram",
+        unit="gram",
         description=("Relative Molecular Mass of sample component"),
         a_nexus_field=NeXusField(
             name="relative_molecular_mass",
@@ -298,7 +298,7 @@ class SampleComponent(Component, basesections.Component):
         a_eln=ELNAnnotation(
             component=ELNComponentEnum.NumberEditQuantity,
         ),
-        a_display={"unit": "kilogram"},
+        a_display={"unit": "gram"},
     )
     description = Quantity(
         type=str,

@@ -312,7 +312,7 @@ class SpectrumSpectrum0d(Data):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXspectrum.html#nxspectrum-spectrum-0d-axis-energy-field"
         ],
         dimensionality="[mass] * [length] ** 2 / [time] ** 2",
-        unit="joule",
+        unit="eV",
         shape=["*"],
         description=("Energy axis"),
         a_nexus_field=NeXusField(
@@ -436,7 +436,7 @@ class SpectrumSpectrum1d(Data):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXspectrum.html#nxspectrum-spectrum-1d-axis-energy-field"
         ],
         dimensionality="[mass] * [length] ** 2 / [time] ** 2",
-        unit="joule",
+        unit="eV",
         shape=["*"],
         description=("Energy axis"),
         a_nexus_field=NeXusField(
@@ -594,7 +594,7 @@ class SpectrumSpectrum2d(Data):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXspectrum.html#nxspectrum-spectrum-2d-axis-energy-field"
         ],
         dimensionality="[mass] * [length] ** 2 / [time] ** 2",
-        unit="joule",
+        unit="eV",
         shape=["*"],
         description=("Energy axis"),
         a_nexus_field=NeXusField(
@@ -786,7 +786,7 @@ class SpectrumSpectrum3d(Data):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXspectrum.html#nxspectrum-spectrum-3d-axis-energy-field"
         ],
         dimensionality="[mass] * [length] ** 2 / [time] ** 2",
-        unit="joule",
+        unit="eV",
         shape=["*"],
         description=("Energy axis"),
         a_nexus_field=NeXusField(
@@ -944,7 +944,7 @@ class SpectrumStack0d(Data):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXspectrum.html#nxspectrum-stack-0d-axis-energy-field"
         ],
         dimensionality="[mass] * [length] ** 2 / [time] ** 2",
-        unit="joule",
+        unit="eV",
         shape=["*"],
         description=("Energy axis"),
         a_nexus_field=NeXusField(
@@ -1170,7 +1170,7 @@ class SpectrumStack2d(Data):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXspectrum.html#nxspectrum-stack-2d-axis-energy-field"
         ],
         dimensionality="[mass] * [length] ** 2 / [time] ** 2",
-        unit="joule",
+        unit="eV",
         shape=["*"],
         description=("Energy axis"),
         a_nexus_field=NeXusField(
@@ -1430,7 +1430,7 @@ class SpectrumStack3d(Data):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXspectrum.html#nxspectrum-stack-3d-axis-energy-field"
         ],
         dimensionality="[mass] * [length] ** 2 / [time] ** 2",
-        unit="joule",
+        unit="eV",
         shape=["*"],
         description=("Energy axis"),
         a_nexus_field=NeXusField(

@@ -216,7 +216,7 @@ class Filter(Component):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXfilter.html#nxfilter-density-field"
         ],
         dimensionality="[mass] / [length] ** 3",
-        unit="kilogram / m ** 3",
+        unit="gram / m ** 3",
         description=("mass density of the filter"),
         a_nexus_field=NeXusField(
             name="density",
@@ -228,7 +228,7 @@ class Filter(Component):
         a_eln=ELNAnnotation(
             component=ELNComponentEnum.NumberEditQuantity,
         ),
-        a_display={"unit": "kilogram / m ** 3"},
+        a_display={"unit": "gram / m ** 3"},
     )
     chemical_formula = Quantity(
         type=str,

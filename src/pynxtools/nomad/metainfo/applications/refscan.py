@@ -313,7 +313,7 @@ class RefscanInstrumentMonochromator(Monochromator):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXrefscan.html#nxrefscan-entry-instrument-monochromator-wavelength-field"
         ],
         dimensionality="[length]",
-        unit="m",
+        unit="angstrom",
         a_nexus_field=NeXusField(
             name="wavelength",
             type="NX_FLOAT",
@@ -324,7 +324,7 @@ class RefscanInstrumentMonochromator(Monochromator):
         a_eln=ELNAnnotation(
             component=ELNComponentEnum.NumberEditQuantity,
         ),
-        a_display={"unit": "m"},
+        a_display={"unit": "angstrom"},
     )
 
     def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:

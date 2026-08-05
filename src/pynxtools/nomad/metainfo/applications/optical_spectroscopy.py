@@ -452,6 +452,26 @@ class OpticalSpectroscopyBeamRefFrame(CoordinateSystem):
         ),
     )
 
+    transformations = SubSection(
+        section_def="pynxtools.nomad.metainfo.base_classes.transformations.Transformations",
+        repeats=True,
+        variable=True,
+        description=(
+            "This is the default NeXus coordinate system (McStas), if the "
+            "transformation does not change the coordinate system at all - i.e. "
+            "it is unity. Otherwise, by this a respective transformation of the "
+            "beam reference frame to the default reference frame could be made. "
+            "i.e. exchange of x and z coordinate, rotation of respective "
+            "coordinates towards each other."
+        ),
+        a_nexus_group=NeXusGroup(
+            nx_class="NXtransformations",
+            name=None,
+            name_type="any",
+            optionality="required",
+        ),
+    )
+
     depends_on = Quantity(
         type=str,
         links=[
@@ -487,6 +507,23 @@ class OpticalSpectroscopySampleNormalRefFrame(CoordinateSystem):
             name="sample_normal_ref_frame",
             name_type="specified",
             optionality="optional",
+        ),
+    )
+
+    transformations = SubSection(
+        section_def="pynxtools.nomad.metainfo.base_classes.transformations.Transformations",
+        repeats=True,
+        variable=True,
+        description=(
+            "Set of transformations, describing the orientation of the "
+            "sample-normal coordinate system with respect to the beam coordinate "
+            "system (.)."
+        ),
+        a_nexus_group=NeXusGroup(
+            nx_class="NXtransformations",
+            name=None,
+            name_type="any",
+            optionality="required",
         ),
     )
 
@@ -2416,6 +2453,21 @@ class OpticalSpectroscopyInstrumentInstrumentCalibrationDEVICE(Calibration):
             optionality="optional",
         ),
     )
+    data = SubSection(
+        section_def="pynxtools.nomad.metainfo.base_classes.data.Data",
+        repeats=True,
+        variable=True,
+        description=(
+            "Generic data which does not fit to the 'NX_FLOAT' fields in "
+            "NXproces. This can be for example the instrument response function."
+        ),
+        a_nexus_group=NeXusGroup(
+            nx_class="NXdata",
+            name=None,
+            name_type="any",
+            optionality="optional",
+        ),
+    )
 
     device_path = Quantity(
         type=str,
@@ -2551,7 +2603,7 @@ class OpticalSpectroscopyInstrumentWavelengthResolution(Resolution):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXoptical_spectroscopy.html#nxoptical_spectroscopy-entry-instrument-wavelength-resolution-resolution-field"
         ],
         dimensionality="[length]",
-        unit="m",
+        unit="angstrom",
         description=(
             "Minimum distinguishable wavelength separation of peaks in spectra."
         ),
@@ -2565,7 +2617,7 @@ class OpticalSpectroscopyInstrumentWavelengthResolution(Resolution):
         a_eln=ELNAnnotation(
             component=ELNComponentEnum.NumberEditQuantity,
         ),
-        a_display={"unit": "m"},
+        a_display={"unit": "angstrom"},
     )
 
     def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
@@ -2593,6 +2645,20 @@ class OpticalSpectroscopySample(Sample):
         ),
     )
 
+    history = SubSection(
+        section_def="pynxtools.nomad.metainfo.base_classes.history.History",
+        repeats=False,
+        description=(
+            "A set of activities that occurred to the sample prior to/during the "
+            "experiment."
+        ),
+        a_nexus_group=NeXusGroup(
+            nx_class="NXhistory",
+            name="history",
+            name_type="specified",
+            optionality="recommended",
+        ),
+    )
     temperature_env = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.optical_spectroscopy.OpticalSpectroscopySampleTemperatureEnv",
         repeats=False,

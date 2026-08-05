@@ -47,9 +47,7 @@ from pynxtools.nomad.annotations import (
 from pynxtools.nomad.metainfo._category import ExperimentCategory
 from pynxtools.nomad.metainfo.applications.apm_paraprobe_tool_results import (
     ApmParaprobeToolResults,
-)
-from pynxtools.nomad.metainfo.base_classes.apm_paraprobe_tool_process import (
-    ApmParaprobeToolProcess,
+    ApmParaprobeToolResultsTaskprocessed,
 )
 from pynxtools.nomad.metainfo.base_classes.atom import Atom
 from pynxtools.nomad.metainfo.base_classes.cg_face_list_data_structure import (
@@ -2283,7 +2281,9 @@ class ApmParaprobeNanochemResultsDelocalizationIDGridIsoSurfaceIDTriangleSoupTri
         super().normalize(archive, logger)
 
 
-class ApmParaprobeNanochemResultsInterfaceMeshingID(ApmParaprobeToolProcess):
+class ApmParaprobeNanochemResultsInterfaceMeshingID(
+    ApmParaprobeToolResultsTaskprocessed
+):
     m_def = Section(
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_nanochem_results.html#nxapm_paraprobe_nanochem_results-entry-interface-meshingid-group"
@@ -2833,7 +2833,7 @@ class ApmParaprobeNanochemResultsInterfaceMeshingIDMeshStateIDTriangles(
         super().normalize(archive, logger)
 
 
-class ApmParaprobeNanochemResultsOnedProfileID(ApmParaprobeToolProcess):
+class ApmParaprobeNanochemResultsOnedProfileID(ApmParaprobeToolResultsTaskprocessed):
     m_def = Section(
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_nanochem_results.html#nxapm_paraprobe_nanochem_results-entry-oned-profileid-group"

@@ -254,7 +254,7 @@ class Electronanalyzer(Component):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXelectronanalyzer.html#nxelectronanalyzer-work-function-field"
         ],
         dimensionality="[mass] * [length] ** 2 / [time] ** 2",
-        unit="joule",
+        unit="eV",
         description=(
             "Work function of the electron analyzer. The work function of a "
             "uniform surface of a conductor is the minimum energy required to "
@@ -293,7 +293,7 @@ class Electronanalyzer(Component):
         a_eln=ELNAnnotation(
             component=ELNComponentEnum.NumberEditQuantity,
         ),
-        a_display={"unit": "joule"},
+        a_display={"unit": "eV"},
     )
     voltage_range = Quantity(
         type=np.float64,
@@ -424,7 +424,7 @@ class ElectronanalyzerEnergyResolution(Resolution):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXelectronanalyzer.html#nxelectronanalyzer-energy-resolution-resolution-field"
         ],
         dimensionality="[mass] * [length] ** 2 / [time] ** 2",
-        unit="joule",
+        unit="eV",
         description=(
             "Minimum distinguishable energy separation in the energy spectra. "
             "This concept is related to term `10.24`_ of the ISO 18115-1:2023 "
@@ -441,7 +441,7 @@ class ElectronanalyzerEnergyResolution(Resolution):
         a_eln=ELNAnnotation(
             component=ELNComponentEnum.NumberEditQuantity,
         ),
-        a_display={"unit": "joule"},
+        a_display={"unit": "eV"},
     )
     resolution_errors = Quantity(
         type=np.float64,
@@ -449,7 +449,7 @@ class ElectronanalyzerEnergyResolution(Resolution):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXelectronanalyzer.html#nxelectronanalyzer-energy-resolution-resolution-errors-field"
         ],
         dimensionality="[mass] * [length] ** 2 / [time] ** 2",
-        unit="joule",
+        unit="eV",
         a_nexus_field=NeXusField(
             name="resolution_errors",
             type="NX_FLOAT",
@@ -460,7 +460,7 @@ class ElectronanalyzerEnergyResolution(Resolution):
         a_eln=ELNAnnotation(
             component=ELNComponentEnum.NumberEditQuantity,
         ),
-        a_display={"unit": "joule"},
+        a_display={"unit": "eV"},
     )
     relative_resolution = Quantity(
         type=np.float64,
@@ -530,7 +530,7 @@ class ElectronanalyzerMomentumResolution(Resolution):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXelectronanalyzer.html#nxelectronanalyzer-momentum-resolution-resolution-field"
         ],
         dimensionality="1 / [length]",
-        unit="1 / m",
+        unit="1 / angstrom",
         a_nexus_field=NeXusField(
             name="resolution",
             type="NX_FLOAT",
@@ -541,7 +541,7 @@ class ElectronanalyzerMomentumResolution(Resolution):
         a_eln=ELNAnnotation(
             component=ELNComponentEnum.NumberEditQuantity,
         ),
-        a_display={"unit": "1 / m"},
+        a_display={"unit": "1 / angstrom"},
     )
     resolution_errors = Quantity(
         type=np.float64,
@@ -549,7 +549,7 @@ class ElectronanalyzerMomentumResolution(Resolution):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXelectronanalyzer.html#nxelectronanalyzer-momentum-resolution-resolution-errors-field"
         ],
         dimensionality="1 / [length]",
-        unit="1 / m",
+        unit="1 / angstrom",
         a_nexus_field=NeXusField(
             name="resolution_errors",
             type="NX_FLOAT",
@@ -560,7 +560,7 @@ class ElectronanalyzerMomentumResolution(Resolution):
         a_eln=ELNAnnotation(
             component=ELNComponentEnum.NumberEditQuantity,
         ),
-        a_display={"unit": "1 / m"},
+        a_display={"unit": "1 / angstrom"},
     )
 
     def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
@@ -796,7 +796,7 @@ class ElectronanalyzerTransmissionFunction(Data):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXelectronanalyzer.html#nxelectronanalyzer-transmission-function-kinetic-energy-field"
         ],
         dimensionality="[mass] * [length] ** 2 / [time] ** 2",
-        unit="joule",
+        unit="eV",
         shape=["*"],
         description=("Kinetic energy values"),
         a_nexus_field=NeXusField(

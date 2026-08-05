@@ -168,7 +168,7 @@ class DispersionFunction(Object):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXdispersion_function.html#nxdispersion_function-energy-min-field"
         ],
         dimensionality="[mass] * [length] ** 2 / [time] ** 2",
-        unit="joule",
+        unit="eV",
         description=("The minimum energy value at which this formula is valid."),
         a_nexus_field=NeXusField(
             name="energy_min",
@@ -180,7 +180,7 @@ class DispersionFunction(Object):
         a_eln=ELNAnnotation(
             component=ELNComponentEnum.NumberEditQuantity,
         ),
-        a_display={"unit": "joule"},
+        a_display={"unit": "eV"},
     )
     energy_max = Quantity(
         type=np.float64,
@@ -188,7 +188,7 @@ class DispersionFunction(Object):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXdispersion_function.html#nxdispersion_function-energy-max-field"
         ],
         dimensionality="[mass] * [length] ** 2 / [time] ** 2",
-        unit="joule",
+        unit="eV",
         description=("The maximum energy value at which this formula is valid."),
         a_nexus_field=NeXusField(
             name="energy_max",
@@ -200,7 +200,7 @@ class DispersionFunction(Object):
         a_eln=ELNAnnotation(
             component=ELNComponentEnum.NumberEditQuantity,
         ),
-        a_display={"unit": "joule"},
+        a_display={"unit": "eV"},
     )
     energy_unit = Quantity(
         type=np.float64,
@@ -208,7 +208,7 @@ class DispersionFunction(Object):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXdispersion_function.html#nxdispersion_function-energy-unit-field"
         ],
         dimensionality="[mass] * [length] ** 2 / [time] ** 2",
-        unit="joule",
+        unit="eV",
         description=(
             "The energy unit used in the formula. The field value is a scaling "
             "factor for the units attribute. It is recommended to set the field "
@@ -225,7 +225,7 @@ class DispersionFunction(Object):
         a_eln=ELNAnnotation(
             component=ELNComponentEnum.NumberEditQuantity,
         ),
-        a_display={"unit": "joule"},
+        a_display={"unit": "eV"},
     )
     wavelength_identifier = Quantity(
         type=str,

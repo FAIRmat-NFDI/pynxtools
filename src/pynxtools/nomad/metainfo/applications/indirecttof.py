@@ -237,7 +237,7 @@ class IndirecttofInstrumentAnalyser(Monochromator):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXindirecttof.html#nxindirecttof-entry-instrument-analyser-energy-field"
         ],
         dimensionality="[mass] * [length] ** 2 / [time] ** 2",
-        unit="joule",
+        unit="eV",
         shape=["*"],
         description=("analyzed energy"),
         a_nexus_field=NeXusField(

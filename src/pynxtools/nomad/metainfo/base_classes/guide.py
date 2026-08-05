@@ -510,7 +510,7 @@ class GuideReflectivity(Data):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXguide.html#nxguide-reflectivity-wavelength-field"
         ],
         dimensionality="[length]",
-        unit="m",
+        unit="angstrom",
         shape=["*"],
         description=("wavelengths at which reflectivity was measured"),
         a_nexus_field=NeXusField(

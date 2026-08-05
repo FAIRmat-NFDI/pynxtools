@@ -76,7 +76,9 @@ Vamas
 Walid
 Welford
 Welford's
+Xbase
 Xclass
+Xrot
 Zenodo
 allclose
 alphabetagamma
@@ -272,6 +274,7 @@ vamas
 vectorizable
 visititems
 vlen
+waveplate
 waxs
 xarrays
 xaxis

@@ -45,11 +45,13 @@ from pynxtools.nomad.annotations import (
     NeXusLink,
 )
 from pynxtools.nomad.metainfo._category import ExperimentCategory
-from pynxtools.nomad.metainfo.applications.monopd import Monopd
+from pynxtools.nomad.metainfo.applications.monopd import (
+    Monopd,
+    MonopdInstrument,
+    MonopdInstrumentDetector,
+)
 from pynxtools.nomad.metainfo.base_classes.beam import Beam
 from pynxtools.nomad.metainfo.base_classes.data import Data
-from pynxtools.nomad.metainfo.base_classes.detector import Detector
-from pynxtools.nomad.metainfo.base_classes.instrument import Instrument
 
 if TYPE_CHECKING:
     from nomad.datamodel import EntryArchive
@@ -165,7 +167,7 @@ class Xrd(Monopd):
 # =============================================================================
 
 
-class XrdInstrument(Instrument):
+class XrdInstrument(MonopdInstrument):
     m_def = Section(
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXxrd.html#nxxrd-entry-instrument-group"
@@ -214,7 +216,7 @@ class XrdInstrumentBeam(Beam):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXxrd.html#nxxrd-entry-instrument-beam-incident-energy-field"
         ],
         dimensionality="[mass] * [length] ** 2 / [time] ** 2",
-        unit="joule",
+        unit="eV",
         shape=["*"],
         a_nexus_field=NeXusField(
             name="incident_energy",
@@ -229,7 +231,7 @@ class XrdInstrumentBeam(Beam):
         super().normalize(archive, logger)
 
 
-class XrdInstrumentDetector(Detector):
+class XrdInstrumentDetector(MonopdInstrumentDetector):
     m_def = Section(
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXxrd.html#nxxrd-entry-instrument-detector-group"

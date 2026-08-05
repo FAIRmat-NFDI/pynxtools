@@ -462,7 +462,7 @@ class Crystal(Component):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXcrystal.html#nxcrystal-wavelength-field"
         ],
         dimensionality="[length]",
-        unit="m",
+        unit="angstrom",
         shape=["*"],
         description=("Optimum diffracted wavelength"),
         a_nexus_field=NeXusField(
@@ -499,7 +499,7 @@ class Crystal(Component):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXcrystal.html#nxcrystal-scattering-vector-field"
         ],
         dimensionality="1 / [length]",
-        unit="1 / m",
+        unit="1 / angstrom",
         description=("Scattering vector, Q, of nominal reflection"),
         a_nexus_field=NeXusField(
             name="scattering_vector",
@@ -511,7 +511,7 @@ class Crystal(Component):
         a_eln=ELNAnnotation(
             component=ELNComponentEnum.NumberEditQuantity,
         ),
-        a_display={"unit": "1 / m"},
+        a_display={"unit": "1 / angstrom"},
     )
     reflection = Quantity(
         type=np.int64,
@@ -559,7 +559,7 @@ class Crystal(Component):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXcrystal.html#nxcrystal-density-field"
         ],
         dimensionality="[mass] / [length] ** 3",
-        unit="kilogram / m ** 3",
+        unit="gram / m ** 3",
         description=("mass density of the crystal"),
         a_nexus_field=NeXusField(
             name="density",
@@ -571,7 +571,7 @@ class Crystal(Component):
         a_eln=ELNAnnotation(
             component=ELNComponentEnum.NumberEditQuantity,
         ),
-        a_display={"unit": "kilogram / m ** 3"},
+        a_display={"unit": "gram / m ** 3"},
     )
     segment_width = Quantity(
         type=np.float64,

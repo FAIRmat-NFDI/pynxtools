@@ -48,6 +48,7 @@ from pynxtools.nomad.metainfo._category import ExperimentCategory
 from pynxtools.nomad.metainfo.applications.sensor_scan import (
     SensorScan,
     SensorScanInstrument,
+    SensorScanInstrumentEnvironment,
     SensorScanSample,
 )
 from pynxtools.nomad.metainfo.base_classes.amplifier import Amplifier
@@ -63,6 +64,7 @@ from pynxtools.nomad.metainfo.base_classes.spm_bias_spectroscopy import (
     SpmBiasSpectroscopy,
 )
 from pynxtools.nomad.metainfo.base_classes.spm_piezo_sensor import SpmPiezoSensor
+from pynxtools.nomad.metainfo.base_classes.spm_positioner import SpmPositioner
 from pynxtools.nomad.metainfo.base_classes.spm_scan_control import SpmScanControl
 from pynxtools.nomad.metainfo.base_classes.spm_scan_pattern import SpmScanPattern
 from pynxtools.nomad.metainfo.base_classes.spm_scan_region import SpmScanRegion
@@ -722,7 +724,7 @@ class SpmInstrumentLockinAmplifier(Lockin):
         super().normalize(archive, logger)
 
 
-class SpmInstrumentScanEnvironment(Environment):
+class SpmInstrumentScanEnvironment(SensorScanInstrumentEnvironment):
     """
     Information of the scan environment holding concept for temperature,
     setpoint (current or height), scan area and scan data.
@@ -1775,7 +1777,7 @@ class SpmInstrumentPiezoSensor(SpmPiezoSensor):
         super().normalize(archive, logger)
 
 
-class SpmInstrumentBiasSpectroscopyEnvironment(Environment):
+class SpmInstrumentBiasSpectroscopyEnvironment(SensorScanInstrumentEnvironment):
     """
     To explain bias and current behavior (sweep measurement especially in STS
     experiment) due to voltage applied to the sample.
@@ -1825,10 +1827,54 @@ class SpmInstrumentBiasSpectroscopyEnvironmentSpmBiasSpectroscopy(SpmBiasSpectro
         ),
     )
 
+    spm_positioner = SubSection(
+        section_def="pynxtools.nomad.metainfo.applications.spm.SpmInstrumentBiasSpectroscopyEnvironmentSpmBiasSpectroscopySpmPositioner",
+        repeats=True,
+        variable=True,
+    )
     bias_sweep = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.spm.SpmInstrumentBiasSpectroscopyEnvironmentSpmBiasSpectroscopyBiasSweep",
         repeats=True,
         variable=True,
+    )
+
+    def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
+        super().normalize(archive, logger)
+
+
+class SpmInstrumentBiasSpectroscopyEnvironmentSpmBiasSpectroscopySpmPositioner(
+    SpmPositioner
+):
+    """
+    Information about positioner used in STS scan settings, like PID controller
+    and offset.
+
+    Reuse, if needed, this group for positioners for multiple scans at
+    different points on sample.
+    """
+
+    m_def = Section(
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXspm.html#nxspm-entry-instrument-bias-spectroscopy-environment-spm-bias-spectroscopy-spm-positioner-group"
+        ],
+        variable=True,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXspm_positioner",
+            name=None,
+            name_type="any",
+            optionality="recommended",
+        ),
+    )
+
+    z_controller = SubSection(
+        section_def="pynxtools.nomad.metainfo.base_classes.pid_controller.PidController",
+        repeats=False,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXpid_controller",
+            name="z_controller",
+            name_type="specified",
+            optionality="recommended",
+        ),
     )
 
     def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:

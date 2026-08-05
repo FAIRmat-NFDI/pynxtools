@@ -273,7 +273,7 @@ class Grating(Component):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXgrating.html#nxgrating-substrate-density-field"
         ],
         dimensionality="[mass] / [length] ** 3",
-        unit="kilogram / m ** 3",
+        unit="gram / m ** 3",
         a_nexus_field=NeXusField(
             name="substrate_density",
             type="NX_FLOAT",
@@ -284,7 +284,7 @@ class Grating(Component):
         a_eln=ELNAnnotation(
             component=ELNComponentEnum.NumberEditQuantity,
         ),
-        a_display={"unit": "kilogram / m ** 3"},
+        a_display={"unit": "gram / m ** 3"},
     )
     substrate_thickness = Quantity(
         type=np.float64,

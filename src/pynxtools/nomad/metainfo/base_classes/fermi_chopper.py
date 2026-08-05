@@ -275,7 +275,7 @@ class FermiChopper(Component):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXfermi_chopper.html#nxfermi_chopper-wavelength-field"
         ],
         dimensionality="[length]",
-        unit="m",
+        unit="angstrom",
         description=("Wavelength transmitted by chopper"),
         a_nexus_field=NeXusField(
             name="wavelength",
@@ -287,7 +287,7 @@ class FermiChopper(Component):
         a_eln=ELNAnnotation(
             component=ELNComponentEnum.NumberEditQuantity,
         ),
-        a_display={"unit": "m"},
+        a_display={"unit": "angstrom"},
     )
     energy = Quantity(
         type=np.float64,
@@ -295,7 +295,7 @@ class FermiChopper(Component):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXfermi_chopper.html#nxfermi_chopper-energy-field"
         ],
         dimensionality="[mass] * [length] ** 2 / [time] ** 2",
-        unit="joule",
+        unit="eV",
         description=("energy selected"),
         a_nexus_field=NeXusField(
             name="energy",
@@ -307,7 +307,7 @@ class FermiChopper(Component):
         a_eln=ELNAnnotation(
             component=ELNComponentEnum.NumberEditQuantity,
         ),
-        a_display={"unit": "joule"},
+        a_display={"unit": "eV"},
     )
     absorbing_material = Quantity(
         type=str,

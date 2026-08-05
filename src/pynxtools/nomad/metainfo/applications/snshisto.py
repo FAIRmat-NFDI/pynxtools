@@ -2158,7 +2158,7 @@ class SnshistoInstrumentCrystal(Crystal):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXsnshisto.html#nxsnshisto-entry-instrument-crystal-wavelength-field"
         ],
         dimensionality="[length]",
-        unit="m",
+        unit="angstrom",
         shape=["*"],
         a_nexus_field=NeXusField(
             name="wavelength",

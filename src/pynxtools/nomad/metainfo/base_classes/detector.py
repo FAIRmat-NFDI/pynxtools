@@ -812,7 +812,7 @@ class Detector(Component):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXdetector.html#nxdetector-gas-pressure-field"
         ],
         dimensionality="[mass] / [length] / [time] ** 2",
-        unit="pascal",
+        unit="mbar",
         shape=["*", "*"],
         description=("Detector gas pressure"),
         a_nexus_field=NeXusField(
@@ -1783,7 +1783,7 @@ class Detector(Component):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXdetector.html#nxdetector-threshold-energy-field"
         ],
         dimensionality="[mass] * [length] ** 2 / [time] ** 2",
-        unit="joule",
+        unit="eV",
         description=(
             "Single photon counter detectors can be adjusted for a certain "
             "energy range in which they work optimally. This is the energy "
@@ -1799,7 +1799,7 @@ class Detector(Component):
         a_eln=ELNAnnotation(
             component=ELNComponentEnum.NumberEditQuantity,
         ),
-        a_display={"unit": "joule"},
+        a_display={"unit": "eV"},
     )
     depends_on = Quantity(
         type=str,
@@ -1974,7 +1974,7 @@ class DetectorEfficiency(Data):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXdetector.html#nxdetector-efficiency-wavelength-field"
         ],
         dimensionality="[length]",
-        unit="m",
+        unit="angstrom",
         shape=["*", "*", "*"],
         description=(
             "This field can be two things: #. For a pixel detector it provides "

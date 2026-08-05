@@ -101,7 +101,7 @@ class DetectorChannel(Object):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXdetector_channel.html#nxdetector_channel-threshold-energy-field"
         ],
         dimensionality="[mass] * [length] ** 2 / [time] ** 2",
-        unit="joule",
+        unit="eV",
         description=("Energy at which a photon will be recorded"),
         a_nexus_field=NeXusField(
             name="threshold_energy",
@@ -113,7 +113,7 @@ class DetectorChannel(Object):
         a_eln=ELNAnnotation(
             component=ELNComponentEnum.NumberEditQuantity,
         ),
-        a_display={"unit": "joule"},
+        a_display={"unit": "eV"},
     )
     flatfield_applied = Quantity(
         type=bool,

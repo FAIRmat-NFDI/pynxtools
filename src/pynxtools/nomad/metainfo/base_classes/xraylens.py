@@ -291,7 +291,7 @@ class Xraylens(Component):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXxraylens.html#nxxraylens-gas-pressure-field"
         ],
         dimensionality="[mass] / [length] / [time] ** 2",
-        unit="pascal",
+        unit="mbar",
         description=("Gas pressure in the lens"),
         a_nexus_field=NeXusField(
             name="gas_pressure",
@@ -303,7 +303,7 @@ class Xraylens(Component):
         a_eln=ELNAnnotation(
             component=ELNComponentEnum.NumberEditQuantity,
         ),
-        a_display={"unit": "pascal"},
+        a_display={"unit": "mbar"},
     )
     depends_on = Quantity(
         type=str,

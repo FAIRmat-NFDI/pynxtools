@@ -267,7 +267,7 @@ class DirecttofInstrumentFermiChopper(FermiChopper):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXdirecttof.html#nxdirecttof-entry-instrument-fermi-chopper-energy-field"
         ],
         dimensionality="[mass] * [length] ** 2 / [time] ** 2",
-        unit="joule",
+        unit="eV",
         description=("energy selected"),
         a_nexus_field=NeXusField(
             name="energy",
@@ -279,7 +279,7 @@ class DirecttofInstrumentFermiChopper(FermiChopper):
         a_eln=ELNAnnotation(
             component=ELNComponentEnum.NumberEditQuantity,
         ),
-        a_display={"unit": "joule"},
+        a_display={"unit": "eV"},
     )
 
     def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
@@ -326,7 +326,7 @@ class DirecttofInstrumentDiskChopper(DiskChopper):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXdirecttof.html#nxdirecttof-entry-instrument-disk-chopper-energy-field"
         ],
         dimensionality="[mass] * [length] ** 2 / [time] ** 2",
-        unit="joule",
+        unit="eV",
         description=("energy selected"),
         a_nexus_field=NeXusField(
             name="energy",
@@ -338,7 +338,7 @@ class DirecttofInstrumentDiskChopper(DiskChopper):
         a_eln=ELNAnnotation(
             component=ELNComponentEnum.NumberEditQuantity,
         ),
-        a_display={"unit": "joule"},
+        a_display={"unit": "eV"},
     )
 
     def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:

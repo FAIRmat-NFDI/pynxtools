@@ -129,7 +129,7 @@ class DispersionTable(Object):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXdispersion_table.html#nxdispersion_table-energy-field"
         ],
         dimensionality="[mass] * [length] ** 2 / [time] ** 2",
-        unit="joule",
+        unit="eV",
         shape=["*"],
         description=(
             "The energy array of the tabulated dataset. This is essentially a "

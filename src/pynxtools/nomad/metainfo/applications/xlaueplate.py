@@ -41,9 +41,8 @@ from pynxtools.nomad.annotations import (
     NeXusLink,
 )
 from pynxtools.nomad.metainfo._category import ExperimentCategory
-from pynxtools.nomad.metainfo.applications.xlaue import Xlaue
-from pynxtools.nomad.metainfo.base_classes.detector import Detector
-from pynxtools.nomad.metainfo.base_classes.instrument import Instrument
+from pynxtools.nomad.metainfo.applications.xlaue import Xlaue, XlaueInstrument
+from pynxtools.nomad.metainfo.applications.xrot import XrotInstrumentDetector
 
 if TYPE_CHECKING:
     from nomad.datamodel import EntryArchive
@@ -138,7 +137,7 @@ class Xlaueplate(Xlaue):
 # =============================================================================
 
 
-class XlaueplateInstrument(Instrument):
+class XlaueplateInstrument(XlaueInstrument):
     m_def = Section(
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXxlaueplate.html#nxxlaueplate-entry-instrument-group"
@@ -160,7 +159,7 @@ class XlaueplateInstrument(Instrument):
         super().normalize(archive, logger)
 
 
-class XlaueplateInstrumentDetector(Detector):
+class XlaueplateInstrumentDetector(XrotInstrumentDetector):
     m_def = Section(
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXxlaueplate.html#nxxlaueplate-entry-instrument-detector-group"
