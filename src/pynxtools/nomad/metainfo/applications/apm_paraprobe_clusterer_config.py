@@ -48,6 +48,7 @@ from pynxtools.nomad.metainfo._category import ExperimentCategory
 from pynxtools.nomad.metainfo.applications.apm_paraprobe_tool_config import (
     ApmParaprobeToolConfig,
     ApmParaprobeToolConfigTaskconfig,
+    ApmParaprobeToolConfigTaskconfigReconstruction,
 )
 from pynxtools.nomad.metainfo.base_classes.note import Note
 from pynxtools.nomad.metainfo.base_classes.process import Process
@@ -202,7 +203,9 @@ class ApmParaprobeClustererConfigCamecaToNexus(ApmParaprobeToolConfigTaskconfig)
         super().normalize(archive, logger)
 
 
-class ApmParaprobeClustererConfigCamecaToNexusReconstruction(Note):
+class ApmParaprobeClustererConfigCamecaToNexusReconstruction(
+    ApmParaprobeToolConfigTaskconfigReconstruction
+):
     m_def = Section(
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_clusterer_config.html#nxapm_paraprobe_clusterer_config-entry-cameca-to-nexus-reconstruction-group"

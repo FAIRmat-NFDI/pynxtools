@@ -45,19 +45,15 @@ from pynxtools.nomad.annotations import (
     NeXusLink,
 )
 from pynxtools.nomad.metainfo._category import ExperimentCategory
-from pynxtools.nomad.metainfo.applications.sensor_scan import (
-    SensorScanInstrumentEnvironment,
-)
 from pynxtools.nomad.metainfo.applications.spm import (
     Spm,
     SpmInstrument,
+    SpmInstrumentBiasSpectroscopyEnvironment,
+    SpmInstrumentBiasSpectroscopyEnvironmentSpmBiasSpectroscopy,
+    SpmInstrumentBiasSpectroscopyEnvironmentSpmBiasSpectroscopySpmPositioner,
     SpmReproducibilityIndicators,
     SpmResolutionIndicators,
 )
-from pynxtools.nomad.metainfo.base_classes.spm_bias_spectroscopy import (
-    SpmBiasSpectroscopy,
-)
-from pynxtools.nomad.metainfo.base_classes.spm_positioner import SpmPositioner
 
 if TYPE_CHECKING:
     from nomad.datamodel import EntryArchive
@@ -360,7 +356,9 @@ class StsInstrument(SpmInstrument):
         super().normalize(archive, logger)
 
 
-class StsInstrumentBiasSpectroscopyEnvironment(SensorScanInstrumentEnvironment):
+class StsInstrumentBiasSpectroscopyEnvironment(
+    SpmInstrumentBiasSpectroscopyEnvironment
+):
     """
     To explain bias (sweep measurement) voltage applied to the sample.
     """
@@ -387,7 +385,9 @@ class StsInstrumentBiasSpectroscopyEnvironment(SensorScanInstrumentEnvironment):
         super().normalize(archive, logger)
 
 
-class StsInstrumentBiasSpectroscopyEnvironmentSpmBiasSpectroscopy(SpmBiasSpectroscopy):
+class StsInstrumentBiasSpectroscopyEnvironmentSpmBiasSpectroscopy(
+    SpmInstrumentBiasSpectroscopyEnvironmentSpmBiasSpectroscopy
+):
     """
     Setup and scan data for continuous measurement of bias-voltage on the
     subject of experiment vs tunneling current from probe.
@@ -417,7 +417,7 @@ class StsInstrumentBiasSpectroscopyEnvironmentSpmBiasSpectroscopy(SpmBiasSpectro
 
 
 class StsInstrumentBiasSpectroscopyEnvironmentSpmBiasSpectroscopySpmPositioner(
-    SpmPositioner
+    SpmInstrumentBiasSpectroscopyEnvironmentSpmBiasSpectroscopySpmPositioner
 ):
     m_def = Section(
         links=[

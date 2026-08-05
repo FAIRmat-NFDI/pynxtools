@@ -45,12 +45,15 @@ from pynxtools.nomad.annotations import (
     NeXusLink,
 )
 from pynxtools.nomad.metainfo._category import ExperimentCategory
-from pynxtools.nomad.metainfo.applications.xrd import Xrd, XrdData
-from pynxtools.nomad.metainfo.base_classes.detector import Detector
-from pynxtools.nomad.metainfo.base_classes.instrument import Instrument
+from pynxtools.nomad.metainfo.applications.monopd import MonopdInstrumentSource
+from pynxtools.nomad.metainfo.applications.xrd import (
+    Xrd,
+    XrdData,
+    XrdInstrument,
+    XrdInstrumentDetector,
+)
 from pynxtools.nomad.metainfo.base_classes.object import Object
 from pynxtools.nomad.metainfo.base_classes.sample import Sample
-from pynxtools.nomad.metainfo.base_classes.source import Source
 
 if TYPE_CHECKING:
     from nomad.datamodel import EntryArchive
@@ -213,7 +216,7 @@ class XrdPan(Xrd):
 # =============================================================================
 
 
-class XrdPanInstrument(Instrument):
+class XrdPanInstrument(XrdInstrument):
     m_def = Section(
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXxrd_pan.html#nxxrd_pan-entry-instrument-group"
@@ -242,7 +245,7 @@ class XrdPanInstrument(Instrument):
         super().normalize(archive, logger)
 
 
-class XrdPanInstrumentSource(Source):
+class XrdPanInstrumentSource(MonopdInstrumentSource):
     m_def = Section(
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXxrd_pan.html#nxxrd_pan-entry-instrument-source-group"
@@ -475,7 +478,7 @@ class XrdPanInstrumentSource(Source):
         super().normalize(archive, logger)
 
 
-class XrdPanInstrumentDetector(Detector):
+class XrdPanInstrumentDetector(XrdInstrumentDetector):
     m_def = Section(
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXxrd_pan.html#nxxrd_pan-entry-instrument-detector-group"

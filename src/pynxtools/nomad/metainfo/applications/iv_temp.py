@@ -45,11 +45,13 @@ from pynxtools.nomad.annotations import (
     NeXusLink,
 )
 from pynxtools.nomad.metainfo._category import ExperimentCategory
-from pynxtools.nomad.metainfo.applications.sensor_scan import SensorScan
+from pynxtools.nomad.metainfo.applications.sensor_scan import (
+    SensorScan,
+    SensorScanInstrument,
+    SensorScanInstrumentEnvironment,
+    SensorScanSample,
+)
 from pynxtools.nomad.metainfo.base_classes.data import Data
-from pynxtools.nomad.metainfo.base_classes.environment import Environment
-from pynxtools.nomad.metainfo.base_classes.instrument import Instrument
-from pynxtools.nomad.metainfo.base_classes.sample import Sample
 
 if TYPE_CHECKING:
     from nomad.datamodel import EntryArchive
@@ -261,7 +263,7 @@ class IvTemp(SensorScan):
 # =============================================================================
 
 
-class IvTempSample(Sample):
+class IvTempSample(SensorScanSample):
     m_def = Section(
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXiv_temp.html#nxiv_temp-entry-sample-group"
@@ -322,7 +324,7 @@ class IvTempSample(Sample):
         super().normalize(archive, logger)
 
 
-class IvTempInstrument(Instrument):
+class IvTempInstrument(SensorScanInstrument):
     m_def = Section(
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXiv_temp.html#nxiv_temp-entry-instrument-group"
@@ -346,7 +348,7 @@ class IvTempInstrument(Instrument):
         super().normalize(archive, logger)
 
 
-class IvTempInstrumentEnvironment(Environment):
+class IvTempInstrumentEnvironment(SensorScanInstrumentEnvironment):
     """
     Describes an environment setup for a temperature-dependent IV measurement
     experiment.

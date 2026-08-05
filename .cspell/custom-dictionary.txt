@@ -274,6 +274,7 @@ vamas
 vectorizable
 visititems
 vlen
+waveplate
 waxs
 xarrays
 xaxis

@@ -49,6 +49,7 @@ from pynxtools.nomad.metainfo.applications.sensor_scan import (
     SensorScan,
     SensorScanInstrument,
     SensorScanInstrumentEnvironment,
+    SensorScanSample,
 )
 from pynxtools.nomad.metainfo.base_classes.amplifier import Amplifier
 from pynxtools.nomad.metainfo.base_classes.calibration import Calibration
@@ -58,7 +59,6 @@ from pynxtools.nomad.metainfo.base_classes.environment import Environment
 from pynxtools.nomad.metainfo.base_classes.fabrication import Fabrication
 from pynxtools.nomad.metainfo.base_classes.lockin import Lockin
 from pynxtools.nomad.metainfo.base_classes.parameters import Parameters
-from pynxtools.nomad.metainfo.base_classes.sample import Sample
 from pynxtools.nomad.metainfo.base_classes.sensor import Sensor
 from pynxtools.nomad.metainfo.base_classes.spm_bias_spectroscopy import (
     SpmBiasSpectroscopy,
@@ -2208,7 +2208,7 @@ class SpmInstrumentSampleBiasVoltageCalibrationCalibrationParameters(Parameters)
         super().normalize(archive, logger)
 
 
-class SpmSample(Sample):
+class SpmSample(SensorScanSample):
     """
     The sample information.
     """
@@ -2226,20 +2226,6 @@ class SpmSample(Sample):
         ),
     )
 
-    history = SubSection(
-        section_def="pynxtools.nomad.metainfo.base_classes.history.History",
-        repeats=False,
-        description=(
-            "A set of physical processes that occurred to the sample "
-            "prior/during experiment."
-        ),
-        a_nexus_group=NeXusGroup(
-            nx_class="NXhistory",
-            name="history",
-            name_type="specified",
-            optionality="recommended",
-        ),
-    )
     sample_environment = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.spm.SpmSampleSampleEnvironment",
         repeats=False,

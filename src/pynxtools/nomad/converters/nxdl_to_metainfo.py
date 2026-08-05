@@ -667,24 +667,58 @@ def _quantity_differs_from_base(
     )
 
 
+def _optionality_from_attrib(attrib: dict) -> str | None:
+    """Compute NXDL optionality from a raw XML element's attributes directly,
+    mirroring ``NexusNode._set_optionality``'s precedence, or ``None`` if none
+    of ``recommended``/``required``/``optional``/``minOccurs`` is present.
+
+    Needed because that method only ever computes optionality for a node's
+    own most-derived declaration (``inheritance[0]``); this lets us ask the
+    same question about an arbitrary ancestor level's raw declaration
+    instead, without constructing a full node for it.
+
+    ``None`` (rather than falling back to NeXus's own "required" default) is
+    deliberate: that default is category-dependent — base classes default to
+    optional, application definitions to required — so an appdef that simply
+    reuses a base class's group (e.g. NXsensor_scan's own bare ``<group
+    type="NXdata">``, no attributes at all) looks "required" by convention
+    alone, even with zero intent to narrow it from the generic "optional".
+    Treating that as a real override would report an ancestor as generating
+    its own concept when ``_build_named_concept`` never actually emits one,
+    producing a class reference that does not exist (confirmed via
+    NXsensor_scan's ``data``, which was wrongly triggering exactly this).
+    """
+    if attrib.get("recommended"):
+        return "recommended"
+    min_occurs = attrib.get("minOccurs")
+    if attrib.get("required") or (min_occurs is not None and int(min_occurs) > 0):
+        return "required"
+    if attrib.get("optional") or min_occurs == "0":
+        return "optional"
+    return None
+
+
 def _parent_generates_concept_at(child: NXTreeGroup, idx: int) -> bool:
     """Return whether the ancestor at ``idx`` generates its own concept.
 
-    An ancestor generates a concept if it declares, at that specific level,
+    An ancestor generates a concept if, at that specific level, it: declares
     a field/attribute that differs from the generic base's (dtype, items,
-    unit — see ``_quantity_differs_from_base``), a child group not already
-    part of the base class for ``child.nx_class``, or a nested group (already
-    a generic type) that itself adds such content one or more levels down.
+    unit — see ``_quantity_differs_from_base``); declares a child group not
+    already part of the base class for ``child.nx_class``; gives ``child``
+    itself different occurrence limits or optionality than the generic
+    enclosing class declares for this same slot; or nests a group (already a
+    generic type) that itself adds any of the above one or more levels down.
 
-    Presence alone isn't enough: an ancestor can redeclare a field purely for
-    documentation, with values identical to the generic default (e.g.
-    NXxbase's ``source`` redeclares ``type``/``name``/``probe`` unchanged). A
-    presence-only check would claim NXxbase generates its own ``source``
-    concept when ``_build_named_concept`` — using this same precise
-    comparison — never actually emits one, producing a class reference that
-    does not exist. Occurrence limits, optionality, and doc are excluded for
-    the same reason ``_build_named_concept``'s ``slot_overridden`` excludes
-    doc: see that function's docstring.
+    Presence alone isn't enough for any of these — an ancestor can redeclare
+    a field, or write an attribute like ``optional="true"``, purely for
+    documentation, with the value identical to the generic default (e.g.
+    NXxbase's ``source`` redeclares ``type``/``name``/``probe`` unchanged;
+    NXoptical_spectroscopy's ``waveplate`` writes ``optional="true"`` when
+    that's already the generic default). A presence-only check would claim
+    an ancestor generates its own concept when ``_build_named_concept`` —
+    using this same precise comparison — never actually emits one, producing
+    a class reference that does not exist. Doc is excluded even so: see
+    ``_build_named_concept``'s ``slot_overridden`` for why.
 
     The recursion into nested groups matters because ``_parent_app_concept_override``
     only descends into a group's own children (e.g. ``detector`` inside
@@ -696,8 +730,20 @@ def _parent_generates_concept_at(child: NXTreeGroup, idx: int) -> bool:
     """
     if idx >= len(child.inheritance):
         return False
-    ancestor_file = child.inheritance[idx].base
-    return _declares_content_at(child, ancestor_file)
+    elem = child.inheritance[idx]
+    parent = child.parent
+    if isinstance(parent, NXTreeGroup):
+        base_sibling = _base_class_group_nodes(parent.nx_class).get(
+            _group_python_name(child)
+        )
+        own_optionality = _optionality_from_attrib(elem.attrib)
+        if (
+            base_sibling is not None
+            and own_optionality is not None
+            and own_optionality != base_sibling.optionality
+        ):
+            return True
+    return _declares_content_at(child, elem.base)
 
 
 def _declares_content_at(
@@ -705,24 +751,57 @@ def _declares_content_at(
 ) -> bool:
     """Return True if ``node``'s declaration at ``ancestor_file`` differs from
     the generic definition of ``node.nx_class``, checking own fields/
-    attributes precisely and recursing into nested groups. Depth-capped
+    attributes and nested groups' occurrence/optionality precisely, and
+    recursing into nested groups for content further down. Depth-capped
     against pathological self-referential NXDL structures (e.g. NXnote
     containing NXnote); real NXDL nesting never comes close to this depth.
+
+    Looks at every child of ``node``, not only those whose ``nxdl_base``
+    exactly equals ``ancestor_file``: a more-derived application can
+    redeclare a child purely to nest further content of its own (e.g.
+    NXsts's ``bias_spectroscopy_environment`` redeclares NXspm's own
+    ``NXspm_bias_spectroscopy`` group just to add a ``z_controller``
+    underneath it), which reassigns ``nxdl_base`` to that more-derived level
+    even though ``ancestor_file`` still genuinely introduces the same child —
+    it still appears in the child's own ``inheritance``. Filtering on
+    ``nxdl_base`` alone would make that content invisible when checking
+    whether ``ancestor_file`` itself generates a concept here.
     """
     if _depth > 10:
         return False
     base_group_nx = _base_class_group_nx_classes(node.nx_class)
     base_lookup = _base_class_quantities(node.nx_class)
-    for c in node.children_at_definition(ancestor_file):
+    base_group_nodes = _base_class_group_nodes(node.nx_class)
+    for c in node.children:
+        own_elem = next(
+            (elem for elem in c.inheritance if elem.base == ancestor_file), None
+        )
+        if own_elem is None:
+            continue
         if isinstance(c, (NXTreeField, NXTreeAttribute)):
             if _quantity_differs_from_base(c, base_lookup):
                 return True
         elif isinstance(c, NXTreeGroup):
             if c.nx_class not in base_group_nx:
                 return True
-            if ancestor_file in (elem.base for elem in c.inheritance) and (
-                _declares_content_at(c, ancestor_file, _depth + 1)
+            base_sibling = base_group_nodes.get(_group_python_name(c))
+            if base_sibling is None:
+                # Same nx_class as some generic child, but no generic sibling
+                # under this exact name (e.g. NXxrd's "raw_data" vs generic
+                # NXdetector's own unnamed NXdata child) — a genuinely new,
+                # separately-named SubSection, matching how
+                # ``_build_named_concept``'s ``is_collision`` treats the same
+                # situation.
+                return True
+            if _repeats_from_node(c) != _repeats_from_node(base_sibling):
+                return True
+            own_optionality = _optionality_from_attrib(own_elem.attrib)
+            if (
+                own_optionality is not None
+                and own_optionality != base_sibling.optionality
             ):
+                return True
+            if _declares_content_at(c, ancestor_file, _depth + 1):
                 return True
     return False
 

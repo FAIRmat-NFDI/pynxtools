@@ -44,10 +44,10 @@ from pynxtools.nomad.metainfo._category import ExperimentCategory
 from pynxtools.nomad.metainfo.applications.optical_spectroscopy import (
     OpticalSpectroscopy,
     OpticalSpectroscopyInstrument,
+    OpticalSpectroscopyInstrumentOpticalLens,
     OpticalSpectroscopySample,
 )
 from pynxtools.nomad.metainfo.base_classes.data import Data
-from pynxtools.nomad.metainfo.base_classes.optical_lens import OpticalLens
 from pynxtools.nomad.metainfo.base_classes.program import Program
 from pynxtools.nomad.metainfo.base_classes.waveplate import Waveplate
 
@@ -429,7 +429,7 @@ class EllipsometryInstrument(OpticalSpectroscopyInstrument):
         super().normalize(archive, logger)
 
 
-class EllipsometryInstrumentFocusingProbes(OpticalLens):
+class EllipsometryInstrumentFocusingProbes(OpticalSpectroscopyInstrumentOpticalLens):
     """
     If focusing probes (lenses) were used, please state if the data were
     corrected for the window effects.
