@@ -2247,15 +2247,51 @@ def format_error_message(msg: str) -> str:
             ],
             id="missing-required-variadic-axisname-indices-attribute",
         ),
+        pytest.param(
+            alter_dict(
+                TEMPLATE,
+                "/ENTRY[my_entry]/NXODD_name[nxodd_name]/DATA[data]",
+                {
+                    "link": "/my_entry/nxodd_name/posint_value",
+                    "shape": (slice(0, 2),),
+                },
+            ),
+            "",
+            id="nxdata-signal-link-with-shape-not-mutated",
+        ),
+        pytest.param(
+            alter_dict(
+                TEMPLATE,
+                "/ENTRY[my_entry]/NXODD_name[nxodd_name]/DATA[data]",
+                {"link": ["file1.h5:/data", "file2.h5:/data"]},
+            ),
+            "",
+            id="list-form-vds-link-not-misclassified",
+        ),
     ],
 )
 def test_validate_data_dict(data_dict, error_messages, caplog, request):
     """Unit test for the data validation routine on the template."""
 
     if not error_messages:
+        link_path = "/ENTRY[my_entry]/NXODD_name[nxodd_name]/DATA[data]"
+        original_value = (
+            data_dict["required"].get(link_path)
+            if request.node.callspec.id
+            in (
+                "nxdata-signal-link-with-shape-not-mutated",
+                "list-form-vds-link-not-misclassified",
+            )
+            else None
+        )
         with caplog.at_level(logging.WARNING):
             assert validate_dict_against("NXtest", data_dict)
         assert caplog.text == ""
+        if original_value is not None:
+            # validate_dict_against() resolves a {"link": ...} entry to check its
+            # type/shape against the schema, but must leave the original link (and
+            # any VDS "shape" slice) in the template - the Writer needs it intact.
+            assert data_dict["required"][link_path] == original_value
     else:
         if request.node.callspec.id in (
             "field-with-illegal-unit",
@@ -3683,6 +3719,18 @@ def test_validate_data_dict(data_dict, error_messages, caplog, request):
             ],
             id="missing-required-variadic-axisname-indices-attribute",
         ),
+        pytest.param(
+            alter_dict(
+                TEMPLATE,
+                "/ENTRY[my_entry]/NXODD_name[nxodd_name]/DATA[data]",
+                {
+                    "link": "/my_entry/nxodd_name/posint_value",
+                    "shape": (slice(0, 2),),
+                },
+            ),
+            "",
+            id="nxdata-signal-link-with-shape-written-as-real-vds",
+        ),
     ],
 )
 def test_validate_nexus_file(data_dict, error_messages, caplog, tmp_path, request):
@@ -3696,6 +3744,17 @@ def test_validate_nexus_file(data_dict, error_messages, caplog, tmp_path, reques
     _, nxdl_path = get_nxdl_root_and_path(nxdl=nxdl_name)
     hdf_file_path = tmp_path / f"hdf5_validator_test_{request.node.callspec.id}.nxs"
     Writer(data=template, nxdl_f_path=nxdl_path, output_path=hdf_file_path).write()
+
+    if request.node.callspec.id == "nxdata-signal-link-with-shape-written-as-real-vds":
+        # ValidationVisitor (via validate()) runs on the already-written file, where
+        # links/VDS are real h5py objects - it should see a correctly sliced VDS,
+        # not the full (unsliced) target the writer would fall back to if a bug
+        # upstream (e.g. in validate_dict_against) had corrupted the link/shape
+        # template entry before Writer ever ran.
+        with h5py.File(hdf_file_path, "r") as hdf_file:
+            dataset = hdf_file["/my_entry/nxodd_name/data"]
+            assert dataset.is_virtual
+            assert dataset.shape == (2,)
 
     if not error_messages:
         with caplog.at_level(logging.WARNING):
