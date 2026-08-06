@@ -42,6 +42,7 @@ from pynxtools.nomad.annotations import (
     NeXusGroup,
     NeXusLink,
 )
+from pynxtools.nomad.metainfo._identified_entity import resolve_or_create_entity
 
 if TYPE_CHECKING:
     from nomad.datamodel import EntryArchive
@@ -289,5 +290,37 @@ class Object(basesections.ArchiveSection):
         ),
     )
 
+    nexus_identifiers = SubSection(
+        section_def=basesections.EntityReference,
+        repeats=True,
+        description="""
+        Standalone NOMAD entries resolved (or newly created) from this object's
+        NeXus `identifierNAME` fields, for identifiers that don't correspond to
+        an already-typed basesections entity (sample, instrument, ...) — those
+        set their own `lab_id` directly instead, see `normalize()`.
+        """,
+    )
+
     def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
+        identifiers = self.__dict__.get("identifierNAME")
+        if identifiers:
+            is_entity = isinstance(self, basesections.Entity)
+            for hdf_field_name, id_quantity in identifiers.items():
+                lab_id = id_quantity.value
+                if not lab_id:
+                    continue
+                # The first identifier becomes this Entity's own lab_id directly
+                # (no bag needed — self already is the thing being identified).
+                # Any further identifier on the same object — or any identifier
+                # at all on a non-Entity object — still needs somewhere to go,
+                # so it's resolved/created as its own nexus_identifiers entry
+                # rather than silently dropped.
+                if is_entity and self.lab_id is None:  # type: ignore[has-type]
+                    self.lab_id = lab_id
+                else:
+                    self.nexus_identifiers.append(
+                        resolve_or_create_entity(
+                            archive, logger, lab_id, hdf_field_name
+                        )
+                    )
         super().normalize(archive, logger)

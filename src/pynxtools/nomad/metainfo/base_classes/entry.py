@@ -857,6 +857,13 @@ class Entry(Object, basesections.Activity, EntryData):
     )
 
     def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
+        if self.name is None:  # type: ignore[has-type]
+            self.name = self.title if self.title else self.m_def.name
+        # A proper method vocabulary (NXem -> "Electron microscopy (EM)", ...)
+        # could be an alternative to the current approach of using the class
+        # name as the method.
+        if self.method is None:  # type: ignore[has-type]
+            self.method = self.m_def.name
         super().normalize(archive, logger)
 
     def to_workflow(self) -> Workflow:

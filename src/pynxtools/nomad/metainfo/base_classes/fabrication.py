@@ -174,4 +174,15 @@ class Fabrication(Object, basesections.InstrumentEntry):
     )
 
     def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
+        if self.name is None:  # type: ignore[has-type]
+            if self.vendor or self.model:
+                parts = " / ".join(p for p in (self.vendor, self.model) if p)
+                self.name = f"{self.m_def.name} ({parts})"
+            else:
+                self.name = self.m_def.name
+        # super().normalize() (Object) sets lab_id from an identifierNAME field
+        # first, if there is one; serial_number is only a fallback identifier
+        # for the common case where the file has no explicit identifierNAME.
         super().normalize(archive, logger)
+        if self.lab_id is None and self.serial_number:
+            self.lab_id = self.serial_number

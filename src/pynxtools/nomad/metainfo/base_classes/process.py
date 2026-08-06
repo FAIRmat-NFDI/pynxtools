@@ -180,4 +180,8 @@ class Process(Object, basesections.Analysis):
     )
 
     def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
+        if self.datetime is None and self.date is not None:  # type: ignore[has-type]
+            self.datetime = self.date  # type: ignore[has-type]
+        if self.name is None:  # type: ignore[has-type]
+            self.name = self.m_def.name
         super().normalize(archive, logger)

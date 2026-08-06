@@ -449,4 +449,17 @@ class Instrument(Object, basesections.Instrument):
     )
 
     def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
+        # Bridge to the static InstrumentEntry catalog record, if this in-use
+        # instrument snapshot unambiguously identifies one: exactly one
+        # Fabrication child (itself an InstrumentEntry) that resolved a lab_id
+        # (from its own identifierNAME field, or serial_number as a fallback —
+        # see Fabrication.normalize(); serial_number alone is often unknown, so
+        # this reads whatever Fabrication itself already resolved, not the
+        # field directly).
+        if len(self.fabrication) == 1 and self.fabrication[0].lab_id:
+            if self.instrument_entry is None:  # type: ignore[has-type]
+                self.instrument_entry = basesections.InstrumentReference()
+            if self.instrument_entry.lab_id is None:
+                self.instrument_entry.lab_id = self.fabrication[0].lab_id
+                self.instrument_entry.normalize(archive, logger)
         super().normalize(archive, logger)
