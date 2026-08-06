@@ -29,14 +29,43 @@ Flow
     1. Unit tests on single converter functions — ``_build_quantity_from_node``,
        ``_build_subsection_from_node``, ``_base_from_extends``,
        ``build_context``, ``write_base_class``, ``generate_all_base_classes``.
-       Input nodes are constructed directly rather than parsed.
+       The definition root comes from a fixture NXDL, and the nodes under test
+       are attached to it directly rather than resolved from the NeXus tree.
     2. Golden tests that render the fixture NXDLs end to end and compare the
        result against stored output.
+
+Coverage
+    - ``_build_quantity_from_node`` — unit, shape and enum mapping for fields;
+      parent-field link and absent unit metadata for attributes.
+    - ``_build_subsection_from_node`` — naming and the ``variable`` / ``repeats``
+      flags per ``nameType``.
+    - ``_base_from_extends`` — primary Python base plus NOMAD semantic bases.
+    - ``build_context`` — the three name-conflict rules: field vs. SubSection,
+      group vs. ancestor Quantity, reserved ``BaseSection`` names.
+    - ``write_base_class`` — a dry run reports the difference and leaves the file
+      on disk unwritten; a full run puts the module in the folder the NXDL's
+      category selects, and the rendered source compiles.
+    - ``generate_all_base_classes`` — the returned count includes only changed
+      classes.
+    - ``render`` (via the golden files) — class bases and member names/kinds for
+      every fixture NXDL.
+
+Why private helpers are tested directly
+    ``_build_quantity_from_node`` and friends are private, but they carry the
+    mapping rules with the highest regression risk and the least visibility — a
+    wrong unit or a dropped enum propagates silently into every generated class.
+    Asserting on them directly points at the broken rule instead of at a diff of
+    generated source.
 
 Dependencies
     - Fixture NXDLs in ``src/pynxtools/data/``: ``NXtestBase``, ``NXtest``,
       ``NXtest_extended``. The golden tests reach the live NeXus definitions
       only through these, so upstream definition changes cannot break them.
+      Two unit tests deliberately do not: ``_base_from_extends`` is asserted
+      against the real ``NXentry`` tree, and the ``write_base_class`` dry-run
+      resolves ``NXentry``'s category. Both would notice an upstream change to
+      ``NXentry``, which is the point — they pin behavior against a real
+      inheritance chain rather than a fixture.
     - Golden files in ``tests/data/nomad/converter/``. Its ``conftest.py`` sets
       ``collect_ignore_glob`` because ``test.py`` and ``test_extended.py`` match
       pytest's discovery pattern but are reference data, not tests.
@@ -71,7 +100,6 @@ Regenerating the golden files
 """
 
 import ast
-import xml.etree.ElementTree as ET
 from pathlib import Path
 
 import pytest
@@ -84,40 +112,35 @@ from pynxtools.nexus.nexus_tree import (
     NexusGroup,
     generate_tree_from,
 )
-from pynxtools.nomad.converters._mapping import _BASESECTION_RESERVED_NAMES
-
-_NX_NS = "http://definition.nexusformat.org/nxdl/3.1"
+from pynxtools.nexus.utils import get_nxdl_root_and_path
 
 
-def _make_definition(
-    nx_name: str,
-    *,
-    extends: str = "NXobject",
-    doc: str = "",
-) -> NexusDefinition:
-    """Build a minimal NexusDefinition for testing without parsing NXDL files.
+def _fixture_definition(nx_name: str) -> NexusDefinition:
+    """Wrap a fixture NXDL's ``<definition>`` element as a childless root node.
 
-    Creates a bare ``<definition>`` XML element with the given ``extends`` and
-    optional ``<doc>`` text, then wraps it in a real ``NexusDefinition`` so that
-    ``_set_definition_attrs()``, ``get_docstring()``, and ``get_link()`` all work
-    without any additional mocking.  Children are attached afterward via the
-    standard anytree pattern: ``child.parent = root``.
+    Reads the real NXDL file — no hand-built XML — so ``category``, ``extends``,
+    ``symbols`` and ``get_link()`` all come from a file under version control,
+    yet the returned node has no children: ``generate_tree_from`` is not called,
+    so nothing is resolved from the inheritance chain. The test then attaches
+    exactly the nodes it wants to assert on, via the standard anytree pattern
+    ``child.parent = root``.
+
+    ``NXtestBase`` is the fixture to use here. An application definition
+    (``NXtest``, ``NXtest_extended``) does not work: ``build_context`` replaces
+    a root's children with those of its ``NXentry`` group, and the
+    ``generate_tree_from`` stub below would make ``_nxdl_category()`` report
+    ``category="application"`` for every class it is asked about, which routes
+    group lookups to the wrong output package and drops them.
     """
-    elem = ET.Element(f"{_NX_NS}definition")
-    elem.attrib["name"] = nx_name
-    elem.attrib["category"] = "base"
-    elem.attrib["extends"] = extends
-    if doc:
-        ET.SubElement(elem, f"{{{_NX_NS}}}doc").text = doc
-    return NexusDefinition(
-        name=nx_name,
-        nxdl_base=f"{nx_name}.nxdl.xml",
-        inheritance=[elem],
-    )
+    elem, path = get_nxdl_root_and_path(nx_name)
+    return NexusDefinition(name=nx_name, nxdl_base=path, inheritance=[elem])
 
 
 def _class_members(source: str) -> dict[str, dict[str, str]]:
-    """Return {class_name: {member_name: constructor}} for every class in source.
+    """Return {class_name: {member_name: kind}} for every class in source.
+
+    ``kind`` is the name of the callable on the right-hand side — ``"Quantity"``
+    or ``"SubSection"``.
 
     Only ``Quantity`` and ``SubSection`` assignments are collected; ``m_def``
     (a ``Section`` call) is excluded because its content differs structurally
@@ -186,8 +209,7 @@ def test_build_quantity_from_field_maps_transformation_unit(monkeypatch):
     node.items = ["a", "b"]
     node.open_enum = False
 
-    build_quantity_from_node = getattr(converter, "_build_quantity_from_node")
-    qty = build_quantity_from_node(node)
+    qty = converter._build_quantity_from_node(node)
 
     assert qty.unit == "NX_ANY"
     assert qty.dimensionality == "[]"
@@ -206,8 +228,7 @@ def test_build_quantity_from_attribute_uses_dtype_mapping():
     node.dtype = "NX_BOOLEAN"
     node.shape = (None, 1)  # multi-dim: exercises (None, 1) → ["*", 1] conversion
 
-    build_quantity_from_node = getattr(converter, "_build_quantity_from_node")
-    qty = build_quantity_from_node(node, parent_field="signal")
+    qty = converter._build_quantity_from_node(node, parent_field="signal")
 
     assert qty.parent_field == "signal"
     assert qty.unit is None
@@ -265,10 +286,9 @@ def test_build_subsection_from_node_by_name_type(
         variadic=variadic,
     )
 
-    build_subsection_from_node = getattr(converter, "_build_subsection_from_node")
     # section_fqn is stored verbatim and resolved lazily by NOMAD at
     # __init_metainfo__() time, so any dotted string works here.
-    section = build_subsection_from_node(
+    section = converter._build_subsection_from_node(
         node,
         section_fqn="test.module.TestSection",
     )
@@ -288,11 +308,8 @@ def test_base_from_extends_for_direct_child_with_nomad_base():
     """
     root = generate_tree_from("NXentry")
 
-    base_from_extends = getattr(converter, "_base_from_extends")
-    nomad_base_for_nx_class = getattr(converter, "_nomad_base_for_nx_class")
-
-    base = base_from_extends("NXentry", root)
-    expected_nomad_fqns = nomad_base_for_nx_class("NXentry")
+    base = converter._base_from_extends("NXentry", root)
+    expected_nomad_fqns = converter._nomad_base_for_nx_class("NXentry")
 
     assert base == (
         "Object",
@@ -305,12 +322,12 @@ def test_base_from_extends_for_direct_child_with_nomad_base():
 def _patch_isolated_build_context(monkeypatch, root, ancestor_members):
     """Point build_context at ``root`` with a fixed ancestor member set.
 
-    ``build_context`` reaches outside the node tree in exactly two places a
-    synthetic definition cannot satisfy: ``_base_from_extends`` parses the real
-    NXDL named by ``extends``, and ``_all_ancestor_member_names`` walks the real
-    inheritance chain. Both are stubbed so the assertions isolate the
-    conflict-renaming rules; node traversal, quantity and subsection building
-    all still run for real.
+    ``build_context`` reaches outside the node tree in exactly two places that a
+    root carrying only the nodes under test cannot satisfy:
+    ``_base_from_extends`` parses the real NXDL named by ``extends``, and
+    ``_all_ancestor_member_names`` walks the real inheritance chain. Both are
+    stubbed so the assertions isolate the conflict-renaming rules; node
+    traversal, quantity and subsection building all still run for real.
 
     ``ancestor_members`` is the ``(quantity_names, subsection_names)`` pair the
     ancestor chain is taken to expose.
@@ -353,7 +370,7 @@ def test_build_context_suffixes_field_conflicting_with_subsection(monkeypatch):
     unaffected = NexusField(name="unaffected")
     unaffected.dtype = "NX_FLOAT"
 
-    root = _make_definition("NXentry", extends="NXancestor", doc="Doc.")
+    root = _fixture_definition("NXtestBase")
     # The group is declared by this class, so its subsection name lands in
     # own_sub_names during build_context's pre-scan. nxdl_base must match the
     # definition's own file or the group is treated as inherited and skipped.
@@ -361,7 +378,7 @@ def test_build_context_suffixes_field_conflicting_with_subsection(monkeypatch):
         nx_class="NXdata",
         name="own_conflict",
         nx_type="group",
-        nxdl_base="NXentry.nxdl.xml",
+        nxdl_base=root.nxdl_base,
     )
     inherited_conflict.parent = root
     own_conflict_field.parent = root
@@ -374,7 +391,7 @@ def test_build_context_suffixes_field_conflicting_with_subsection(monkeypatch):
         ancestor_members=(frozenset(), frozenset({"inherited_conflict"})),
     )
 
-    context = converter.build_context("NXentry")
+    context = converter.build_context("NXtestBase")
     quantity_names = [q.python_name for q in context["quantities"]]
     subsection_names = [s.python_name for s in context["subsections"]]
 
@@ -396,18 +413,18 @@ def test_build_context_suffixes_subsection_conflicting_with_ancestor_quantity(
     Mirror image of the rename above: whichever concept sits higher in the NeXus
     chain keeps the unqualified name, so here the ancestor's Quantity wins.
     """
-    root = _make_definition("NXentry", extends="NXancestor", doc="Doc.")
+    root = _fixture_definition("NXtestBase")
     conflicting_group = NexusGroup(
         nx_class="NXdata",
         name="ancestor_quantity_name",
         nx_type="group",
-        nxdl_base="NXentry.nxdl.xml",
+        nxdl_base=root.nxdl_base,
     )
     plain_group = NexusGroup(
         nx_class="NXnote",
         name="plain_group",
         nx_type="group",
-        nxdl_base="NXentry.nxdl.xml",
+        nxdl_base=root.nxdl_base,
     )
     conflicting_group.parent = root
     plain_group.parent = root
@@ -418,7 +435,7 @@ def test_build_context_suffixes_subsection_conflicting_with_ancestor_quantity(
         ancestor_members=(frozenset({"ancestor_quantity_name"}), frozenset()),
     )
 
-    context = converter.build_context("NXentry")
+    context = converter.build_context("NXtestBase")
     subsection_names = [s.python_name for s in context["subsections"]]
 
     assert subsection_names == ["ancestor_quantity_name_group", "plain_group"]
@@ -428,23 +445,24 @@ def test_build_context_suffixes_subsection_conflicting_with_ancestor_quantity(
 def test_build_context_reserved_quantity_names_are_suffixed(monkeypatch, reserved_name):
     """Array fields named like a BaseSection attribute get a ``_quantity`` suffix.
 
-    ``name``, ``lab_id`` and ``description`` (``_BASESECTION_RESERVED_NAMES``)
-    shadow ``BaseSection``. A scalar of the same name may override safely, an
-    array may not — ``BaseSection.normalize()`` treats them as scalars — so the
-    field under test is given a shape.
+    ``name``, ``lab_id`` and ``description`` shadow ``BaseSection`` attributes;
+    the converter's full list is ``_BASESECTION_RESERVED_NAMES`` in
+    ``pynxtools.nomad.converters._mapping``. A scalar of the same name may
+    override safely, an array may not — ``BaseSection.normalize()`` treats them
+    as scalars — so the field under test is given a shape.
     """
     reserved_field = NexusField(name=reserved_name)
     reserved_field.dtype = "NX_CHAR"
     reserved_field.shape = (None,)
 
-    root = _make_definition("NXentry", extends="NXobject")
+    root = _fixture_definition("NXtestBase")
     reserved_field.parent = root
 
     _patch_isolated_build_context(
         monkeypatch, root, ancestor_members=(frozenset(), frozenset())
     )
 
-    context = converter.build_context("NXentry")
+    context = converter.build_context("NXtestBase")
     quantity_names = [q.python_name for q in context["quantities"]]
     expected_base = f"{reserved_name}_quantity"
 
@@ -472,6 +490,9 @@ def test_write_base_class_dry_run_detects_content_change(monkeypatch, tmp_path):
     )
 
     assert changed is True
+    # "Dry run" is the other half of the contract: the difference is reported,
+    # but the file on disk still holds its original content.
+    assert existing.read_text(encoding="utf-8") == "old content\n"
 
 
 def test_generate_all_base_classes_counts_only_changed(monkeypatch, tmp_path):
@@ -503,17 +524,19 @@ def test_generate_all_base_classes_counts_only_changed(monkeypatch, tmp_path):
 
 
 # ---------------------------------------------------------------------------
-# Full-pipeline integration tests (controlled NXtestBase fixture → Python source)
+# Full-pipeline tests: fixture NXDL → Python source on disk
 # ---------------------------------------------------------------------------
 
 
 def test_write_base_class_nxtestbase_full_pipeline(tmp_path):
-    """NXtestBase renders through the whole pipeline to compilable Python.
+    """NXtestBase renders through the whole pipeline to compilable Python on disk.
 
     Runs ``generate_tree_from`` → ``build_context`` → ``render`` → write with no
-    stubs. The fixture covers NX_CHAR, NX_FLOAT with units, NX_INT, NX_BOOLEAN, a
-    closed enum, a group reference and a group-level attribute in one pass, and
-    keeps the test independent of live NeXus definition changes.
+    stubs. What this pins that the golden test below does not: the file lands at
+    the path ``write_class`` derives from the NXDL's category, the rendered
+    source compiles, and ``m_def``'s ``nx_class`` survives — ``_class_members``
+    skips ``m_def``, so no golden assertion covers it. The class members
+    themselves are left to the golden test rather than re-asserted as substrings.
     """
     converter.write_base_class("NXtestBase", output_dir=tmp_path, force=True)
 
@@ -521,37 +544,12 @@ def test_write_base_class_nxtestbase_full_pipeline(tmp_path):
     # <output_dir>/base_classes/ rather than <output_dir> directly.
     source = (tmp_path / "base_classes" / "testbase.py").read_text(encoding="utf-8")
 
-    assert "class Testbase(Object):" in source
     assert 'nx_class="NXtestBase"' in source
-    assert "label = Quantity(" in source
-    assert "energy = Quantity(" in source
-    assert "count = Quantity(" in source
-    assert "flag = Quantity(" in source
-    assert "mode = Quantity(" in source
-    assert "data = SubSection(" in source
-    assert "version = Quantity(" in source
     compile(source, "testbase.py", "exec")
 
 
-def test_write_base_class_nxtestbase_matches_golden():
-    """NXtestBase's class structure matches its stored golden, rendered in memory.
-
-    Same assertions as the parametrized golden test below, which also covers
-    NXtestBase; this one is kept separate because it renders without touching the
-    filesystem, isolating a structural drift from a write-path failure.
-    """
-    golden = (_CONVERTER_GOLDEN_DIR / "testbase.py").read_text(encoding="utf-8")
-    generated = converter.render(converter.build_context("NXtestBase"))
-    assert _class_bases(generated) == _class_bases(golden), (
-        "NXtestBase: class inheritance mismatch"
-    )
-    assert _class_members(generated) == _class_members(golden), (
-        "NXtestBase: class member mismatch (name or Quantity/SubSection kind changed)"
-    )
-
-
 # ---------------------------------------------------------------------------
-# NXtest / NXtest_extended: full-pipeline section-by-section golden tests
+# Section-by-section golden tests over every fixture NXDL
 # ---------------------------------------------------------------------------
 
 

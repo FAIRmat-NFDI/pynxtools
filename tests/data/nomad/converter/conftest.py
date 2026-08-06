@@ -24,6 +24,13 @@ matches pytest's default ``test_*.py`` discovery pattern. They are reference
 data, not tests: importing them would require the generated metainfo packages to
 be importable, which is not what this suite checks. ``collect_ignore_glob`` is
 pytest's supported hook for excluding files from collection in a directory.
+
+Note on the goldens' own headers: each carries the generator's standard banner,
+including ``Run `pynx nomad generate-metainfo --nxdl <NXclass>` to regenerate``.
+That command does not regenerate these files — it writes into
+``src/pynxtools/nomad/metainfo/``. The banner is template boilerplate that comes
+along with the rendered source. To refresh the goldens, use the snippet in the
+module docstring of ``tests/nomad/test_nxdl_to_metainfo.py``.
 """
 
 collect_ignore_glob = ["*.py"]
