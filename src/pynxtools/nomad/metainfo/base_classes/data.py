@@ -51,7 +51,7 @@ if TYPE_CHECKING:
 __all__ = ["Data"]
 
 
-class Data(Object, basesections.ActivityResult):
+class Data(Object, basesections.MeasurementResult):
     """
     The :ref:`NXdata` class is designed to encapsulate all the information
     required for a set of data to be plotted. NXdata groups contain plottable
