@@ -550,7 +550,7 @@ class TestNXODD_name(Data):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/src/pynxtools/data/NXtest.html#nxtest-entry-nxodd-name-float-value-field"
         ],
         dimensionality="[mass] * [length] ** 2 / [time] ** 2",
-        unit="joule",
+        unit="eV",
         description=("A dummy entry for a float value."),
         a_nexus_field=NeXusField(
             name="float_value",
@@ -562,7 +562,7 @@ class TestNXODD_name(Data):
         a_eln=ELNAnnotation(
             component=ELNComponentEnum.NumberEditQuantity,
         ),
-        a_display={"unit": "joule"},
+        a_display={"unit": "eV"},
     )
     number_value = Quantity(
         type=np.float64,
@@ -570,7 +570,7 @@ class TestNXODD_name(Data):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/src/pynxtools/data/NXtest.html#nxtest-entry-nxodd-name-number-value-field"
         ],
         dimensionality="[mass] * [length] ** 2 / [time] ** 2",
-        unit="joule",
+        unit="eV",
         description=("A dummy entry for a number value."),
         a_nexus_field=NeXusField(
             name="number_value",
@@ -582,7 +582,7 @@ class TestNXODD_name(Data):
         a_eln=ELNAnnotation(
             component=ELNComponentEnum.NumberEditQuantity,
         ),
-        a_display={"unit": "joule"},
+        a_display={"unit": "eV"},
     )
     bool_value = Quantity(
         type=bool,

@@ -106,7 +106,7 @@ class TestExtended(Test):
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/src/pynxtools/data/NXtest_extended.html#nxtest_extended-entry-extended-field-field"
         ],
         dimensionality="[mass] * [length] ** 2 / [time] ** 2",
-        unit="joule",
+        unit="eV",
         description=("A dummy entry for an extended field."),
         a_nexus_field=NeXusField(
             name="extended_field",
@@ -118,7 +118,7 @@ class TestExtended(Test):
         a_eln=ELNAnnotation(
             component=ELNComponentEnum.NumberEditQuantity,
         ),
-        a_display={"unit": "joule"},
+        a_display={"unit": "eV"},
     )
     program_name = Quantity(
         type=str,

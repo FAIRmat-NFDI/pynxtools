@@ -11,10 +11,16 @@
     <doc>
         Minimal base class used as a controlled fixture in converter unit tests.
         Not part of the NeXus standard definitions. Covers: NX_CHAR, NX_FLOAT with
-        units, NX_INT, NX_BOOLEAN, closed enumeration, group reference, and
-        group-level attribute — the key structural features exercised by the
+        units, NX_INT, NX_BOOLEAN, closed and open enumerations, dimensions,
+        flexible and transformation units, named, partial and anonymous groups and
+        fields, a field name clashing with a group inherited from NXobject, a link,
+        and a group-level attribute — the key structural features exercised by the
         NXDL-to-metainfo converter.
     </doc>
+    <symbols>
+        <doc>Symbols used to express shared dimension constraints.</doc>
+        <symbol name="n"><doc>number of points in the sampled fields</doc></symbol>
+    </symbols>
     <field name="label" type="NX_CHAR">
         <doc>A text label field (tests NX_CHAR → str mapping).</doc>
     </field>
@@ -35,9 +41,44 @@
             <item value="medium"/>
         </enumeration>
     </field>
+    <field name="quality">
+        <doc>Quality rating (tests open enumeration → plain type with items kept).</doc>
+        <enumeration open="true">
+            <item value="good"/>
+            <item value="poor"/>
+        </enumeration>
+    </field>
+    <field name="sampled_values" type="NX_FLOAT" units="NX_UNITLESS">
+        <doc>A one-dimensional field (tests dimensions → shape conversion).</doc>
+        <dimensions rank="1"><dim index="1" value="n"/></dimensions>
+    </field>
+    <field name="scale_factor" type="NX_FLOAT" units="NX_ANY">
+        <doc>A value in any unit (tests NX_ANY → flexible_unit in the schema).</doc>
+    </field>
+    <field name="offset" type="NX_FLOAT" units="NX_TRANSFORMATION">
+        <doc>A transformation value (tests NX_TRANSFORMATION → NX_ANY unit mapping).</doc>
+    </field>
+    <field name="collection" type="NX_CHAR">
+        <doc>
+            A field whose name collides with the anonymous NXcollection group
+            inherited from NXobject (tests the field-versus-group rename rule).
+        </doc>
+    </field>
+    <field name="labelID" nameType="partial" type="NX_CHAR">
+        <doc>A named, partial, variadic field (tests partial nameType on a field).</doc>
+    </field>
     <group type="NXdata" name="data">
         <doc>Primary data group (tests group → SubSection mapping).</doc>
     </group>
+    <group type="NXinstrument">
+        <doc>An anonymous, variadic subgroup (tests unnamed group → SubSection mapping).</doc>
+    </group>
+    <group type="NXsample" name="sampleID" nameType="partial">
+        <doc>A named, partial, variadic subgroup (tests partial nameType on a group).</doc>
+    </group>
+    <link name="energy_link" target="/NXtestBase/energy">
+        <doc>A link to another field in this class (tests link → Quantity mapping).</doc>
+    </link>
     <attribute name="version" type="NX_CHAR">
         <doc>Schema version string (tests group-level attribute → Quantity mapping).</doc>
     </attribute>

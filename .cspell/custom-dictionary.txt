@@ -219,6 +219,7 @@ nxdls
 nxentry
 nxroot
 nxtest
+nxtestbase
 nyaml
 oned
 optionalities
@@ -256,6 +257,7 @@ skiprows
 straße
 submoduled
 superproject
+testbase
 threed
 tnxdl
 tofile
@@ -287,5 +289,3 @@ ylabel
 zaxis
 zenodo
 zstd
-nxtestbase
-testbase
