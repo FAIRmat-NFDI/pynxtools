@@ -1048,25 +1048,17 @@ def validate_dict_against(
 
     def handle_nxdata(node: NexusGroup, keys: Mapping[str, Any], prev_path: str):
         def check_nxdata():
-            # `resolved_keys` (a `_follow_link`-resolved copy) is used to read
-            # realized values for the shape/length checks below. The *original*,
-            # unresolved `keys` is what gets passed into `handle_field` so that
-            # function can still see (and preserve) a {"link": ...} entry itself -
-            # handing it an already-resolved value here would make `handle_field`
-            # think the field was never a link, and it would write the realized
-            # value back into the global template, destroying the link/VDS shape.
+            # `resolved_keys` is for realized values (shape/length checks below);
+            # `handle_field` gets the original `keys` so it still sees (and
+            # preserves) a {"link": ...} entry instead of overwriting it.
             data = (
                 resolved_keys.get(f"DATA[{signal}]")
                 if f"DATA[{signal}]" in resolved_keys
                 else resolved_keys.get(signal)
             )
             if isinstance(data, np.ndarray):
-                # `_follow_link` resolves to the full link target and ignores any
-                # "shape" slice request (VDS assembly is the writer's job) - so for
-                # a sliced VDS field, `data` here is still the *unsliced* target.
-                # Apply the original entry's "shape" (if any) before using `data`
-                # for the axis-length comparison below, or a correctly sliced VDS
-                # signal spuriously fails NXdataAxisMismatch against its axis.
+                # _follow_link ignores "shape", so `data` is still unsliced here -
+                # apply it before the axis-length comparison below.
                 original_value = (
                     keys.get(f"DATA[{signal}]")
                     if f"DATA[{signal}]" in keys
@@ -1157,12 +1149,9 @@ def validate_dict_against(
         indices = list(map(lambda x: f"{x}_indices", axes))
         errors = list(map(lambda x: f"{x}_errors", [signal, *aux_signals, *axes]))
 
-        # Handle all remaining keys which are not part of NXdata. Field keys may be
-        # written with or without their variadic wrapper (e.g. "Psi_50deg" or
-        # "DATA[Psi_50deg]", "wavelength" or "AXISNAME[wavelength]") - exclude both
-        # forms, or an already-handled link field leaks through here and gets
-        # resolved a second time below, corrupting it (see check_nxdata, which
-        # already handles the signal/axes fields themselves via handle_field).
+        # Handle all remaining keys which are not part of NXdata. Field keys may
+        # appear bare ("Psi_50deg") or wrapped ("DATA[Psi_50deg]") - exclude both
+        # forms, or an already-handled field leaks back in and gets corrupted.
         def _wrapped(names: list, wrapper: str) -> set:
             result = set(names)
             result.update(f"{wrapper}[{name}]" for name in names)
@@ -1176,12 +1165,8 @@ def validate_dict_against(
         )
         remaining_keys = {x: keys[x] for x in keys if x not in handled_names}
         remaining_keys = _follow_link(remaining_keys, prev_path)
-        # `search_add_child_for_multiple` in check_nxdata() adds concrete
-        # variant-named children (e.g. "Psi_50deg", "DATA[Psi_50deg]") to `node`
-        # alongside the generic "DATA"/"AXISNAME" wildcard children - both bare and
-        # bracketed forms must be ignored here too, or recurse_tree visits that
-        # concrete child a second time and re-triggers handle_field on an
-        # already-resolved value, corrupting it the same way `remaining_keys` did.
+        # check_nxdata() adds concrete variant-named children (bare and wrapped)
+        # to `node` too - ignore both forms so recurse_tree doesn't revisit them.
         recurse_tree(
             node,
             remaining_keys,
@@ -1189,12 +1174,9 @@ def validate_dict_against(
             ignore_names=[
                 "DATA",
                 "AXISNAME",
-                # Deliberately NOT "AXISNAME_indices": unlike DATA/AXISNAME, an
-                # AXISNAME_indices instance (e.g. "@axis_a_indices") can be required
-                # independent of whether `axes` is non-empty here, and is not itself
-                # a link/VDS field - skip only the specific instances already
-                # covered by check_nxdata via `handled_names`, not the whole concept,
-                # or its required-attribute check silently never runs.
+                # Not "AXISNAME_indices": an instance like "@axis_a_indices" can be
+                # required independent of `axes` here, so only the specific
+                # instances in `handled_names` are skipped, not the whole concept.
                 "FIELDNAME_errors",
                 "signal",
                 "auxiliary_signals",
@@ -1279,13 +1261,9 @@ def validate_dict_against(
                 continue
 
             if node.nx_class == "NXdata":
-                # handle_nxdata() already walks this group's fields (signal, axes,
-                # auxiliary signals, everything else). Falling through to the
-                # generic branch below would process it a second time with
-                # already-`_follow_link`-resolved values, silently overwriting any
-                # {"link": ...} field entries (including sliced VDS "shape"
-                # requests) with their fully realized, unsliced form - this used to
-                # be `if`/`if`/`else`, which ran both branches for NXdata groups.
+                # Was `if`/`if`/`else`, so this ran alongside the generic branch
+                # below too - reprocessing fields with resolved values and
+                # corrupting any {"link": ...}/VDS "shape" entries.
                 handle_nxdata(node, keys[variant], prev_path=variant_path)
             elif node.nx_class == "NXcollection":
                 return
@@ -1456,11 +1434,8 @@ def validate_dict_against(
                 variant_value = resolved_link[variant]
 
             if isinstance(variant_value, Mapping) and "link" in variant_value:
-                # Multi-source VDS links (a list under "link") are deliberately left
-                # unresolved by _follow_link - VDS assembly happens in the writer, not
-                # here. There's no realized value to type/shape-check against the
-                # schema, so accept it as-is rather than treating the still-dict value
-                # as an invalid nested structure.
+                # Multi-source VDS link (list) - _follow_link deliberately leaves it
+                # unresolved, so accept it rather than flag it as an invalid struct.
                 continue
 
             if (
@@ -1553,12 +1528,8 @@ def validate_dict_against(
                     )
                 continue
 
-            # Check general validity. For a link-backed field this validates the
-            # *resolved* value's type/shape against the schema, but the mapping must
-            # keep the original {"link": ...} entry - overwriting it here would
-            # destroy the link (and any VDS "shape" slice) before the Writer ever
-            # sees it, silently turning a virtual/linked dataset into a fully
-            # realized, unsliced copy.
+            # Check general validity - for a link, `mapping` must keep the original
+            # {"link": ...} entry, not the resolved value used for this check.
             checked_value = is_valid_data_field(
                 variant_value,
                 node.dtype,
