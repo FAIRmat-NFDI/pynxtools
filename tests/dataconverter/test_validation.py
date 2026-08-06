@@ -17,6 +17,7 @@
 #
 import logging
 import os
+from collections.abc import Mapping
 
 import h5py
 import numpy as np
@@ -2275,22 +2276,13 @@ def test_validate_data_dict(data_dict, error_messages, caplog, request):
 
     if not error_messages:
         link_path = "/ENTRY[my_entry]/NXODD_name[nxodd_name]/DATA[data]"
-        original_value = (
-            data_dict["required"].get(link_path)
-            if request.node.callspec.id
-            in (
-                "nxdata-signal-link-with-shape-not-mutated",
-                "list-form-vds-link-not-misclassified",
-            )
-            else None
-        )
+        original_value = data_dict["required"].get(link_path)
         with caplog.at_level(logging.WARNING):
             assert validate_dict_against("NXtest", data_dict)
         assert caplog.text == ""
-        if original_value is not None:
-            # validate_dict_against() resolves a {"link": ...} entry to check its
-            # type/shape against the schema, but must leave the original link (and
-            # any VDS "shape" slice) in the template - the Writer needs it intact.
+        if isinstance(original_value, Mapping) and "link" in original_value:
+            # A {"link": ...} entry (and any VDS "shape" slice) must survive
+            # validation unchanged - the Writer needs it intact.
             assert data_dict["required"][link_path] == original_value
     else:
         if request.node.callspec.id in (
