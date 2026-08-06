@@ -30,7 +30,6 @@ from nomad.datamodel.metainfo.annotations import (
     SchemaAnnotation,
 )
 from nomad.datamodel.metainfo.basesections import v2 as basesections
-from nomad.datamodel.metainfo.workflow import Workflow
 from nomad.metainfo import MEnum, Quantity, Section, SubSection
 from nomad.metainfo.data_type import Bytes, Datetime
 
@@ -45,6 +44,7 @@ from pynxtools.nomad.annotations import (
 from pynxtools.nomad.metainfo._category import ExperimentCategory
 from pynxtools.nomad.metainfo.base_classes.note import Note
 from pynxtools.nomad.metainfo.base_classes.object import Object
+from nomad.datamodel.metainfo.workflow import Workflow
 
 if TYPE_CHECKING:
     from nomad.datamodel import EntryArchive
@@ -868,6 +868,13 @@ class Entry(Object, basesections.Activity, EntryData):
         return workflow
 
     def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
+        if self.name is None:  # type: ignore[has-type]
+            self.name = self.title if self.title else self.m_def.name
+        # A proper method vocabulary (NXem -> "Electron microscopy (EM)", ...)
+        # could be an alternative to the current approach of using the class
+        # name as the method.
+        if self.method is None:  # type: ignore[has-type]
+            self.method = self.m_def.name
         super().normalize(archive, logger)
 
 

@@ -166,7 +166,16 @@ BASESECTIONS_MAP: dict[str, list[str]] = {
     "NXfabrication": ["nomad.datamodel.metainfo.basesections.v2.InstrumentEntry"],
     # The in-use, per-activity instrument snapshot — with a reference to InstrumentEntry.
     "NXinstrument": ["nomad.datamodel.metainfo.basesections.v2.Instrument"],
-    "NXdata": ["nomad.datamodel.metainfo.basesections.v2.ActivityResult"],
+    # MeasurementData, not the more generic ActivityResult: it's a plain,
+    # field-free subclass of ActivityResult, so this costs nothing for
+    # non-Measurement entries (Process/Analysis both accept ActivityResult
+    # fine) while making Data satisfy Measurement.data's stricter
+    # MeasurementResult typing automatically wherever an app mixes in
+    # basesections.Measurement (e.g. Mpes, Xps) — no per-app generator
+    # special-casing needed.
+    "NXdata": ["nomad.datamodel.metainfo.basesections.v2.MeasurementData"],
+    # NXactivity's only real usage is inside NXhistory, logging physical
+    # treatments applied to a sample/instrument.
     "NXactivity": ["nomad.datamodel.metainfo.basesections.v2.Activity"],
 }
 
