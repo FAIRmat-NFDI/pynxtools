@@ -38,6 +38,7 @@ files in ``tests/data/nomad/converter/``.
 """
 
 from collections.abc import Callable
+from pathlib import Path
 
 import pytest
 
@@ -352,18 +353,35 @@ def test_build_context_reserved_quantity_names_are_suffixed(
     assert quantity_names == [expected_name]
 
 
-def test_write_base_class_dry_run_detects_content_change(monkeypatch, tmp_path):
-    """A dry run reports a content difference without writing the file."""
+@pytest.fixture
+def stub_write_base_class(monkeypatch, tmp_path) -> Callable[[str, str], Path]:
+    """Stub ``build_context``/``render`` for ``write_base_class("NXentry", ...)``.
 
+    Returns a ``seed(existing_content, new_content)`` helper: writes
+    ``existing_content`` to the would-be output file, makes ``render`` return
+    ``new_content``, and returns the file's path. Callers still pass
+    ``output_dir=tmp_path`` to ``write_base_class`` themselves.
+    """
     out_dir = tmp_path / "base_classes"
     out_dir.mkdir(parents=True)
-    existing = out_dir / "entry.py"
-    existing.write_text("old content\n", encoding="utf-8")
-
     monkeypatch.setattr(converter, "build_context", lambda _: {"class_name": "Entry"})
-    monkeypatch.setattr(
-        converter, "render", lambda _context, out_path=None: "new content\n"
-    )
+
+    def seed(existing_content: str, new_content: str) -> Path:
+        monkeypatch.setattr(
+            converter, "render", lambda _context, out_path=None: new_content
+        )
+        existing = out_dir / "entry.py"
+        existing.write_text(existing_content, encoding="utf-8")
+        return existing
+
+    return seed
+
+
+def test_write_base_class_dry_run_detects_content_change(
+    stub_write_base_class, tmp_path
+):
+    """A dry run reports a content difference without writing the file."""
+    existing = stub_write_base_class("old content\n", "new content\n")
 
     changed = converter.write_base_class(
         "NXentry", dry_run=True, force=False, output_dir=tmp_path
@@ -373,6 +391,45 @@ def test_write_base_class_dry_run_detects_content_change(monkeypatch, tmp_path):
     # "Dry run" is the other half of the contract: the difference is reported,
     # but the file on disk still holds its original content.
     assert existing.read_text(encoding="utf-8") == "old content\n"
+
+
+@pytest.mark.parametrize(
+    "force,expect_written",
+    [
+        pytest.param(False, False, id="preserved-without-force"),
+        pytest.param(True, True, id="overwritten-with-force"),
+    ],
+)
+def test_write_base_class_hand_edited_shared_member(
+    stub_write_base_class, tmp_path, force, expect_written
+):
+    """Check that hand-edited members are preserved unless ``force=True``.
+
+    The generator always emits a generic ``normalize()`` implementation. Once a
+    user edits that generated stub, subsequent generations must preserve the
+    modified implementation instead of replacing it with a freshly generated one,
+    unless ``force=True``.
+    """
+    existing_source = (
+        "class Entry:\n"
+        "    def normalize(self, archive, logger):\n"
+        "        self.name = self.title\n"
+        "        super().normalize(archive, logger)\n"
+    )
+    fresh_source = (
+        "class Entry:\n"
+        "    def normalize(self, archive, logger):\n"
+        "        super().normalize(archive, logger)\n"
+    )
+    existing = stub_write_base_class(existing_source, fresh_source)
+
+    changed = converter.write_base_class(
+        "NXentry", dry_run=False, force=force, output_dir=tmp_path
+    )
+
+    assert changed is expect_written
+    expected = fresh_source if expect_written else existing_source
+    assert existing.read_text(encoding="utf-8") == expected
 
 
 def test_generate_all_base_classes_counts_only_changed(monkeypatch, tmp_path):

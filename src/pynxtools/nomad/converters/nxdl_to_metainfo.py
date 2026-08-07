@@ -1945,23 +1945,35 @@ def render(context: dict, out_path: Path | None = None) -> str:
 # ---------------------------------------------------------------------------
 
 
-def _existing_member_names(source: str) -> set[str]:
-    """Parse a Python source file and return top-level class member names."""
+def _class_member_sources(source: str) -> dict[str, str]:
+    """Parse a Python source file and return {member_name: source_text} for
+    every top-level class member (Quantity/SubSection assignment or method).
+
+    Source text, not just presence, matters: every generated class always
+    defines ``normalize()``, so a name-only comparison can't tell a
+    hand-edited body from a freshly generated one — both use the same name.
+    """
     try:
         tree = ast.parse(source)
     except SyntaxError:
-        return set()
-    names: set[str] = set()
+        return {}
+    members: dict[str, str] = {}
     for node in ast.walk(tree):
         if isinstance(node, ast.ClassDef):
             for child in node.body:
+                name: str | None = None
                 if isinstance(child, ast.Assign):
                     for target in child.targets:
                         if isinstance(target, ast.Name):
-                            names.add(target.id)
+                            name = target.id
                 elif isinstance(child, (ast.FunctionDef, ast.AsyncFunctionDef)):
-                    names.add(child.name)
-    return names
+                    name = child.name
+                if name is None:
+                    continue
+                segment = ast.get_source_segment(source, child)
+                if segment is not None:
+                    members[name] = segment
+    return members
 
 
 def write_class(
@@ -1974,6 +1986,10 @@ def write_class(
 
     Returns True if the file content changed (or was created), False if unchanged.
     In dry_run mode: returns True if the file would differ, raises nothing.
+
+    Without ``force``, a file is left untouched if it has a member the fresh
+    template doesn't, or a shared member (e.g. ``normalize()``) whose content
+    was hand-edited to differ from the template's own version.
 
     output_dir should be the parent of base_classes/ and applications/ — the generator
     appends the correct subfolder automatically. Defaults to the pynxtools-internal
@@ -2006,10 +2022,15 @@ def write_class(
         else:
             if existing_source == new_source:
                 return False
-            existing_members = _existing_member_names(existing_source)
-            new_members = _existing_member_names(new_source)
-            user_added = existing_members - new_members
-            if user_added:
+            existing_members = _class_member_sources(existing_source)
+            new_members = _class_member_sources(new_source)
+            user_added = existing_members.keys() - new_members.keys()
+            user_modified = {
+                name
+                for name in existing_members.keys() & new_members.keys()
+                if existing_members[name] != new_members[name]
+            }
+            if user_added or user_modified:
                 return False
 
     if dry_run:
