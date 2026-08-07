@@ -23,6 +23,7 @@ import re
 import shutil
 import xml.etree.ElementTree as ET
 
+import h5py
 import numpy as np
 import pytest
 
@@ -144,6 +145,24 @@ def test_transform_to_intended_dt(input_data, expected_output):
 def test_path_in_data_dict(nxdl_path, expected, template):
     """Unit test for helper function to check if an NXDL path exists in the reader dictionary."""
     assert helpers.path_in_data_dict(nxdl_path, tuple(template.keys())) == expected
+
+
+def test_list_hdf5_paths_uses_nxclass_group_names(tmp_path):
+    filename = tmp_path / "test.nxs"
+    with h5py.File(filename, "w") as f:
+        entry = f.create_group("entry")
+        entry.attrs["NX_class"] = "NXentry"
+        entry.create_dataset("data", data=[1, 2, 3])[()]
+        child = entry.create_group("child")
+        child.attrs["NX_class"] = "NXgroup"
+        child.create_dataset("value", data=42)
+
+    paths = helpers.list_hdf5_paths(filename)
+
+    assert "/ENTRY[entry]" in paths
+    assert "/ENTRY[entry]/data" in paths
+    assert "/ENTRY[entry]/GROUP[child]" in paths
+    assert "/ENTRY[entry]/GROUP[child]/value" in paths
 
 
 def test_atom_type_extractor_and_hill_conversion():

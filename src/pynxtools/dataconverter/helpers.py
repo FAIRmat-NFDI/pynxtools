@@ -711,6 +711,108 @@ def convert_data_dict_path_to_hdf5_path(path) -> str:
     return hdf5path
 
 
+def _format_hdf5_group_name(group_name: str, nx_class: str | None) -> str:
+    """Return a renamed group when an NX class is available."""
+    if not nx_class:
+        return group_name
+
+    if nx_class.startswith("NX"):
+        nx_class = nx_class[2:]
+
+    return f"{nx_class.upper()}[{group_name}]"
+
+
+def convert_hdf5_path_to_data_dict_path(h5file: h5py.File, path: str) -> str:
+    """Convert an HDF5 path to the data converter path style.
+
+    Group names that contain an NX_class (or NXclass) attribute are renamed using
+    the class name with the original group name in square brackets:
+    /entry -> /Entry[entry]
+    """
+    parts = []
+    current = h5file
+    for part in path.strip("/").split("/"):
+        if part == "":
+            continue
+        current = current[part]
+        if isinstance(current, h5py.Group):
+            nx_class = decode_if_bytes(
+                current.attrs.get("NX_class") or current.attrs.get("NXclass")
+            )
+            parts.append(_format_hdf5_group_name(part, nx_class))
+        else:
+            parts.append(part)
+    return "/" + "/".join(parts) if parts else "/"
+
+
+def list_hdf5_paths(file_path) -> dict[str, str]:
+    """Return a mapping of data-converter-style paths to HDF5 '@data:' paths.
+
+    The returned dict maps the original data-converter-style path (as used
+    elsewhere in this module) to a normalized HDF5 path string prefixed with
+    `@data:`. Group class names are removed (so NX-class decorated group names
+    like `ENTRY[entry]` become `entry`), trailing slashes are removed, and
+    attribute paths use an `@` between the dataset/group and the attribute
+    name (e.g. `@data:/entry/sample@attr`). For root attributes the base path
+    portion is omitted (e.g. `@data:@NX_class`).
+    """
+    mapping: dict[str, str] = {}
+    with h5py.File(file_path, "r") as h5file:
+
+        def recurse(name, obj):
+            data_path = convert_hdf5_path_to_data_dict_path(h5file, name)
+            # compute the hdf5-style base path without NX-class decorations
+            hdf5_base = convert_data_dict_path_to_hdf5_path(data_path).rstrip("/")
+            # strip leading slash from the hdf5 path per requested format
+            hdf5_base = hdf5_base.lstrip("/")
+
+            # only include dataset entries, not groups
+            if isinstance(obj, h5py.Dataset):
+                mapping[data_path] = f"@data:{hdf5_base}"
+
+            # attributes live on the object; produce values with '@' before attr
+            for attr_name in obj.attrs:
+                if attr_name.startswith("NX_") or attr_name.startswith("nx_"):
+                    continue
+                attr_name_dec = decode_if_bytes(attr_name)
+                attr_key = f"{data_path}/@{attr_name_dec}"
+                mapping[attr_key] = f"@data:{hdf5_base}@{attr_name_dec}"
+
+        h5file.visititems(recurse)
+    return mapping
+
+
+def save_hdf5_paths_to_json(
+    source_file_path: str,
+    output_file_path: str | None = None,
+    *,
+    indent: int = 2,
+) -> str:
+    """Write the dict from ``list_hdf5_paths`` to a JSON file.
+
+    Args:
+        source_file_path: Path to the input NeXus/HDF5 file.
+        output_file_path: Optional output JSON filename. If omitted, the file is
+            written next to ``source_file_path`` with name
+            ``<basename>.config.json``.
+        indent: JSON indentation level.
+
+    Returns:
+        The path to the written JSON file.
+    """
+    paths_dict = list_hdf5_paths(source_file_path)
+    if output_file_path is None:
+        basename = os.path.splitext(os.path.basename(source_file_path))[0]
+        output_file_path = os.path.join(
+            os.path.dirname(source_file_path), f"{basename}.config.json"
+        )
+
+    with open(output_file_path, "w", encoding="utf-8") as json_file:
+        json.dump(paths_dict, json_file, indent=indent, ensure_ascii=False)
+
+    return output_file_path
+
+
 def is_value_valid_element_of_enum(value, elem_list) -> tuple[bool, list]:
     """Checks whether a value has to be specific from the NXDL enumeration and returns options.
 
