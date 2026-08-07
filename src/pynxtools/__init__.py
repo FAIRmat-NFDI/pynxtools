@@ -52,6 +52,7 @@ formatter = CustomFormatter("%(message)s")
 handler.setFormatter(formatter)
 logger.addHandler(handler)
 logger.setLevel(logging.INFO)
+logger.propagate = False
 
 
 def _build_version(tag: str, distance: int, node: str, dirty: bool) -> str:
