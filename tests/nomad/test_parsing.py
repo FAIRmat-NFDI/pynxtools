@@ -140,7 +140,7 @@ def test_nexus_example():
 
 def test_same_name_field_and_group():
     archive = EntryArchive()
-    example_data = "tests/data/parser/SiO2onSi.ellips.nxs"
+    example_data = "tests/data/nomad/SiO2onSi.ellips.nxs"
     NexusParser().parse(example_data, archive, get_logger(__name__))
     archive.m_to_dict(with_out_meta=True)
 

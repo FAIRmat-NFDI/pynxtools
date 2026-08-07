@@ -205,6 +205,7 @@ ndim
 ndims
 nexpy
 nexusapp
+nexusappv
 nexusformat
 njit
 nodemixin
