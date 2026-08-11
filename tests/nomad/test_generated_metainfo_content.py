@@ -91,18 +91,13 @@ def _top_level_field(nx_class: str, field_name: str) -> NexusField:
     )
 
 
-def _expected_shape(node: NexusField) -> list[str]:
-    """NXDL <dimensions> rank/value, translated to NOMAD's Quantity.shape
-    convention: no <dimensions> at all -> [], each dimension -> "*" (this
-    corpus only uses symbolic/unbounded dims, never fixed integers).
+def _expected_shape(node: NexusField) -> list[int | str]:
+    """NXDL <dimensions> to NOMAD's Quantity.shape: [] if none, else each
+    dimension's fixed size or "*" — mirrors the generator's _shape_from_node.
     """
     if node.shape is None:
         return []
-    assert all(d is None for d in node.shape), (
-        "helper assumes symbolic/unbounded dims; extend if a fixed-size "
-        "dimension shows up in a case this test covers"
-    )
-    return ["*"] * len(node.shape)
+    return [d if d is not None else "*" for d in node.shape]
 
 
 def _expected_unit(node: NexusField):
@@ -150,7 +145,8 @@ def _own_child_group_names(elem) -> set[str]:
     """Return the subsection names of an XML element's direct ``<group>`` children.
 
     Named groups use their explicit name; anonymous groups use the lowercased
-    NXDL type name with any ``NX`` prefix removed.
+    NXDL type name with any ``NX`` prefix removed — matching the generator,
+    so an anonymous and an identically-named explicit group collide here too.
     """
     names = set()
     for child in elem:
@@ -178,25 +174,30 @@ def _inheritance_index(node: NexusGroup, nxdl_filename: str) -> int:
 # ---------------------------------------------------------------------------
 
 
-@pytest.mark.parametrize("field_name", ["beam_center_x", "beam_center_y"])
-def test_base_class_quantity_unit_matches_nxdl(field_name):
-    """Verify that Detector field units and shapes match the NXDL definition."""
-    node = _top_level_field("NXdetector", field_name)
-    quantity = Detector.m_def.all_quantities[field_name]
-    assert quantity.unit == _expected_unit(node)
-    assert quantity.shape == _expected_shape(node)
+def _own_fields(nx_class: str) -> list[NexusField]:
+    """Every top-level field on a base class's own NXDL root."""
+    return [
+        c for c in generate_tree_from(nx_class).children if isinstance(c, NexusField)
+    ]
 
 
-@pytest.mark.parametrize("field_name", ["polar_angle", "x_pixel_size"])
-def test_base_class_quantity_shape_matches_nxdl_dimensions(field_name):
-    """polar_angle (<dimensions rank="3">) and x_pixel_size (rank="2") on
-    NXdetector must produce Quantity.shape with exactly that many "*"
-    entries.
-    """
-    node = _top_level_field("NXdetector", field_name)
-    quantity = Detector.m_def.all_quantities[field_name]
-    assert quantity.shape == _expected_shape(node)
-    assert len(quantity.shape) == len(node.shape)
+@pytest.mark.parametrize(
+    "nx_class,cls",
+    [
+        pytest.param("NXdetector", Detector, id="NXdetector"),
+        pytest.param("NXbeam_stop", BeamStop, id="NXbeam_stop"),
+    ],
+)
+def test_base_class_quantity_unit_and_shape_matches_nxdl(nx_class, cls):
+    """Every field's shape, and every unit-bearing field's unit, matches NXDL."""
+    fields = _own_fields(nx_class)
+    assert fields, f"{nx_class} declares no fields"
+    quantities = cls.m_def.all_quantities
+    for node in fields:
+        quantity = quantities[node.name]
+        assert quantity.shape == _expected_shape(node)
+        if node.unit:
+            assert quantity.unit == _expected_unit(node)
 
 
 def test_base_class_enum_values_match_nxdl_enumeration():
@@ -232,11 +233,7 @@ def test_appdef_entry_class_has_expected_base_sections_and_subsections():
         for c in entry.children
         if isinstance(c, NexusGroup) and c.nx_class == "NXentry"
     )
-    expected_group_names = {
-        c.name.lower() if c.name_type == "any" else c.name
-        for c in entry_group.own_children()
-        if isinstance(c, NexusGroup)
-    }
+    expected_group_names = _own_child_group_names(entry_group.inheritance[0])
     assert expected_group_names  # sanity: NXbase does declare top-level groups
     assert expected_group_names <= set(Xbase.m_def.all_sub_sections)
 
