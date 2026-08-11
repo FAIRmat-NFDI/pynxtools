@@ -34,7 +34,7 @@ import pytest
 
 import pynxtools.nomad.converters.nxdl_to_metainfo as converter
 
-REFERENCE_DIR = Path(__file__).parent.parent / "data" / "nomad" / "converter"
+REFERENCE_DIR = Path(__file__).parents[2] / "data" / "nomad" / "converter"
 
 
 def _class_members(source: str) -> dict[str, dict[str, str]]:
