@@ -101,11 +101,11 @@ def _expected_shape(node: NexusField) -> list[int | str]:
 
 
 def _expected_unit(node: NexusField):
-    """Pint unit for a field's NX_UNIT category (e.g. NX_LENGTH -> meter),
-    via pynxtools.units.NXUnitSet — shared domain data used across
-    pynxtools, not part of the generator's own decision logic.
+    """Pint unit for a field's NX_UNIT category (e.g. NX_LENGTH -> meter), or
+    None for an unconstrained category like NX_ANY, via pynxtools.units.NXUnitSet.
     """
-    return ureg(NXUnitSet.get_default_unit(node.unit)).units
+    default_unit = NXUnitSet.get_default_unit(node.unit)
+    return ureg(default_unit).units if default_unit is not None else None
 
 
 def _entry_child_group(app_name: str, *path: str | tuple[str, str]) -> NexusGroup:
@@ -128,29 +128,17 @@ def _entry_child_group(app_name: str, *path: str | tuple[str, str]) -> NexusGrou
     return node
 
 
-def _own_child_element_names(elem, tag: str) -> set[str]:
+def _own_child_names(elem, tag: str) -> set[str]:
     """Return the names of an XML element's direct ``<tag>`` children.
 
-    Used to inspect an application's own NXDL declarations without merged or
-    inherited content.
-    """
-    return {
-        child.attrib["name"]
-        for child in elem
-        if child.tag.split("}")[-1] == tag and "name" in child.attrib
-    }
-
-
-def _own_child_group_names(elem) -> set[str]:
-    """Return the subsection names of an XML element's direct ``<group>`` children.
-
-    Named groups use their explicit name; anonymous groups use the lowercased
-    NXDL type name with any ``NX`` prefix removed — matching the generator,
-    so an anonymous and an identically-named explicit group collide here too.
+    Named children use their explicit name; anonymous ones (only ``<group>``
+    goes unnamed in this corpus) use the lowercased NXDL type name with any
+    ``NX`` prefix removed — matching the generator, so an anonymous and an
+    identically-named explicit group collide here too.
     """
     names = set()
     for child in elem:
-        if child.tag.split("}")[-1] != "group":
+        if child.tag.split("}")[-1] != tag:
             continue
         name = child.attrib.get("name")
         if name is None:
@@ -158,6 +146,13 @@ def _own_child_group_names(elem) -> set[str]:
             name = (nx_type[2:] if nx_type.startswith("NX") else nx_type).lower()
         names.add(name)
     return names
+
+
+def _own_fields(nx_class: str) -> list[NexusField]:
+    """Every top-level field on a base class's own NXDL root."""
+    return [
+        c for c in generate_tree_from(nx_class).children if isinstance(c, NexusField)
+    ]
 
 
 def _inheritance_index(node: NexusGroup, nxdl_filename: str) -> int:
@@ -174,13 +169,6 @@ def _inheritance_index(node: NexusGroup, nxdl_filename: str) -> int:
 # ---------------------------------------------------------------------------
 
 
-def _own_fields(nx_class: str) -> list[NexusField]:
-    """Every top-level field on a base class's own NXDL root."""
-    return [
-        c for c in generate_tree_from(nx_class).children if isinstance(c, NexusField)
-    ]
-
-
 @pytest.mark.parametrize(
     "nx_class,cls",
     [
@@ -194,7 +182,10 @@ def test_base_class_quantity_unit_and_shape_matches_nxdl(nx_class, cls):
     assert fields, f"{nx_class} declares no fields"
     quantities = cls.m_def.all_quantities
     for node in fields:
-        quantity = quantities[node.name]
+        # A field named like a reserved BaseSection quantity gets a
+        # "_quantity" suffix if array-shaped (converters/_mapping.py's
+        # _BASESECTION_RESERVED_NAMES) — "data" is exactly this case.
+        quantity = quantities.get(node.name) or quantities[f"{node.name}_quantity"]
         assert quantity.shape == _expected_shape(node)
         if node.unit:
             assert quantity.unit == _expected_unit(node)
@@ -233,7 +224,7 @@ def test_appdef_entry_class_has_expected_base_sections_and_subsections():
         for c in entry.children
         if isinstance(c, NexusGroup) and c.nx_class == "NXentry"
     )
-    expected_group_names = _own_child_group_names(entry_group.inheritance[0])
+    expected_group_names = _own_child_names(entry_group.inheritance[0], "group")
     assert expected_group_names  # sanity: NXbase does declare top-level groups
     assert expected_group_names <= set(Xbase.m_def.all_sub_sections)
 
@@ -252,10 +243,8 @@ def test_single_level_named_concept_exposes_own_and_inherited_terms():
     detector = _entry_child_group("NXxrot", "NXinstrument", "NXdetector")
     xrot_idx = _inheritance_index(detector, "NXxrot.nxdl.xml")
     xbase_idx = _inheritance_index(detector, "NXxbase.nxdl.xml")
-    xrot_own_fields = _own_child_element_names(detector.inheritance[xrot_idx], "field")
-    xbase_own_fields = _own_child_element_names(
-        detector.inheritance[xbase_idx], "field"
-    )
+    xrot_own_fields = _own_child_names(detector.inheritance[xrot_idx], "field")
+    xbase_own_fields = _own_child_names(detector.inheritance[xbase_idx], "field")
     assert xrot_own_fields, "NXxrot's own detector declares no fields"
     assert xbase_own_fields, "NXxbase's own detector declares no fields"
 
@@ -284,7 +273,7 @@ def test_multi_level_named_concept_exposes_terms_from_every_ancestor():
     quantities = XlaueplateInstrumentDetector.m_def.all_quantities
     for nxdl_file in ("NXxlaueplate.nxdl.xml", "NXxrot.nxdl.xml", "NXxbase.nxdl.xml"):
         idx = _inheritance_index(detector, nxdl_file)
-        own_fields = _own_child_element_names(detector.inheritance[idx], "field")
+        own_fields = _own_child_names(detector.inheritance[idx], "field")
         assert own_fields, f"{nxdl_file}'s own detector declares no fields"
         for name in own_fields:
             # A field named like a reserved BaseSection quantity gets a
@@ -339,7 +328,7 @@ def test_three_level_named_concept_chain_preserves_middle_ancestor():
         ("NXenvironment", "bias_spectroscopy_environment"),
     )
     spm_idx = _inheritance_index(environment, "NXspm.nxdl.xml")
-    spm_own_groups = _own_child_group_names(environment.inheritance[spm_idx])
+    spm_own_groups = _own_child_names(environment.inheritance[spm_idx], "group")
     assert spm_own_groups, (
         "NXspm's own bias_spectroscopy_environment declares no groups"
     )
@@ -359,12 +348,8 @@ def test_link_only_named_concept_exposes_links_as_quantities():
     name_group = _entry_child_group("NXxeuler", ("NXdata", "name"))
     xeuler_idx = _inheritance_index(name_group, "NXxeuler.nxdl.xml")
     xbase_idx = _inheritance_index(name_group, "NXxbase.nxdl.xml")
-    xeuler_own_links = _own_child_element_names(
-        name_group.inheritance[xeuler_idx], "link"
-    )
-    xbase_own_links = _own_child_element_names(
-        name_group.inheritance[xbase_idx], "link"
-    )
+    xeuler_own_links = _own_child_names(name_group.inheritance[xeuler_idx], "link")
+    xbase_own_links = _own_child_names(name_group.inheritance[xbase_idx], "link")
     assert xeuler_own_links, "NXxeuler's own name group declares no links"
     assert xbase_own_links, "NXxbase's own DATA group declares no links"
 
