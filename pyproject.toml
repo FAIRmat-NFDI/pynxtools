@@ -7,11 +7,38 @@ build-backend = "_build_wrapper"
 name = "pynxtools"
 dynamic = ["version"]
 authors = [
-    { name = "The NOMAD Authors" },
+    { name = "Sherjeel Shabih" },
+    { name = "Lukas Pielsticker" },
+    { name = "Florian Dobener" },
+    { name = "Andrea Albino" },
+    { name = "Theodore Chang" },
+    { name = "Carola Emminger" },
+    { name = "Lev Ginzburg" },
+    { name = "Ron Hildebrandt" },
+    { name = "Markus Kühbach" },
+    { name = "Rubel Mozumder" },
+    { name = "Tommaso Pincelli" },
+    { name = "Martin Aeschlimann" },
+    { name = "Marius Grundmann" },
+    { name = "Walid Hetaba" },
+    { name = "Carlos-Andres Palma" },
+    { name = "Laurenz Rettig" },
+    { name = "Markus Scheidgen" },
+    { name = "Sandor Brockhauser" },
+    { name = "José A. Márquez Prieto" },
+    { name = "Claudia Draxl" },
+    { name = "Christoph T. Koch" },
+    { name = "Heiko B. Weber" },
+]
+maintainers = [
+    { name = "Lukas Pielsticker", email = "lukas.pielsticker@physik.hu-berlin.de" },
+    { name = "Markus Kühbach", email = "markus.kuehbach@physik.hu-berlin.de" },
+    { name = "Rubel Mozumder", email = "rubel.mozumder@physik.hu-berlin.de" },
 ]
 description = "Extend NeXus for experiments and characterization in Materials Science and Materials Engineering and serve as a NOMAD parser implementation for NeXus."
 readme = "README.md"
-license = { file = "LICENSE" }
+license = "Apache-2.0 AND LGPL-3.0-or-later AND MIT"
+license-files = ["LICENSES/*.txt"]
 requires-python = ">=3.10"
 classifiers = [
     "Programming Language :: Python :: 3.10",
@@ -19,7 +46,6 @@ classifiers = [
     "Programming Language :: Python :: 3.12",
     "Programming Language :: Python :: 3.13",
     "Programming Language :: Python :: 3.14",
-    "License :: OSI Approved :: Apache Software License",
     "Operating System :: OS Independent",
 ]
 dependencies = [

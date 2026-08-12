@@ -39,3 +39,8 @@ repos:
           - docs/**/*
           - src/pynxtools/**/*.py
           - tests/**/*.py
+
+  - repo: https://github.com/fsfe/reuse-tool
+    rev: v6.2.0
+    hooks:
+      - id: reuse  # checks REUSE (SPDX license header) compliance
