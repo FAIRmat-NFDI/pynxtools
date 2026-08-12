@@ -1,3 +1,9 @@
+# SPDX-FileCopyrightText: The pynxtools Authors
+#
+# This file is part of pynxtools.
+#
+# SPDX-License-Identifier: Apache-2.0
+
 """Regenerate the reference files in tests/data/nomad/converter/.
 
 Run after changing a fixture NXDL or the metainfo Jinja2 template, then review

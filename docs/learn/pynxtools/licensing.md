@@ -16,7 +16,7 @@ To avoid this ambiguity, the generated files are licensed under LGPL-3.0-or-late
 
 `pynxtools` contains files under three licenses:
 
-- Most of the codebase, including the parsers, readers, and the generator itself, is licensed under Apache-2.0.
+- Most of the codebase, including the parsers, readers, and the generator (the code for programmatic generating of Python NOMAD metainfo classes from NeXus NXDL/XML files), is licensed under Apache-2.0.
 - The generated NeXus metainfo classes (`base_classes/` and `applications/`) are licensed under LGPL-3.0-or-later.
 - A small number of vendored third-party files keep their original license — e.g. `src/pynxtools/dataconverter/hdfdict.py` is adapted from the MIT-licensed [`hdfdict`](https://github.com/SiggiGue/hdfdict) project and stays MIT-licensed.
 
