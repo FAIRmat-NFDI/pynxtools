@@ -30,4 +30,4 @@ Shabih, S., Pielsticker, L., Dobener, F., Albino, A., Chang, T., Emminger, C., G
 
 # License
 
-`pynxtools` is primarily licensed under Apache-2.0, with the NeXus-derived generated metainfo classes under LGPL-3.0-or-later and a small vendored file under MIT. Full license texts are in [`LICENSES/`](LICENSES/); see [Licensing](https://fairmat-nfdi.github.io/pynxtools/learn/pynxtools/licensing.html) for details. The project follows the [REUSE Software specification](https://reuse.software/).
+`pynxtools` is primarily licensed under Apache-2.0, with the NeXus-derived generated metainfo classes under LGPL-3.0-or-later, and a small vendored file under MIT. Full license texts are in [`LICENSES/`](LICENSES/); see [Licensing](https://fairmat-nfdi.github.io/pynxtools/learn/pynxtools/licensing.html) for details. The project follows the [REUSE Software specification](https://reuse.software/).

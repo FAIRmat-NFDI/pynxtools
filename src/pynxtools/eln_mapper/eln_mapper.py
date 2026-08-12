@@ -4,7 +4,7 @@
 #
 # SPDX-License-Identifier: Apache-2.0
 
-"""This module generates ELN file in a hierarchical format according to a NeXus application definition."""
+"""This module generates an ELN file in a hierarchical format according to a NeXus application definition."""
 
 from pathlib import Path
 

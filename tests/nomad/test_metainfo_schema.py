@@ -4,7 +4,7 @@
 #
 # SPDX-License-Identifier: Apache-2.0
 
-"""This is a code that performs several tests on nexus tool"""
+"""This is a code that performs several tests on NeXus tool"""
 
 import os
 
