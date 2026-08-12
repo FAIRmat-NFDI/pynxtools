@@ -92,7 +92,7 @@ authors:
     surname: Brockhauser
     orcid: 0000-0002-9700-4803
     affiliation: 1
-  - given-names: Christoph
+  - given-names: Christoph T.
     surname: Koch
     orcid: 0000-0002-3984-1523
     affiliation: 1
