@@ -28,6 +28,7 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 
 import numpy as np
+from nomad.datamodel.hdf5 import HDF5Reference
 from nomad.datamodel.metainfo.annotations import (
     ELNAnnotation,
     ELNComponentEnum,
@@ -707,13 +708,10 @@ class MicrostructureCrystals(MicrostructureFeature):
         a_display={"unit": "dimensionless"},
     )
     indices_crystal = Quantity(
-        type=np.int64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXmicrostructure.html#nxmicrostructure-crystals-indices-crystal-field"
         ],
-        dimensionality="dimensionless",
-        unit="dimensionless",
-        shape=["*"],
         description=("Identifier whereby to identify each crystal explicitly."),
         a_nexus_field=NeXusField(
             name="indices_crystal",
@@ -724,13 +722,10 @@ class MicrostructureCrystals(MicrostructureFeature):
         ),
     )
     indices_phase = Quantity(
-        type=np.int64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXmicrostructure.html#nxmicrostructure-crystals-indices-phase-field"
         ],
-        dimensionality="dimensionless",
-        unit="dimensionless",
-        shape=["*"],
         description=(
             "Identifier whereby to identify phase for each crystal explicitly."
         ),
@@ -743,11 +738,10 @@ class MicrostructureCrystals(MicrostructureFeature):
         ),
     )
     boundary_contact = Quantity(
-        type=np.int64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXmicrostructure.html#nxmicrostructure-crystals-boundary-contact-field"
         ],
-        shape=["*"],
         description=(
             "True, if the feature makes contact with the edge of the ROI. False, "
             "if the feature does not make contact with the edge of the ROI."
@@ -760,13 +754,10 @@ class MicrostructureCrystals(MicrostructureFeature):
         ),
     )
     orientation_spread = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXmicrostructure.html#nxmicrostructure-crystals-orientation-spread-field"
         ],
-        dimensionality="[angle]",
-        unit="radian",
-        shape=["*"],
         description=(
             "Average disorientation angle for each crystal between individual "
             "orientations of that crystal evaluated as a summary statistic for "
@@ -781,13 +772,10 @@ class MicrostructureCrystals(MicrostructureFeature):
         ),
     )
     length = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXmicrostructure.html#nxmicrostructure-crystals-length-field"
         ],
-        dimensionality="[length]",
-        unit="m",
-        shape=["*"],
         description=("Length of each crystal"),
         a_nexus_field=NeXusField(
             name="length",
@@ -798,13 +786,10 @@ class MicrostructureCrystals(MicrostructureFeature):
         ),
     )
     area = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXmicrostructure.html#nxmicrostructure-crystals-area-field"
         ],
-        dimensionality="[length] ** 2",
-        unit="m ** 2",
-        shape=["*"],
         description=("Area of each crystal."),
         a_nexus_field=NeXusField(
             name="area",
@@ -815,13 +800,10 @@ class MicrostructureCrystals(MicrostructureFeature):
         ),
     )
     volume = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXmicrostructure.html#nxmicrostructure-crystals-volume-field"
         ],
-        dimensionality="[length] ** 3",
-        unit="m ** 3",
-        shape=["*"],
         description=("Volume of each crystal"),
         a_nexus_field=NeXusField(
             name="volume",
@@ -937,13 +919,10 @@ class MicrostructureInterfaces(MicrostructureFeature):
         a_display={"unit": "dimensionless"},
     )
     indices_interface = Quantity(
-        type=np.int64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXmicrostructure.html#nxmicrostructure-interfaces-indices-interface-field"
         ],
-        dimensionality="dimensionless",
-        unit="dimensionless",
-        shape=["*"],
         description=(
             "Identifier whereby to identify each interface explicitly. An array "
             "with as many entries as interfaces or their projections."
@@ -957,13 +936,10 @@ class MicrostructureInterfaces(MicrostructureFeature):
         ),
     )
     indices_crystal = Quantity(
-        type=np.int64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXmicrostructure.html#nxmicrostructure-interfaces-indices-crystal-field"
         ],
-        dimensionality="dimensionless",
-        unit="dimensionless",
-        shape=["*", 2],
         description=(
             "Set of pairs of indices_crystal values, for each interface one "
             "value pair. An array with as many pairs as interfaces or their "
@@ -995,13 +971,10 @@ class MicrostructureInterfaces(MicrostructureFeature):
         ),
     )
     indices_phase = Quantity(
-        type=np.int64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXmicrostructure.html#nxmicrostructure-interfaces-indices-phase-field"
         ],
-        dimensionality="dimensionless",
-        unit="dimensionless",
-        shape=["*", 2],
         description=(
             "Set of pairs of indices_phase values, for each interface one value "
             "pair. An array with as many pairs as interfaces or their "
@@ -1033,13 +1006,10 @@ class MicrostructureInterfaces(MicrostructureFeature):
         ),
     )
     number_of_triple_junctions = Quantity(
-        type=np.int64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXmicrostructure.html#nxmicrostructure-interfaces-number-of-triple-junctions-field"
         ],
-        dimensionality="dimensionless",
-        unit="dimensionless",
-        shape=["*"],
         description=(
             "Interfaces can be the physical three-dimensional surfaces or two- "
             "or one-dimensional projections. The latter situation applies "
@@ -1060,13 +1030,10 @@ class MicrostructureInterfaces(MicrostructureFeature):
         ),
     )
     indices_triple_junction = Quantity(
-        type=np.int64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXmicrostructure.html#nxmicrostructure-interfaces-indices-triple-junction-field"
         ],
-        dimensionality="dimensionless",
-        unit="dimensionless",
-        shape=["*"],
         description=(
             "Set of pairs of indices_triple_junction for each interface. An "
             "array with as many tuples of pairs to describe all junctions about "
@@ -1098,11 +1065,10 @@ class MicrostructureInterfaces(MicrostructureFeature):
         ),
     )
     boundary_contact = Quantity(
-        type=np.int64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXmicrostructure.html#nxmicrostructure-interfaces-boundary-contact-field"
         ],
-        shape=["*"],
         description=(
             "True, if the interface makes contact with the edge of the ROI. "
             "False, if the interface does not make contact with the edge of the "
@@ -1116,12 +1082,10 @@ class MicrostructureInterfaces(MicrostructureFeature):
         ),
     )
     surface_energy = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXmicrostructure.html#nxmicrostructure-interfaces-surface-energy-field"
         ],
-        flexible_unit=True,
-        shape=["*"],
         description=("Gibbs free surface energy for each interface."),
         a_nexus_field=NeXusField(
             name="surface_energy",
@@ -1132,12 +1096,10 @@ class MicrostructureInterfaces(MicrostructureFeature):
         ),
     )
     mobility = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXmicrostructure.html#nxmicrostructure-interfaces-mobility-field"
         ],
-        flexible_unit=True,
-        shape=["*"],
         description=("Non-intrinsic mobility of each interface."),
         a_nexus_field=NeXusField(
             name="mobility",
@@ -1148,13 +1110,10 @@ class MicrostructureInterfaces(MicrostructureFeature):
         ),
     )
     length = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXmicrostructure.html#nxmicrostructure-interfaces-length-field"
         ],
-        dimensionality="[length]",
-        unit="m",
-        shape=["*"],
         description=(
             "The length of each interface if only projections are available. "
             "This is not necessarily the same as the length of the individual "
@@ -1169,13 +1128,10 @@ class MicrostructureInterfaces(MicrostructureFeature):
         ),
     )
     area = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXmicrostructure.html#nxmicrostructure-interfaces-area-field"
         ],
-        dimensionality="[length] ** 2",
-        unit="m ** 2",
-        shape=["*"],
         description=("The surface area of all interfaces."),
         a_nexus_field=NeXusField(
             name="area",
@@ -1283,13 +1239,10 @@ class MicrostructureTripleJunctions(MicrostructureFeature):
         a_display={"unit": "dimensionless"},
     )
     indices_triple_junction = Quantity(
-        type=np.int64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXmicrostructure.html#nxmicrostructure-triple-junctions-indices-triple-junction-field"
         ],
-        dimensionality="dimensionless",
-        unit="dimensionless",
-        shape=["*"],
         description=("Identifier to identify each triple junction explicitly."),
         a_nexus_field=NeXusField(
             name="indices_triple_junction",
@@ -1300,13 +1253,10 @@ class MicrostructureTripleJunctions(MicrostructureFeature):
         ),
     )
     location = Quantity(
-        type=np.int64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXmicrostructure.html#nxmicrostructure-triple-junctions-location-field"
         ],
-        dimensionality="dimensionless",
-        unit="dimensionless",
-        shape=["*"],
         description=(
             "Set of identifier for positions whereby to identify the location of "
             "each junction."
@@ -1337,13 +1287,10 @@ class MicrostructureTripleJunctions(MicrostructureFeature):
         ),
     )
     position = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXmicrostructure.html#nxmicrostructure-triple-junctions-position-field"
         ],
-        dimensionality="[length]",
-        unit="m",
-        shape=["*", "*"],
         description=("Explicit positions."),
         a_nexus_field=NeXusField(
             name="position",
@@ -1354,13 +1301,10 @@ class MicrostructureTripleJunctions(MicrostructureFeature):
         ),
     )
     indices_crystal = Quantity(
-        type=np.int64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXmicrostructure.html#nxmicrostructure-triple-junctions-indices-crystal-field"
         ],
-        dimensionality="dimensionless",
-        unit="dimensionless",
-        shape=["*", 3],
         description=(
             "Set of tuples of identifier of crystals connected to the junction "
             "for each triple junction."
@@ -1374,13 +1318,10 @@ class MicrostructureTripleJunctions(MicrostructureFeature):
         ),
     )
     indices_interface = Quantity(
-        type=np.int64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXmicrostructure.html#nxmicrostructure-triple-junctions-indices-interface-field"
         ],
-        dimensionality="dimensionless",
-        unit="dimensionless",
-        shape=["*", 3],
         description=(
             "Set of tuples of identifier of interfaces connected to the junction "
             "for each triple junction."
@@ -1413,13 +1354,10 @@ class MicrostructureTripleJunctions(MicrostructureFeature):
         ),
     )
     indices_polyline = Quantity(
-        type=np.int64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXmicrostructure.html#nxmicrostructure-triple-junctions-indices-polyline-field"
         ],
-        dimensionality="dimensionless",
-        unit="dimensionless",
-        shape=["*", 3],
         description=(
             "Set of tuples of identifier for polyline segments connected to the "
             "junction for each triple junction."
@@ -1450,11 +1388,10 @@ class MicrostructureTripleJunctions(MicrostructureFeature):
         ),
     )
     boundary_contact = Quantity(
-        type=np.int64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXmicrostructure.html#nxmicrostructure-triple-junctions-boundary-contact-field"
         ],
-        shape=["*"],
         description=(
             "True, if the triple line makes contact with the edge of the ROI. "
             "False, if the triple line does not make contact with the edge of "
@@ -1468,12 +1405,10 @@ class MicrostructureTripleJunctions(MicrostructureFeature):
         ),
     )
     line_energy = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXmicrostructure.html#nxmicrostructure-triple-junctions-line-energy-field"
         ],
-        flexible_unit=True,
-        shape=["*"],
         description=("Specific line energy of each triple junction"),
         a_nexus_field=NeXusField(
             name="line_energy",
@@ -1484,12 +1419,10 @@ class MicrostructureTripleJunctions(MicrostructureFeature):
         ),
     )
     mobility = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXmicrostructure.html#nxmicrostructure-triple-junctions-mobility-field"
         ],
-        flexible_unit=True,
-        shape=["*"],
         description=("Non-intrinsic mobility of each triple junction."),
         a_nexus_field=NeXusField(
             name="mobility",
@@ -1500,13 +1433,10 @@ class MicrostructureTripleJunctions(MicrostructureFeature):
         ),
     )
     length = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXmicrostructure.html#nxmicrostructure-triple-junctions-length-field"
         ],
-        dimensionality="[length]",
-        unit="m",
-        shape=["*"],
         description=(
             "The length of each triple junction. This is not necessarily the "
             "same as the length of the individual polyline segments whereby the "
@@ -1521,13 +1451,10 @@ class MicrostructureTripleJunctions(MicrostructureFeature):
         ),
     )
     volume = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXmicrostructure.html#nxmicrostructure-triple-junctions-volume-field"
         ],
-        dimensionality="[length] ** 3",
-        unit="m ** 3",
-        shape=["*"],
         description=(
             "The volume about each triple junction. Respective cut-off criteria "
             "need to be specified."
@@ -1632,13 +1559,10 @@ class MicrostructureQuadrupleJunctions(MicrostructureFeature):
         a_display={"unit": "dimensionless"},
     )
     indices_quadruple_junction = Quantity(
-        type=np.int64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXmicrostructure.html#nxmicrostructure-quadruple-junctions-indices-quadruple-junction-field"
         ],
-        dimensionality="dimensionless",
-        unit="dimensionless",
-        shape=["*"],
         description=("Identifier to identify each quadruple junction explicitly."),
         a_nexus_field=NeXusField(
             name="indices_quadruple_junction",
@@ -1649,13 +1573,10 @@ class MicrostructureQuadrupleJunctions(MicrostructureFeature):
         ),
     )
     location = Quantity(
-        type=np.int64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXmicrostructure.html#nxmicrostructure-quadruple-junctions-location-field"
         ],
-        dimensionality="dimensionless",
-        unit="dimensionless",
-        shape=["*"],
         description=(
             "Set of identifier for positions whereby to identify the location of "
             "each junction."
@@ -1686,13 +1607,10 @@ class MicrostructureQuadrupleJunctions(MicrostructureFeature):
         ),
     )
     position = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXmicrostructure.html#nxmicrostructure-quadruple-junctions-position-field"
         ],
-        dimensionality="[length]",
-        unit="m",
-        shape=["*", "*"],
         description=("Explicit positions."),
         a_nexus_field=NeXusField(
             name="position",
@@ -1703,13 +1621,10 @@ class MicrostructureQuadrupleJunctions(MicrostructureFeature):
         ),
     )
     indices_crystal = Quantity(
-        type=np.int64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXmicrostructure.html#nxmicrostructure-quadruple-junctions-indices-crystal-field"
         ],
-        dimensionality="dimensionless",
-        unit="dimensionless",
-        shape=["*", 4],
         description=(
             "Set of tuples of identifier of crystals connected to the junction "
             "for each junction."
@@ -1743,13 +1658,10 @@ class MicrostructureQuadrupleJunctions(MicrostructureFeature):
         ),
     )
     indices_interface = Quantity(
-        type=np.int64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXmicrostructure.html#nxmicrostructure-quadruple-junctions-indices-interface-field"
         ],
-        dimensionality="dimensionless",
-        unit="dimensionless",
-        shape=["*", 4],
         description=(
             "Set of tuples of identifier of interfaces connected to the junction "
             "for each junction."
@@ -1783,13 +1695,10 @@ class MicrostructureQuadrupleJunctions(MicrostructureFeature):
         ),
     )
     indices_triple_junction = Quantity(
-        type=np.int64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXmicrostructure.html#nxmicrostructure-quadruple-junctions-indices-triple-junction-field"
         ],
-        dimensionality="dimensionless",
-        unit="dimensionless",
-        shape=["*", 3],
         description=(
             "Set of tuples of identifier for triple junctions connected to the "
             "junction for each quadruple junction."
@@ -1823,13 +1732,10 @@ class MicrostructureQuadrupleJunctions(MicrostructureFeature):
         ),
     )
     indices_phase = Quantity(
-        type=np.int64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXmicrostructure.html#nxmicrostructure-quadruple-junctions-indices-phase-field"
         ],
-        dimensionality="dimensionless",
-        unit="dimensionless",
-        shape=["*", 4],
         description=(
             "Set of tuples of identifier for phases of crystals connected to the "
             "junction for each quadruple junction."
@@ -1863,11 +1769,10 @@ class MicrostructureQuadrupleJunctions(MicrostructureFeature):
         ),
     )
     boundary_contact = Quantity(
-        type=np.int64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXmicrostructure.html#nxmicrostructure-quadruple-junctions-boundary-contact-field"
         ],
-        shape=["*"],
         description=(
             "True, if the junction makes contact with the edge of the ROI. True, "
             "if the junction does not make contact with the edge of the ROI."
@@ -1880,12 +1785,10 @@ class MicrostructureQuadrupleJunctions(MicrostructureFeature):
         ),
     )
     energy = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXmicrostructure.html#nxmicrostructure-quadruple-junctions-energy-field"
         ],
-        flexible_unit=True,
-        shape=["*"],
         description=("Energy of the quadruple_junction as a defect."),
         a_nexus_field=NeXusField(
             name="energy",
@@ -1896,12 +1799,10 @@ class MicrostructureQuadrupleJunctions(MicrostructureFeature):
         ),
     )
     mobility = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXmicrostructure.html#nxmicrostructure-quadruple-junctions-mobility-field"
         ],
-        flexible_unit=True,
-        shape=["*"],
         description=("Non-intrinsic mobility of each quadruple_junction."),
         a_nexus_field=NeXusField(
             name="mobility",

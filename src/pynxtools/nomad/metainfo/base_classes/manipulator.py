@@ -24,6 +24,7 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 
 import numpy as np
+from nomad.datamodel.hdf5 import HDF5Reference
 from nomad.datamodel.metainfo.annotations import (
     ELNAnnotation,
     ELNComponentEnum,
@@ -372,13 +373,10 @@ class ManipulatorTemperatureSensor(Sensor):
         ),
     )
     value = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXmanipulator.html#nxmanipulator-temperature-sensor-value-field"
         ],
-        dimensionality="[temperature]",
-        unit="kelvin",
-        shape=["*"],
         description=(
             "In case of a single or averaged temperature measurement, this is "
             "the scalar temperature measured by the sample temperature sensor. "
@@ -685,13 +683,10 @@ class ManipulatorDrainCurrentAmmeter(Sensor):
         ),
     )
     value = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXmanipulator.html#nxmanipulator-drain-current-ammeter-value-field"
         ],
-        dimensionality="[current]",
-        unit="ampere",
-        shape=["*"],
         description=(
             "In case of a single or averaged drain current measurement, this is "
             "the scalar drain current measured between the sample and sample "
@@ -928,13 +923,10 @@ class ManipulatorSampleBiasVoltmeter(Sensor):
         ),
     )
     value = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXmanipulator.html#nxmanipulator-sample-bias-voltmeter-value-field"
         ],
-        dimensionality="[mass] * [length] ** 2 / [time] ** 3 / [current]",
-        unit="volt",
-        shape=["*"],
         description=(
             "In case of a single or averaged bias measurement, this is the "
             "scalar voltage measured between sample and sample holder. It can "

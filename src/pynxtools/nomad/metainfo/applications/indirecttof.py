@@ -24,6 +24,7 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 
 import numpy as np
+from nomad.datamodel.hdf5 import HDF5Reference
 from nomad.datamodel.metainfo.annotations import (
     ELNAnnotation,
     ELNComponentEnum,
@@ -232,13 +233,10 @@ class IndirecttofInstrumentAnalyser(Monochromator):
     )
 
     energy = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXindirecttof.html#nxindirecttof-entry-instrument-analyser-energy-field"
         ],
-        dimensionality="[mass] * [length] ** 2 / [time] ** 2",
-        unit="eV",
-        shape=["*"],
         description=("analyzed energy"),
         a_nexus_field=NeXusField(
             name="energy",
@@ -249,13 +247,10 @@ class IndirecttofInstrumentAnalyser(Monochromator):
         ),
     )
     polar_angle = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXindirecttof.html#nxindirecttof-entry-instrument-analyser-polar-angle-field"
         ],
-        dimensionality="[angle]",
-        unit="radian",
-        shape=["*"],
         description=("polar angle towards sample"),
         a_nexus_field=NeXusField(
             name="polar_angle",
@@ -266,13 +261,10 @@ class IndirecttofInstrumentAnalyser(Monochromator):
         ),
     )
     distance = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXindirecttof.html#nxindirecttof-entry-instrument-analyser-distance-field"
         ],
-        dimensionality="[length]",
-        unit="m",
-        shape=["*"],
         description=("distance from sample"),
         a_nexus_field=NeXusField(
             name="distance",

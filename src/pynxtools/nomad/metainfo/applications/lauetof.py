@@ -24,6 +24,7 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 
 import numpy as np
+from nomad.datamodel.hdf5 import HDF5Reference
 from nomad.datamodel.metainfo.annotations import (
     ELNAnnotation,
     ELNComponentEnum,
@@ -166,13 +167,10 @@ class LauetofInstrumentDetector(Detector):
     )
 
     polar_angle = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXlauetof.html#nxlauetof-entry-instrument-detector-polar-angle-field"
         ],
-        dimensionality="[angle]",
-        unit="radian",
-        shape=["*", "*", "*"],
         description=("The polar_angle (two theta) where the detector is placed."),
         a_nexus_field=NeXusField(
             name="polar_angle",
@@ -183,13 +181,10 @@ class LauetofInstrumentDetector(Detector):
         ),
     )
     azimuthal_angle = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXlauetof.html#nxlauetof-entry-instrument-detector-azimuthal-angle-field"
         ],
-        dimensionality="[angle]",
-        unit="radian",
-        shape=["*", "*", "*"],
         description=("The azimuthal angle where the detector is placed."),
         a_nexus_field=NeXusField(
             name="azimuthal_angle",
@@ -200,12 +195,10 @@ class LauetofInstrumentDetector(Detector):
         ),
     )
     data_quantity = Quantity(
-        type=np.int64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXlauetof.html#nxlauetof-entry-instrument-detector-data-field"
         ],
-        flexible_unit=True,
-        shape=["*", "*", "*"],
         a_nexus_field=NeXusField(
             name="data",
             type="NX_INT",
@@ -233,13 +226,10 @@ class LauetofInstrumentDetector(Detector):
         ),
     )
     x_pixel_size = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXlauetof.html#nxlauetof-entry-instrument-detector-x-pixel-size-field"
         ],
-        dimensionality="[length]",
-        unit="m",
-        shape=["*", "*"],
         a_nexus_field=NeXusField(
             name="x_pixel_size",
             type="NX_FLOAT",
@@ -249,13 +239,10 @@ class LauetofInstrumentDetector(Detector):
         ),
     )
     y_pixel_size = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXlauetof.html#nxlauetof-entry-instrument-detector-y-pixel-size-field"
         ],
-        dimensionality="[length]",
-        unit="m",
-        shape=["*", "*"],
         a_nexus_field=NeXusField(
             name="y_pixel_size",
             type="NX_FLOAT",
@@ -265,13 +252,10 @@ class LauetofInstrumentDetector(Detector):
         ),
     )
     distance = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXlauetof.html#nxlauetof-entry-instrument-detector-distance-field"
         ],
-        dimensionality="[length]",
-        unit="m",
-        shape=["*", "*", "*"],
         a_nexus_field=NeXusField(
             name="distance",
             type="NX_FLOAT",
@@ -281,13 +265,10 @@ class LauetofInstrumentDetector(Detector):
         ),
     )
     time_of_flight = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXlauetof.html#nxlauetof-entry-instrument-detector-time-of-flight-field"
         ],
-        dimensionality="[time]",
-        unit="second",
-        shape=["*"],
         a_nexus_field=NeXusField(
             name="time_of_flight",
             type="NX_FLOAT",
@@ -331,11 +312,10 @@ class LauetofSample(Sample):
         ),
     )
     orientation_matrix = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXlauetof.html#nxlauetof-entry-sample-orientation-matrix-field"
         ],
-        shape=[3, 3],
         description=(
             "The orientation matrix according to Busing and Levy conventions. "
             "This is not strictly necessary as the UB can always be derived from "
@@ -350,13 +330,10 @@ class LauetofSample(Sample):
         ),
     )
     unit_cell = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXlauetof.html#nxlauetof-entry-sample-unit-cell-field"
         ],
-        dimensionality="[length]",
-        unit="m",
-        shape=[6],
         description=(
             "The unit cell, a, b, c, alpha, beta, gamma. Again, not strictly "
             "necessary, but normally written."
@@ -426,12 +403,10 @@ class LauetofControl(Monitor):
         ),
     )
     data_quantity = Quantity(
-        type=np.int64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXlauetof.html#nxlauetof-entry-control-data-field"
         ],
-        flexible_unit=True,
-        shape=["*"],
         description=("use these attributes ``primary=1 signal=1``"),
         a_nexus_field=NeXusField(
             name="data",
@@ -442,13 +417,10 @@ class LauetofControl(Monitor):
         ),
     )
     time_of_flight = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXlauetof.html#nxlauetof-entry-control-time-of-flight-field"
         ],
-        dimensionality="[time]",
-        unit="second",
-        shape=["*"],
         a_nexus_field=NeXusField(
             name="time_of_flight",
             type="NX_FLOAT",
@@ -476,12 +448,10 @@ class LauetofName(Data):
     )
 
     data_quantity = Quantity(
-        type=np.int64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXlauetof.html#nxlauetof-entry-name-data-link"
         ],
-        shape=["*", "*", "*"],
-        flexible_unit=True,
         a_nexus_link=NeXusLink(
             name="data",
             target="/NXentry/NXinstrument/NXdetector/data",
@@ -489,13 +459,10 @@ class LauetofName(Data):
         ),
     )
     time_of_flight = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXlauetof.html#nxlauetof-entry-name-time-of-flight-link"
         ],
-        dimensionality="[time]",
-        unit="second",
-        shape=["*"],
         a_nexus_link=NeXusLink(
             name="time_of_flight",
             target="/NXentry/NXinstrument/NXdetector/time_of_flight",

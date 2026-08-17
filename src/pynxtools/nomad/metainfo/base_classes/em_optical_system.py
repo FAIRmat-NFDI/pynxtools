@@ -24,6 +24,7 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 
 import numpy as np
+from nomad.datamodel.hdf5 import HDF5Reference
 from nomad.datamodel.metainfo.annotations import (
     ELNAnnotation,
     ELNComponentEnum,
@@ -211,11 +212,10 @@ class EmOpticalSystem(Object):
         a_display={"unit": "m"},
     )
     probe = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXem_optical_system.html#nxem_optical_system-probe-field"
         ],
-        shape=[2],
         description=(
             "Geometry of the cross-section formed when the primary beam shines "
             "onto the specimen surface. Reported as length of the semiaxes of "

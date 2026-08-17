@@ -28,6 +28,7 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 
 import numpy as np
+from nomad.datamodel.hdf5 import HDF5Reference
 from nomad.datamodel.metainfo.annotations import (
     ELNAnnotation,
     ELNComponentEnum,
@@ -153,13 +154,10 @@ class ApmParaprobeRangerResultsIontypesID(ApmParaprobeToolResultsTaskprocessed):
     )
 
     iontypes = Quantity(
-        type=np.int64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_ranger_results.html#nxapm_paraprobe_ranger_results-entry-iontypesid-iontypes-field"
         ],
-        dimensionality="dimensionless",
-        unit="dimensionless",
-        shape=["*"],
         description=(
             "The iontype (identifier) for each ion that was best matching, "
             "stored in the order of the evaporation sequence ID."

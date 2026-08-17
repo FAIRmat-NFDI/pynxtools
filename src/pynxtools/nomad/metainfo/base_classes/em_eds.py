@@ -24,6 +24,7 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 
 import numpy as np
+from nomad.datamodel.hdf5 import HDF5Reference
 from nomad.datamodel.metainfo.annotations import (
     ELNAnnotation,
     ELNComponentEnum,
@@ -194,13 +195,10 @@ class EmEdsIndexingSummary(Data):
     )
 
     intensity = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXem_eds.html#nxem_eds-indexing-summary-intensity-field"
         ],
-        dimensionality="dimensionless",
-        unit="dimensionless",
-        shape=["*"],
         description=("Accumulated counts"),
         a_nexus_field=NeXusField(
             name="intensity",
@@ -244,13 +242,10 @@ class EmEdsIndexingSummary(Data):
         ),
     )
     axis_energy = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXem_eds.html#nxem_eds-indexing-summary-axis-energy-field"
         ],
-        dimensionality="[mass] * [length] ** 2 / [time] ** 2",
-        unit="eV",
-        shape=["*"],
         description=("Energy axis"),
         a_nexus_field=NeXusField(
             name="axis_energy",
@@ -341,13 +336,10 @@ class EmEdsIndexingPeakAtom(Atom):
     )
 
     energy_range = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXem_eds.html#nxem_eds-indexing-peak-atom-energy-range-field"
         ],
-        dimensionality="[mass] * [length] ** 2 / [time] ** 2",
-        unit="eV",
-        shape=[2],
         description=(
             "Associated lower :math:`[e_{min}, e_{max}]` bounds of the energy "
             "which is assumed associated with this peak."
@@ -381,11 +373,10 @@ class EmEdsIndexingPeakAtom(Atom):
         a_display={"unit": "eV"},
     )
     iupac_line_name = Quantity(
-        type=str,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXem_eds.html#nxem_eds-indexing-peak-atom-iupac-line-name-field"
         ],
-        shape=["*"],
         description=(
             "IUPAC notation identifier of the line which the peak represents. "
             "This can be a list of IUPAC notations for (the seldom) case that "
@@ -478,13 +469,10 @@ class EmEdsIndexingElementSpecificMap(Image):
         ),
     )
     energy_range = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXem_eds.html#nxem_eds-indexing-element-specific-map-energy-range-field"
         ],
-        dimensionality="[mass] * [length] ** 2 / [time] ** 2",
-        unit="eV",
-        shape=[2],
         description=(
             "Associated :math:`[e_{min}, e_{max}]` bounds of the energy range "
             "for which spectrum counts were accumulated."
@@ -517,11 +505,10 @@ class EmEdsIndexingElementSpecificMapProcess(Process):
     )
 
     peak = Quantity(
-        type=str,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXem_eds.html#nxem_eds-indexing-element-specific-map-process-peak-field"
         ],
-        shape=["*"],
         description=(
             "A list of :ref:`NXpeak` instance names whose X-ray quanta were "
             "accumulated for each pixel to obtain an element-specific EDS map."

@@ -24,6 +24,7 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 
 import numpy as np
+from nomad.datamodel.hdf5 import HDF5Reference
 from nomad.datamodel.metainfo.annotations import (
     ELNAnnotation,
     ELNComponentEnum,
@@ -710,7 +711,7 @@ class EllipsometryDataCollection(OpticalSpectroscopyData):
     )
 
     data_identifier = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXellipsometry.html#nxellipsometry-entry-data-collection-data-identifier-field"
         ],
@@ -745,19 +746,7 @@ class EllipsometryDataCollection(OpticalSpectroscopyData):
         description="Number of dimensions of data_identifier in the HDF5 file.",
     )
     data_type = Quantity(
-        type=MEnum(
-            [
-                "intensity",
-                "reflectivity",
-                "transmittance",
-                "Psi/Delta",
-                "tan(Psi)/cos(Delta)",
-                "Mueller matrix",
-                "Jones matrix",
-                "N/C/S",
-                "raw data",
-            ]
-        ),
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXellipsometry.html#nxellipsometry-entry-data-collection-data-type-field"
         ],
@@ -789,13 +778,11 @@ class EllipsometryDataCollection(OpticalSpectroscopyData):
         ),
     )
     NAME_spectrum = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXellipsometry.html#nxellipsometry-entry-data-collection-name-spectrum-field"
         ],
         variable=True,
-        flexible_unit=True,
-        shape=["*"],
         description=(
             "Spectral values (e.g. wavelength or energy) used for the "
             "measurement. An array of 1 or more elements. Length defines "
@@ -852,12 +839,10 @@ class EllipsometryDataCollection(OpticalSpectroscopyData):
         ),
     )
     measured_data = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXellipsometry.html#nxellipsometry-entry-data-collection-measured-data-field"
         ],
-        flexible_unit=True,
-        shape=["*", "*", "*"],
         description=(
             "Resulting data from the measurement, described by 'data_type'. The "
             "first dimension is defined by the number of measurements taken, "
@@ -916,12 +901,10 @@ class EllipsometryDataCollection(OpticalSpectroscopyData):
         ),
     )
     measured_data_errors = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXellipsometry.html#nxellipsometry-entry-data-collection-measured-data-errors-field"
         ],
-        flexible_unit=True,
-        shape=["*", "*", "*"],
         description=(
             "Specified uncertainties (errors) of the data described by "
             "'data_type' and provided in 'measured_data'."
@@ -972,11 +955,10 @@ class EllipsometryDataCollection(OpticalSpectroscopyData):
         ),
     )
     varied_parameter_link = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXellipsometry.html#nxellipsometry-entry-data-collection-varied-parameter-link-field"
         ],
-        shape=["*"],
         description=(
             "List of links to the values of the sensors. Add a link for each "
             "varied parameter (i.e. for each sensor)."
@@ -1005,7 +987,7 @@ class EllipsometryDataCollection(OpticalSpectroscopyData):
         description="Number of dimensions of varied_parameter_link in the HDF5 file.",
     )
     reference_data_link = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXellipsometry.html#nxellipsometry-entry-data-collection-reference-data-link-field"
         ],

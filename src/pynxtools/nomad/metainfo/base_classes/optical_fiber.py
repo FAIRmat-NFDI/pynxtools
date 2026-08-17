@@ -28,6 +28,7 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 
 import numpy as np
+from nomad.datamodel.hdf5 import HDF5Reference
 from nomad.datamodel.metainfo.annotations import (
     ELNAnnotation,
     ELNComponentEnum,
@@ -156,13 +157,10 @@ class OpticalFiber(Component):
         ),
     )
     dispersion = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXoptical_fiber.html#nxoptical_fiber-dispersion-field"
         ],
-        dimensionality="[time]",
-        unit="second",
-        shape=["*"],
         description=(
             "Spectrum-dependent (or refractive index-dependent) dispersion of "
             "the fiber. Specify in ps/nm*km."
@@ -196,12 +194,10 @@ class OpticalFiber(Component):
         a_display={"unit": "m"},
     )
     spectral_range = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXoptical_fiber.html#nxoptical_fiber-spectral-range-field"
         ],
-        flexible_unit=True,
-        shape=[2],
         description=(
             "Spectral range for which the fiber is designed. Enter the minimum "
             "and maximum values (lower and upper limit) of the wavelength range."
@@ -275,13 +271,10 @@ class OpticalFiber(Component):
         a_display={"unit": "dimensionless"},
     )
     attenuation = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXoptical_fiber.html#nxoptical_fiber-attenuation-field"
         ],
-        dimensionality="[information] / [length]",
-        unit="dB/km",
-        shape=["*"],
         description=(
             "Wavelength-dependent attenuation of the fiber (specify in dB/km)."
         ),
@@ -420,13 +413,10 @@ class OpticalFiberCore(Sample):
         a_display={"unit": "m"},
     )
     index_of_refraction = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXoptical_fiber.html#nxoptical_fiber-core-index-of-refraction-field"
         ],
-        dimensionality="dimensionless",
-        unit="dimensionless",
-        shape=[2, "*"],
         description=(
             "Complex index of refraction of the fiber. Specify at given "
             "wavelength (or energy, wavenumber etc.) values."
@@ -498,13 +488,10 @@ class OpticalFiberCladding(Sample):
         a_display={"unit": "m"},
     )
     index_of_refraction = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXoptical_fiber.html#nxoptical_fiber-cladding-index-of-refraction-field"
         ],
-        dimensionality="dimensionless",
-        unit="dimensionless",
-        shape=[2, "*"],
         description=(
             "Complex index of refraction of the fiber. Specify at given "
             "wavelength (or energy, wavenumber etc.) values."

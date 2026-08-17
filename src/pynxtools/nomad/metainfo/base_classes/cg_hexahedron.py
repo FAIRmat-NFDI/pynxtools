@@ -24,6 +24,7 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 
 import numpy as np
+from nomad.datamodel.hdf5 import HDF5Reference
 from nomad.datamodel.metainfo.annotations import (
     ELNAnnotation,
     ELNComponentEnum,
@@ -178,13 +179,10 @@ class CgHexahedron(CgPrimitive):
     )
 
     shape = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXcg_hexahedron.html#nxcg_hexahedron-shape-field"
         ],
-        dimensionality="[length]",
-        unit="m",
-        shape=["*", 3],
         description=("Qualifier for the shape of each hexahedron."),
         a_nexus_field=NeXusField(
             name="shape",
@@ -195,13 +193,10 @@ class CgHexahedron(CgPrimitive):
         ),
     )
     length = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXcg_hexahedron.html#nxcg_hexahedron-length-field"
         ],
-        dimensionality="[length]",
-        unit="m",
-        shape=["*"],
         description=(
             "Qualifier that is useful in cases when one edge is longer than all "
             "other edges of the hexahedra. Often the term length is associated "
@@ -217,13 +212,10 @@ class CgHexahedron(CgPrimitive):
         ),
     )
     width = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXcg_hexahedron.html#nxcg_hexahedron-width-field"
         ],
-        dimensionality="[length]",
-        unit="m",
-        shape=["*"],
         description=(
             "Qualifier often used to describe the extent of an object in the "
             "horizontal direction assuming a specific coordinate system. For the "
@@ -240,13 +232,10 @@ class CgHexahedron(CgPrimitive):
         ),
     )
     height = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXcg_hexahedron.html#nxcg_hexahedron-height-field"
         ],
-        dimensionality="[length]",
-        unit="m",
-        shape=["*"],
         description=(
             "Qualifier often used to describe the extent of an object in the "
             "vertical direction assuming a specific coordinate system."
@@ -260,13 +249,10 @@ class CgHexahedron(CgPrimitive):
         ),
     )
     volume = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXcg_hexahedron.html#nxcg_hexahedron-volume-field"
         ],
-        dimensionality="[length] ** 3",
-        unit="m ** 3",
-        shape=["*"],
         description=("Volume of each hexahedron."),
         a_nexus_field=NeXusField(
             name="volume",
@@ -277,13 +263,10 @@ class CgHexahedron(CgPrimitive):
         ),
     )
     area = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXcg_hexahedron.html#nxcg_hexahedron-area-field"
         ],
-        dimensionality="[length] ** 2",
-        unit="m ** 2",
-        shape=["*"],
         description=("Total (surface) area (of all six faces) of each hexahedron."),
         a_nexus_field=NeXusField(
             name="area",
@@ -294,13 +277,10 @@ class CgHexahedron(CgPrimitive):
         ),
     )
     face_area = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXcg_hexahedron.html#nxcg_hexahedron-face-area-field"
         ],
-        dimensionality="[length] ** 2",
-        unit="m ** 2",
-        shape=["*", 6],
         description=("Area of each of the six faces of each hexahedron."),
         a_nexus_field=NeXusField(
             name="face_area",
@@ -311,11 +291,10 @@ class CgHexahedron(CgPrimitive):
         ),
     )
     is_box = Quantity(
-        type=bool,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXcg_hexahedron.html#nxcg_hexahedron-is-box-field"
         ],
-        shape=["*"],
         description=(
             "Specifies if the hexahedra represent cuboids or cubes eventually "
             "rotated ones but at least not too exotic six-faced polyhedra."
@@ -328,11 +307,10 @@ class CgHexahedron(CgPrimitive):
         ),
     )
     is_axis_aligned = Quantity(
-        type=bool,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXcg_hexahedron.html#nxcg_hexahedron-is-axis-aligned-field"
         ],
-        shape=["*"],
         description=(
             "Only to be used if is_box is present. In this case, this field "
             "describes whether hexahedra are boxes whose primary edges are "

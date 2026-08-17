@@ -24,6 +24,7 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 
 import numpy as np
+from nomad.datamodel.hdf5 import HDF5Reference
 from nomad.datamodel.metainfo.annotations import (
     ELNAnnotation,
     ELNComponentEnum,
@@ -200,12 +201,10 @@ class Monitor(Component):
         a_display={"unit": "m"},
     )
     range = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXmonitor.html#nxmonitor-range-field"
         ],
-        flexible_unit=True,
-        shape=[2],
         description=(
             "Range (X-axis, Time-of-flight, etc.) over which the integral was "
             "calculated"

@@ -24,6 +24,7 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 
 import numpy as np
+from nomad.datamodel.hdf5 import HDF5Reference
 from nomad.datamodel.metainfo.annotations import (
     ELNAnnotation,
     ELNComponentEnum,
@@ -91,13 +92,10 @@ class ApmChargeStateAnalysis(Process):
     )
 
     charge_state = Quantity(
-        type=np.int64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXapm_charge_state_analysis.html#nxapm_charge_state_analysis-charge-state-field"
         ],
-        dimensionality="dimensionless",
-        unit="dimensionless",
-        shape=["*"],
         description=(
             "Signed charge, i.e. integer multiple of the elementary charge of "
             "each candidate."
@@ -111,13 +109,10 @@ class ApmChargeStateAnalysis(Process):
         ),
     )
     nuclide_hash = Quantity(
-        type=np.int64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXapm_charge_state_analysis.html#nxapm_charge_state_analysis-nuclide-hash-field"
         ],
-        dimensionality="dimensionless",
-        unit="dimensionless",
-        shape=["*", "*"],
         description=(
             "Table of nuclide instances of which each candidate is composed. "
             "Each row vector is sorted in descending order. Unused entries in "
@@ -133,13 +128,10 @@ class ApmChargeStateAnalysis(Process):
         ),
     )
     mass = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXapm_charge_state_analysis.html#nxapm_charge_state_analysis-mass-field"
         ],
-        dimensionality="[mass]",
-        unit="gram",
-        shape=["*"],
         description=(
             "Accumulated mass of the nuclides in each candidate. Not corrected "
             "for quantum effects."
@@ -153,13 +145,10 @@ class ApmChargeStateAnalysis(Process):
         ),
     )
     natural_abundance_product = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXapm_charge_state_analysis.html#nxapm_charge_state_analysis-natural-abundance-product-field"
         ],
-        dimensionality="dimensionless",
-        unit="dimensionless",
-        shape=["*"],
         description=(
             "The product of the natural abundances of the nuclides for each candidate."
         ),
@@ -172,13 +161,10 @@ class ApmChargeStateAnalysis(Process):
         ),
     )
     shortest_half_life = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXapm_charge_state_analysis.html#nxapm_charge_state_analysis-shortest-half-life-field"
         ],
-        dimensionality="[time]",
-        unit="second",
-        shape=["*"],
         description=(
             "For each candidate the half life of the nuclide that has the "
             "shortest half life."
@@ -226,13 +212,10 @@ class ApmChargeStateAnalysisConfig(Parameters):
     )
 
     nuclides = Quantity(
-        type=np.int64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXapm_charge_state_analysis.html#nxapm_charge_state_analysis-config-nuclides-field"
         ],
-        dimensionality="dimensionless",
-        unit="dimensionless",
-        shape=["*"],
         description=(
             "Parameter that defines the elements considered in the combinatorial "
             "search. The array contains nuclides as many times as their "
@@ -251,12 +234,10 @@ class ApmChargeStateAnalysisConfig(Parameters):
         ),
     )
     mass_to_charge_range = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXapm_charge_state_analysis.html#nxapm_charge_state_analysis-config-mass-to-charge-range-field"
         ],
-        flexible_unit=True,
-        shape=[2],
         description=(
             "Parameter that defines the interval :math:`[{\\frac{m}{q}}_{min}, "
             "{\\frac{m}{q}}_{max}]` within which ions with given "

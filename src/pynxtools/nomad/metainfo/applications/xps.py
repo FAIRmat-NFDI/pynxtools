@@ -24,6 +24,7 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 
 import numpy as np
+from nomad.datamodel.hdf5 import HDF5Reference
 from nomad.datamodel.metainfo.annotations import (
     ELNAnnotation,
     ELNComponentEnum,
@@ -368,13 +369,10 @@ class XpsCoordinateSystem(CoordinateSystem):
         ),
     )
     x = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXxps.html#nxxps-entry-xps-coordinate-system-x-field"
         ],
-        dimensionality="[length]",
-        unit="m",
-        shape=[3],
         a_nexus_field=NeXusField(
             name="x",
             type="NX_NUMBER",
@@ -384,13 +382,10 @@ class XpsCoordinateSystem(CoordinateSystem):
         ),
     )
     y = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXxps.html#nxxps-entry-xps-coordinate-system-y-field"
         ],
-        dimensionality="[length]",
-        unit="m",
-        shape=[3],
         a_nexus_field=NeXusField(
             name="y",
             type="NX_NUMBER",
@@ -400,13 +395,10 @@ class XpsCoordinateSystem(CoordinateSystem):
         ),
     )
     z = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXxps.html#nxxps-entry-xps-coordinate-system-z-field"
         ],
-        dimensionality="[length]",
-        unit="m",
-        shape=[3],
         a_nexus_field=NeXusField(
             name="z",
             type="NX_NUMBER",
@@ -1255,11 +1247,10 @@ class XpsFitData(Data):
     )
 
     input_dependent = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXxps.html#nxxps-entry-fit-data-input-dependent-field"
         ],
-        flexible_unit=True,
         description=(
             "Dependent variable for this fit procedure. This could be a link to "
             "entry/data/data."
@@ -1292,12 +1283,10 @@ class XpsFitData(Data):
         description="Number of dimensions of input_dependent in the HDF5 file.",
     )
     input_independent = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXxps.html#nxxps-entry-fit-data-input-independent-field"
         ],
-        dimensionality="[mass] * [length] ** 2 / [time] ** 2",
-        unit="eV",
         description=(
             "Independent variable for this fit procedure. This could be a link "
             "to entry/data/energy."
@@ -1331,11 +1320,10 @@ class XpsFitData(Data):
         description="Number of dimensions of input_independent in the HDF5 file.",
     )
     fit_sum = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXxps.html#nxxps-entry-fit-data-fit-sum-field"
         ],
-        flexible_unit=True,
         a_nexus_field=NeXusField(
             name="fit_sum",
             type="NX_NUMBER",
@@ -1364,11 +1352,10 @@ class XpsFitData(Data):
         description="Number of dimensions of fit_sum in the HDF5 file.",
     )
     residual = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXxps.html#nxxps-entry-fit-data-residual-field"
         ],
-        flexible_unit=True,
         a_nexus_field=NeXusField(
             name="residual",
             type="NX_NUMBER",
@@ -1501,12 +1488,10 @@ class XpsFitPeakPEAKData(Data):
     )
 
     position = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXxps.html#nxxps-entry-fit-peakpeak-data-position-field"
         ],
-        dimensionality="[mass] * [length] ** 2 / [time] ** 2",
-        unit="eV",
         description=("This could be a link to entry/data/energy."),
         a_nexus_field=NeXusField(
             name="position",
@@ -1537,11 +1522,10 @@ class XpsFitPeakPEAKData(Data):
         description="Number of dimensions of position in the HDF5 file.",
     )
     intensity = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXxps.html#nxxps-entry-fit-peakpeak-data-intensity-field"
         ],
-        flexible_unit=True,
         description=(
             "Intensity values of the fitted function at each energy in the "
             "position field. This concept is related to term `3.15`_ of the ISO "
@@ -1821,12 +1805,10 @@ class XpsFitBackgroundBACKGROUNDData(Data):
     )
 
     position = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXxps.html#nxxps-entry-fit-backgroundbackground-data-position-field"
         ],
-        dimensionality="[mass] * [length] ** 2 / [time] ** 2",
-        unit="eV",
         a_nexus_field=NeXusField(
             name="position",
             type="NX_NUMBER",
@@ -1856,11 +1838,10 @@ class XpsFitBackgroundBACKGROUNDData(Data):
         description="Number of dimensions of position in the HDF5 file.",
     )
     intensity = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXxps.html#nxxps-entry-fit-backgroundbackground-data-intensity-field"
         ],
-        flexible_unit=True,
         a_nexus_field=NeXusField(
             name="intensity",
             type="NX_NUMBER",
@@ -2390,12 +2371,10 @@ class XpsData(MpesData):
     )
 
     energy = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXxps.html#nxxps-entry-data-energy-field"
         ],
-        dimensionality="[mass] * [length] ** 2 / [time] ** 2",
-        unit="eV",
         a_nexus_field=NeXusField(
             name="energy",
             type="NX_NUMBER",

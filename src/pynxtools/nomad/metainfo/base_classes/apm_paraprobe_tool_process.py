@@ -28,6 +28,7 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 
 import numpy as np
+from nomad.datamodel.hdf5 import HDF5Reference
 from nomad.datamodel.metainfo.annotations import (
     ELNAnnotation,
     ELNComponentEnum,
@@ -171,13 +172,10 @@ class ApmParaprobeToolProcessWindow(CsFilterBooleanMask):
         a_display={"unit": "dimensionless"},
     )
     mask = Quantity(
-        type=np.int64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_tool_process.html#nxapm_paraprobe_tool_process-window-mask-field"
         ],
-        dimensionality="dimensionless",
-        unit="dimensionless",
-        shape=["*"],
         description=(
             "The mask. The length of the mask is an integer multiple of "
             "bitdepth. In such case, padded bits are set to 0."

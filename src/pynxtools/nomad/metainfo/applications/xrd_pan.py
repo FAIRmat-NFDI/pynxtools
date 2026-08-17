@@ -28,6 +28,7 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 
 import numpy as np
+from nomad.datamodel.hdf5 import HDF5Reference
 from nomad.datamodel.metainfo.annotations import (
     ELNAnnotation,
     ELNComponentEnum,
@@ -853,11 +854,10 @@ class XrdPanExperimentResult(XrdData):
     )
 
     intensity = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXxrd_pan.html#nxxrd_pan-entry-experiment-result-intensity-field"
         ],
-        shape=["*"],
         description=("Number of scattered electrons per unit time."),
         a_nexus_field=NeXusField(
             name="intensity",
@@ -883,13 +883,10 @@ class XrdPanExperimentResult(XrdData):
         description="Number of dimensions of intensity in the HDF5 file.",
     )
     two_theta = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXxrd_pan.html#nxxrd_pan-entry-experiment-result-two-theta-field"
         ],
-        dimensionality="[angle]",
-        unit="radian",
-        shape=["*"],
         description=("Two-theta (scattering angle) of the diffractogram."),
         a_nexus_field=NeXusField(
             name="two_theta",
@@ -916,13 +913,10 @@ class XrdPanExperimentResult(XrdData):
         description="Number of dimensions of two_theta in the HDF5 file.",
     )
     omega = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXxrd_pan.html#nxxrd_pan-entry-experiment-result-omega-field"
         ],
-        dimensionality="[angle]",
-        unit="radian",
-        shape=["*"],
         description=("Incident angle of the diffractogram."),
         a_nexus_field=NeXusField(
             name="omega",
@@ -949,13 +943,10 @@ class XrdPanExperimentResult(XrdData):
         description="Number of dimensions of omega in the HDF5 file.",
     )
     phi = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXxrd_pan.html#nxxrd_pan-entry-experiment-result-phi-field"
         ],
-        dimensionality="[angle]",
-        unit="radian",
-        shape=["*"],
         description=("The phi range of the diffractogram."),
         a_nexus_field=NeXusField(
             name="phi",
@@ -982,13 +973,10 @@ class XrdPanExperimentResult(XrdData):
         description="Number of dimensions of phi in the HDF5 file.",
     )
     chi = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXxrd_pan.html#nxxrd_pan-entry-experiment-result-chi-field"
         ],
-        dimensionality="[angle]",
-        unit="radian",
-        shape=["*"],
         description=("The chi range of the diffractogram"),
         a_nexus_field=NeXusField(
             name="chi",
@@ -1015,11 +1003,10 @@ class XrdPanExperimentResult(XrdData):
         description="Number of dimensions of chi in the HDF5 file.",
     )
     q_parallel = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXxrd_pan.html#nxxrd_pan-entry-experiment-result-q-parallel-field"
         ],
-        flexible_unit=True,
         description=(
             "The scattering vector component, which is parallel to the sample surface."
         ),
@@ -1051,11 +1038,10 @@ class XrdPanExperimentResult(XrdData):
         description="Number of dimensions of q_parallel in the HDF5 file.",
     )
     q_perpendicular = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXxrd_pan.html#nxxrd_pan-entry-experiment-result-q-perpendicular-field"
         ],
-        flexible_unit=True,
         description=(
             "The scattering vector component, which is perpendicular to the "
             "sample surface."
@@ -1088,11 +1074,10 @@ class XrdPanExperimentResult(XrdData):
         description="Number of dimensions of q_perpendicular in the HDF5 file.",
     )
     q_norm = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXxrd_pan.html#nxxrd_pan-entry-experiment-result-q-norm-field"
         ],
-        flexible_unit=True,
         description=(
             "The norm value of the scattering vector, q. The scattering vector "
             "is defined as a difference between the incident and scattered wave "
@@ -1150,7 +1135,7 @@ class XrdPanQData(XrdData):
     )
 
     q = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXxrd_pan.html#nxxrd_pan-entry-q-data-q-field"
         ],
@@ -1187,7 +1172,7 @@ class XrdPanQData(XrdData):
         description="Number of dimensions of q in the HDF5 file.",
     )
     intensity = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXxrd_pan.html#nxxrd_pan-entry-q-data-intensity-field"
         ],
@@ -1224,7 +1209,7 @@ class XrdPanQData(XrdData):
         description="Number of dimensions of intensity in the HDF5 file.",
     )
     q_parallel = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXxrd_pan.html#nxxrd_pan-entry-q-data-q-parallel-field"
         ],
@@ -1262,7 +1247,7 @@ class XrdPanQData(XrdData):
         description="Number of dimensions of q_parallel in the HDF5 file.",
     )
     q_perpendicular = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXxrd_pan.html#nxxrd_pan-entry-q-data-q-perpendicular-field"
         ],

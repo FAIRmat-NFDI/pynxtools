@@ -28,6 +28,7 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 
 import numpy as np
+from nomad.datamodel.hdf5 import HDF5Reference
 from nomad.datamodel.metainfo.annotations import (
     ELNAnnotation,
     ELNComponentEnum,
@@ -210,11 +211,10 @@ class Region(Object):
         ),
     )
     start = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXregion.html#nxregion-start-field"
         ],
-        shape=["*"],
         description=(
             "The starting position for region in detector data field array. This "
             "is recommended as it also defines the region rank. If omitted then "
@@ -228,11 +228,10 @@ class Region(Object):
         ),
     )
     count = Quantity(
-        type=np.int64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXregion.html#nxregion-count-field"
         ],
-        shape=["*"],
         description=(
             "The number of blocks or items in the hyperslab selection. If "
             "omitted then defined as an array of dimensions that take into "
@@ -247,11 +246,10 @@ class Region(Object):
         ),
     )
     stride = Quantity(
-        type=np.int64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXregion.html#nxregion-stride-field"
         ],
-        shape=["*"],
         description=(
             "An optional field to define striding used to downsample data. If "
             "omitted then defined as an array of ones."
@@ -264,11 +262,10 @@ class Region(Object):
         ),
     )
     block = Quantity(
-        type=np.int64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXregion.html#nxregion-block-field"
         ],
-        shape=["*"],
         description=(
             "An optional field to define the block size used to copy or "
             "downsample data. In the :math:`i`-th dimension, if "
@@ -285,11 +282,10 @@ class Region(Object):
         ),
     )
     scale = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXregion.html#nxregion-scale-field"
         ],
-        shape=["*"],
         description=(
             "An optional field to define a divisor for scaling of reduced data. "
             "For example, in a downsampled sum, it can reduce the maximum values "

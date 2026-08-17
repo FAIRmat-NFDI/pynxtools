@@ -24,6 +24,7 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 
 import numpy as np
+from nomad.datamodel.hdf5 import HDF5Reference
 from nomad.datamodel.metainfo.annotations import (
     ELNAnnotation,
     ELNComponentEnum,
@@ -260,13 +261,10 @@ class CoordinateSystem(Object):
         ),
     )
     x = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXcoordinate_system.html#nxcoordinate_system-x-field"
         ],
-        dimensionality="[length]",
-        unit="m",
-        shape=[3],
         description=(
             "Basis unit vector along the first axis which spans the coordinate "
             "system. This axis is frequently referred to as the x-axis in "
@@ -320,13 +318,10 @@ class CoordinateSystem(Object):
         ),
     )
     y = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXcoordinate_system.html#nxcoordinate_system-y-field"
         ],
-        dimensionality="[length]",
-        unit="m",
-        shape=[3],
         description=(
             "Basis unit vector along the second axis which spans the coordinate "
             "system. This axis is frequently referred to as the y-axis in "
@@ -378,13 +373,10 @@ class CoordinateSystem(Object):
         ),
     )
     z = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXcoordinate_system.html#nxcoordinate_system-z-field"
         ],
-        dimensionality="[length]",
-        unit="m",
-        shape=[3],
         description=(
             "Basis unit vector along the third axis which spans the coordinate "
             "system. This axis is frequently referred to as the z-axis in "

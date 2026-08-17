@@ -28,6 +28,7 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 
 import numpy as np
+from nomad.datamodel.hdf5 import HDF5Reference
 from nomad.datamodel.metainfo.annotations import (
     ELNAnnotation,
     ELNComponentEnum,
@@ -645,12 +646,10 @@ class ApmParaprobeToolConfigTaskconfigSpatialFilterCylinderSet(CgCylinder):
         a_display={"unit": "dimensionless"},
     )
     center = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_tool_config.html#nxapm_paraprobe_tool_config-entry-taskconfig-spatial-filter-cylinder-set-center-field"
         ],
-        flexible_unit=True,
-        shape=["*", "*"],
         a_nexus_field=NeXusField(
             name="center",
             type="NX_NUMBER",
@@ -660,13 +659,10 @@ class ApmParaprobeToolConfigTaskconfigSpatialFilterCylinderSet(CgCylinder):
         ),
     )
     height = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_tool_config.html#nxapm_paraprobe_tool_config-entry-taskconfig-spatial-filter-cylinder-set-height-field"
         ],
-        dimensionality="[length]",
-        unit="m",
-        shape=["*", "*"],
         a_nexus_field=NeXusField(
             name="height",
             type="NX_NUMBER",
@@ -676,13 +672,10 @@ class ApmParaprobeToolConfigTaskconfigSpatialFilterCylinderSet(CgCylinder):
         ),
     )
     radii = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_tool_config.html#nxapm_paraprobe_tool_config-entry-taskconfig-spatial-filter-cylinder-set-radii-field"
         ],
-        dimensionality="[length]",
-        unit="m",
-        shape=["*"],
         a_nexus_field=NeXusField(
             name="radii",
             type="NX_NUMBER",
@@ -767,12 +760,10 @@ class ApmParaprobeToolConfigTaskconfigSpatialFilterEllipsoidSet(CgEllipsoid):
         a_display={"unit": "dimensionless"},
     )
     center = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_tool_config.html#nxapm_paraprobe_tool_config-entry-taskconfig-spatial-filter-ellipsoid-set-center-field"
         ],
-        flexible_unit=True,
-        shape=["*", "*"],
         a_nexus_field=NeXusField(
             name="center",
             type="NX_NUMBER",
@@ -797,13 +788,10 @@ class ApmParaprobeToolConfigTaskconfigSpatialFilterEllipsoidSet(CgEllipsoid):
         ),
     )
     orientation = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_tool_config.html#nxapm_paraprobe_tool_config-entry-taskconfig-spatial-filter-ellipsoid-set-orientation-field"
         ],
-        dimensionality="dimensionless",
-        unit="dimensionless",
-        shape=["*", "*"],
         a_nexus_field=NeXusField(
             name="orientation",
             type="NX_NUMBER",
@@ -997,13 +985,10 @@ class ApmParaprobeToolConfigTaskconfigIontypeFilter(MatchFilter):
         ),
     )
     match = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_tool_config.html#nxapm_paraprobe_tool_config-entry-taskconfig-iontype-filter-match-field"
         ],
-        dimensionality="dimensionless",
-        unit="dimensionless",
-        shape=["*"],
         a_nexus_field=NeXusField(
             name="match",
             type="NX_NUMBER",
@@ -1047,13 +1032,10 @@ class ApmParaprobeToolConfigTaskconfigHitMultiplicityFilter(MatchFilter):
         ),
     )
     match = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_tool_config.html#nxapm_paraprobe_tool_config-entry-taskconfig-hit-multiplicity-filter-match-field"
         ],
-        dimensionality="dimensionless",
-        unit="dimensionless",
-        shape=["*"],
         a_nexus_field=NeXusField(
             name="match",
             type="NX_NUMBER",

@@ -28,6 +28,7 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 
 import numpy as np
+from nomad.datamodel.hdf5 import HDF5Reference
 from nomad.datamodel.metainfo.annotations import (
     ELNAnnotation,
     ELNComponentEnum,
@@ -222,13 +223,10 @@ class Container(Component):
         ),
     )
     density = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXcontainer.html#nxcontainer-density-field"
         ],
-        dimensionality="[mass] / [length] ** 3",
-        unit="gram / m ** 3",
-        shape=["*"],
         description=("Density of the material the container is made from."),
         a_nexus_field=NeXusField(
             name="density",
@@ -239,13 +237,10 @@ class Container(Component):
         ),
     )
     packing_fraction = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXcontainer.html#nxcontainer-packing-fraction-field"
         ],
-        dimensionality="dimensionless",
-        unit="dimensionless",
-        shape=["*"],
         description=(
             "Fraction of the volume of the container occupied by the material "
             "forming the container."
@@ -259,13 +254,10 @@ class Container(Component):
         ),
     )
     relative_molecular_mass = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXcontainer.html#nxcontainer-relative-molecular-mass-field"
         ],
-        dimensionality="[mass]",
-        unit="gram",
-        shape=["*"],
         description=("Relative molecular mass of container."),
         a_nexus_field=NeXusField(
             name="relative_molecular_mass",

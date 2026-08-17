@@ -28,6 +28,7 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 
 import numpy as np
+from nomad.datamodel.hdf5 import HDF5Reference
 from nomad.datamodel.metainfo.annotations import (
     ELNAnnotation,
     ELNComponentEnum,
@@ -102,11 +103,10 @@ class DispersionRepeatedParameter(Object):
         ),
     )
     parameter_units = Quantity(
-        type=str,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXdispersion_repeated_parameter.html#nxdispersion_repeated_parameter-parameter-units-field"
         ],
-        shape=["*"],
         description=(
             "A unit array associating a unit with each parameter. The first "
             "element should be equal to values/@unit. The values should be SI "
@@ -121,12 +121,10 @@ class DispersionRepeatedParameter(Object):
         ),
     )
     values = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXdispersion_repeated_parameter.html#nxdispersion_repeated_parameter-values-field"
         ],
-        flexible_unit=True,
-        shape=["*"],
         description=("The value of the parameter"),
         a_nexus_field=NeXusField(
             name="values",

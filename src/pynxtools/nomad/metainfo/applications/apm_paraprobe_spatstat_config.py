@@ -28,6 +28,7 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 
 import numpy as np
+from nomad.datamodel.hdf5 import HDF5Reference
 from nomad.datamodel.metainfo.annotations import (
     ELNAnnotation,
     ELNComponentEnum,
@@ -247,13 +248,10 @@ class ApmParaprobeSpatstatConfigSpatialStatisticsID(ApmParaprobeToolConfigTaskco
         ),
     )
     ion_query_nuclide_source = Quantity(
-        type=np.int64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_spatstat_config.html#nxapm_paraprobe_spatstat_config-entry-spatial-statisticsid-ion-query-nuclide-source-field"
         ],
-        dimensionality="dimensionless",
-        unit="dimensionless",
-        shape=["*", "*"],
         description=(
             "Matrix of isotope vectors, as many as rows as different candidates "
             "for iontypes should be distinguished as possible source iontypes. "
@@ -312,13 +310,10 @@ class ApmParaprobeSpatstatConfigSpatialStatisticsID(ApmParaprobeToolConfigTaskco
         ),
     )
     ion_query_nuclide_target = Quantity(
-        type=np.int64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_spatstat_config.html#nxapm_paraprobe_spatstat_config-entry-spatial-statisticsid-ion-query-nuclide-target-field"
         ],
-        dimensionality="dimensionless",
-        unit="dimensionless",
-        shape=["*", "*"],
         description=(
             "Matrix of isotope vectors, as many as rows as different candidates "
             "for iontypes to distinguish as possible targets. See additional "

@@ -25,6 +25,7 @@ from typing import TYPE_CHECKING
 
 import numpy as np
 from nomad.datamodel.data import EntryData
+from nomad.datamodel.hdf5 import HDF5Reference
 from nomad.datamodel.metainfo import basesections
 from nomad.datamodel.metainfo.annotations import (
     ELNAnnotation,

@@ -28,6 +28,7 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 
 import numpy as np
+from nomad.datamodel.hdf5 import HDF5Reference
 from nomad.datamodel.metainfo.annotations import (
     ELNAnnotation,
     ELNComponentEnum,
@@ -211,13 +212,10 @@ class XrdInstrumentBeam(Beam):
     )
 
     incident_energy = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXxrd.html#nxxrd-entry-instrument-beam-incident-energy-field"
         ],
-        dimensionality="[mass] * [length] ** 2 / [time] ** 2",
-        unit="eV",
-        shape=["*"],
         a_nexus_field=NeXusField(
             name="incident_energy",
             type="NX_FLOAT",
@@ -262,13 +260,10 @@ class XrdInstrumentDetector(MonopdInstrumentDetector):
     )
 
     polar_angle = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXxrd.html#nxxrd-entry-instrument-detector-polar-angle-field"
         ],
-        dimensionality="[angle]",
-        unit="radian",
-        shape=["*"],
         description=("The 2-theta range of the diffractogram"),
         a_nexus_field=NeXusField(
             name="polar_angle",
@@ -316,11 +311,10 @@ class XrdData(Data):
     )
 
     polar_angle = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXxrd.html#nxxrd-entry-data-polar-angle-field"
         ],
-        shape=["*"],
         description=(
             "link (suggested "
             "target:/NXentry/NXinstrument/NXdetector/polar_angle) Link to polar "
@@ -350,11 +344,10 @@ class XrdData(Data):
         description="Number of dimensions of polar_angle in the HDF5 file.",
     )
     data_quantity = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXxrd.html#nxxrd-entry-data-data-field"
         ],
-        shape=["*"],
         description=(
             "link (suggested target:/NXentry/NXinstrument/NXdetector/data) Link "
             "to data in /Nxentry/Nxinstrument/Nxdetector"

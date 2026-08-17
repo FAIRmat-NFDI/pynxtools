@@ -24,6 +24,7 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 
 import numpy as np
+from nomad.datamodel.hdf5 import HDF5Reference
 from nomad.datamodel.metainfo.annotations import (
     ELNAnnotation,
     ELNComponentEnum,
@@ -89,12 +90,10 @@ class CgGrid(CgPrimitive):
     )
 
     origin = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXcg_grid.html#nxcg_grid-origin-field"
         ],
-        flexible_unit=True,
-        shape=["*"],
         description=(
             "Location of the origin of the grid. Use the depends_on field that "
             "is inherited from the :ref:`NXcg_primitive` class to specify the "
@@ -129,13 +128,10 @@ class CgGrid(CgPrimitive):
         ),
     )
     cell_dimensions = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXcg_grid.html#nxcg_grid-cell-dimensions-field"
         ],
-        dimensionality="[length]",
-        unit="m",
-        shape=["*"],
         description=("The unit cell dimensions using crystallographic notation."),
         a_nexus_field=NeXusField(
             name="cell_dimensions",
@@ -146,13 +142,10 @@ class CgGrid(CgPrimitive):
         ),
     )
     extent = Quantity(
-        type=np.int64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXcg_grid.html#nxcg_grid-extent-field"
         ],
-        dimensionality="dimensionless",
-        unit="dimensionless",
-        shape=["*"],
         description=(
             "Number of unit cells along each of the d unit vectors. The total "
             "number of cells or grid points has to be the cardinality. If the "
@@ -170,12 +163,10 @@ class CgGrid(CgPrimitive):
         ),
     )
     position = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXcg_grid.html#nxcg_grid-position-field"
         ],
-        flexible_unit=True,
-        shape=["*", "*"],
         description=("Position of each cell in Euclidean space."),
         a_nexus_field=NeXusField(
             name="position",
@@ -186,13 +177,10 @@ class CgGrid(CgPrimitive):
         ),
     )
     coordinate = Quantity(
-        type=np.int64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXcg_grid.html#nxcg_grid-coordinate-field"
         ],
-        dimensionality="dimensionless",
-        unit="dimensionless",
-        shape=["*", "*"],
         description=("Coordinate of each cell with respect to the discrete grid."),
         a_nexus_field=NeXusField(
             name="coordinate",
@@ -227,11 +215,10 @@ class CgGrid(CgPrimitive):
         a_display={"unit": "dimensionless"},
     )
     boundaries = Quantity(
-        type=str,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXcg_grid.html#nxcg_grid-boundaries-field"
         ],
-        shape=["*"],
         description=(
             "Name of domain boundaries of the simulation box/ROI e.g. left, "
             "right, front, back, bottom, top."
@@ -244,13 +231,10 @@ class CgGrid(CgPrimitive):
         ),
     )
     boundary_conditions = Quantity(
-        type=np.int64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXcg_grid.html#nxcg_grid-boundary-conditions-field"
         ],
-        dimensionality="dimensionless",
-        unit="dimensionless",
-        shape=["*"],
         description=(
             "The boundary conditions for each boundary: 0 - undefined 1 - open 2 "
             "- periodic 3 - mirror 4 - von Neumann 5 - Dirichlet"

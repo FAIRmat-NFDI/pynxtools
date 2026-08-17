@@ -28,6 +28,7 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 
 import numpy as np
+from nomad.datamodel.hdf5 import HDF5Reference
 from nomad.datamodel.metainfo.annotations import (
     ELNAnnotation,
     ELNComponentEnum,
@@ -235,13 +236,10 @@ class ApmParaprobeToolResultsTaskprocessedWindow(CsFilterBooleanMask):
         a_display={"unit": "dimensionless"},
     )
     mask = Quantity(
-        type=np.int64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_tool_results.html#nxapm_paraprobe_tool_results-entry-taskprocessed-window-mask-field"
         ],
-        dimensionality="dimensionless",
-        unit="dimensionless",
-        shape=["*"],
         a_nexus_field=NeXusField(
             name="mask",
             type="NX_UINT",
@@ -639,13 +637,10 @@ class ApmParaprobeToolResultsCommonParaprobeReferenceFrame(CoordinateSystem):
         ),
     )
     x = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_tool_results.html#nxapm_paraprobe_tool_results-entry-common-paraprobe-reference-frame-x-field"
         ],
-        dimensionality="[length]",
-        unit="m",
-        shape=[3],
         a_nexus_field=NeXusField(
             name="x",
             type="NX_NUMBER",
@@ -670,13 +665,10 @@ class ApmParaprobeToolResultsCommonParaprobeReferenceFrame(CoordinateSystem):
         ),
     )
     y = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_tool_results.html#nxapm_paraprobe_tool_results-entry-common-paraprobe-reference-frame-y-field"
         ],
-        dimensionality="[length]",
-        unit="m",
-        shape=[3],
         a_nexus_field=NeXusField(
             name="y",
             type="NX_NUMBER",
@@ -701,13 +693,10 @@ class ApmParaprobeToolResultsCommonParaprobeReferenceFrame(CoordinateSystem):
         ),
     )
     z = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_tool_results.html#nxapm_paraprobe_tool_results-entry-common-paraprobe-reference-frame-z-field"
         ],
-        dimensionality="[length]",
-        unit="m",
-        shape=[3],
         a_nexus_field=NeXusField(
             name="z",
             type="NX_NUMBER",

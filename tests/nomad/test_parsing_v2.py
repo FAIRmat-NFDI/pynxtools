@@ -147,18 +147,17 @@ def test_arpes_example(arpes_archive):
 
     assert len(data.AXISNAME) == 3
     assert data.delays is not None
-    assert data.angles.check("1/Å")
-    # ToDo: if AXISNAME and DATA can be resolved properly, extend this!
-    # assert data.delays.check("fs")
-    # but the following still works
+    # angles/energies/delays are shape-ful, so they're HDF5References pointing
+    # at their own dataset path rather than parsed values with units.
+    assert data.angles.endswith("#/entry/data/angles")
     assert data.energies is not None
-    assert data.energies.check("eV")
+    assert data.energies.endswith("#/entry/data/energies")
     # manual name resolution
     assert data.AXISNAME["angles"] is not None
     # TODO: reimplement with field statistics
     # assert data.AXISNAME__max["angles__max"].value == 2.168025463513032
-    assert (1 * data.AXISNAME["angles"].unit).check("1/Å")
-    assert (1 * data.AXISNAME["delays"].unit).check("fs")
+    assert data.AXISNAME["angles"].value.endswith("#/entry/data/angles")
+    assert data.AXISNAME["delays"].value.endswith("#/entry/data/delays")
     assert data.axes == ["angles", "energies", "delays"]
 
 
@@ -216,7 +215,11 @@ def test_parse_valid_files(file_path, reason):
         # Check some specific fields to ensure correct parsing of renamed groups
         # and links
         lauetof_obj = archive.data
-        assert lauetof_obj.name_group.time_of_flight == ureg.Quantity("1.0*second")
+        # time_of_flight is shape-ful, so it's an HDF5Reference pointing at the
+        # renamed group's own (linked) path, not a parsed value.
+        file_part, _, path_part = lauetof_obj.name_group.time_of_flight.partition("#")
+        assert path_part == "/entry/name/time_of_flight"
+        assert file_part.endswith("NXlauetof.hdf5")
         assert lauetof_obj.sample.name == "SAMPLE-CHAR-DATA"
 
 

@@ -24,6 +24,7 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 
 import numpy as np
+from nomad.datamodel.hdf5 import HDF5Reference
 from nomad.datamodel.metainfo.annotations import (
     ELNAnnotation,
     ELNComponentEnum,
@@ -75,13 +76,10 @@ class CylindricalGeometry(Object):
     )
 
     vertices = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXcylindrical_geometry.html#nxcylindrical_geometry-vertices-field"
         ],
-        dimensionality="[length]",
-        unit="m",
-        shape=["*", 3],
         description=(
             "List of x,y,z coordinates for vertices. The origin of the "
             "coordinates is the position of the parent component, for example "
@@ -99,11 +97,10 @@ class CylindricalGeometry(Object):
         ),
     )
     cylinders = Quantity(
-        type=np.int64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXcylindrical_geometry.html#nxcylindrical_geometry-cylinders-field"
         ],
-        shape=["*", 3],
         description=(
             "List of indices of vertices in the ``vertices`` dataset to form "
             "each cylinder. Each cylinder is described by three vertices A, B, "
@@ -119,11 +116,10 @@ class CylindricalGeometry(Object):
         ),
     )
     detector_number = Quantity(
-        type=np.int64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXcylindrical_geometry.html#nxcylindrical_geometry-detector-number-field"
         ],
-        shape=["*"],
         description=("Maps cylinders in ``cylinder``, by index, with a detector id."),
         a_nexus_field=NeXusField(
             name="detector_number",

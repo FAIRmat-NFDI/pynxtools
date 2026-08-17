@@ -24,6 +24,7 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 
 import numpy as np
+from nomad.datamodel.hdf5 import HDF5Reference
 from nomad.datamodel.metainfo.annotations import (
     ELNAnnotation,
     ELNComponentEnum,
@@ -99,13 +100,10 @@ class ChemicalComposition(Object):
         ),
     )
     total = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXchemical_composition.html#nxchemical_composition-total-field"
         ],
-        dimensionality="dimensionless",
-        unit="dimensionless",
-        shape=["*"],
         description=(
             "Total formula mass or number of atoms, depending on the "
             "normalization stated in the normalization field."
@@ -154,13 +152,10 @@ class ChemicalCompositionElement(Atom):
     )
 
     amount = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXchemical_composition.html#nxchemical_composition-element-amount-field"
         ],
-        dimensionality="dimensionless",
-        unit="dimensionless",
-        shape=["*"],
         description=(
             "Count or weight which, when divided by total yields the composition "
             "of this element, isotope, molecule, or ion."

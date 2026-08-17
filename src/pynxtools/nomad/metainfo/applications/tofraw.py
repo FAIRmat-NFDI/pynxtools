@@ -24,6 +24,7 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 
 import numpy as np
+from nomad.datamodel.hdf5 import HDF5Reference
 from nomad.datamodel.metainfo.annotations import (
     ELNAnnotation,
     ELNComponentEnum,
@@ -288,12 +289,10 @@ class TofrawInstrumentDetector(Detector):
     )
 
     data_quantity = Quantity(
-        type=np.int64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXtofraw.html#nxtofraw-entry-instrument-detector-data-field"
         ],
-        flexible_unit=True,
-        shape=["*", "*"],
         a_nexus_field=NeXusField(
             name="data",
             type="NX_INT",
@@ -303,11 +302,10 @@ class TofrawInstrumentDetector(Detector):
         ),
     )
     detector_number = Quantity(
-        type=np.int64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXtofraw.html#nxtofraw-entry-instrument-detector-detector-number-field"
         ],
-        shape=["*"],
         a_nexus_field=NeXusField(
             name="detector_number",
             type="NX_INT",
@@ -316,13 +314,10 @@ class TofrawInstrumentDetector(Detector):
         ),
     )
     distance = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXtofraw.html#nxtofraw-entry-instrument-detector-distance-field"
         ],
-        dimensionality="[length]",
-        unit="m",
-        shape=["*"],
         description=("distance to sample for each detector"),
         a_nexus_field=NeXusField(
             name="distance",
@@ -333,13 +328,10 @@ class TofrawInstrumentDetector(Detector):
         ),
     )
     time_of_flight = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXtofraw.html#nxtofraw-entry-instrument-detector-time-of-flight-field"
         ],
-        dimensionality="[time]",
-        unit="second",
-        shape=["*"],
         a_nexus_field=NeXusField(
             name="time_of_flight",
             type="NX_FLOAT",
@@ -349,13 +341,10 @@ class TofrawInstrumentDetector(Detector):
         ),
     )
     polar_angle = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXtofraw.html#nxtofraw-entry-instrument-detector-polar-angle-field"
         ],
-        dimensionality="[angle]",
-        unit="radian",
-        shape=["*"],
         description=("polar angle for each detector element"),
         a_nexus_field=NeXusField(
             name="polar_angle",
@@ -366,13 +355,10 @@ class TofrawInstrumentDetector(Detector):
         ),
     )
     azimuthal_angle = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXtofraw.html#nxtofraw-entry-instrument-detector-azimuthal-angle-field"
         ],
-        dimensionality="[angle]",
-        unit="radian",
-        shape=["*"],
         description=("azimuthal angle for each detector element"),
         a_nexus_field=NeXusField(
             name="azimuthal_angle",
@@ -510,12 +496,10 @@ class TofrawMonitor(Monitor):
         a_display={"unit": "m"},
     )
     data_quantity = Quantity(
-        type=np.int64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXtofraw.html#nxtofraw-entry-monitor-data-field"
         ],
-        flexible_unit=True,
-        shape=["*"],
         a_nexus_field=NeXusField(
             name="data",
             type="NX_INT",
@@ -525,13 +509,10 @@ class TofrawMonitor(Monitor):
         ),
     )
     time_of_flight = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXtofraw.html#nxtofraw-entry-monitor-time-of-flight-field"
         ],
-        dimensionality="[time]",
-        unit="second",
-        shape=["*"],
         a_nexus_field=NeXusField(
             name="time_of_flight",
             type="NX_FLOAT",
@@ -578,12 +559,10 @@ class TofrawData(Data):
     )
 
     data_quantity = Quantity(
-        type=np.int64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXtofraw.html#nxtofraw-entry-data-data-link"
         ],
-        shape=["*", "*"],
-        flexible_unit=True,
         a_nexus_link=NeXusLink(
             name="data",
             target="/NXentry/NXinstrument/NXdetector/data",
@@ -591,11 +570,10 @@ class TofrawData(Data):
         ),
     )
     detector_number = Quantity(
-        type=np.int64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXtofraw.html#nxtofraw-entry-data-detector-number-link"
         ],
-        shape=["*"],
         a_nexus_link=NeXusLink(
             name="detector_number",
             target="/NXentry/NXinstrument/NXdetector/detector_number",
@@ -603,13 +581,10 @@ class TofrawData(Data):
         ),
     )
     time_of_flight = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXtofraw.html#nxtofraw-entry-data-time-of-flight-link"
         ],
-        dimensionality="[time]",
-        unit="second",
-        shape=["*"],
         a_nexus_link=NeXusLink(
             name="time_of_flight",
             target="/NXentry/NXinstrument/NXdetector/time_of_flight",

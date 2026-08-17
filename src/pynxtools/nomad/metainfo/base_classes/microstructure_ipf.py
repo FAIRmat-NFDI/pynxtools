@@ -28,6 +28,7 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 
 import numpy as np
+from nomad.datamodel.hdf5 import HDF5Reference
 from nomad.datamodel.metainfo.annotations import (
     ELNAnnotation,
     ELNComponentEnum,
@@ -153,13 +154,10 @@ class MicrostructureIpf(Process):
         ),
     )
     projection_direction = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXmicrostructure_ipf.html#nxmicrostructure_ipf-projection-direction-field"
         ],
-        dimensionality="dimensionless",
-        unit="dimensionless",
-        shape=[3],
         description=(
             "The direction normal vector along which orientations are projected."
         ),
@@ -263,12 +261,10 @@ class MicrostructureIpfMap(Data):
     )
 
     data_quantity = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXmicrostructure_ipf.html#nxmicrostructure_ipf-map-data-field"
         ],
-        dimensionality="dimensionless",
-        unit="dimensionless",
         description=(
             "Inverse pole figure color code for each map coordinate. Different "
             "types of AXISNAME dimensional scale axes are found in practice. A "
@@ -322,13 +318,10 @@ class MicrostructureIpfMap(Data):
         description="Number of dimensions of data_quantity in the HDF5 file.",
     )
     axis_z = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXmicrostructure_ipf.html#nxmicrostructure_ipf-map-axis-z-field"
         ],
-        dimensionality="[length]",
-        unit="m",
-        shape=["*"],
         description=(
             "Pixel center coordinate calibrated for step size along the z axis "
             "of the map."
@@ -358,13 +351,10 @@ class MicrostructureIpfMap(Data):
         description="Number of dimensions of axis_z in the HDF5 file.",
     )
     axis_y = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXmicrostructure_ipf.html#nxmicrostructure_ipf-map-axis-y-field"
         ],
-        dimensionality="[length]",
-        unit="m",
-        shape=["*"],
         description=(
             "Pixel center coordinate calibrated for step size along the y axis "
             "of the map."
@@ -394,13 +384,10 @@ class MicrostructureIpfMap(Data):
         description="Number of dimensions of axis_y in the HDF5 file.",
     )
     axis_x = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXmicrostructure_ipf.html#nxmicrostructure_ipf-map-axis-x-field"
         ],
-        dimensionality="[length]",
-        unit="m",
-        shape=["*"],
         description=(
             "Pixel center coordinate calibrated for step size along the x axis "
             "of the map."
@@ -471,12 +458,10 @@ class MicrostructureIpfLegend(Data):
     )
 
     data_quantity = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXmicrostructure_ipf.html#nxmicrostructure_ipf-legend-data-field"
         ],
-        flexible_unit=True,
-        shape=["*", "*", 3],
         description=("Inverse pole figure color code for each map coordinate."),
         a_nexus_field=NeXusField(
             name="data",
@@ -503,13 +488,10 @@ class MicrostructureIpfLegend(Data):
         description="Number of dimensions of data_quantity in the HDF5 file.",
     )
     axis_y = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXmicrostructure_ipf.html#nxmicrostructure_ipf-legend-axis-y-field"
         ],
-        dimensionality="dimensionless",
-        unit="dimensionless",
-        shape=["*"],
         description=("Pixel along the y-axis."),
         a_nexus_field=NeXusField(
             name="axis_y",
@@ -536,13 +518,10 @@ class MicrostructureIpfLegend(Data):
         description="Number of dimensions of axis_y in the HDF5 file.",
     )
     axis_x = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXmicrostructure_ipf.html#nxmicrostructure_ipf-legend-axis-x-field"
         ],
-        dimensionality="dimensionless",
-        unit="dimensionless",
-        shape=["*"],
         description=("Pixel along the x-axis."),
         a_nexus_field=NeXusField(
             name="axis_x",

@@ -28,6 +28,7 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 
 import numpy as np
+from nomad.datamodel.hdf5 import HDF5Reference
 from nomad.datamodel.metainfo.annotations import (
     ELNAnnotation,
     ELNComponentEnum,
@@ -144,13 +145,10 @@ class OpticalPolarizer(Component):
         a_display={"unit": "radian"},
     )
     acceptance_angle = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXoptical_polarizer.html#nxoptical_polarizer-acceptance-angle-field"
         ],
-        dimensionality="[angle]",
-        unit="radian",
-        shape=[2],
         description=("Acceptance angle of the polarizer (range)."),
         a_nexus_field=NeXusField(
             name="acceptance_angle",
@@ -161,13 +159,10 @@ class OpticalPolarizer(Component):
         ),
     )
     wavelength_range = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXoptical_polarizer.html#nxoptical_polarizer-wavelength-range-field"
         ],
-        dimensionality="[length]",
-        unit="angstrom",
-        shape=[2],
         description=(
             "Wavelength range for which the polarizer is designed. Enter the "
             "minimum and maximum wavelength (lower and upper limit) of the "
@@ -182,13 +177,10 @@ class OpticalPolarizer(Component):
         ),
     )
     extinction_ratio = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXoptical_polarizer.html#nxoptical_polarizer-extinction-ratio-field"
         ],
-        dimensionality="dimensionless",
-        unit="dimensionless",
-        shape=["*"],
         description=("Extinction ratio (maximum to minimum transmission)."),
         a_nexus_field=NeXusField(
             name="extinction_ratio",
@@ -199,13 +191,10 @@ class OpticalPolarizer(Component):
         ),
     )
     reflection = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXoptical_polarizer.html#nxoptical_polarizer-reflection-field"
         ],
-        dimensionality="dimensionless",
-        unit="dimensionless",
-        shape=["*"],
         description=("Reflection of the polarizer at given wavelength values."),
         a_nexus_field=NeXusField(
             name="reflection",
@@ -216,13 +205,10 @@ class OpticalPolarizer(Component):
         ),
     )
     transmission = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXoptical_polarizer.html#nxoptical_polarizer-transmission-field"
         ],
-        dimensionality="dimensionless",
-        unit="dimensionless",
-        shape=["*"],
         description=("Transmission of the polarizer at given wavelength values."),
         a_nexus_field=NeXusField(
             name="transmission",
@@ -303,11 +289,10 @@ class OpticalPolarizerShape(Shape):
         ),
     )
     size = Quantity(
-        type=str,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXoptical_polarizer.html#nxoptical_polarizer-shape-size-field"
         ],
-        shape=["*", "*"],
         description=(
             "Physical extent of the device. The device might be made up of one "
             "or more objects (NX_objects). The meaning and location of the axes "
@@ -408,13 +393,10 @@ class OpticalPolarizerSubstrate(Sample):
         a_display={"unit": "m"},
     )
     index_of_refraction = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXoptical_polarizer.html#nxoptical_polarizer-substrate-index-of-refraction-field"
         ],
-        dimensionality="dimensionless",
-        unit="dimensionless",
-        shape=[2, "*"],
         description=(
             "Complex index of refraction of the polarizer material. Specify at "
             "given spectral values (wavelength, energy, wavenumber etc.)."
@@ -536,13 +518,10 @@ class OpticalPolarizerCoatingTYPE(Sample):
         a_display={"unit": "m"},
     )
     index_of_refraction_coating = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXoptical_polarizer.html#nxoptical_polarizer-coatingtype-index-of-refraction-coating-field"
         ],
-        dimensionality="dimensionless",
-        unit="dimensionless",
-        shape=[2, "*"],
         description=(
             "Complex index of refraction of the coating. Specify at given "
             "spectral values (wavelength, energy, wavenumber etc.)."

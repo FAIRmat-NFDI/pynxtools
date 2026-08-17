@@ -24,6 +24,7 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 
 import numpy as np
+from nomad.datamodel.hdf5 import HDF5Reference
 from nomad.datamodel.metainfo.annotations import (
     ELNAnnotation,
     ELNComponentEnum,
@@ -793,13 +794,10 @@ class StressInstrumentDetector(Detector):
         ),
     )
     distance = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXstress.html#nxstress-entry-instrument-detector-distance-field"
         ],
-        dimensionality="[length]",
-        unit="m",
-        shape=["*", "*", "*"],
         description=(
             "This is the distance to the previous component in the instrument; "
             "most often the sample. The usage depends on the nature of the "
@@ -817,13 +815,10 @@ class StressInstrumentDetector(Detector):
         ),
     )
     efficiency_quantity = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXstress.html#nxstress-entry-instrument-detector-efficiency-field"
         ],
-        dimensionality="dimensionless",
-        unit="dimensionless",
-        shape=["*", "*"],
         description=("efficiency of the detector"),
         a_nexus_field=NeXusField(
             name="efficiency",
@@ -834,13 +829,10 @@ class StressInstrumentDetector(Detector):
         ),
     )
     wavelength = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXstress.html#nxstress-entry-instrument-detector-wavelength-field"
         ],
-        dimensionality="[length]",
-        unit="angstrom",
-        shape=["*", "*"],
         description=(
             "This field can be two things: 1. For a pixel detector it provides "
             "the nominal wavelength for which the detector has been calibrated. "
@@ -1225,13 +1217,10 @@ class StressInstrumentBeamIntensityProfile(Beam):
         ),
     )
     incident_energy = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXstress.html#nxstress-entry-instrument-beam-intensity-profile-incident-energy-field"
         ],
-        dimensionality="[mass] * [length] ** 2 / [time] ** 2",
-        unit="eV",
-        shape=["*"],
         description=("Incident energy mostly useful for monochromatic beams."),
         a_nexus_field=NeXusField(
             name="incident_energy",
@@ -1865,12 +1854,10 @@ class StressFitPeakParameters(Parameters):
         ),
     )
     area = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXstress.html#nxstress-entry-fit-peak-parameters-area-field"
         ],
-        flexible_unit=True,
-        shape=["*"],
         description=(
             "Diffraction peak area (not including the background) in *y_Unit* units."
         ),
@@ -1900,13 +1887,10 @@ class StressFitPeakParameters(Parameters):
         ),
     )
     area_errors = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXstress.html#nxstress-entry-fit-peak-parameters-area-errors-field"
         ],
-        dimensionality="dimensionless",
-        unit="dimensionless",
-        shape=["*"],
         description=(
             "Error value(s) asscociated with :ref:`area "
             "</NXstress/ENTRY/fit/peak_parameters/area-field>`"
@@ -1920,12 +1904,10 @@ class StressFitPeakParameters(Parameters):
         ),
     )
     center = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXstress.html#nxstress-entry-fit-peak-parameters-center-field"
         ],
-        flexible_unit=True,
-        shape=["*"],
         description=("Diffraction peak position in *x_Unit* units."),
         a_nexus_field=NeXusField(
             name="center",
@@ -1953,13 +1935,10 @@ class StressFitPeakParameters(Parameters):
         ),
     )
     center_errors = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXstress.html#nxstress-entry-fit-peak-parameters-center-errors-field"
         ],
-        dimensionality="dimensionless",
-        unit="dimensionless",
-        shape=["*"],
         description=(
             "Error value(s) asscociated with :ref:`center "
             "</NXstress/ENTRY/fit/peak_parameters/center-field>`"
@@ -1973,12 +1952,10 @@ class StressFitPeakParameters(Parameters):
         ),
     )
     height = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXstress.html#nxstress-entry-fit-peak-parameters-height-field"
         ],
-        flexible_unit=True,
-        shape=["*"],
         description=(
             "Diffraction peak height (not including the background) in *y_Unit* units."
         ),
@@ -2008,13 +1985,10 @@ class StressFitPeakParameters(Parameters):
         ),
     )
     height_errors = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXstress.html#nxstress-entry-fit-peak-parameters-height-errors-field"
         ],
-        dimensionality="dimensionless",
-        unit="dimensionless",
-        shape=["*"],
         description=(
             "Error value(s) asscociated with :ref:`height "
             "</NXstress/ENTRY/fit/peak_parameters/height-field>`"
@@ -2028,12 +2002,10 @@ class StressFitPeakParameters(Parameters):
         ),
     )
     fwhm = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXstress.html#nxstress-entry-fit-peak-parameters-fwhm-field"
         ],
-        flexible_unit=True,
-        shape=["*"],
         description=("Diffraction peak full width at half maximum in *x_Unit* units."),
         a_nexus_field=NeXusField(
             name="fwhm",
@@ -2061,13 +2033,10 @@ class StressFitPeakParameters(Parameters):
         ),
     )
     fwhm_errors = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXstress.html#nxstress-entry-fit-peak-parameters-fwhm-errors-field"
         ],
-        dimensionality="dimensionless",
-        unit="dimensionless",
-        shape=["*"],
         description=(
             "Error value(s) asscociated with :ref:`fwhm "
             "</NXstress/ENTRY/fit/peak_parameters/fwhm-field>`"
@@ -2081,12 +2050,10 @@ class StressFitPeakParameters(Parameters):
         ),
     )
     fwhm_left = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXstress.html#nxstress-entry-fit-peak-parameters-fwhm-left-field"
         ],
-        flexible_unit=True,
-        shape=["*"],
         description=("Left-side FWHM for split profiles in *x_Unit* units."),
         a_nexus_field=NeXusField(
             name="fwhm_left",
@@ -2114,13 +2081,10 @@ class StressFitPeakParameters(Parameters):
         ),
     )
     fwhm_left_errors = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXstress.html#nxstress-entry-fit-peak-parameters-fwhm-left-errors-field"
         ],
-        dimensionality="dimensionless",
-        unit="dimensionless",
-        shape=["*"],
         description=(
             "Error value(s) asscociated with :ref:`fwhm_left "
             "</NXstress/ENTRY/fit/peak_parameters/fwhm_left-field>`"
@@ -2134,12 +2098,10 @@ class StressFitPeakParameters(Parameters):
         ),
     )
     fwhm_right = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXstress.html#nxstress-entry-fit-peak-parameters-fwhm-right-field"
         ],
-        flexible_unit=True,
-        shape=["*"],
         description=("Right-side FWHM for split profiles in *x_Unit* units."),
         a_nexus_field=NeXusField(
             name="fwhm_right",
@@ -2167,13 +2129,10 @@ class StressFitPeakParameters(Parameters):
         ),
     )
     fwhm_right_errors = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXstress.html#nxstress-entry-fit-peak-parameters-fwhm-right-errors-field"
         ],
-        dimensionality="dimensionless",
-        unit="dimensionless",
-        shape=["*"],
         description=(
             "Error value(s) asscociated with :ref:`fwhm_right "
             "</NXstress/ENTRY/fit/peak_parameters/fwhm_right-field>`"
@@ -2187,13 +2146,10 @@ class StressFitPeakParameters(Parameters):
         ),
     )
     form_factor = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXstress.html#nxstress-entry-fit-peak-parameters-form-factor-field"
         ],
-        dimensionality="dimensionless",
-        unit="dimensionless",
-        shape=["*"],
         description=(
             "- Voigt or Pseudo-Voigt: Lorentzian fraction - Pearson VII: decay "
             "parameter - Other profiles: not applicable"
@@ -2207,13 +2163,10 @@ class StressFitPeakParameters(Parameters):
         ),
     )
     form_factor_errors = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXstress.html#nxstress-entry-fit-peak-parameters-form-factor-errors-field"
         ],
-        dimensionality="dimensionless",
-        unit="dimensionless",
-        shape=["*"],
         description=(
             "Error value(s) asscociated with :ref:`form_factor "
             "</NXstress/ENTRY/fit/peak_parameters/form_factor-field>`"
@@ -2227,13 +2180,10 @@ class StressFitPeakParameters(Parameters):
         ),
     )
     azimuth = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXstress.html#nxstress-entry-fit-peak-parameters-azimuth-field"
         ],
-        dimensionality="[angle]",
-        unit="radian",
-        shape=["*"],
         description=(
             "Angle that defines the position of the integrated sector in the "
             "diffraction cone for angular-dispersive diffraction or the position "
@@ -2306,13 +2256,10 @@ class StressFitBackgroundParameters(Parameters):
         ),
     )
     A = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXstress.html#nxstress-entry-fit-background-parameters-a-field"
         ],
-        dimensionality="dimensionless",
-        unit="dimensionless",
-        shape=["*"],
         description=(
             "Background parameter(s). For example a second-degree polynomial "
             "will have fields ``A0``, ``A1`` and ``A2``."
@@ -2326,13 +2273,10 @@ class StressFitBackgroundParameters(Parameters):
         ),
     )
     as_quantity = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXstress.html#nxstress-entry-fit-background-parameters-as-field"
         ],
-        dimensionality="dimensionless",
-        unit="dimensionless",
-        shape=["*"],
         description=("Background parameter *constant* for SHAPE function."),
         a_nexus_field=NeXusField(
             name="as",
@@ -2343,13 +2287,10 @@ class StressFitBackgroundParameters(Parameters):
         ),
     )
     as_errors = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXstress.html#nxstress-entry-fit-background-parameters-as-errors-field"
         ],
-        dimensionality="dimensionless",
-        unit="dimensionless",
-        shape=["*"],
         description=(
             "Error associated with background parameter *constant* for SHAPE function."
         ),
@@ -2362,13 +2303,10 @@ class StressFitBackgroundParameters(Parameters):
         ),
     )
     b = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXstress.html#nxstress-entry-fit-background-parameters-b-field"
         ],
-        dimensionality="dimensionless",
-        unit="dimensionless",
-        shape=["*"],
         description=("Background parameter *amplitude* for SHAPE function."),
         a_nexus_field=NeXusField(
             name="b",
@@ -2379,13 +2317,10 @@ class StressFitBackgroundParameters(Parameters):
         ),
     )
     b_errors = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXstress.html#nxstress-entry-fit-background-parameters-b-errors-field"
         ],
-        dimensionality="dimensionless",
-        unit="dimensionless",
-        shape=["*"],
         description=(
             "Error associated with background parameter *amplitude* for SHAPE function."
         ),
@@ -2398,13 +2333,10 @@ class StressFitBackgroundParameters(Parameters):
         ),
     )
     o = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXstress.html#nxstress-entry-fit-background-parameters-o-field"
         ],
-        dimensionality="dimensionless",
-        unit="dimensionless",
-        shape=["*"],
         description=("Background parameter *offset* for SHAPE function."),
         a_nexus_field=NeXusField(
             name="o",
@@ -2415,13 +2347,10 @@ class StressFitBackgroundParameters(Parameters):
         ),
     )
     o_errors = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXstress.html#nxstress-entry-fit-background-parameters-o-errors-field"
         ],
-        dimensionality="dimensionless",
-        unit="dimensionless",
-        shape=["*"],
         description=(
             "Error associated with background parameter *offset* for SHAPE function."
         ),
@@ -2434,12 +2363,10 @@ class StressFitBackgroundParameters(Parameters):
         ),
     )
     background_area = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXstress.html#nxstress-entry-fit-background-parameters-background-area-field"
         ],
-        flexible_unit=True,
-        shape=["*"],
         description=(
             "The background area in *y_Unit* units, integrated over a confidence "
             "interval around the center (*0.95* by default)."
@@ -2540,12 +2467,11 @@ class StressFitDiffractogram(Data):
         ),
     )
     DAXIS = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXstress.html#nxstress-entry-fit-diffractogram-daxis-field"
         ],
         variable=True,
-        shape=["*"],
         description=(
             "One or more fields that contain the values for the **n_D** "
             "dimension. For example the azimuthal positions of different "
@@ -2580,13 +2506,11 @@ class StressFitDiffractogram(Data):
         description="Number of dimensions of DAXIS in the HDF5 file.",
     )
     XAXIS = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXstress.html#nxstress-entry-fit-diffractogram-xaxis-field"
         ],
         variable=True,
-        flexible_unit=True,
-        shape=["*"],
         description=(
             "One or more fields that contain the values for the **n_X** "
             "dimension in *x_Unit* units. For example: MCA channels, scattering "
@@ -2676,12 +2600,10 @@ class StressFitDiffractogram(Data):
         ),
     )
     diffractogram = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXstress.html#nxstress-entry-fit-diffractogram-diffractogram-field"
         ],
-        flexible_unit=True,
-        shape=["*", "*"],
         description=("Diffractogram counts in *y_Unit* units (default signal)"),
         a_nexus_field=NeXusField(
             name="diffractogram",
@@ -2743,12 +2665,10 @@ class StressFitDiffractogram(Data):
         ),
     )
     diffractogram_errors = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXstress.html#nxstress-entry-fit-diffractogram-diffractogram-errors-field"
         ],
-        flexible_unit=True,
-        shape=["*", "*"],
         description=("Diffractogram counts error in *y_Unit* units (default signal)"),
         a_nexus_field=NeXusField(
             name="diffractogram_errors",
@@ -2810,12 +2730,10 @@ class StressFitDiffractogram(Data):
         ),
     )
     fit = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXstress.html#nxstress-entry-fit-diffractogram-fit-field"
         ],
-        flexible_unit=True,
-        shape=["*", "*"],
         description=("Diffractogram fit counts (auxiliary signal)."),
         a_nexus_field=NeXusField(
             name="fit",
@@ -2877,12 +2795,10 @@ class StressFitDiffractogram(Data):
         ),
     )
     fit_errors = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXstress.html#nxstress-entry-fit-diffractogram-fit-errors-field"
         ],
-        flexible_unit=True,
-        shape=["*", "*"],
         description=("Diffractogram fit counts error (auxiliary signal)."),
         a_nexus_field=NeXusField(
             name="fit_errors",
@@ -2926,12 +2842,10 @@ class StressFitDiffractogram(Data):
         ),
     )
     background = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXstress.html#nxstress-entry-fit-diffractogram-background-field"
         ],
-        flexible_unit=True,
-        shape=["*", "*"],
         description=(
             "In case the diffraction background was manually determined. "
             "Diffractogram background counts (auxiliary signal)."
@@ -2996,12 +2910,10 @@ class StressFitDiffractogram(Data):
         ),
     )
     residuals = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXstress.html#nxstress-entry-fit-diffractogram-residuals-field"
         ],
-        flexible_unit=True,
-        shape=["*", "*"],
         description=("Difference between diffractogram and fit (auxiliary signal)."),
         a_nexus_field=NeXusField(
             name="residuals",
@@ -3090,13 +3002,10 @@ class StressPeaks(Reflections):
     )
 
     h = Quantity(
-        type=np.int64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXstress.html#nxstress-entry-peaks-h-field"
         ],
-        dimensionality="dimensionless",
-        unit="dimensionless",
-        shape=["*"],
         description=("First Miller index."),
         a_nexus_field=NeXusField(
             name="h",
@@ -3107,13 +3016,10 @@ class StressPeaks(Reflections):
         ),
     )
     k = Quantity(
-        type=np.int64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXstress.html#nxstress-entry-peaks-k-field"
         ],
-        dimensionality="dimensionless",
-        unit="dimensionless",
-        shape=["*"],
         description=("Second Miller index."),
         a_nexus_field=NeXusField(
             name="k",
@@ -3124,13 +3030,10 @@ class StressPeaks(Reflections):
         ),
     )
     l = Quantity(
-        type=np.int64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXstress.html#nxstress-entry-peaks-l-field"
         ],
-        dimensionality="dimensionless",
-        unit="dimensionless",
-        shape=["*"],
         description=("Third Miller index."),
         a_nexus_field=NeXusField(
             name="l",
@@ -3141,11 +3044,10 @@ class StressPeaks(Reflections):
         ),
     )
     lattice = Quantity(
-        type=str,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXstress.html#nxstress-entry-peaks-lattice-field"
         ],
-        shape=["*"],
         description=("Crystal lattice systems (*cubic*, *hexagonal*, ...)"),
         a_nexus_field=NeXusField(
             name="lattice",
@@ -3155,11 +3057,10 @@ class StressPeaks(Reflections):
         ),
     )
     space_group = Quantity(
-        type=str,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXstress.html#nxstress-entry-peaks-space-group-field"
         ],
-        shape=["*"],
         description=(
             "Crystallographic space group :math:`(Fm\\bar{3}m, Im\\bar{3}m, ...)`"
         ),
@@ -3171,11 +3072,10 @@ class StressPeaks(Reflections):
         ),
     )
     phase_name = Quantity(
-        type=str,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXstress.html#nxstress-entry-peaks-phase-name-field"
         ],
-        shape=["*"],
         description=(
             "Name of the crystallographic phase (hematite, goethite, \\ "
             ":math:`\\alpha`-Al\\ :sub:`2`\\ O\\ :sub:`3`\\ , ...)."
@@ -3188,13 +3088,10 @@ class StressPeaks(Reflections):
         ),
     )
     qx = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXstress.html#nxstress-entry-peaks-qx-field"
         ],
-        dimensionality="dimensionless",
-        unit="dimensionless",
-        shape=["*"],
         description=(
             "First component of the *normalized* scattering vector *Q* in the "
             "sample reference frame. The sample reference frame is defined by "
@@ -3210,13 +3107,10 @@ class StressPeaks(Reflections):
         ),
     )
     qy = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXstress.html#nxstress-entry-peaks-qy-field"
         ],
-        dimensionality="dimensionless",
-        unit="dimensionless",
-        shape=["*"],
         description=(
             "Second component of the *normalized* scattering vector *Q* in the "
             "sample reference frame. The sample reference frame is defined by "
@@ -3232,13 +3126,10 @@ class StressPeaks(Reflections):
         ),
     )
     qz = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXstress.html#nxstress-entry-peaks-qz-field"
         ],
-        dimensionality="dimensionless",
-        unit="dimensionless",
-        shape=["*"],
         description=(
             "Third component of the *normalized* scattering vector *Q* in the "
             "sample reference frame. The sample reference frame is defined by "
@@ -3254,12 +3145,10 @@ class StressPeaks(Reflections):
         ),
     )
     center = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXstress.html#nxstress-entry-peaks-center-field"
         ],
-        flexible_unit=True,
-        shape=["*"],
         description=("Diffraction peak position in *c_Unit* units."),
         a_nexus_field=NeXusField(
             name="center",
@@ -3298,12 +3187,10 @@ class StressPeaks(Reflections):
         ),
     )
     center_errors = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXstress.html#nxstress-entry-peaks-center-errors-field"
         ],
-        flexible_unit=True,
-        shape=["*"],
         description=(
             "Uncentrainties on :ref:`center "
             "</NXstress/ENTRY/peaks/center-field>` in *c_Unit* units."
@@ -3390,13 +3277,10 @@ class StressPeaks(Reflections):
         ),
     )
     sx = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXstress.html#nxstress-entry-peaks-sx-field"
         ],
-        dimensionality="[length]",
-        unit="m",
-        shape=["*"],
         description=(
             "First component of the sample position in the sample reference "
             "frame. The sample reference frame is defined by the :ref:`sample "
@@ -3412,13 +3296,10 @@ class StressPeaks(Reflections):
         ),
     )
     sy = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXstress.html#nxstress-entry-peaks-sy-field"
         ],
-        dimensionality="[length]",
-        unit="m",
-        shape=["*"],
         description=(
             "First component of the sample position in the sample reference "
             "frame. The sample reference frame is defined by the :ref:`sample "
@@ -3434,13 +3315,10 @@ class StressPeaks(Reflections):
         ),
     )
     sz = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXstress.html#nxstress-entry-peaks-sz-field"
         ],
-        dimensionality="[length]",
-        unit="m",
-        shape=["*"],
         description=(
             "First component of the sample position in the sample reference "
             "frame. The sample reference frame is defined by the :ref:`sample "

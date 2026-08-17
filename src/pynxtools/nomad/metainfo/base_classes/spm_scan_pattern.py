@@ -28,6 +28,7 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 
 import numpy as np
+from nomad.datamodel.hdf5 import HDF5Reference
 from nomad.datamodel.metainfo.annotations import (
     ELNAnnotation,
     ELNComponentEnum,
@@ -323,11 +324,10 @@ class SpmScanPattern(Object):
         ),
     )
     trajectory_points = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXspm_scan_pattern.html#nxspm_scan_pattern-trajectory-points-field"
         ],
-        shape=["*", "*"],
         description=(
             "The trajectory points (nTraj) are the N-dimensional vectors (nD), "
             "each vector refers to a point in N-dimensional phase space."
@@ -394,12 +394,11 @@ class SpmScanPatternData(Data):
     )
 
     DATA = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXspm_scan_pattern.html#nxspm_scan_pattern-data-data-field"
         ],
         variable=True,
-        flexible_unit=True,
         description=(
             "The data (e.g. current, voltage, temperature) field that can be "
             "plotted against the axes."
@@ -433,12 +432,11 @@ class SpmScanPatternData(Data):
         description="Number of dimensions of DATA in the HDF5 file.",
     )
     AXISNAME = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXspm_scan_pattern.html#nxspm_scan_pattern-data-axisname-field"
         ],
         variable=True,
-        flexible_unit=True,
         description=("The name of the axis that corresponds to the data field."),
         a_nexus_field=NeXusField(
             name="AXISNAME",

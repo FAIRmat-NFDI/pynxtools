@@ -24,6 +24,7 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 
 import numpy as np
+from nomad.datamodel.hdf5 import HDF5Reference
 from nomad.datamodel.metainfo.annotations import (
     ELNAnnotation,
     ELNComponentEnum,
@@ -97,13 +98,10 @@ class CgHalfEdgeDataStructure(CgPrimitive):
         ),
     )
     number_of_vertices = Quantity(
-        type=np.int64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXcg_half_edge_data_structure.html#nxcg_half_edge_data_structure-number-of-vertices-field"
         ],
-        dimensionality="dimensionless",
-        unit="dimensionless",
-        shape=["*"],
         description=(
             "Number of vertices for each face. Each entry represents the total "
             "number of vertices for that face, irrespectively whether vertices "
@@ -118,13 +116,10 @@ class CgHalfEdgeDataStructure(CgPrimitive):
         ),
     )
     number_of_edges = Quantity(
-        type=np.int64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXcg_half_edge_data_structure.html#nxcg_half_edge_data_structure-number-of-edges-field"
         ],
-        dimensionality="dimensionless",
-        unit="dimensionless",
-        shape=["*"],
         description=(
             "Number of edges for each face. Each entry represents the total "
             "number of edges for that face, irrespectively whether edges are "
@@ -210,12 +205,10 @@ class CgHalfEdgeDataStructure(CgPrimitive):
         ),
     )
     position = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXcg_half_edge_data_structure.html#nxcg_half_edge_data_structure-position-field"
         ],
-        flexible_unit=True,
-        shape=["*", "*"],
         description=("The position of the vertices."),
         a_nexus_field=NeXusField(
             name="position",
@@ -226,13 +219,10 @@ class CgHalfEdgeDataStructure(CgPrimitive):
         ),
     )
     vertex_incident_half_edge = Quantity(
-        type=np.int64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXcg_half_edge_data_structure.html#nxcg_half_edge_data_structure-vertex-incident-half-edge-field"
         ],
-        dimensionality="dimensionless",
-        unit="dimensionless",
-        shape=["*"],
         description=("Identifier of the incident half-edge."),
         a_nexus_field=NeXusField(
             name="vertex_incident_half_edge",
@@ -243,13 +233,10 @@ class CgHalfEdgeDataStructure(CgPrimitive):
         ),
     )
     face_half_edge = Quantity(
-        type=np.int64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXcg_half_edge_data_structure.html#nxcg_half_edge_data_structure-face-half-edge-field"
         ],
-        dimensionality="dimensionless",
-        unit="dimensionless",
-        shape=["*"],
         description=("Identifier of the (starting)/associated half-edge of the face."),
         a_nexus_field=NeXusField(
             name="face_half_edge",
@@ -260,13 +247,10 @@ class CgHalfEdgeDataStructure(CgPrimitive):
         ),
     )
     half_edge_vertex_origin = Quantity(
-        type=np.int64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXcg_half_edge_data_structure.html#nxcg_half_edge_data_structure-half-edge-vertex-origin-field"
         ],
-        dimensionality="dimensionless",
-        unit="dimensionless",
-        shape=["*"],
         description=(
             "The identifier of the vertex from which this half-edge is outwards "
             "pointing."
@@ -280,13 +264,10 @@ class CgHalfEdgeDataStructure(CgPrimitive):
         ),
     )
     half_edge_twin = Quantity(
-        type=np.int64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXcg_half_edge_data_structure.html#nxcg_half_edge_data_structure-half-edge-twin-field"
         ],
-        dimensionality="dimensionless",
-        unit="dimensionless",
-        shape=["*"],
         description=("Identifier of the associated oppositely pointing half-edge."),
         a_nexus_field=NeXusField(
             name="half_edge_twin",
@@ -297,13 +278,10 @@ class CgHalfEdgeDataStructure(CgPrimitive):
         ),
     )
     half_edge_incident_face = Quantity(
-        type=np.int64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXcg_half_edge_data_structure.html#nxcg_half_edge_data_structure-half-edge-incident-face-field"
         ],
-        dimensionality="dimensionless",
-        unit="dimensionless",
-        shape=["*"],
         description=(
             "If the half-edge is a boundary half-edge the incident face "
             "identifier is NULL, i.e. 0."
@@ -317,13 +295,10 @@ class CgHalfEdgeDataStructure(CgPrimitive):
         ),
     )
     half_edge_next = Quantity(
-        type=np.int64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXcg_half_edge_data_structure.html#nxcg_half_edge_data_structure-half-edge-next-field"
         ],
-        dimensionality="dimensionless",
-        unit="dimensionless",
-        shape=["*"],
         description=("Identifier of the next half-edge."),
         a_nexus_field=NeXusField(
             name="half_edge_next",
@@ -334,13 +309,10 @@ class CgHalfEdgeDataStructure(CgPrimitive):
         ),
     )
     half_edge_prev = Quantity(
-        type=np.int64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXcg_half_edge_data_structure.html#nxcg_half_edge_data_structure-half-edge-prev-field"
         ],
-        dimensionality="dimensionless",
-        unit="dimensionless",
-        shape=["*"],
         description=("Identifier of the previous half-edge."),
         a_nexus_field=NeXusField(
             name="half_edge_prev",

@@ -28,6 +28,7 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 
 import numpy as np
+from nomad.datamodel.hdf5 import HDF5Reference
 from nomad.datamodel.metainfo.annotations import (
     ELNAnnotation,
     ELNComponentEnum,
@@ -222,13 +223,10 @@ class ApmParaprobeNanochemConfigDelocalizationID(ApmParaprobeToolConfigTaskconfi
         ),
     )
     nuclide_whitelist = Quantity(
-        type=np.int64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_nanochem_config.html#nxapm_paraprobe_nanochem_config-entry-delocalizationid-nuclide-whitelist-field"
         ],
-        dimensionality="dimensionless",
-        unit="dimensionless",
-        shape=["*", "*"],
         description=(
             "Matrix of nuclides representing how iontypes should be accounted "
             "for during the delocalization. This is the most general approach to "
@@ -265,13 +263,10 @@ class ApmParaprobeNanochemConfigDelocalizationID(ApmParaprobeToolConfigTaskconfi
         ),
     )
     grid_resolution = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_nanochem_config.html#nxapm_paraprobe_nanochem_config-entry-delocalizationid-grid-resolution-field"
         ],
-        dimensionality="[length]",
-        unit="m",
-        shape=["*"],
         description=(
             "Array of edge lengths of the cubic cells used for discretizing the "
             "reconstructed dataset on a cuboidal 3D grid (:ref:`NXcg_grid`). The "
@@ -312,13 +307,10 @@ class ApmParaprobeNanochemConfigDelocalizationID(ApmParaprobeToolConfigTaskconfi
         a_display={"unit": "dimensionless"},
     )
     kernel_variance = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_nanochem_config.html#nxapm_paraprobe_nanochem_config-entry-delocalizationid-kernel-variance-field"
         ],
-        dimensionality="[length]",
-        unit="m",
-        shape=["*"],
         description=(
             "Array of variance values :math:`\\sigma` of the Gaussian Ansatz "
             "kernel (:math:`\\sigma_x := \\sigma`, :math:`\\sigma_x = \\sigma_y "
@@ -1409,13 +1401,10 @@ class ApmParaprobeNanochemConfigInterfaceMeshingID(ApmParaprobeToolConfigTaskcon
         a_display={"unit": "dimensionless"},
     )
     target_edge_length = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_nanochem_config.html#nxapm_paraprobe_nanochem_config-entry-interface-meshingid-target-edge-length-field"
         ],
-        dimensionality="[length]",
-        unit="m",
-        shape=["*"],
         description=(
             "Array of decreasing positive not smaller than one nanometer real "
             "values which specify how the initial triangles of the mesh should "
@@ -1431,13 +1420,10 @@ class ApmParaprobeNanochemConfigInterfaceMeshingID(ApmParaprobeToolConfigTaskcon
         ),
     )
     target_dcom_radius = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_nanochem_config.html#nxapm_paraprobe_nanochem_config-entry-interface-meshingid-target-dcom-radius-field"
         ],
-        dimensionality="[length]",
-        unit="m",
-        shape=["*"],
         description=(
             "Array of decreasing positive not smaller than one nanometer real "
             "values which specify the radius of the spherical region of interest "
@@ -1458,13 +1444,10 @@ class ApmParaprobeNanochemConfigInterfaceMeshingID(ApmParaprobeToolConfigTaskcon
         ),
     )
     target_smoothing_step = Quantity(
-        type=np.int64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_nanochem_config.html#nxapm_paraprobe_nanochem_config-entry-interface-meshingid-target-smoothing-step-field"
         ],
-        dimensionality="dimensionless",
-        unit="dimensionless",
-        shape=["*"],
         description=(
             "Array of integers which specify for each DCOM step how many times "
             "the mesh should be iteratively smoothened. Users should be aware "
@@ -1717,13 +1700,10 @@ class ApmParaprobeNanochemConfigInterfaceMeshingIDDecorationFilter(MatchFilter):
         ),
     )
     match = Quantity(
-        type=np.int64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_nanochem_config.html#nxapm_paraprobe_nanochem_config-entry-interface-meshingid-decoration-filter-match-field"
         ],
-        dimensionality="dimensionless",
-        unit="dimensionless",
-        shape=["*", "*"],
         description=("Array of nuclide iontypes to filter."),
         a_nexus_field=NeXusField(
             name="match",
@@ -2278,13 +2258,10 @@ class ApmParaprobeNanochemConfigOnedProfileIDFeaturePatchFilter(MatchFilter):
         ),
     )
     match = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_nanochem_config.html#nxapm_paraprobe_nanochem_config-entry-oned-profileid-feature-patch-filter-match-field"
         ],
-        dimensionality="dimensionless",
-        unit="dimensionless",
-        shape=["*"],
         a_nexus_field=NeXusField(
             name="match",
             type="NX_NUMBER",
@@ -2450,12 +2427,10 @@ class ApmParaprobeNanochemConfigOnedProfileIDUserDefinedRoiCylinderSet(CgCylinde
         a_display={"unit": "dimensionless"},
     )
     center = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_nanochem_config.html#nxapm_paraprobe_nanochem_config-entry-oned-profileid-user-defined-roi-cylinder-set-center-field"
         ],
-        flexible_unit=True,
-        shape=["*", 3],
         a_nexus_field=NeXusField(
             name="center",
             type="NX_NUMBER",
@@ -2465,13 +2440,10 @@ class ApmParaprobeNanochemConfigOnedProfileIDUserDefinedRoiCylinderSet(CgCylinde
         ),
     )
     height = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_nanochem_config.html#nxapm_paraprobe_nanochem_config-entry-oned-profileid-user-defined-roi-cylinder-set-height-field"
         ],
-        dimensionality="[length]",
-        unit="m",
-        shape=["*", 3],
         a_nexus_field=NeXusField(
             name="height",
             type="NX_NUMBER",
@@ -2481,13 +2453,10 @@ class ApmParaprobeNanochemConfigOnedProfileIDUserDefinedRoiCylinderSet(CgCylinde
         ),
     )
     radii = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_nanochem_config.html#nxapm_paraprobe_nanochem_config-entry-oned-profileid-user-defined-roi-cylinder-set-radii-field"
         ],
-        dimensionality="[length]",
-        unit="m",
-        shape=["*"],
         a_nexus_field=NeXusField(
             name="radii",
             type="NX_NUMBER",

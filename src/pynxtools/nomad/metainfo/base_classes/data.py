@@ -24,6 +24,7 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 
 import numpy as np
+from nomad.datamodel.hdf5 import HDF5Reference
 from nomad.datamodel.metainfo import basesections
 from nomad.datamodel.metainfo.annotations import (
     ELNAnnotation,
@@ -403,7 +404,7 @@ class Data(Object, basesections.ActivityResult):
         ),
     )
     AXISNAME = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXdata.html#nxdata-axisname-field"
         ],
@@ -595,7 +596,7 @@ class Data(Object, basesections.ActivityResult):
         ),
     )
     DATA = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXdata.html#nxdata-data-field"
         ],
@@ -727,7 +728,7 @@ class Data(Object, basesections.ActivityResult):
         ),
     )
     FIELDNAME_errors = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXdata.html#nxdata-fieldname-errors-field"
         ],
@@ -768,7 +769,7 @@ class Data(Object, basesections.ActivityResult):
         description="Number of dimensions of FIELDNAME_errors in the HDF5 file.",
     )
     errors = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXdata.html#nxdata-errors-field"
         ],
@@ -806,7 +807,7 @@ class Data(Object, basesections.ActivityResult):
         description="Number of dimensions of errors in the HDF5 file.",
     )
     FIELDNAME_scaling_factor = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXdata.html#nxdata-fieldname-scaling-factor-field"
         ],
@@ -855,7 +856,7 @@ class Data(Object, basesections.ActivityResult):
         description="Number of dimensions of FIELDNAME_scaling_factor in the HDF5 file.",
     )
     FIELDNAME_offset = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXdata.html#nxdata-fieldname-offset-field"
         ],
@@ -894,7 +895,7 @@ class Data(Object, basesections.ActivityResult):
         description="Number of dimensions of FIELDNAME_offset in the HDF5 file.",
     )
     scaling_factor = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXdata.html#nxdata-scaling-factor-field"
         ],
@@ -933,7 +934,7 @@ class Data(Object, basesections.ActivityResult):
         description="Number of dimensions of scaling_factor in the HDF5 file.",
     )
     offset = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXdata.html#nxdata-offset-field"
         ],
@@ -971,7 +972,7 @@ class Data(Object, basesections.ActivityResult):
         description="Number of dimensions of offset in the HDF5 file.",
     )
     title = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXdata.html#nxdata-title-field"
         ],
@@ -1003,12 +1004,10 @@ class Data(Object, basesections.ActivityResult):
         description="Number of dimensions of title in the HDF5 file.",
     )
     x = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXdata.html#nxdata-x-field"
         ],
-        flexible_unit=True,
-        shape=["*"],
         description=(
             "This is an array holding the values to use for the x-axis of data. "
             "The units must be appropriate for the measurement. This is a "
@@ -1040,12 +1039,10 @@ class Data(Object, basesections.ActivityResult):
         description="Number of dimensions of x in the HDF5 file.",
     )
     y = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXdata.html#nxdata-y-field"
         ],
-        flexible_unit=True,
-        shape=["*"],
         description=(
             "This is an array holding the values to use for the y-axis of data. "
             "The units must be appropriate for the measurement. This is a "
@@ -1077,12 +1074,10 @@ class Data(Object, basesections.ActivityResult):
         description="Number of dimensions of y in the HDF5 file.",
     )
     z = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXdata.html#nxdata-z-field"
         ],
-        flexible_unit=True,
-        shape=["*"],
         description=(
             "This is an array holding the values to use for the z-axis of data. "
             "The units must be appropriate for the measurement. This is a "

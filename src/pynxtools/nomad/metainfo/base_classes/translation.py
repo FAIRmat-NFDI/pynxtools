@@ -24,6 +24,7 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 
 import numpy as np
+from nomad.datamodel.hdf5 import HDF5Reference
 from nomad.datamodel.metainfo.annotations import (
     ELNAnnotation,
     ELNComponentEnum,
@@ -78,13 +79,10 @@ class Translation(Object):
     )
 
     distances = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXtranslation.html#nxtranslation-distances-field"
         ],
-        dimensionality="[length]",
-        unit="m",
-        shape=["*", 3],
         description=(
             "(x,y,z) This field describes the lateral movement of a component. "
             "The pair of groups NXtranslation and NXorientation together "

@@ -24,6 +24,7 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 
 import numpy as np
+from nomad.datamodel.hdf5 import HDF5Reference
 from nomad.datamodel.metainfo.annotations import (
     ELNAnnotation,
     ELNComponentEnum,
@@ -153,11 +154,10 @@ class PeakData(Data):
     )
 
     position = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXpeak.html#nxpeak-data-position-field"
         ],
-        flexible_unit=True,
         description=(
             "Position values along one or more data dimensions (to hold the "
             "values for the independent variable)."
@@ -190,11 +190,10 @@ class PeakData(Data):
         description="Number of dimensions of position in the HDF5 file.",
     )
     intensity = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXpeak.html#nxpeak-data-intensity-field"
         ],
-        flexible_unit=True,
         description=(
             "This array holds the intensity/count values of the fitted peak at "
             "each position."

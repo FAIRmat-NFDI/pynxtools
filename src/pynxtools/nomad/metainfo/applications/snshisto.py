@@ -28,6 +28,7 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 
 import numpy as np
+from nomad.datamodel.hdf5 import HDF5Reference
 from nomad.datamodel.metainfo.annotations import (
     ELNAnnotation,
     ELNComponentEnum,
@@ -549,13 +550,10 @@ class SnshistoDaslogsLog(Log):
         ),
     )
     time = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXsnshisto.html#nxsnshisto-entry-daslogs-log-time-field"
         ],
-        dimensionality="[time]",
-        unit="second",
-        shape=["*"],
         a_nexus_field=NeXusField(
             name="time",
             type="NX_FLOAT",
@@ -565,12 +563,10 @@ class SnshistoDaslogsLog(Log):
         ),
     )
     value = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXsnshisto.html#nxsnshisto-entry-daslogs-log-value-field"
         ],
-        flexible_unit=True,
-        shape=["*"],
         a_nexus_field=NeXusField(
             name="value",
             type="NX_FLOAT",
@@ -710,11 +706,10 @@ class SnshistoDaslogsPositioner(Positioner):
         ),
     )
     time = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXsnshisto.html#nxsnshisto-entry-daslogs-positioner-time-field"
         ],
-        shape=["*"],
         a_nexus_field=NeXusField(
             name="time",
             type="NX_FLOAT",
@@ -723,12 +718,10 @@ class SnshistoDaslogsPositioner(Positioner):
         ),
     )
     value = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXsnshisto.html#nxsnshisto-entry-daslogs-positioner-value-field"
         ],
-        flexible_unit=True,
-        shape=["*"],
         a_nexus_field=NeXusField(
             name="value",
             type="NX_FLOAT",
@@ -882,11 +875,10 @@ class SnshistoData(Data):
     )
 
     data_quantity = Quantity(
-        type=np.int64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXsnshisto.html#nxsnshisto-entry-data-data-link"
         ],
-        shape=["*", "*", "*"],
         a_nexus_link=NeXusLink(
             name="data",
             target="/NXentry/NXinstrument/NXdetector/data",
@@ -894,11 +886,10 @@ class SnshistoData(Data):
         ),
     )
     data_x_time_of_flight = Quantity(
-        type=np.int64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXsnshisto.html#nxsnshisto-entry-data-data-x-time-of-flight-link"
         ],
-        shape=["*", "*"],
         a_nexus_link=NeXusLink(
             name="data_x_time_of_flight",
             target="/NXentry/NXinstrument/NXdetector/data_x_time_of_flight",
@@ -906,11 +897,10 @@ class SnshistoData(Data):
         ),
     )
     data_x_y = Quantity(
-        type=np.int64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXsnshisto.html#nxsnshisto-entry-data-data-x-y-link"
         ],
-        shape=["*", "*"],
         a_nexus_link=NeXusLink(
             name="data_x_y",
             target="/NXentry/NXinstrument/NXdetector/data_x_y",
@@ -918,11 +908,10 @@ class SnshistoData(Data):
         ),
     )
     data_y_time_of_flight = Quantity(
-        type=np.int64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXsnshisto.html#nxsnshisto-entry-data-data-y-time-of-flight-link"
         ],
-        shape=["*", "*"],
         a_nexus_link=NeXusLink(
             name="data_y_time_of_flight",
             target="/NXentry/NXinstrument/NXdetector/data_y_time_of_flight",
@@ -930,11 +919,10 @@ class SnshistoData(Data):
         ),
     )
     pixel_id = Quantity(
-        type=np.int64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXsnshisto.html#nxsnshisto-entry-data-pixel-id-link"
         ],
-        shape=["*", "*"],
         a_nexus_link=NeXusLink(
             name="pixel_id",
             target="/NXentry/NXinstrument/NXdetector/pixel_id",
@@ -942,13 +930,10 @@ class SnshistoData(Data):
         ),
     )
     time_of_flight = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXsnshisto.html#nxsnshisto-entry-data-time-of-flight-link"
         ],
-        dimensionality="[time]",
-        unit="second",
-        shape=["*"],
         a_nexus_link=NeXusLink(
             name="time_of_flight",
             target="/NXentry/NXinstrument/NXdetector/time_of_flight",
@@ -967,13 +952,10 @@ class SnshistoData(Data):
         ),
     )
     x_pixel_offset = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXsnshisto.html#nxsnshisto-entry-data-x-pixel-offset-link"
         ],
-        dimensionality="[length]",
-        unit="m",
-        shape=["*"],
         a_nexus_link=NeXusLink(
             name="x_pixel_offset",
             target="/NXentry/NXinstrument/NXdetector/x_pixel_offset",
@@ -981,13 +963,10 @@ class SnshistoData(Data):
         ),
     )
     y_pixel_offset = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXsnshisto.html#nxsnshisto-entry-data-y-pixel-offset-link"
         ],
-        dimensionality="[length]",
-        unit="m",
-        shape=["*"],
         a_nexus_link=NeXusLink(
             name="y_pixel_offset",
             target="/NXentry/NXinstrument/NXdetector/y_pixel_offset",
@@ -1283,13 +1262,10 @@ class SnshistoInstrumentDetector(Detector):
     )
 
     azimuthal_angle = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXsnshisto.html#nxsnshisto-entry-instrument-detector-azimuthal-angle-field"
         ],
-        dimensionality="[angle]",
-        unit="radian",
-        shape=["*", "*"],
         a_nexus_field=NeXusField(
             name="azimuthal_angle",
             type="NX_FLOAT",
@@ -1299,11 +1275,10 @@ class SnshistoInstrumentDetector(Detector):
         ),
     )
     data_quantity = Quantity(
-        type=np.int64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXsnshisto.html#nxsnshisto-entry-instrument-detector-data-field"
         ],
-        shape=["*", "*", "*"],
         a_nexus_field=NeXusField(
             name="data",
             type="NX_UINT",
@@ -1312,11 +1287,10 @@ class SnshistoInstrumentDetector(Detector):
         ),
     )
     data_x_time_of_flight = Quantity(
-        type=np.int64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXsnshisto.html#nxsnshisto-entry-instrument-detector-data-x-time-of-flight-field"
         ],
-        shape=["*", "*"],
         a_nexus_field=NeXusField(
             name="data_x_time_of_flight",
             type="NX_UINT",
@@ -1325,11 +1299,10 @@ class SnshistoInstrumentDetector(Detector):
         ),
     )
     data_x_y = Quantity(
-        type=np.int64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXsnshisto.html#nxsnshisto-entry-instrument-detector-data-x-y-field"
         ],
-        shape=["*", "*"],
         a_nexus_field=NeXusField(
             name="data_x_y",
             type="NX_UINT",
@@ -1338,11 +1311,10 @@ class SnshistoInstrumentDetector(Detector):
         ),
     )
     data_y_time_of_flight = Quantity(
-        type=np.int64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXsnshisto.html#nxsnshisto-entry-instrument-detector-data-y-time-of-flight-field"
         ],
-        shape=["*", "*"],
         a_nexus_field=NeXusField(
             name="data_y_time_of_flight",
             type="NX_UINT",
@@ -1351,13 +1323,10 @@ class SnshistoInstrumentDetector(Detector):
         ),
     )
     distance = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXsnshisto.html#nxsnshisto-entry-instrument-detector-distance-field"
         ],
-        dimensionality="[length]",
-        unit="m",
-        shape=["*", "*"],
         a_nexus_field=NeXusField(
             name="distance",
             type="NX_FLOAT",
@@ -1367,11 +1336,10 @@ class SnshistoInstrumentDetector(Detector):
         ),
     )
     pixel_id = Quantity(
-        type=np.int64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXsnshisto.html#nxsnshisto-entry-instrument-detector-pixel-id-field"
         ],
-        shape=["*", "*"],
         a_nexus_field=NeXusField(
             name="pixel_id",
             type="NX_UINT",
@@ -1380,13 +1348,10 @@ class SnshistoInstrumentDetector(Detector):
         ),
     )
     polar_angle = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXsnshisto.html#nxsnshisto-entry-instrument-detector-polar-angle-field"
         ],
-        dimensionality="[angle]",
-        unit="radian",
-        shape=["*", "*"],
         a_nexus_field=NeXusField(
             name="polar_angle",
             type="NX_FLOAT",
@@ -1396,13 +1361,10 @@ class SnshistoInstrumentDetector(Detector):
         ),
     )
     time_of_flight = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXsnshisto.html#nxsnshisto-entry-instrument-detector-time-of-flight-field"
         ],
-        dimensionality="[time]",
-        unit="second",
-        shape=["*"],
         a_nexus_field=NeXusField(
             name="time_of_flight",
             type="NX_FLOAT",
@@ -1427,13 +1389,10 @@ class SnshistoInstrumentDetector(Detector):
         ),
     )
     x_pixel_offset = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXsnshisto.html#nxsnshisto-entry-instrument-detector-x-pixel-offset-field"
         ],
-        dimensionality="[length]",
-        unit="m",
-        shape=["*"],
         a_nexus_field=NeXusField(
             name="x_pixel_offset",
             type="NX_FLOAT",
@@ -1443,13 +1402,10 @@ class SnshistoInstrumentDetector(Detector):
         ),
     )
     y_pixel_offset = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXsnshisto.html#nxsnshisto-entry-instrument-detector-y-pixel-offset-field"
         ],
-        dimensionality="[length]",
-        unit="m",
-        shape=["*"],
         a_nexus_field=NeXusField(
             name="y_pixel_offset",
             type="NX_FLOAT",
@@ -1507,13 +1463,10 @@ class SnshistoInstrumentDetectorOriginOrientation(Orientation):
     )
 
     value = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXsnshisto.html#nxsnshisto-entry-instrument-detector-origin-orientation-value-field"
         ],
-        dimensionality="dimensionless",
-        unit="dimensionless",
-        shape=[6],
         description=("Six out of nine rotation parameters."),
         a_nexus_field=NeXusField(
             name="value",
@@ -1595,13 +1548,10 @@ class SnshistoInstrumentDetectorOriginShape(Shape):
         ),
     )
     size = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXsnshisto.html#nxsnshisto-entry-instrument-detector-origin-shape-size-field"
         ],
-        dimensionality="[length]",
-        unit="m",
-        shape=[3],
         a_nexus_field=NeXusField(
             name="size",
             type="NX_FLOAT",
@@ -1629,13 +1579,10 @@ class SnshistoInstrumentDetectorOriginTranslation(Translation):
     )
 
     distance = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXsnshisto.html#nxsnshisto-entry-instrument-detector-origin-translation-distance-field"
         ],
-        dimensionality="[length]",
-        unit="m",
-        shape=[3],
         a_nexus_field=NeXusField(
             name="distance",
             type="NX_FLOAT",
@@ -1936,13 +1883,10 @@ class SnshistoInstrumentApertureOriginOrientation(Orientation):
     )
 
     value = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXsnshisto.html#nxsnshisto-entry-instrument-aperture-origin-orientation-value-field"
         ],
-        dimensionality="dimensionless",
-        unit="dimensionless",
-        shape=[6],
         description=("Six out of nine rotation parameters."),
         a_nexus_field=NeXusField(
             name="value",
@@ -2024,13 +1968,10 @@ class SnshistoInstrumentApertureOriginShape(Shape):
         ),
     )
     size = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXsnshisto.html#nxsnshisto-entry-instrument-aperture-origin-shape-size-field"
         ],
-        dimensionality="[length]",
-        unit="m",
-        shape=[3],
         a_nexus_field=NeXusField(
             name="size",
             type="NX_FLOAT",
@@ -2058,13 +1999,10 @@ class SnshistoInstrumentApertureOriginTranslation(Translation):
     )
 
     distance = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXsnshisto.html#nxsnshisto-entry-instrument-aperture-origin-translation-distance-field"
         ],
-        dimensionality="[length]",
-        unit="m",
-        shape=[3],
         a_nexus_field=NeXusField(
             name="distance",
             type="NX_FLOAT",
@@ -2153,13 +2091,10 @@ class SnshistoInstrumentCrystal(Crystal):
         ),
     )
     wavelength = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXsnshisto.html#nxsnshisto-entry-instrument-crystal-wavelength-field"
         ],
-        dimensionality="[length]",
-        unit="angstrom",
-        shape=["*"],
         a_nexus_field=NeXusField(
             name="wavelength",
             type="NX_FLOAT",
@@ -2233,13 +2168,10 @@ class SnshistoInstrumentCrystalOriginOrientation(Orientation):
     )
 
     value = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXsnshisto.html#nxsnshisto-entry-instrument-crystal-origin-orientation-value-field"
         ],
-        dimensionality="dimensionless",
-        unit="dimensionless",
-        shape=[6],
         description=("Six out of nine rotation parameters."),
         a_nexus_field=NeXusField(
             name="value",
@@ -2321,13 +2253,10 @@ class SnshistoInstrumentCrystalOriginShape(Shape):
         ),
     )
     size = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXsnshisto.html#nxsnshisto-entry-instrument-crystal-origin-shape-size-field"
         ],
-        dimensionality="[length]",
-        unit="m",
-        shape=["*", "*"],
         a_nexus_field=NeXusField(
             name="size",
             type="NX_FLOAT",
@@ -2355,13 +2284,10 @@ class SnshistoInstrumentCrystalOriginTranslation(Translation):
     )
 
     distance = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXsnshisto.html#nxsnshisto-entry-instrument-crystal-origin-translation-distance-field"
         ],
-        dimensionality="[length]",
-        unit="m",
-        shape=[3],
         a_nexus_field=NeXusField(
             name="distance",
             type="NX_FLOAT",
@@ -2391,11 +2317,10 @@ class SnshistoMonitor(Monitor):
     )
 
     data_quantity = Quantity(
-        type=np.int64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXsnshisto.html#nxsnshisto-entry-monitor-data-field"
         ],
-        shape=["*"],
         a_nexus_field=NeXusField(
             name="data",
             type="NX_UINT",
@@ -2439,13 +2364,10 @@ class SnshistoMonitor(Monitor):
         ),
     )
     time_of_flight = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXsnshisto.html#nxsnshisto-entry-monitor-time-of-flight-field"
         ],
-        dimensionality="[time]",
-        unit="second",
-        shape=["*"],
         a_nexus_field=NeXusField(
             name="time_of_flight",
             type="NX_FLOAT",

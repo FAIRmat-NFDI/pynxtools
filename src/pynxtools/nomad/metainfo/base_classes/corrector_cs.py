@@ -24,6 +24,7 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 
 import numpy as np
+from nomad.datamodel.hdf5 import HDF5Reference
 from nomad.datamodel.metainfo.annotations import (
     ELNAnnotation,
     ELNComponentEnum,
@@ -620,13 +621,10 @@ class CorrectorCsTableauID(Process):
         ),
     )
     tilt_angle = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXcorrector_cs.html#nxcorrector_cs-tableauid-tilt-angle-field"
         ],
-        dimensionality="[angle]",
-        unit="radian",
-        shape=["*"],
         description=(
             "The outer tilt angle of the beam in tableau acquisition. TODO: The "
             "relevant axes which span the tilt_angle need a cleaner description. "
@@ -642,13 +640,10 @@ class CorrectorCsTableauID(Process):
         ),
     )
     exposure_time = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXcorrector_cs.html#nxcorrector_cs-tableauid-exposure-time-field"
         ],
-        dimensionality="[time]",
-        unit="second",
-        shape=["*"],
         description=("The exposure time of single tilt images."),
         a_nexus_field=NeXusField(
             name="exposure_time",
@@ -659,13 +654,10 @@ class CorrectorCsTableauID(Process):
         ),
     )
     magnification = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXcorrector_cs.html#nxcorrector_cs-tableauid-magnification-field"
         ],
-        dimensionality="dimensionless",
-        unit="dimensionless",
-        shape=["*"],
         description=(
             "The factor of enlargement of the apparent size, not the physical "
             "size, of an object."

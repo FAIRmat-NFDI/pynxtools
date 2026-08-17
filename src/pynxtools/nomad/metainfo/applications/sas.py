@@ -24,6 +24,7 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 
 import numpy as np
+from nomad.datamodel.hdf5 import HDF5Reference
 from nomad.datamodel.metainfo.annotations import (
     ELNAnnotation,
     ELNComponentEnum,
@@ -478,13 +479,10 @@ class SasInstrumentCollimatorGeometryShape(Shape):
         ),
     )
     size = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXsas.html#nxsas-entry-instrument-collimator-geometry-shape-size-field"
         ],
-        dimensionality="[length]",
-        unit="m",
-        shape=["*", "*"],
         description=("The collimation length."),
         a_nexus_field=NeXusField(
             name="size",
@@ -514,12 +512,10 @@ class SasInstrumentDetector(Detector):
     )
 
     data_quantity = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXsas.html#nxsas-entry-instrument-detector-data-field"
         ],
-        flexible_unit=True,
-        shape=["*", "*"],
         description=(
             "This is area detector data, number of x-pixel versus number of "
             "y-pixels. Since the beam center is to be determined as a step of "
@@ -537,13 +533,10 @@ class SasInstrumentDetector(Detector):
         ),
     )
     distance = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXsas.html#nxsas-entry-instrument-detector-distance-field"
         ],
-        dimensionality="[length]",
-        unit="m",
-        shape=["*", "*", "*"],
         description=("The distance between detector and sample."),
         a_nexus_field=NeXusField(
             name="distance",
@@ -554,13 +547,10 @@ class SasInstrumentDetector(Detector):
         ),
     )
     x_pixel_size = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXsas.html#nxsas-entry-instrument-detector-x-pixel-size-field"
         ],
-        dimensionality="[length]",
-        unit="m",
-        shape=["*", "*"],
         description=("Physical size of a pixel in x-direction."),
         a_nexus_field=NeXusField(
             name="x_pixel_size",
@@ -571,13 +561,10 @@ class SasInstrumentDetector(Detector):
         ),
     )
     y_pixel_size = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXsas.html#nxsas-entry-instrument-detector-y-pixel-size-field"
         ],
-        dimensionality="[length]",
-        unit="m",
-        shape=["*", "*"],
         description=("Physical size of a pixel in y-direction."),
         a_nexus_field=NeXusField(
             name="y_pixel_size",
@@ -588,13 +575,10 @@ class SasInstrumentDetector(Detector):
         ),
     )
     polar_angle = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXsas.html#nxsas-entry-instrument-detector-polar-angle-field"
         ],
-        dimensionality="[angle]",
-        unit="radian",
-        shape=["*", "*", "*"],
         a_nexus_field=NeXusField(
             name="polar_angle",
             type="NX_FLOAT",
@@ -604,13 +588,10 @@ class SasInstrumentDetector(Detector):
         ),
     )
     azimuthal_angle = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXsas.html#nxsas-entry-instrument-detector-azimuthal-angle-field"
         ],
-        dimensionality="[angle]",
-        unit="radian",
-        shape=["*", "*", "*"],
         a_nexus_field=NeXusField(
             name="azimuthal_angle",
             type="NX_FLOAT",
@@ -883,12 +864,10 @@ class SasData(Data):
     )
 
     data_quantity = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXsas.html#nxsas-entry-data-data-link"
         ],
-        shape=["*", "*"],
-        flexible_unit=True,
         a_nexus_link=NeXusLink(
             name="data",
             target="/NXentry/NXinstrument/NXdetector/data",

@@ -24,6 +24,7 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 
 import numpy as np
+from nomad.datamodel.hdf5 import HDF5Reference
 from nomad.datamodel.metainfo.annotations import (
     ELNAnnotation,
     ELNComponentEnum,
@@ -1424,13 +1425,10 @@ class MpesInstrumentBeamProbe(Beam):
         a_display={"unit": "m"},
     )
     incident_energy = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXmpes.html#nxmpes-entry-instrument-beam-probe-incident-energy-field"
         ],
-        dimensionality="[mass] * [length] ** 2 / [time] ** 2",
-        unit="eV",
-        shape=["*"],
         a_nexus_field=NeXusField(
             name="incident_energy",
             type="NX_FLOAT",
@@ -1459,12 +1457,10 @@ class MpesInstrumentBeamProbe(Beam):
         a_display={"unit": "eV"},
     )
     incident_polarization = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXmpes.html#nxmpes-entry-instrument-beam-probe-incident-polarization-field"
         ],
-        flexible_unit=True,
-        shape=["*", 2],
         a_nexus_field=NeXusField(
             name="incident_polarization",
             type="NX_NUMBER",
@@ -1474,13 +1470,10 @@ class MpesInstrumentBeamProbe(Beam):
         ),
     )
     extent = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXmpes.html#nxmpes-entry-instrument-beam-probe-extent-field"
         ],
-        dimensionality="[length]",
-        unit="m",
-        shape=["*", 2],
         a_nexus_field=NeXusField(
             name="extent",
             type="NX_FLOAT",
@@ -1563,13 +1556,10 @@ class MpesInstrumentBeamPump(Beam):
         a_display={"unit": "m"},
     )
     incident_energy = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXmpes.html#nxmpes-entry-instrument-beam-pump-incident-energy-field"
         ],
-        dimensionality="[mass] * [length] ** 2 / [time] ** 2",
-        unit="eV",
-        shape=["*"],
         a_nexus_field=NeXusField(
             name="incident_energy",
             type="NX_FLOAT",
@@ -1598,12 +1588,10 @@ class MpesInstrumentBeamPump(Beam):
         a_display={"unit": "eV"},
     )
     incident_polarization = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXmpes.html#nxmpes-entry-instrument-beam-pump-incident-polarization-field"
         ],
-        flexible_unit=True,
-        shape=["*", 2],
         a_nexus_field=NeXusField(
             name="incident_polarization",
             type="NX_NUMBER",
@@ -1613,13 +1601,10 @@ class MpesInstrumentBeamPump(Beam):
         ),
     )
     extent = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXmpes.html#nxmpes-entry-instrument-beam-pump-extent-field"
         ],
-        dimensionality="[length]",
-        unit="m",
-        shape=["*", 2],
         a_nexus_field=NeXusField(
             name="extent",
             type="NX_FLOAT",
@@ -1706,13 +1691,10 @@ class MpesInstrumentBeamTYPE(Beam):
         a_display={"unit": "m"},
     )
     incident_energy = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXmpes.html#nxmpes-entry-instrument-beam-type-incident-energy-field"
         ],
-        dimensionality="[mass] * [length] ** 2 / [time] ** 2",
-        unit="eV",
-        shape=["*"],
         a_nexus_field=NeXusField(
             name="incident_energy",
             type="NX_FLOAT",
@@ -1741,12 +1723,10 @@ class MpesInstrumentBeamTYPE(Beam):
         a_display={"unit": "eV"},
     )
     incident_polarization = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXmpes.html#nxmpes-entry-instrument-beam-type-incident-polarization-field"
         ],
-        flexible_unit=True,
-        shape=["*", 2],
         a_nexus_field=NeXusField(
             name="incident_polarization",
             type="NX_NUMBER",
@@ -1756,13 +1736,10 @@ class MpesInstrumentBeamTYPE(Beam):
         ),
     )
     extent = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXmpes.html#nxmpes-entry-instrument-beam-type-extent-field"
         ],
-        dimensionality="[length]",
-        unit="m",
-        shape=["*", 2],
         a_nexus_field=NeXusField(
             name="extent",
             type="NX_FLOAT",
@@ -1881,11 +1858,10 @@ class MpesInstrumentElectronanalyzer(Electronanalyzer):
         a_display={"unit": "eV"},
     )
     fast_axes = Quantity(
-        type=str,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXmpes.html#nxmpes-entry-instrument-electronanalyzer-fast-axes-field"
         ],
-        shape=["*"],
         a_nexus_field=NeXusField(
             name="fast_axes",
             type="NX_CHAR",
@@ -1894,11 +1870,10 @@ class MpesInstrumentElectronanalyzer(Electronanalyzer):
         ),
     )
     slow_axes = Quantity(
-        type=str,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXmpes.html#nxmpes-entry-instrument-electronanalyzer-slow-axes-field"
         ],
-        shape=["*"],
         a_nexus_field=NeXusField(
             name="slow_axes",
             type="NX_CHAR",
@@ -2673,7 +2648,7 @@ class MpesInstrumentElectronanalyzerElectronDetectorRawData(Data):
         ),
     )
     raw = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXmpes.html#nxmpes-entry-instrument-electronanalyzer-electron-detector-raw-data-raw-field"
         ],
@@ -2705,7 +2680,7 @@ class MpesInstrumentElectronanalyzerElectronDetectorRawData(Data):
         description="Number of dimensions of raw in the HDF5 file.",
     )
     pixel_x = Quantity(
-        type=np.int64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXmpes.html#nxmpes-entry-instrument-electronanalyzer-electron-detector-raw-data-pixel-x-field"
         ],
@@ -2737,7 +2712,7 @@ class MpesInstrumentElectronanalyzerElectronDetectorRawData(Data):
         description="Number of dimensions of pixel_x in the HDF5 file.",
     )
     pixel_y = Quantity(
-        type=np.int64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXmpes.html#nxmpes-entry-instrument-electronanalyzer-electron-detector-raw-data-pixel-y-field"
         ],
@@ -2769,12 +2744,10 @@ class MpesInstrumentElectronanalyzerElectronDetectorRawData(Data):
         description="Number of dimensions of pixel_y in the HDF5 file.",
     )
     energy = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXmpes.html#nxmpes-entry-instrument-electronanalyzer-electron-detector-raw-data-energy-field"
         ],
-        dimensionality="[mass] * [length] ** 2 / [time] ** 2",
-        unit="eV",
         description=("(Un)calibrated energy axis."),
         a_nexus_field=NeXusField(
             name="energy",
@@ -2825,12 +2798,10 @@ class MpesInstrumentElectronanalyzerElectronDetectorRawData(Data):
         ),
     )
     photon_energy = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXmpes.html#nxmpes-entry-instrument-electronanalyzer-electron-detector-raw-data-photon-energy-field"
         ],
-        dimensionality="[mass] * [length] ** 2 / [time] ** 2",
-        unit="eV",
         description=(
             "(Un)calibrated photon energy of the incoming probe beam. Could be a "
             "link to /entry/instrument/beam_probe/incident_energy."
@@ -2864,12 +2835,10 @@ class MpesInstrumentElectronanalyzerElectronDetectorRawData(Data):
         description="Number of dimensions of photon_energy in the HDF5 file.",
     )
     kx = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXmpes.html#nxmpes-entry-instrument-electronanalyzer-electron-detector-raw-data-kx-field"
         ],
-        dimensionality="1 / [length]",
-        unit="1 / angstrom",
         description=(
             "(Un)calibrated k-space coordinate in x direction. It is envisioned "
             "that the axes in momentum space are named ``kx``, ``ky``, and "
@@ -2909,12 +2878,10 @@ class MpesInstrumentElectronanalyzerElectronDetectorRawData(Data):
         description="Number of dimensions of kx in the HDF5 file.",
     )
     ky = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXmpes.html#nxmpes-entry-instrument-electronanalyzer-electron-detector-raw-data-ky-field"
         ],
-        dimensionality="1 / [length]",
-        unit="1 / angstrom",
         description=(
             "(Un)calibrated k-space coordinate in y direction. For more "
             "information, see the definition of the :ref:`kx "
@@ -2950,12 +2917,10 @@ class MpesInstrumentElectronanalyzerElectronDetectorRawData(Data):
         description="Number of dimensions of ky in the HDF5 file.",
     )
     kz = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXmpes.html#nxmpes-entry-instrument-electronanalyzer-electron-detector-raw-data-kz-field"
         ],
-        dimensionality="1 / [length]",
-        unit="1 / angstrom",
         description=(
             "(Un)calibrated k-space coordinate in z direction. For more "
             "information, see the definition of the :ref:`kx "
@@ -2991,12 +2956,10 @@ class MpesInstrumentElectronanalyzerElectronDetectorRawData(Data):
         description="Number of dimensions of kz in the HDF5 file.",
     )
     k_parallel = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXmpes.html#nxmpes-entry-instrument-electronanalyzer-electron-detector-raw-data-k-parallel-field"
         ],
-        dimensionality="1 / [length]",
-        unit="1 / angstrom",
         description=(
             "(Un)calibrated parallel component in k-space. ``k_parallel`` and "
             ":ref:`k_perpendicular "
@@ -3038,12 +3001,10 @@ class MpesInstrumentElectronanalyzerElectronDetectorRawData(Data):
         description="Number of dimensions of k_parallel in the HDF5 file.",
     )
     k_perpendicular = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXmpes.html#nxmpes-entry-instrument-electronanalyzer-electron-detector-raw-data-k-perpendicular-field"
         ],
-        dimensionality="1 / [length]",
-        unit="1 / angstrom",
         description=(
             "(Un)calibrated perpendicular component in k-space. "
             "``k_perpendicular`` is the component that is normal (perpendicular) "
@@ -3084,12 +3045,10 @@ class MpesInstrumentElectronanalyzerElectronDetectorRawData(Data):
         description="Number of dimensions of k_perpendicular in the HDF5 file.",
     )
     angular0 = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXmpes.html#nxmpes-entry-instrument-electronanalyzer-electron-detector-raw-data-angular0-field"
         ],
-        dimensionality="[angle]",
-        unit="radian",
         description=(
             "First (un)calibrated angular coordinate. It is envisioned that the "
             "axes in angular space are named ``angular0`` and ``angular1``. The "
@@ -3129,12 +3088,10 @@ class MpesInstrumentElectronanalyzerElectronDetectorRawData(Data):
         description="Number of dimensions of angular0 in the HDF5 file.",
     )
     angular1 = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXmpes.html#nxmpes-entry-instrument-electronanalyzer-electron-detector-raw-data-angular1-field"
         ],
-        dimensionality="[angle]",
-        unit="radian",
         description=(
             "Second (un)calibrated angular coordinate. For more information, see "
             "the definition of the :ref:`angular0 "
@@ -3171,12 +3128,10 @@ class MpesInstrumentElectronanalyzerElectronDetectorRawData(Data):
         description="Number of dimensions of angular1 in the HDF5 file.",
     )
     spatial0 = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXmpes.html#nxmpes-entry-instrument-electronanalyzer-electron-detector-raw-data-spatial0-field"
         ],
-        dimensionality="[length]",
-        unit="m",
         description=(
             "First (un)calibrated spatial coordinate. It is envisioned that the "
             "axes in regular space are named ``spatial0`` and ``spatial1``. The "
@@ -3216,12 +3171,10 @@ class MpesInstrumentElectronanalyzerElectronDetectorRawData(Data):
         description="Number of dimensions of spatial0 in the HDF5 file.",
     )
     spatial1 = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXmpes.html#nxmpes-entry-instrument-electronanalyzer-electron-detector-raw-data-spatial1-field"
         ],
-        dimensionality="[length]",
-        unit="m",
         description=(
             "Second (un)calibrated spatial coordinate. For more information, see "
             "the definition of the :ref:`spatial0 "
@@ -3258,12 +3211,10 @@ class MpesInstrumentElectronanalyzerElectronDetectorRawData(Data):
         description="Number of dimensions of spatial1 in the HDF5 file.",
     )
     delay = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXmpes.html#nxmpes-entry-instrument-electronanalyzer-electron-detector-raw-data-delay-field"
         ],
-        dimensionality="[time]",
-        unit="second",
         description=(
             "(Un)calibrated delay time. This is to be used for time-resolved "
             "pump-probe experiments and describes the delay between "
@@ -3299,12 +3250,10 @@ class MpesInstrumentElectronanalyzerElectronDetectorRawData(Data):
         description="Number of dimensions of delay in the HDF5 file.",
     )
     temperature = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXmpes.html#nxmpes-entry-instrument-electronanalyzer-electron-detector-raw-data-temperature-field"
         ],
-        dimensionality="[time]",
-        unit="second",
         description=(
             "(Un)calibrated temperature axis in case of experiments where the "
             "temperature was scanned. This is typically the sample temperature "
@@ -3456,13 +3405,10 @@ class MpesInstrumentManipulatorTemperatureSensor(Sensor):
         ),
     )
     value = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXmpes.html#nxmpes-entry-instrument-manipulator-temperature-sensor-value-field"
         ],
-        dimensionality="[temperature]",
-        unit="kelvin",
-        shape=["*"],
         a_nexus_field=NeXusField(
             name="value",
             type="NX_FLOAT",
@@ -3774,13 +3720,10 @@ class MpesInstrumentManipulatorDrainCurrentAmmeter(Sensor):
         ),
     )
     value = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXmpes.html#nxmpes-entry-instrument-manipulator-drain-current-ammeter-value-field"
         ],
-        dimensionality="[current]",
-        unit="ampere",
-        shape=["*"],
         a_nexus_field=NeXusField(
             name="value",
             type="NX_FLOAT",
@@ -3855,13 +3798,10 @@ class MpesInstrumentManipulatorSampleBiasVoltmeter(Sensor):
         ),
     )
     value = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXmpes.html#nxmpes-entry-instrument-manipulator-sample-bias-voltmeter-value-field"
         ],
-        dimensionality="[mass] * [length] ** 2 / [time] ** 3 / [current]",
-        unit="volt",
-        shape=["*"],
         a_nexus_field=NeXusField(
             name="value",
             type="NX_FLOAT",
@@ -4117,13 +4057,10 @@ class MpesInstrumentPressureGauge(Sensor):
         ),
     )
     value = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXmpes.html#nxmpes-entry-instrument-pressure-gauge-value-field"
         ],
-        dimensionality="[mass] / [length] / [time] ** 2",
-        unit="mbar",
-        shape=["*"],
         description=(
             "In case of a single or averaged gas pressure measurement, this is "
             "the scalar gas pressure. It can also be an 1D array of measured "
@@ -4429,13 +4366,10 @@ class MpesEnergyAxisCalibration(Calibration):
         ),
     )
     calibrated_axis = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXmpes.html#nxmpes-entry-energy-axis-calibration-calibrated-axis-field"
         ],
-        dimensionality="[mass] * [length] ** 2 / [time] ** 2",
-        unit="eV",
-        shape=["*"],
         description=(
             "This is the calibrated energy axis to be used for data plotting."
         ),
@@ -4476,12 +4410,10 @@ class MpesAXIS_axis_calibration(Calibration):
     )
 
     calibrated_axis = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXmpes.html#nxmpes-entry-axis-axis-calibration-calibrated-axis-field"
         ],
-        flexible_unit=True,
-        shape=["*"],
         a_nexus_field=NeXusField(
             name="calibrated_axis",
             type="NX_FLOAT",
@@ -4632,13 +4564,10 @@ class MpesEnergyReferencing(Calibration):
         a_display={"unit": "eV"},
     )
     calibrated_axis = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXmpes.html#nxmpes-entry-energy-referencing-calibrated-axis-field"
         ],
-        dimensionality="[mass] * [length] ** 2 / [time] ** 2",
-        unit="eV",
-        shape=["*"],
         description=(
             "This is the calibrated energy axis to be used for data plotting. "
             "This could be a link to /entry/data/energy."
@@ -4741,13 +4670,10 @@ class MpesTransmissionCorrectionTransmissionFunction(Data):
         ),
     )
     kinetic_energy = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXmpes.html#nxmpes-entry-transmission-correction-transmission-function-kinetic-energy-field"
         ],
-        dimensionality="[mass] * [length] ** 2 / [time] ** 2",
-        unit="eV",
-        shape=["*"],
         description=("Kinetic energy values"),
         a_nexus_field=NeXusField(
             name="kinetic_energy",
@@ -4774,13 +4700,10 @@ class MpesTransmissionCorrectionTransmissionFunction(Data):
         description="Number of dimensions of kinetic_energy in the HDF5 file.",
     )
     relative_intensity = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXmpes.html#nxmpes-entry-transmission-correction-transmission-function-relative-intensity-field"
         ],
-        dimensionality="dimensionless",
-        unit="dimensionless",
-        shape=["*"],
         description=("Relative transmission efficiency for the given kinetic energies"),
         a_nexus_field=NeXusField(
             name="relative_intensity",
@@ -5485,11 +5408,10 @@ class MpesData(Data):
         ),
     )
     data_quantity = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXmpes.html#nxmpes-entry-data-data-field"
         ],
-        flexible_unit=True,
         description=(
             "Represents a measure of one- or more-dimensional photoemission "
             "counts, where the varied axis may be for example energy, momentum, "
@@ -5526,12 +5448,10 @@ class MpesData(Data):
         description="Number of dimensions of data_quantity in the HDF5 file.",
     )
     energy = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXmpes.html#nxmpes-entry-data-energy-field"
         ],
-        dimensionality="[mass] * [length] ** 2 / [time] ** 2",
-        unit="eV",
         description=("Calibrated axis for the energy of the measured electrons."),
         a_nexus_field=NeXusField(
             name="energy",
@@ -5597,12 +5517,10 @@ class MpesData(Data):
         ),
     )
     photon_energy = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXmpes.html#nxmpes-entry-data-photon-energy-field"
         ],
-        dimensionality="[mass] * [length] ** 2 / [time] ** 2",
-        unit="eV",
         description=(
             "Calibrated photon energy of the incoming probe beam. Could be a "
             "link to /entry/instrument/beam_probe/incident_energy."
@@ -5636,12 +5554,10 @@ class MpesData(Data):
         description="Number of dimensions of photon_energy in the HDF5 file.",
     )
     kx = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXmpes.html#nxmpes-entry-data-kx-field"
         ],
-        dimensionality="1 / [length]",
-        unit="1 / angstrom",
         description=(
             "Calibrated k-space coordinate in x direction. It is envisioned that "
             "the axes in momentum space are named ``kx``, ``ky``, and ``kz``. "
@@ -5680,12 +5596,10 @@ class MpesData(Data):
         description="Number of dimensions of kx in the HDF5 file.",
     )
     ky = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXmpes.html#nxmpes-entry-data-ky-field"
         ],
-        dimensionality="1 / [length]",
-        unit="1 / angstrom",
         description=(
             "Calibrated k-space coordinate in y direction. For more information, "
             "see the definition of the :ref:`kx </NXmpes/ENTRY/DATA/kx-field>` "
@@ -5720,12 +5634,10 @@ class MpesData(Data):
         description="Number of dimensions of ky in the HDF5 file.",
     )
     kz = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXmpes.html#nxmpes-entry-data-kz-field"
         ],
-        dimensionality="1 / [length]",
-        unit="1 / angstrom",
         description=(
             "Calibrated k-space coordinate in z direction. For more information, "
             "see the definition of the :ref:`kx </NXmpes/ENTRY/DATA/kx-field>` "
@@ -5760,12 +5672,10 @@ class MpesData(Data):
         description="Number of dimensions of kz in the HDF5 file.",
     )
     k_parallel = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXmpes.html#nxmpes-entry-data-k-parallel-field"
         ],
-        dimensionality="1 / [length]",
-        unit="1 / angstrom",
         description=(
             "Calibrated parallel component in k-space. ``k_parallel`` and "
             ":ref:`k_perpendicular </NXmpes/ENTRY/DATA/k_perpendicular-field>` "
@@ -5806,12 +5716,10 @@ class MpesData(Data):
         description="Number of dimensions of k_parallel in the HDF5 file.",
     )
     k_perpendicular = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXmpes.html#nxmpes-entry-data-k-perpendicular-field"
         ],
-        dimensionality="1 / [length]",
-        unit="1 / angstrom",
         description=(
             "Calibrated perpendicular component in k-space. ``k_perpendicular`` "
             "is the component that is normal (perpendicular) to the surface. It "
@@ -5851,12 +5759,10 @@ class MpesData(Data):
         description="Number of dimensions of k_perpendicular in the HDF5 file.",
     )
     angular0 = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXmpes.html#nxmpes-entry-data-angular0-field"
         ],
-        dimensionality="[angle]",
-        unit="radian",
         description=(
             "First calibrated angular coordinate. It is envisioned that the axes "
             "in angular space are named ``angular0`` and ``angular1``. The "
@@ -5896,12 +5802,10 @@ class MpesData(Data):
         description="Number of dimensions of angular0 in the HDF5 file.",
     )
     angular1 = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXmpes.html#nxmpes-entry-data-angular1-field"
         ],
-        dimensionality="[angle]",
-        unit="radian",
         description=(
             "Second calibrated angular coordinate. For more information, see the "
             "definition of the :ref:`angular0 "
@@ -5937,12 +5841,10 @@ class MpesData(Data):
         description="Number of dimensions of angular1 in the HDF5 file.",
     )
     spatial0 = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXmpes.html#nxmpes-entry-data-spatial0-field"
         ],
-        dimensionality="[length]",
-        unit="m",
         description=(
             "First calibrated spatial coordinate. It is envisioned that the axes "
             "in angular space are named ``spatial0`` and ``spatial1``. The "
@@ -5982,12 +5884,10 @@ class MpesData(Data):
         description="Number of dimensions of spatial0 in the HDF5 file.",
     )
     spatial1 = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXmpes.html#nxmpes-entry-data-spatial1-field"
         ],
-        dimensionality="[length]",
-        unit="m",
         description=(
             "Second calibrated spatial coordinate. For more information, see the "
             "definition of the :ref:`spatial0 "
@@ -6023,12 +5923,10 @@ class MpesData(Data):
         description="Number of dimensions of spatial1 in the HDF5 file.",
     )
     delay = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXmpes.html#nxmpes-entry-data-delay-field"
         ],
-        dimensionality="[time]",
-        unit="second",
         description=(
             "Calibrated pump-probe delay time. Could be a link to "
             "/entry/instrument/beam_pump/pulse_delay."
@@ -6062,12 +5960,10 @@ class MpesData(Data):
         description="Number of dimensions of delay in the HDF5 file.",
     )
     temperature = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXmpes.html#nxmpes-entry-data-temperature-field"
         ],
-        dimensionality="[time]",
-        unit="second",
         description=(
             "Calibrated temperature axis in case of experiments where the "
             "temperature was scanned. This is typically the sample temperature "

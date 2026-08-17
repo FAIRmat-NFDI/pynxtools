@@ -24,6 +24,7 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 
 import numpy as np
+from nomad.datamodel.hdf5 import HDF5Reference
 from nomad.datamodel.metainfo.annotations import (
     ELNAnnotation,
     ELNComponentEnum,
@@ -384,13 +385,10 @@ class Filter(Component):
         a_display={"unit": "radian"},
     )
     unit_cell_volume = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXfilter.html#nxfilter-unit-cell-volume-field"
         ],
-        dimensionality="[length] ** 3",
-        unit="m ** 3",
-        shape=["*"],
         description=("Unit cell"),
         a_nexus_field=NeXusField(
             name="unit_cell_volume",
@@ -401,11 +399,10 @@ class Filter(Component):
         ),
     )
     orientation_matrix = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXfilter.html#nxfilter-orientation-matrix-field"
         ],
-        shape=["*", 3, 3],
         description=(
             "Orientation matrix of single crystal filter using Busing-Levy "
             "convention: W. R. Busing and H. A. Levy (1967). Acta Cryst. 22, "
@@ -511,13 +508,10 @@ class Filter(Component):
         a_display={"unit": "m"},
     )
     coating_roughness = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXfilter.html#nxfilter-coating-roughness-field"
         ],
-        dimensionality="[length]",
-        unit="m",
-        shape=["*"],
         description=("coating roughness (RMS) of supermirror filter"),
         a_nexus_field=NeXusField(
             name="coating_roughness",

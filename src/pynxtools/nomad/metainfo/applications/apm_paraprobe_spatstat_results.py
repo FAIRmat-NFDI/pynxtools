@@ -28,6 +28,7 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 
 import numpy as np
+from nomad.datamodel.hdf5 import HDF5Reference
 from nomad.datamodel.metainfo.annotations import (
     ELNAnnotation,
     ELNComponentEnum,
@@ -161,13 +162,10 @@ class ApmParaprobeSpatstatResultsSpatialStatisticsID(
     )
 
     iontypes_randomized = Quantity(
-        type=np.int64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_spatstat_results.html#nxapm_paraprobe_spatstat_results-entry-spatial-statisticsid-iontypes-randomized-field"
         ],
-        dimensionality="dimensionless",
-        unit="dimensionless",
-        shape=["*"],
         description=(
             "The iontype ID for each ion that was assigned to each ion during "
             "the randomization of the ionlabels. Iontype labels are just "
@@ -208,13 +206,10 @@ class ApmParaprobeSpatstatResultsSpatialStatisticsIDKnn(Process):
     )
 
     distance = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_spatstat_results.html#nxapm_paraprobe_spatstat_results-entry-spatial-statisticsid-knn-distance-field"
         ],
-        dimensionality="[length]",
-        unit="m",
-        shape=["*"],
         description=("Right boundary of the binning."),
         a_nexus_field=NeXusField(
             name="distance",
@@ -225,13 +220,10 @@ class ApmParaprobeSpatstatResultsSpatialStatisticsIDKnn(Process):
         ),
     )
     probability_mass = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_spatstat_results.html#nxapm_paraprobe_spatstat_results-entry-spatial-statisticsid-knn-probability-mass-field"
         ],
-        dimensionality="dimensionless",
-        unit="dimensionless",
-        shape=["*"],
         a_nexus_field=NeXusField(
             name="probability_mass",
             type="NX_FLOAT",
@@ -241,13 +233,10 @@ class ApmParaprobeSpatstatResultsSpatialStatisticsIDKnn(Process):
         ),
     )
     cumulated = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_spatstat_results.html#nxapm_paraprobe_spatstat_results-entry-spatial-statisticsid-knn-cumulated-field"
         ],
-        dimensionality="dimensionless",
-        unit="dimensionless",
-        shape=["*"],
         description=("Cumulated not normalized by total counts."),
         a_nexus_field=NeXusField(
             name="cumulated",
@@ -258,13 +247,10 @@ class ApmParaprobeSpatstatResultsSpatialStatisticsIDKnn(Process):
         ),
     )
     cumulated_normalized = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_spatstat_results.html#nxapm_paraprobe_spatstat_results-entry-spatial-statisticsid-knn-cumulated-normalized-field"
         ],
-        dimensionality="dimensionless",
-        unit="dimensionless",
-        shape=["*"],
         description=("Cumulated and normalized by total counts."),
         a_nexus_field=NeXusField(
             name="cumulated_normalized",
@@ -297,13 +283,10 @@ class ApmParaprobeSpatstatResultsSpatialStatisticsIDRdf(Process):
     )
 
     distance = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_spatstat_results.html#nxapm_paraprobe_spatstat_results-entry-spatial-statisticsid-rdf-distance-field"
         ],
-        dimensionality="[length]",
-        unit="m",
-        shape=["*"],
         description=("Right boundary of the binning."),
         a_nexus_field=NeXusField(
             name="distance",
@@ -314,13 +297,10 @@ class ApmParaprobeSpatstatResultsSpatialStatisticsIDRdf(Process):
         ),
     )
     probability_mass = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_spatstat_results.html#nxapm_paraprobe_spatstat_results-entry-spatial-statisticsid-rdf-probability-mass-field"
         ],
-        dimensionality="dimensionless",
-        unit="dimensionless",
-        shape=["*"],
         a_nexus_field=NeXusField(
             name="probability_mass",
             type="NX_FLOAT",
@@ -330,13 +310,10 @@ class ApmParaprobeSpatstatResultsSpatialStatisticsIDRdf(Process):
         ),
     )
     cumulated = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_spatstat_results.html#nxapm_paraprobe_spatstat_results-entry-spatial-statisticsid-rdf-cumulated-field"
         ],
-        dimensionality="dimensionless",
-        unit="dimensionless",
-        shape=["*"],
         description=("Cumulated not normalized by total counts."),
         a_nexus_field=NeXusField(
             name="cumulated",
@@ -347,13 +324,10 @@ class ApmParaprobeSpatstatResultsSpatialStatisticsIDRdf(Process):
         ),
     )
     cumulated_normalized = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_spatstat_results.html#nxapm_paraprobe_spatstat_results-entry-spatial-statisticsid-rdf-cumulated-normalized-field"
         ],
-        dimensionality="dimensionless",
-        unit="dimensionless",
-        shape=["*"],
         description=("Cumulated and normalized by total counts."),
         a_nexus_field=NeXusField(
             name="cumulated_normalized",

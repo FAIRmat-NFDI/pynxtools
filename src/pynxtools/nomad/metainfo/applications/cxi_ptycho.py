@@ -28,6 +28,7 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 
 import numpy as np
+from nomad.datamodel.hdf5 import HDF5Reference
 from nomad.datamodel.metainfo.annotations import (
     ELNAnnotation,
     ELNComponentEnum,
@@ -396,13 +397,10 @@ class CxiPtychoInstrument1Beam1(Beam):
         ),
     )
     extent = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXcxi_ptycho.html#nxcxi_ptycho-entry-1-instrument-1-beam-1-extent-field"
         ],
-        dimensionality="[length]",
-        unit="m",
-        shape=["*", 2],
         a_nexus_field=NeXusField(
             name="extent",
             type="NX_FLOAT",
@@ -428,13 +426,10 @@ class CxiPtychoInstrument1Beam1(Beam):
         ),
     )
     incident_beam_divergence = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXcxi_ptycho.html#nxcxi_ptycho-entry-1-instrument-1-beam-1-incident-beam-divergence-field"
         ],
-        dimensionality="[angle]",
-        unit="radian",
-        shape=["*", "*"],
         a_nexus_field=NeXusField(
             name="incident_beam_divergence",
             type="NX_FLOAT",
@@ -672,13 +667,10 @@ class CxiPtychoInstrument1Detector1(Detector):
         ),
     )
     x_pixel_size = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXcxi_ptycho.html#nxcxi_ptycho-entry-1-instrument-1-detector-1-x-pixel-size-field"
         ],
-        dimensionality="[length]",
-        unit="m",
-        shape=["*", "*"],
         a_nexus_field=NeXusField(
             name="x_pixel_size",
             type="NX_FLOAT",
@@ -704,13 +696,10 @@ class CxiPtychoInstrument1Detector1(Detector):
         ),
     )
     y_pixel_size = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXcxi_ptycho.html#nxcxi_ptycho-entry-1-instrument-1-detector-1-y-pixel-size-field"
         ],
-        dimensionality="[length]",
-        unit="m",
-        shape=["*", "*"],
         a_nexus_field=NeXusField(
             name="y_pixel_size",
             type="NX_FLOAT",
@@ -736,13 +725,10 @@ class CxiPtychoInstrument1Detector1(Detector):
         ),
     )
     distance = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXcxi_ptycho.html#nxcxi_ptycho-entry-1-instrument-1-detector-1-distance-field"
         ],
-        dimensionality="[length]",
-        unit="m",
-        shape=["*", "*", "*"],
         description=("The distance between the detector and the sample"),
         a_nexus_field=NeXusField(
             name="distance",

@@ -24,6 +24,7 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 
 import numpy as np
+from nomad.datamodel.hdf5 import HDF5Reference
 from nomad.datamodel.metainfo.annotations import (
     ELNAnnotation,
     ELNComponentEnum,
@@ -225,12 +226,10 @@ class CsProfilingEvent(Object):
         a_display={"unit": "dimensionless"},
     )
     max_virtual_memory_snapshot = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXcs_profiling_event.html#nxcs_profiling_event-max-virtual-memory-snapshot-field"
         ],
-        flexible_unit=True,
-        shape=["*"],
         description=(
             "Maximum amount of virtual memory allocated per process during the event."
         ),
@@ -243,12 +242,10 @@ class CsProfilingEvent(Object):
         ),
     )
     max_resident_memory_snapshot = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXcs_profiling_event.html#nxcs_profiling_event-max-resident-memory-snapshot-field"
         ],
-        flexible_unit=True,
-        shape=["*"],
         description=(
             "Maximum amount of resident memory allocated per process during the event."
         ),

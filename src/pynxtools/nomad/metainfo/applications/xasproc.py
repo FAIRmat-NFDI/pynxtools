@@ -24,6 +24,7 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 
 import numpy as np
+from nomad.datamodel.hdf5 import HDF5Reference
 from nomad.datamodel.metainfo.annotations import (
     ELNAnnotation,
     ELNComponentEnum,
@@ -288,11 +289,10 @@ class XasprocData(Data):
     )
 
     energy = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXxasproc.html#nxxasproc-entry-data-energy-field"
         ],
-        shape=["*"],
         a_nexus_field=NeXusField(
             name="energy",
             type="NX_CHAR_OR_NUMBER",
@@ -317,11 +317,10 @@ class XasprocData(Data):
         description="Number of dimensions of energy in the HDF5 file.",
     )
     data_quantity = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXxasproc.html#nxxasproc-entry-data-data-field"
         ],
-        shape=["*"],
         description=(
             "This is corrected and calibrated I(incoming)/I(absorbed). So it is "
             "the absorption. Expect attribute ``signal=1``"

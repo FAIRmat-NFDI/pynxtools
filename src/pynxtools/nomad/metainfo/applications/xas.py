@@ -24,6 +24,7 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 
 import numpy as np
+from nomad.datamodel.hdf5 import HDF5Reference
 from nomad.datamodel.metainfo.annotations import (
     ELNAnnotation,
     ELNComponentEnum,
@@ -301,13 +302,10 @@ class XasInstrumentMonochromator(Monochromator):
     )
 
     energy = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXxas.html#nxxas-entry-instrument-monochromator-energy-field"
         ],
-        dimensionality="[mass] * [length] ** 2 / [time] ** 2",
-        unit="eV",
-        shape=["*"],
         a_nexus_field=NeXusField(
             name="energy",
             type="NX_FLOAT",
@@ -335,12 +333,10 @@ class XasInstrumentIncomingBeam(Detector):
     )
 
     data_quantity = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXxas.html#nxxas-entry-instrument-incoming-beam-data-field"
         ],
-        flexible_unit=True,
-        shape=["*"],
         a_nexus_field=NeXusField(
             name="data",
             type="NX_NUMBER",
@@ -368,12 +364,10 @@ class XasInstrumentAbsorbedBeam(Detector):
     )
 
     data_quantity = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXxas.html#nxxas-entry-instrument-absorbed-beam-data-field"
         ],
-        flexible_unit=True,
-        shape=["*"],
         description=("This data corresponds to the sample signal."),
         a_nexus_field=NeXusField(
             name="data",
@@ -476,12 +470,10 @@ class XasMonitor(Monitor):
         ),
     )
     data_quantity = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXxas.html#nxxas-entry-monitor-data-field"
         ],
-        flexible_unit=True,
-        shape=["*"],
         description=(
             "This field could be a link to "
             "``/NXentry/NXinstrument/incoming_beam:NXdetector/data``"
@@ -514,15 +506,7 @@ class XasData(Data):
     )
 
     mode = Quantity(
-        type=MEnum(
-            [
-                "Total Electron Yield",
-                "Partial Electron Yield",
-                "Auger Electron Yield",
-                "Fluorescence Yield",
-                "Transmission",
-            ]
-        ),
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXxas.html#nxxas-entry-data-mode-field"
         ],

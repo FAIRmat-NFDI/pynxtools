@@ -28,6 +28,7 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 
 import numpy as np
+from nomad.datamodel.hdf5 import HDF5Reference
 from nomad.datamodel.metainfo.annotations import (
     ELNAnnotation,
     ELNComponentEnum,
@@ -726,13 +727,10 @@ class MicrostructureScoreConfigDeformation(Parameters):
         ),
     )
     extent = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXmicrostructure_score_config.html#nxmicrostructure_score_config-entry-deformation-extent-field"
         ],
-        dimensionality="[length]",
-        unit="m",
-        shape=[3],
         description=(
             "Extent of each deformed grain in voxel along the x, y, and z "
             "direction when model is cuboidal."
@@ -789,13 +787,10 @@ class MicrostructureScoreConfigDeformationEnsemble(Parameters):
     )
 
     bunge_euler = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXmicrostructure_score_config.html#nxmicrostructure_score_config-entry-deformation-ensemble-bunge-euler-field"
         ],
-        dimensionality="[angle]",
-        unit="radian",
-        shape=["*", 3],
         description=(
             "Set of Bunge-Euler orientations (:math:`\\varphi_1`, :math:`\\Phi`, "
             ":math:`\\varphi_2` ) out of which the orientations of deformed "
@@ -810,12 +805,10 @@ class MicrostructureScoreConfigDeformationEnsemble(Parameters):
         ),
     )
     stored_energy = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXmicrostructure_score_config.html#nxmicrostructure_score_config-entry-deformation-ensemble-stored-energy-field"
         ],
-        flexible_unit=True,
-        shape=["*"],
         description=(
             "Set of stored elastic energy quantified as a dislocation density "
             "which is assigned to deformed grains with orientations from "
@@ -899,13 +892,10 @@ class MicrostructureScoreConfigDeformationEbsd(Note):
         ),
     )
     stepsize = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXmicrostructure_score_config.html#nxmicrostructure_score_config-entry-deformation-ebsd-stepsize-field"
         ],
-        dimensionality="[length]",
-        unit="m",
-        shape=["*"],
         description=(
             "Extent of the pixel of the EBSD orientation mapping assuming "
             "square-shaped pixels or cube-shaped voxels respectively."
@@ -1106,13 +1096,10 @@ class MicrostructureScoreConfigNucleationEnsemble(Parameters):
     )
 
     bunge_euler = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXmicrostructure_score_config.html#nxmicrostructure_score_config-entry-nucleation-ensemble-bunge-euler-field"
         ],
-        dimensionality="[angle]",
-        unit="radian",
-        shape=["*", 3],
         description=(
             "Set of Bunge-Euler orientations (:math:`\\varphi_1`, :math:`\\Phi`, "
             ":math:`\\varphi_2` ) out of which the orientations of "
@@ -1127,13 +1114,10 @@ class MicrostructureScoreConfigNucleationEnsemble(Parameters):
         ),
     )
     incubation_time = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXmicrostructure_score_config.html#nxmicrostructure_score_config-entry-nucleation-ensemble-incubation-time-field"
         ],
-        dimensionality="[time]",
-        unit="second",
-        shape=["*"],
         description=(
             "Incubation time which is assigned to deformed grains with "
             "orientations from bunge_euler with index queries matching for the "
@@ -1704,7 +1688,7 @@ class MicrostructureScoreConfigDispersoidDragZenerSmithRadiusEvolution(Data):
         ),
     )
     title = Quantity(
-        type=str,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXmicrostructure_score_config.html#nxmicrostructure_score_config-entry-dispersoid-drag-zener-smith-radius-evolution-title-field"
         ],
@@ -1719,13 +1703,10 @@ class MicrostructureScoreConfigDispersoidDragZenerSmithRadiusEvolution(Data):
         ),
     )
     time = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXmicrostructure_score_config.html#nxmicrostructure_score_config-entry-dispersoid-drag-zener-smith-radius-evolution-time-field"
         ],
-        dimensionality="[time]",
-        unit="second",
-        shape=["*"],
         description=(
             "Support point of the linearized curve of simulated time matching a "
             "specific support point of the average dispersoid radius."
@@ -1771,13 +1752,10 @@ class MicrostructureScoreConfigDispersoidDragZenerSmithRadiusEvolution(Data):
         ),
     )
     radius = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXmicrostructure_score_config.html#nxmicrostructure_score_config-entry-dispersoid-drag-zener-smith-radius-evolution-radius-field"
         ],
-        dimensionality="[length]",
-        unit="m",
-        shape=["*"],
         description=(
             "Support point of the linearized curve of the average dispersoid radius."
         ),
@@ -1840,11 +1818,10 @@ class MicrostructureScoreConfigComponentAnalysis(Parameters):
     )
 
     names = Quantity(
-        type=str,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXmicrostructure_score_config.html#nxmicrostructure_score_config-entry-component-analysis-names-field"
         ],
-        shape=["*"],
         description=("Given name(s) of a texture component."),
         a_nexus_field=NeXusField(
             name="names",
@@ -1854,13 +1831,10 @@ class MicrostructureScoreConfigComponentAnalysis(Parameters):
         ),
     )
     bunge_euler = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXmicrostructure_score_config.html#nxmicrostructure_score_config-entry-component-analysis-bunge-euler-field"
         ],
-        dimensionality="[angle]",
-        unit="radian",
-        shape=["*", 3],
         description=(
             "Bunge-Euler angle representation :math:`\\varphi_1`, :math:`\\Phi`, "
             ":math:`\\varphi_2` of the texture components in sequence of the "
@@ -1875,13 +1849,10 @@ class MicrostructureScoreConfigComponentAnalysis(Parameters):
         ),
     )
     theta = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXmicrostructure_score_config.html#nxmicrostructure_score_config-entry-component-analysis-theta-field"
         ],
-        dimensionality="[angle]",
-        unit="radian",
-        shape=["*"],
         description=(
             "Integration radius that constraints the theta angular region of the "
             "orientation space (SO3) about each central location (obeying "
@@ -1977,7 +1948,7 @@ class MicrostructureScoreConfigTimeTemperature(Data):
         ),
     )
     title = Quantity(
-        type=str,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXmicrostructure_score_config.html#nxmicrostructure_score_config-entry-time-temperature-title-field"
         ],
@@ -1992,13 +1963,10 @@ class MicrostructureScoreConfigTimeTemperature(Data):
         ),
     )
     time = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXmicrostructure_score_config.html#nxmicrostructure_score_config-entry-time-temperature-time-field"
         ],
-        dimensionality="[time]",
-        unit="second",
-        shape=["*"],
         description=(
             "Support point of the linearized curve of simulated time matching a "
             "specific support point of the temperature."
@@ -2044,13 +2012,10 @@ class MicrostructureScoreConfigTimeTemperature(Data):
         ),
     )
     temperature = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXmicrostructure_score_config.html#nxmicrostructure_score_config-entry-time-temperature-temperature-field"
         ],
-        dimensionality="[temperature]",
-        unit="kelvin",
-        shape=["*"],
         description=("Support point of the linearized curve of the temperature."),
         a_nexus_field=NeXusField(
             name="temperature",
@@ -2145,13 +2110,10 @@ class MicrostructureScoreConfigDiscretizationGrid(CgGrid):
     )
 
     extent = Quantity(
-        type=np.int64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXmicrostructure_score_config.html#nxmicrostructure_score_config-entry-discretization-grid-extent-field"
         ],
-        dimensionality="dimensionless",
-        unit="dimensionless",
-        shape=[3],
         description=(
             "Extend of each CA domain in voxel along the x, y, and z direction. "
             "Deformation of sheet material is assumed. The x axis is assumed "
@@ -2168,13 +2130,10 @@ class MicrostructureScoreConfigDiscretizationGrid(CgGrid):
         ),
     )
     cell_dimensions = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXmicrostructure_score_config.html#nxmicrostructure_score_config-entry-discretization-grid-cell-dimensions-field"
         ],
-        dimensionality="[length]",
-        unit="m",
-        shape=["*"],
         description=(
             "Edge length of the material point that in SCORE is discretized via "
             "equisized cubic voxels."
@@ -2301,13 +2260,10 @@ class MicrostructureScoreConfigNumerics(Parameters):
         a_display={"unit": "dimensionless"},
     )
     x_set = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXmicrostructure_score_config.html#nxmicrostructure_score_config-entry-numerics-x-set-field"
         ],
-        dimensionality="dimensionless",
-        unit="dimensionless",
-        shape=["*"],
         description=(
             "List of target values at which recrystallized volume fractions the "
             "state of the CA is evaluated and stored. The code documents summary "
@@ -2422,13 +2378,10 @@ class MicrostructureScoreConfigNumericsCellCache(Parameters):
         ),
     )
     defragment_x = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXmicrostructure_score_config.html#nxmicrostructure_score_config-entry-numerics-cell-cache-defragment-x-field"
         ],
-        dimensionality="dimensionless",
-        unit="dimensionless",
-        shape=["*"],
         description=(
             "Target values at which recrystallized volume fraction the cache for "
             "cells in the recrystallization front will be defragmented "
