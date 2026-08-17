@@ -25,6 +25,7 @@ from typing import TYPE_CHECKING
 
 import numpy as np
 from nomad.datamodel.data import EntryData
+from nomad.datamodel.hdf5 import HDF5Reference
 from nomad.datamodel.metainfo import basesections
 from nomad.datamodel.metainfo.annotations import (
     ELNAnnotation,
@@ -372,6 +373,7 @@ class Root(Object, basesections.Experiment, EntryData):
     )
 
     def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
+        super().normalize(archive, logger)
         if not self.m_entry_paths:
             return
         try:
@@ -398,5 +400,3 @@ class Root(Object, basesections.Experiment, EntryData):
             self.steps = new_steps
         except Exception as e:
             logger.warning("Could not resolve NXentry references for Root: %s", e)
-
-        super().normalize(archive, logger)

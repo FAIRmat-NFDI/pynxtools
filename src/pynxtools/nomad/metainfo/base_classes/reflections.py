@@ -24,6 +24,7 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 
 import numpy as np
+from nomad.datamodel.hdf5 import HDF5Reference
 from nomad.datamodel.metainfo.annotations import (
     ELNAnnotation,
     ELNComponentEnum,
@@ -66,11 +67,10 @@ class Reflections(Object):
     )
 
     experiments = Quantity(
-        type=str,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXreflections.html#nxreflections-experiments-field"
         ],
-        shape=["*"],
         description=("The experiments from which the reflection data derives"),
         a_nexus_field=NeXusField(
             name="experiments",
@@ -80,11 +80,10 @@ class Reflections(Object):
         ),
     )
     h = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXreflections.html#nxreflections-h-field"
         ],
-        shape=["*"],
         description=("The h component of the miller index"),
         a_nexus_field=NeXusField(
             name="h",
@@ -111,11 +110,10 @@ class Reflections(Object):
         ),
     )
     k = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXreflections.html#nxreflections-k-field"
         ],
-        shape=["*"],
         description=("The k component of the miller index"),
         a_nexus_field=NeXusField(
             name="k",
@@ -142,11 +140,10 @@ class Reflections(Object):
         ),
     )
     l = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXreflections.html#nxreflections-l-field"
         ],
-        shape=["*"],
         description=("The l component of the miller index"),
         a_nexus_field=NeXusField(
             name="l",
@@ -173,11 +170,10 @@ class Reflections(Object):
         ),
     )
     id = Quantity(
-        type=np.int64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXreflections.html#nxreflections-id-field"
         ],
-        shape=["*"],
         description=(
             "The id of the experiment which resulted in the reflection. If the "
             "value is greater than 0, the experiments must link to a "
@@ -208,11 +204,10 @@ class Reflections(Object):
         ),
     )
     reflection_id = Quantity(
-        type=np.int64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXreflections.html#nxreflections-reflection-id-field"
         ],
-        shape=["*"],
         description=(
             "The id of the reflection. Multiple partials from the same "
             "reflection should all have the same id"
@@ -242,11 +237,10 @@ class Reflections(Object):
         ),
     )
     entering = Quantity(
-        type=bool,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXreflections.html#nxreflections-entering-field"
         ],
-        shape=["*"],
         description=("Is the reflection entering or exiting the Ewald sphere"),
         a_nexus_field=NeXusField(
             name="entering",
@@ -273,11 +267,10 @@ class Reflections(Object):
         ),
     )
     det_module = Quantity(
-        type=np.int64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXreflections.html#nxreflections-det-module-field"
         ],
-        shape=["*"],
         description=("The detector module on which the reflection was recorded"),
         a_nexus_field=NeXusField(
             name="det_module",
@@ -304,11 +297,10 @@ class Reflections(Object):
         ),
     )
     flags = Quantity(
-        type=np.int64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXreflections.html#nxreflections-flags-field"
         ],
-        shape=["*"],
         description=(
             "Status flags describing the reflection. This is a bit mask. The "
             "bits in the mask follow the convention used by DIALS, and have the "
@@ -350,11 +342,10 @@ class Reflections(Object):
         ),
     )
     d = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXreflections.html#nxreflections-d-field"
         ],
-        shape=["*"],
         description=("The resolution of the reflection"),
         a_nexus_field=NeXusField(
             name="d",
@@ -381,11 +372,10 @@ class Reflections(Object):
         ),
     )
     partiality = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXreflections.html#nxreflections-partiality-field"
         ],
-        shape=["*"],
         description=(
             "The partiality of the reflection. Dividing by this number will "
             "inflate the measured intensity to the full reflection equivalent."
@@ -415,13 +405,10 @@ class Reflections(Object):
         ),
     )
     predicted_frame = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXreflections.html#nxreflections-predicted-frame-field"
         ],
-        dimensionality="dimensionless",
-        unit="dimensionless",
-        shape=["*"],
         description=(
             "The frame on which the bragg peak of the reflection is predicted"
         ),
@@ -451,13 +438,10 @@ class Reflections(Object):
         ),
     )
     predicted_x = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXreflections.html#nxreflections-predicted-x-field"
         ],
-        dimensionality="[length]",
-        unit="m",
-        shape=["*"],
         description=(
             "The x position at which the bragg peak of the reflection is predicted"
         ),
@@ -487,13 +471,10 @@ class Reflections(Object):
         ),
     )
     predicted_y = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXreflections.html#nxreflections-predicted-y-field"
         ],
-        dimensionality="[length]",
-        unit="m",
-        shape=["*"],
         description=(
             "The y position at which the bragg peak of the reflection is predicted"
         ),
@@ -523,13 +504,10 @@ class Reflections(Object):
         ),
     )
     predicted_phi = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXreflections.html#nxreflections-predicted-phi-field"
         ],
-        dimensionality="[angle]",
-        unit="radian",
-        shape=["*"],
         description=(
             "The phi angle at which the bragg peak of the reflection is predicted"
         ),
@@ -559,13 +537,10 @@ class Reflections(Object):
         ),
     )
     predicted_px_x = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXreflections.html#nxreflections-predicted-px-x-field"
         ],
-        dimensionality="dimensionless",
-        unit="dimensionless",
-        shape=["*"],
         description=(
             "The x pixel position at which the bragg peak of the reflection is "
             "predicted"
@@ -596,13 +571,10 @@ class Reflections(Object):
         ),
     )
     predicted_px_y = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXreflections.html#nxreflections-predicted-px-y-field"
         ],
-        dimensionality="dimensionless",
-        unit="dimensionless",
-        shape=["*"],
         description=(
             "The y pixel position at which the bragg peak of the reflection is "
             "predicted"
@@ -633,13 +605,10 @@ class Reflections(Object):
         ),
     )
     observed_frame = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXreflections.html#nxreflections-observed-frame-field"
         ],
-        dimensionality="dimensionless",
-        unit="dimensionless",
-        shape=["*"],
         description=(
             "The estimate of the frame at which the central impact of the "
             "reflection was recorded"
@@ -670,13 +639,10 @@ class Reflections(Object):
         ),
     )
     observed_frame_var = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXreflections.html#nxreflections-observed-frame-var-field"
         ],
-        dimensionality="dimensionless",
-        unit="dimensionless",
-        shape=["*"],
         description=(
             "The variance on the estimate of the frame at which the central "
             "impact of the reflection was recorded"
@@ -707,13 +673,10 @@ class Reflections(Object):
         ),
     )
     observed_frame_errors = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXreflections.html#nxreflections-observed-frame-errors-field"
         ],
-        dimensionality="dimensionless",
-        unit="dimensionless",
-        shape=["*"],
         description=(
             "The standard deviation of the estimate of the frame at which the "
             "central impact of the reflection was recorded"
@@ -744,13 +707,10 @@ class Reflections(Object):
         ),
     )
     observed_px_x = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXreflections.html#nxreflections-observed-px-x-field"
         ],
-        dimensionality="dimensionless",
-        unit="dimensionless",
-        shape=["*"],
         description=(
             "The estimate of the pixel x position at which the central impact of "
             "the reflection was recorded"
@@ -781,13 +741,10 @@ class Reflections(Object):
         ),
     )
     observed_px_x_var = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXreflections.html#nxreflections-observed-px-x-var-field"
         ],
-        dimensionality="dimensionless",
-        unit="dimensionless",
-        shape=["*"],
         description=(
             "The variance on the estimate of the pixel x position at which the "
             "central impact of the reflection was recorded"
@@ -818,13 +775,10 @@ class Reflections(Object):
         ),
     )
     observed_px_x_errors = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXreflections.html#nxreflections-observed-px-x-errors-field"
         ],
-        dimensionality="dimensionless",
-        unit="dimensionless",
-        shape=["*"],
         description=(
             "The standard deviation of the estimate of the pixel x position at "
             "which the central impact of the reflection was recorded"
@@ -855,13 +809,10 @@ class Reflections(Object):
         ),
     )
     observed_px_y = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXreflections.html#nxreflections-observed-px-y-field"
         ],
-        dimensionality="dimensionless",
-        unit="dimensionless",
-        shape=["*"],
         description=(
             "The estimate of the pixel y position at which the central impact of "
             "the reflection was recorded"
@@ -892,13 +843,10 @@ class Reflections(Object):
         ),
     )
     observed_px_y_var = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXreflections.html#nxreflections-observed-px-y-var-field"
         ],
-        dimensionality="dimensionless",
-        unit="dimensionless",
-        shape=["*"],
         description=(
             "The variance on the estimate of the pixel y position at which the "
             "central impact of the reflection was recorded"
@@ -929,13 +877,10 @@ class Reflections(Object):
         ),
     )
     observed_px_y_errors = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXreflections.html#nxreflections-observed-px-y-errors-field"
         ],
-        dimensionality="dimensionless",
-        unit="dimensionless",
-        shape=["*"],
         description=(
             "The standard deviation of the estimate of the pixel y position at "
             "which the central impact of the reflection was recorded"
@@ -966,13 +911,10 @@ class Reflections(Object):
         ),
     )
     observed_phi = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXreflections.html#nxreflections-observed-phi-field"
         ],
-        dimensionality="[angle]",
-        unit="radian",
-        shape=["*"],
         description=(
             "The estimate of the phi angle at which the central impact of the "
             "reflection was recorded"
@@ -1003,13 +945,10 @@ class Reflections(Object):
         ),
     )
     observed_phi_var = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXreflections.html#nxreflections-observed-phi-var-field"
         ],
-        dimensionality="[angle]",
-        unit="radian",
-        shape=["*"],
         description=(
             "The variance on the estimate of the phi angle at which the central "
             "impact of the reflection was recorded"
@@ -1040,13 +979,10 @@ class Reflections(Object):
         ),
     )
     observed_phi_errors = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXreflections.html#nxreflections-observed-phi-errors-field"
         ],
-        dimensionality="[angle]",
-        unit="radian",
-        shape=["*"],
         description=(
             "The standard deviation of the estimate of the phi angle at which "
             "the central impact of the reflection was recorded"
@@ -1077,13 +1013,10 @@ class Reflections(Object):
         ),
     )
     observed_x = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXreflections.html#nxreflections-observed-x-field"
         ],
-        dimensionality="[length]",
-        unit="m",
-        shape=["*"],
         description=(
             "The estimate of the x position at which the central impact of the "
             "reflection was recorded"
@@ -1114,13 +1047,10 @@ class Reflections(Object):
         ),
     )
     observed_x_var = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXreflections.html#nxreflections-observed-x-var-field"
         ],
-        dimensionality="[length]",
-        unit="m",
-        shape=["*"],
         description=(
             "The variance on the estimate of the x position at which the central "
             "impact of the reflection was recorded"
@@ -1151,13 +1081,10 @@ class Reflections(Object):
         ),
     )
     observed_x_errors = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXreflections.html#nxreflections-observed-x-errors-field"
         ],
-        dimensionality="[length]",
-        unit="m",
-        shape=["*"],
         description=(
             "The standard deviation of the estimate of the x position at which "
             "the central impact of the reflection was recorded"
@@ -1188,13 +1115,10 @@ class Reflections(Object):
         ),
     )
     observed_y = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXreflections.html#nxreflections-observed-y-field"
         ],
-        dimensionality="[length]",
-        unit="m",
-        shape=["*"],
         description=(
             "The estimate of the y position at which the central impact of the "
             "reflection was recorded"
@@ -1225,13 +1149,10 @@ class Reflections(Object):
         ),
     )
     observed_y_var = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXreflections.html#nxreflections-observed-y-var-field"
         ],
-        dimensionality="[length]",
-        unit="m",
-        shape=["*"],
         description=(
             "The variance on the estimate of the y position at which the central "
             "impact of the reflection was recorded"
@@ -1262,13 +1183,10 @@ class Reflections(Object):
         ),
     )
     observed_y_errors = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXreflections.html#nxreflections-observed-y-errors-field"
         ],
-        dimensionality="[length]",
-        unit="m",
-        shape=["*"],
         description=(
             "The standard deviation of the estimate of the y position at which "
             "the central impact of the reflection was recorded"
@@ -1299,13 +1217,10 @@ class Reflections(Object):
         ),
     )
     bounding_box = Quantity(
-        type=np.int64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXreflections.html#nxreflections-bounding-box-field"
         ],
-        dimensionality="dimensionless",
-        unit="dimensionless",
-        shape=["*", 6],
         description=(
             "The bounding box around the recorded recorded reflection. Should be "
             "an integer array of length 6, where the 6 values are pixel "
@@ -1342,11 +1257,10 @@ class Reflections(Object):
         ),
     )
     background_mean = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXreflections.html#nxreflections-background-mean-field"
         ],
-        shape=["*"],
         description=("The mean background under the reflection peak"),
         a_nexus_field=NeXusField(
             name="background_mean",
@@ -1373,11 +1287,10 @@ class Reflections(Object):
         ),
     )
     int_prf = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXreflections.html#nxreflections-int-prf-field"
         ],
-        shape=["*"],
         description=("The estimate of the reflection intensity by profile fitting"),
         a_nexus_field=NeXusField(
             name="int_prf",
@@ -1404,11 +1317,10 @@ class Reflections(Object):
         ),
     )
     int_prf_var = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXreflections.html#nxreflections-int-prf-var-field"
         ],
-        shape=["*"],
         description=(
             "The variance on the estimate of the reflection intensity by profile "
             "fitting"
@@ -1438,11 +1350,10 @@ class Reflections(Object):
         ),
     )
     int_prf_errors = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXreflections.html#nxreflections-int-prf-errors-field"
         ],
-        shape=["*"],
         description=(
             "The standard deviation of the estimate of the reflection intensity "
             "by profile fitting"
@@ -1472,11 +1383,10 @@ class Reflections(Object):
         ),
     )
     int_sum = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXreflections.html#nxreflections-int-sum-field"
         ],
-        shape=["*"],
         description=("The estimate of the reflection intensity by summation"),
         a_nexus_field=NeXusField(
             name="int_sum",
@@ -1503,11 +1413,10 @@ class Reflections(Object):
         ),
     )
     int_sum_var = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXreflections.html#nxreflections-int-sum-var-field"
         ],
-        shape=["*"],
         description=(
             "The variance on the estimate of the reflection intensity by summation"
         ),
@@ -1536,11 +1445,10 @@ class Reflections(Object):
         ),
     )
     int_sum_errors = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXreflections.html#nxreflections-int-sum-errors-field"
         ],
-        shape=["*"],
         description=(
             "The standard deviation of the estimate of the reflection intensity "
             "by summation"
@@ -1570,11 +1478,10 @@ class Reflections(Object):
         ),
     )
     lp = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXreflections.html#nxreflections-lp-field"
         ],
-        shape=["*"],
         description=(
             "The LP correction factor to be applied to the reflection intensities"
         ),
@@ -1603,11 +1510,10 @@ class Reflections(Object):
         ),
     )
     prf_cc = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXreflections.html#nxreflections-prf-cc-field"
         ],
-        shape=["*"],
         description=(
             "The correlation of the reflection profile with the reference "
             "profile used in profile fitting"
@@ -1675,13 +1581,10 @@ class Reflections(Object):
         ),
     )
     polar_angle = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXreflections.html#nxreflections-polar-angle-field"
         ],
-        dimensionality="[angle]",
-        unit="radian",
-        shape=["*"],
         description=(
             "Polar angle of reflection centroid, following the NeXus simple "
             "(spherical polar) coordinate system"
@@ -1712,13 +1615,10 @@ class Reflections(Object):
         ),
     )
     azimuthal_angle = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXreflections.html#nxreflections-azimuthal-angle-field"
         ],
-        dimensionality="[angle]",
-        unit="radian",
-        shape=["*"],
         description=(
             "Azimuthal angle of reflection centroid, following the NeXus simple "
             "(spherical polar) coordinate system"

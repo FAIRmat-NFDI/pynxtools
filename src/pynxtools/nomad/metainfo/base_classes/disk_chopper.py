@@ -24,6 +24,7 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 
 import numpy as np
+from nomad.datamodel.hdf5 import HDF5Reference
 from nomad.datamodel.metainfo.annotations import (
     ELNAnnotation,
     ELNComponentEnum,
@@ -203,13 +204,10 @@ class DiskChopper(Component):
         a_display={"unit": "m"},
     )
     slit_edges = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXdisk_chopper.html#nxdisk_chopper-slit-edges-field"
         ],
-        dimensionality="[angle]",
-        unit="radian",
-        shape=["*"],
         description=(
             "Angle of each edge of every slit from the position of the "
             "top-dead-center timestamp sensor, anticlockwise when facing away "
@@ -414,13 +412,10 @@ class DiskChopper(Component):
         a_display={"unit": "m"},
     )
     wavelength_range = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXdisk_chopper.html#nxdisk_chopper-wavelength-range-field"
         ],
-        dimensionality="[length]",
-        unit="angstrom",
-        shape=[2],
         description=("Low and high values of wavelength range transmitted"),
         a_nexus_field=NeXusField(
             name="wavelength_range",

@@ -24,6 +24,7 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 
 import numpy as np
+from nomad.datamodel.hdf5 import HDF5Reference
 from nomad.datamodel.metainfo.annotations import (
     ELNAnnotation,
     ELNComponentEnum,
@@ -319,11 +320,10 @@ class Electronanalyzer(Component):
         a_display={"unit": "volt"},
     )
     fast_axes = Quantity(
-        type=str,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXelectronanalyzer.html#nxelectronanalyzer-fast-axes-field"
         ],
-        shape=["*"],
         description=(
             "List of the axes that are acquired simultaneously by the detector. "
             "These refer only to the experimental variables recorded by the "
@@ -352,11 +352,10 @@ class Electronanalyzer(Component):
         ),
     )
     slow_axes = Quantity(
-        type=str,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXelectronanalyzer.html#nxelectronanalyzer-slow-axes-field"
         ],
-        shape=["*"],
         description=(
             "List of the axes that are acquired by scanning a physical "
             "parameter, listed in order of decreasing speed. See fast_axes for "
@@ -791,13 +790,10 @@ class ElectronanalyzerTransmissionFunction(Data):
         ),
     )
     kinetic_energy = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXelectronanalyzer.html#nxelectronanalyzer-transmission-function-kinetic-energy-field"
         ],
-        dimensionality="[mass] * [length] ** 2 / [time] ** 2",
-        unit="eV",
-        shape=["*"],
         description=("Kinetic energy values"),
         a_nexus_field=NeXusField(
             name="kinetic_energy",
@@ -824,13 +820,10 @@ class ElectronanalyzerTransmissionFunction(Data):
         description="Number of dimensions of kinetic_energy in the HDF5 file.",
     )
     relative_intensity = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXelectronanalyzer.html#nxelectronanalyzer-transmission-function-relative-intensity-field"
         ],
-        dimensionality="dimensionless",
-        unit="dimensionless",
-        shape=["*"],
         description=("Relative transmission efficiency for the given kinetic energies"),
         a_nexus_field=NeXusField(
             name="relative_intensity",

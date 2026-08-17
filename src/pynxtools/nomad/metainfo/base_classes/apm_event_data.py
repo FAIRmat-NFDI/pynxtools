@@ -24,6 +24,7 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 
 import numpy as np
+from nomad.datamodel.hdf5 import HDF5Reference
 from nomad.datamodel.metainfo.annotations import (
     ELNAnnotation,
     ELNComponentEnum,
@@ -147,13 +148,10 @@ class ApmEventData(Object):
         ),
     )
     delta_time = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXapm_event_data.html#nxapm_event_data-delta-time-field"
         ],
-        dimensionality="[time]",
-        unit="second",
-        shape=["*"],
         description=(
             "Delta time array which resolves for each pulse_id the time "
             "difference between when that pulse was fired and start_time. In "
@@ -198,13 +196,10 @@ class ApmEventData(Object):
         a_display={"unit": "dimensionless"},
     )
     pulse_id = Quantity(
-        type=np.int64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXapm_event_data.html#nxapm_event_data-pulse-id-field"
         ],
-        dimensionality="dimensionless",
-        unit="dimensionless",
-        shape=["*"],
         description=(
             "An integer to identify a specific pulse in a sequence. There are "
             "two possibilities to report pulse_id values: If pulse_id_offset is "

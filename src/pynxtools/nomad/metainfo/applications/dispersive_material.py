@@ -28,6 +28,7 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 
 import numpy as np
+from nomad.datamodel.hdf5 import HDF5Reference
 from nomad.datamodel.metainfo.annotations import (
     ELNAnnotation,
     ELNComponentEnum,
@@ -483,13 +484,10 @@ class DispersiveMaterialDispersionXDispersionTable(DispersionTable):
         ),
     )
     wavelength = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXdispersive_material.html#nxdispersive_material-entry-dispersion-x-dispersion-table-wavelength-field"
         ],
-        dimensionality="[length]",
-        unit="m",
-        shape=["*"],
         a_nexus_field=NeXusField(
             name="wavelength",
             type="NX_NUMBER",
@@ -499,13 +497,10 @@ class DispersiveMaterialDispersionXDispersionTable(DispersionTable):
         ),
     )
     dielectric_function = Quantity(
-        type=np.complex128,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXdispersive_material.html#nxdispersive_material-entry-dispersion-x-dispersion-table-dielectric-function-field"
         ],
-        dimensionality="dimensionless",
-        unit="dimensionless",
-        shape=["*"],
         a_nexus_field=NeXusField(
             name="dielectric_function",
             type="NX_COMPLEX",
@@ -515,13 +510,10 @@ class DispersiveMaterialDispersionXDispersionTable(DispersionTable):
         ),
     )
     refractive_index = Quantity(
-        type=np.complex128,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXdispersive_material.html#nxdispersive_material-entry-dispersion-x-dispersion-table-refractive-index-field"
         ],
-        dimensionality="dimensionless",
-        unit="dimensionless",
-        shape=["*"],
         a_nexus_field=NeXusField(
             name="refractive_index",
             type="NX_COMPLEX",
@@ -780,12 +772,10 @@ class DispersiveMaterialDispersionXDispersionFunctionDispersionRepeatedParameter
         ),
     )
     values = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXdispersive_material.html#nxdispersive_material-entry-dispersion-x-dispersion-function-dispersion-repeated-parameter-values-field"
         ],
-        flexible_unit=True,
-        shape=["*"],
         a_nexus_field=NeXusField(
             name="values",
             type="NX_NUMBER",
@@ -905,13 +895,10 @@ class DispersiveMaterialDispersionYDispersionTable(DispersionTable):
         ),
     )
     wavelength = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXdispersive_material.html#nxdispersive_material-entry-dispersion-y-dispersion-table-wavelength-field"
         ],
-        dimensionality="[length]",
-        unit="m",
-        shape=["*"],
         a_nexus_field=NeXusField(
             name="wavelength",
             type="NX_NUMBER",
@@ -921,13 +908,10 @@ class DispersiveMaterialDispersionYDispersionTable(DispersionTable):
         ),
     )
     dielectric_function = Quantity(
-        type=np.complex128,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXdispersive_material.html#nxdispersive_material-entry-dispersion-y-dispersion-table-dielectric-function-field"
         ],
-        dimensionality="dimensionless",
-        unit="dimensionless",
-        shape=["*"],
         a_nexus_field=NeXusField(
             name="dielectric_function",
             type="NX_COMPLEX",
@@ -937,13 +921,10 @@ class DispersiveMaterialDispersionYDispersionTable(DispersionTable):
         ),
     )
     refractive_index = Quantity(
-        type=np.complex128,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXdispersive_material.html#nxdispersive_material-entry-dispersion-y-dispersion-table-refractive-index-field"
         ],
-        dimensionality="dimensionless",
-        unit="dimensionless",
-        shape=["*"],
         a_nexus_field=NeXusField(
             name="refractive_index",
             type="NX_COMPLEX",
@@ -1202,12 +1183,10 @@ class DispersiveMaterialDispersionYDispersionFunctionDispersionRepeatedParameter
         ),
     )
     values = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXdispersive_material.html#nxdispersive_material-entry-dispersion-y-dispersion-function-dispersion-repeated-parameter-values-field"
         ],
-        flexible_unit=True,
-        shape=["*"],
         a_nexus_field=NeXusField(
             name="values",
             type="NX_NUMBER",
@@ -1329,13 +1308,10 @@ class DispersiveMaterialDispersionZDispersionTable(DispersionTable):
         ),
     )
     wavelength = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXdispersive_material.html#nxdispersive_material-entry-dispersion-z-dispersion-table-wavelength-field"
         ],
-        dimensionality="[length]",
-        unit="m",
-        shape=["*"],
         a_nexus_field=NeXusField(
             name="wavelength",
             type="NX_NUMBER",
@@ -1345,13 +1321,10 @@ class DispersiveMaterialDispersionZDispersionTable(DispersionTable):
         ),
     )
     dielectric_function = Quantity(
-        type=np.complex128,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXdispersive_material.html#nxdispersive_material-entry-dispersion-z-dispersion-table-dielectric-function-field"
         ],
-        dimensionality="dimensionless",
-        unit="dimensionless",
-        shape=["*"],
         a_nexus_field=NeXusField(
             name="dielectric_function",
             type="NX_COMPLEX",
@@ -1361,13 +1334,10 @@ class DispersiveMaterialDispersionZDispersionTable(DispersionTable):
         ),
     )
     refractive_index = Quantity(
-        type=np.complex128,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXdispersive_material.html#nxdispersive_material-entry-dispersion-z-dispersion-table-refractive-index-field"
         ],
-        dimensionality="dimensionless",
-        unit="dimensionless",
-        shape=["*"],
         a_nexus_field=NeXusField(
             name="refractive_index",
             type="NX_COMPLEX",
@@ -1626,12 +1596,10 @@ class DispersiveMaterialDispersionZDispersionFunctionDispersionRepeatedParameter
         ),
     )
     values = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXdispersive_material.html#nxdispersive_material-entry-dispersion-z-dispersion-function-dispersion-repeated-parameter-values-field"
         ],
-        flexible_unit=True,
-        shape=["*"],
         a_nexus_field=NeXusField(
             name="values",
             type="NX_NUMBER",

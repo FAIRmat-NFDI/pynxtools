@@ -24,6 +24,7 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 
 import numpy as np
+from nomad.datamodel.hdf5 import HDF5Reference
 from nomad.datamodel.metainfo.annotations import (
     ELNAnnotation,
     ELNComponentEnum,
@@ -84,13 +85,10 @@ class EventData(Object):
     )
 
     event_time_offset = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXevent_data.html#nxevent_data-event-time-offset-field"
         ],
-        dimensionality="[time]",
-        unit="second",
-        shape=["*"],
         description=("A list of timestamps for each event as it comes in."),
         a_nexus_field=NeXusField(
             name="event_time_offset",
@@ -101,13 +99,10 @@ class EventData(Object):
         ),
     )
     event_id = Quantity(
-        type=np.int64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXevent_data.html#nxevent_data-event-id-field"
         ],
-        dimensionality="dimensionless",
-        unit="dimensionless",
-        shape=["*"],
         description=(
             "There will be extra information in the NXdetector to convert "
             "event_id to detector_number. But in short, event_id contains "
@@ -123,13 +118,10 @@ class EventData(Object):
         ),
     )
     event_time_zero = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXevent_data.html#nxevent_data-event-time-zero-field"
         ],
-        dimensionality="[time]",
-        unit="second",
-        shape=["*"],
         description=("The time that each pulse started with respect to the offset"),
         a_nexus_field=NeXusField(
             name="event_time_zero",
@@ -157,13 +149,10 @@ class EventData(Object):
         ),
     )
     event_index = Quantity(
-        type=np.int64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXevent_data.html#nxevent_data-event-index-field"
         ],
-        dimensionality="dimensionless",
-        unit="dimensionless",
-        shape=["*"],
         description=(
             "The index into the event_time_offset, event_id pair for the pulse "
             "occurring at the matching entry in event_time_zero. Each pulse "
@@ -182,13 +171,10 @@ class EventData(Object):
         ),
     )
     pulse_height = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXevent_data.html#nxevent_data-pulse-height-field"
         ],
-        dimensionality="dimensionless",
-        unit="dimensionless",
-        shape=["*", "*"],
         description=(
             "If voltages from the ends of the detector are read out this is "
             "where they go. This list is for all events with information to "

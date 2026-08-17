@@ -24,6 +24,7 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 
 import numpy as np
+from nomad.datamodel.hdf5 import HDF5Reference
 from nomad.datamodel.metainfo.annotations import (
     ELNAnnotation,
     ELNComponentEnum,
@@ -241,12 +242,10 @@ class SpeData(Data):
     )
 
     azimuthal = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXspe.html#nxspe-entry-data-azimuthal-field"
         ],
-        dimensionality="[angle]",
-        unit="radian",
         a_nexus_field=NeXusField(
             name="azimuthal",
             type="NX_FLOAT",
@@ -276,12 +275,10 @@ class SpeData(Data):
         description="Number of dimensions of azimuthal in the HDF5 file.",
     )
     azimuthal_width = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXspe.html#nxspe-entry-data-azimuthal-width-field"
         ],
-        dimensionality="[angle]",
-        unit="radian",
         a_nexus_field=NeXusField(
             name="azimuthal_width",
             type="NX_FLOAT",
@@ -311,12 +308,10 @@ class SpeData(Data):
         description="Number of dimensions of azimuthal_width in the HDF5 file.",
     )
     polar = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXspe.html#nxspe-entry-data-polar-field"
         ],
-        dimensionality="[angle]",
-        unit="radian",
         a_nexus_field=NeXusField(
             name="polar",
             type="NX_FLOAT",
@@ -346,12 +341,10 @@ class SpeData(Data):
         description="Number of dimensions of polar in the HDF5 file.",
     )
     polar_width = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXspe.html#nxspe-entry-data-polar-width-field"
         ],
-        dimensionality="[angle]",
-        unit="radian",
         a_nexus_field=NeXusField(
             name="polar_width",
             type="NX_FLOAT",
@@ -381,12 +374,10 @@ class SpeData(Data):
         description="Number of dimensions of polar_width in the HDF5 file.",
     )
     distance = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXspe.html#nxspe-entry-data-distance-field"
         ],
-        dimensionality="[length]",
-        unit="m",
         a_nexus_field=NeXusField(
             name="distance",
             type="NX_FLOAT",
@@ -416,7 +407,7 @@ class SpeData(Data):
         description="Number of dimensions of distance in the HDF5 file.",
     )
     data_quantity = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXspe.html#nxspe-entry-data-data-field"
         ],
@@ -447,7 +438,7 @@ class SpeData(Data):
         description="Number of dimensions of data_quantity in the HDF5 file.",
     )
     error = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXspe.html#nxspe-entry-data-error-field"
         ],
@@ -478,12 +469,10 @@ class SpeData(Data):
         description="Number of dimensions of error in the HDF5 file.",
     )
     energy = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXspe.html#nxspe-entry-data-energy-field"
         ],
-        dimensionality="[mass] * [length] ** 2 / [time] ** 2",
-        unit="eV",
         a_nexus_field=NeXusField(
             name="energy",
             type="NX_FLOAT",

@@ -28,6 +28,7 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 
 import numpy as np
+from nomad.datamodel.hdf5 import HDF5Reference
 from nomad.datamodel.metainfo.annotations import (
     ELNAnnotation,
     ELNComponentEnum,
@@ -328,13 +329,10 @@ class XasTransInstrumentMonochromator(Monochromator):
     )
 
     energy = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXxas_trans.html#nxxas_trans-entry-instrument-monochromator-energy-field"
         ],
-        dimensionality="[mass] * [length] ** 2 / [time] ** 2",
-        unit="eV",
-        shape=["*"],
         a_nexus_field=NeXusField(
             name="energy",
             type="NX_FLOAT",
@@ -400,13 +398,10 @@ class XasTransInstrumentMonochromatorCrystal(Crystal):
         ),
     )
     reflection = Quantity(
-        type=np.int64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXxas_trans.html#nxxas_trans-entry-instrument-monochromator-crystal-reflection-field"
         ],
-        dimensionality="dimensionless",
-        unit="dimensionless",
-        shape=[3],
         description=("Miller indices (hkl) values of nominal reflection"),
         a_nexus_field=NeXusField(
             name="reflection",

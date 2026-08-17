@@ -24,6 +24,7 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 
 import numpy as np
+from nomad.datamodel.hdf5 import HDF5Reference
 from nomad.datamodel.metainfo.annotations import (
     ELNAnnotation,
     ELNComponentEnum,
@@ -346,12 +347,10 @@ class RefscanInstrumentDetector(Detector):
     )
 
     data_quantity = Quantity(
-        type=np.int64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXrefscan.html#nxrefscan-entry-instrument-detector-data-field"
         ],
-        flexible_unit=True,
-        shape=["*"],
         a_nexus_field=NeXusField(
             name="data",
             type="NX_INT",
@@ -361,13 +360,10 @@ class RefscanInstrumentDetector(Detector):
         ),
     )
     polar_angle = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXrefscan.html#nxrefscan-entry-instrument-detector-polar-angle-field"
         ],
-        dimensionality="[angle]",
-        unit="radian",
-        shape=["*"],
         a_nexus_field=NeXusField(
             name="polar_angle",
             type="NX_FLOAT",
@@ -411,13 +407,10 @@ class RefscanSample(Sample):
         ),
     )
     rotation_angle = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXrefscan.html#nxrefscan-entry-sample-rotation-angle-field"
         ],
-        dimensionality="[angle]",
-        unit="radian",
-        shape=["*"],
         a_nexus_field=NeXusField(
             name="rotation_angle",
             type="NX_FLOAT",
@@ -483,12 +476,10 @@ class RefscanControl(Monitor):
         ),
     )
     data_quantity = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXrefscan.html#nxrefscan-entry-control-data-field"
         ],
-        flexible_unit=True,
-        shape=["*"],
         description=("Monitor counts for each step"),
         a_nexus_field=NeXusField(
             name="data",
@@ -517,12 +508,10 @@ class RefscanData(Data):
     )
 
     data_quantity = Quantity(
-        type=np.int64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXrefscan.html#nxrefscan-entry-data-data-link"
         ],
-        shape=["*"],
-        flexible_unit=True,
         a_nexus_link=NeXusLink(
             name="data",
             target="/NXentry/NXinstrument/NXdetector/data",
@@ -530,13 +519,10 @@ class RefscanData(Data):
         ),
     )
     rotation_angle = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXrefscan.html#nxrefscan-entry-data-rotation-angle-link"
         ],
-        dimensionality="[angle]",
-        unit="radian",
-        shape=["*"],
         a_nexus_link=NeXusLink(
             name="rotation_angle",
             target="/NXentry/NXsample/rotation_angle",
@@ -544,13 +530,10 @@ class RefscanData(Data):
         ),
     )
     polar_angle = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXrefscan.html#nxrefscan-entry-data-polar-angle-link"
         ],
-        dimensionality="[angle]",
-        unit="radian",
-        shape=["*"],
         a_nexus_link=NeXusLink(
             name="polar_angle",
             target="/NXentry/NXinstrument/NXdetector/polar_angle",

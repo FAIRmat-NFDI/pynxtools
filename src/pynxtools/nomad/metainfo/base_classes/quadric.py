@@ -28,6 +28,7 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 
 import numpy as np
+from nomad.datamodel.hdf5 import HDF5Reference
 from nomad.datamodel.metainfo.annotations import (
     ELNAnnotation,
     ELNComponentEnum,
@@ -69,13 +70,10 @@ class Quadric(Object):
     )
 
     parameters_quantity = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXquadric.html#nxquadric-parameters-field"
         ],
-        dimensionality="1 / [length]",
-        unit="1 / m",
-        shape=[10],
         description=(
             "Ten real values of the matrix that defines the quadric surface in "
             "projective space. Ordered Q11, Q12, Q13, Q22, Q23, Q33, P1, P2, P3, "

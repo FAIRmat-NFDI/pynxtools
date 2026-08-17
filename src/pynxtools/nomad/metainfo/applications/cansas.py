@@ -24,6 +24,7 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 
 import numpy as np
+from nomad.datamodel.hdf5 import HDF5Reference
 from nomad.datamodel.metainfo.annotations import (
     ELNAnnotation,
     ELNComponentEnum,
@@ -554,12 +555,10 @@ class CansasData(Data):
         ),
     )
     Q = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXcanSAS.html#nxcansas-entry-data-q-field"
         ],
-        dimensionality="1 / [length]",
-        unit="1 / m",
         description=(
             ".. index:: NXcanSAS (applications); Q Array of :math:`Q` data to "
             "accompany :math:`I`. .. figure:: canSAS/Q-geometry.jpg :width: 60% "
@@ -729,7 +728,7 @@ class CansasData(Data):
         ),
     )
     I = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXcanSAS.html#nxcansas-entry-data-i-field"
         ],
@@ -870,7 +869,7 @@ class CansasData(Data):
         ),
     )
     Idev = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXcanSAS.html#nxcansas-entry-data-idev-field"
         ],
@@ -934,12 +933,10 @@ class CansasData(Data):
         ),
     )
     Qdev = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXcanSAS.html#nxcansas-entry-data-qdev-field"
         ],
-        dimensionality="1 / [length]",
-        unit="1 / m",
         description=(
             ".. index:: NXcanSAS (applications); Qdev Estimated :math:`Q` "
             "**resolution** (usually standard deviation). Must have the same "
@@ -998,12 +995,10 @@ class CansasData(Data):
         ),
     )
     dQw = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXcanSAS.html#nxcansas-entry-data-dqw-field"
         ],
-        dimensionality="1 / [length]",
-        unit="1 / m",
         description=(
             ".. index:: NXcanSAS (applications); dQw :math:`Q` **resolution** "
             "along the axis of scanning (the high-resolution *slit width* "
@@ -1064,12 +1059,10 @@ class CansasData(Data):
         ),
     )
     dQl = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXcanSAS.html#nxcansas-entry-data-dql-field"
         ],
-        dimensionality="1 / [length]",
-        unit="1 / m",
         description=(
             ".. index:: NXcanSAS (applications); dQl :math:`Q` **resolution** "
             "perpendicular to the axis of scanning (the low-resolution *slit "
@@ -1130,12 +1123,10 @@ class CansasData(Data):
         ),
     )
     Qmean = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXcanSAS.html#nxcansas-entry-data-qmean-field"
         ],
-        dimensionality="1 / [length]",
-        unit="1 / m",
         description=(
             "Mean value of :math:`Q` for this data point. Useful when describing "
             "data that has been binned from higher-resolution data. It is "
@@ -1193,12 +1184,10 @@ class CansasData(Data):
         ),
     )
     ShadowFactor = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXcanSAS.html#nxcansas-entry-data-shadowfactor-field"
         ],
-        dimensionality="dimensionless",
-        unit="dimensionless",
         description=(
             "A numerical factor applied to pixels affected by the beam stop "
             "penumbra. Used in data files from NIST/NCNR instruments. See: J.G. "
@@ -1788,13 +1777,10 @@ class CansasInstrumentDetector(Detector):
         a_display={"unit": "m"},
     )
     x_pixel_size = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXcanSAS.html#nxcansas-entry-instrument-detector-x-pixel-size-field"
         ],
-        dimensionality="[length]",
-        unit="m",
-        shape=["*", "*"],
         description=(
             "Size of each detector pixel. If it is scalar all pixels are the same size"
         ),
@@ -2668,12 +2654,10 @@ class CansasTransmissionSpectrum(Data):
         ),
     )
     lambda_quantity = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXcanSAS.html#nxcansas-entry-transmission-spectrum-lambda-field"
         ],
-        dimensionality="[length]",
-        unit="angstrom",
         description=(
             "Wavelength of the radiation. This array is of the same shape as "
             "``T`` and ``Tdev``."
@@ -2707,12 +2691,10 @@ class CansasTransmissionSpectrum(Data):
         description="Number of dimensions of lambda_quantity in the HDF5 file.",
     )
     T = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXcanSAS.html#nxcansas-entry-transmission-spectrum-t-field"
         ],
-        dimensionality="dimensionless",
-        unit="dimensionless",
         description=(
             "Transmission values (:math:`I/I_0`) as a function of wavelength. "
             "This array is of the same shape as ``lambda`` and ``Tdev``."
@@ -2770,12 +2752,10 @@ class CansasTransmissionSpectrum(Data):
         ),
     )
     Tdev = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXcanSAS.html#nxcansas-entry-transmission-spectrum-tdev-field"
         ],
-        dimensionality="dimensionless",
-        unit="dimensionless",
         description=(
             ".. index:: NXcanSAS (applications); Tdev Estimated uncertainty "
             "(usually standard deviation) in :math:`T`. Must have the same units "

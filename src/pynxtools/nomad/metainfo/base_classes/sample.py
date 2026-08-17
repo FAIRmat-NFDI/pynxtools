@@ -24,6 +24,7 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 
 import numpy as np
+from nomad.datamodel.hdf5 import HDF5Reference
 from nomad.datamodel.metainfo import basesections
 from nomad.datamodel.metainfo.annotations import (
     ELNAnnotation,
@@ -335,13 +336,10 @@ class Sample(Component, basesections.CompositeSystem):
         a_display={"unit": "kelvin"},
     )
     electric_field = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXsample.html#nxsample-electric-field-field"
         ],
-        dimensionality="[mass] * [length] ** 2 / [time] ** 3 / [current]",
-        unit="volt",
-        shape=["*"],
         description=("Applied electric field"),
         a_nexus_field=NeXusField(
             name="electric_field",
@@ -369,12 +367,10 @@ class Sample(Component, basesections.CompositeSystem):
         ),
     )
     magnetic_field_quantity = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXsample.html#nxsample-magnetic-field-field"
         ],
-        flexible_unit=True,
-        shape=["*"],
         description=("Applied magnetic field"),
         a_nexus_field=NeXusField(
             name="magnetic_field",
@@ -402,12 +398,10 @@ class Sample(Component, basesections.CompositeSystem):
         ),
     )
     stress_field = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXsample.html#nxsample-stress-field-field"
         ],
-        flexible_unit=True,
-        shape=["*"],
         description=("Applied external stress field"),
         a_nexus_field=NeXusField(
             name="stress_field",
@@ -435,13 +429,10 @@ class Sample(Component, basesections.CompositeSystem):
         ),
     )
     pressure = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXsample.html#nxsample-pressure-field"
         ],
-        dimensionality="[mass] / [length] / [time] ** 2",
-        unit="mbar",
-        shape=["*"],
         description=("Applied pressure"),
         a_nexus_field=NeXusField(
             name="pressure",
@@ -472,13 +463,10 @@ class Sample(Component, basesections.CompositeSystem):
         a_display={"unit": "dimensionless"},
     )
     unit_cell_abc = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXsample.html#nxsample-unit-cell-abc-field"
         ],
-        dimensionality="[length]",
-        unit="m",
-        shape=[3],
         description=("Crystallography unit cell parameters a, b, and c"),
         a_nexus_field=NeXusField(
             name="unit_cell_abc",
@@ -489,13 +477,10 @@ class Sample(Component, basesections.CompositeSystem):
         ),
     )
     unit_cell_alphabetagamma = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXsample.html#nxsample-unit-cell-alphabetagamma-field"
         ],
-        dimensionality="[angle]",
-        unit="radian",
-        shape=[3],
         description=("Crystallography unit cell parameters alpha, beta, and gamma"),
         a_nexus_field=NeXusField(
             name="unit_cell_alphabetagamma",
@@ -506,13 +491,10 @@ class Sample(Component, basesections.CompositeSystem):
         ),
     )
     unit_cell = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXsample.html#nxsample-unit-cell-field"
         ],
-        dimensionality="[length]",
-        unit="m",
-        shape=["*", 6],
         description=("Unit cell parameters (lengths and angles)"),
         a_nexus_field=NeXusField(
             name="unit_cell",
@@ -523,13 +505,10 @@ class Sample(Component, basesections.CompositeSystem):
         ),
     )
     unit_cell_volume = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXsample.html#nxsample-unit-cell-volume-field"
         ],
-        dimensionality="[length] ** 3",
-        unit="m ** 3",
-        shape=["*"],
         description=("Volume of the unit cell"),
         a_nexus_field=NeXusField(
             name="unit_cell_volume",
@@ -540,13 +519,10 @@ class Sample(Component, basesections.CompositeSystem):
         ),
     )
     sample_orientation = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXsample.html#nxsample-sample-orientation-field"
         ],
-        dimensionality="[angle]",
-        unit="radian",
-        shape=[3],
         description=(
             "This will follow the Busing-Levy convention: W. R. Busing and H. A. "
             "Levy (1967). Acta Cryst. 22, 457-464"
@@ -560,11 +536,10 @@ class Sample(Component, basesections.CompositeSystem):
         ),
     )
     orientation_matrix = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXsample.html#nxsample-orientation-matrix-field"
         ],
-        shape=["*", 3, 3],
         description=(
             "Orientation matrix of single crystal sample using Busing-Levy "
             "convention: W. R. Busing and H. A. Levy (1967). Acta Cryst. 22, "
@@ -578,11 +553,10 @@ class Sample(Component, basesections.CompositeSystem):
         ),
     )
     ub_matrix = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXsample.html#nxsample-ub-matrix-field"
         ],
-        shape=["*", 3, 3],
         description=(
             "UB matrix of single crystal sample using Busing-Levy convention: W. "
             "R. Busing and H. A. Levy (1967). Acta Cryst. 22, 457-464. This is "
@@ -597,13 +571,10 @@ class Sample(Component, basesections.CompositeSystem):
         ),
     )
     mass = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXsample.html#nxsample-mass-field"
         ],
-        dimensionality="[mass]",
-        unit="gram",
-        shape=["*"],
         description=("Mass of sample"),
         a_nexus_field=NeXusField(
             name="mass",
@@ -614,13 +585,10 @@ class Sample(Component, basesections.CompositeSystem):
         ),
     )
     density = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXsample.html#nxsample-density-field"
         ],
-        dimensionality="[mass] / [length] ** 3",
-        unit="gram / m ** 3",
-        shape=["*"],
         description=("Density of sample"),
         a_nexus_field=NeXusField(
             name="density",
@@ -631,13 +599,10 @@ class Sample(Component, basesections.CompositeSystem):
         ),
     )
     relative_molecular_mass = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXsample.html#nxsample-relative-molecular-mass-field"
         ],
-        dimensionality="[mass]",
-        unit="gram",
-        shape=["*"],
         description=("Relative Molecular Mass of sample"),
         a_nexus_field=NeXusField(
             name="relative_molecular_mass",
@@ -759,11 +724,10 @@ class Sample(Component, basesections.CompositeSystem):
         ),
     )
     component = Quantity(
-        type=str,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXsample.html#nxsample-component-field"
         ],
-        shape=["*"],
         description=("Details of the component of the sample and/or can"),
         a_nexus_field=NeXusField(
             name="component",
@@ -773,11 +737,10 @@ class Sample(Component, basesections.CompositeSystem):
         ),
     )
     sample_component_quantity = Quantity(
-        type=MEnum(["sample", "can", "atmosphere", "kit"]),
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXsample.html#nxsample-sample-component-field"
         ],
-        shape=["*"],
         description=("Type of component"),
         a_nexus_field=NeXusField(
             name="sample_component",
@@ -788,13 +751,10 @@ class Sample(Component, basesections.CompositeSystem):
         ),
     )
     concentration = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXsample.html#nxsample-concentration-field"
         ],
-        dimensionality="[mass] / [length] ** 3",
-        unit="gram / m ** 3",
-        shape=["*"],
         description=("Concentration of each component"),
         a_nexus_field=NeXusField(
             name="concentration",
@@ -805,11 +765,10 @@ class Sample(Component, basesections.CompositeSystem):
         ),
     )
     volume_fraction = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXsample.html#nxsample-volume-fraction-field"
         ],
-        shape=["*"],
         description=("Volume fraction of each component"),
         a_nexus_field=NeXusField(
             name="volume_fraction",
@@ -819,13 +778,10 @@ class Sample(Component, basesections.CompositeSystem):
         ),
     )
     scattering_length_density = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXsample.html#nxsample-scattering-length-density-field"
         ],
-        dimensionality="1 / [length] ** 2",
-        unit="1 / m ** 2",
-        shape=["*"],
         description=("Scattering length density of each component"),
         a_nexus_field=NeXusField(
             name="scattering_length_density",
@@ -871,11 +827,10 @@ class Sample(Component, basesections.CompositeSystem):
         ),
     )
     space_group = Quantity(
-        type=str,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXsample.html#nxsample-space-group-field"
         ],
-        shape=["*"],
         description=("Crystallographic space group"),
         a_nexus_field=NeXusField(
             name="space_group",
@@ -885,11 +840,10 @@ class Sample(Component, basesections.CompositeSystem):
         ),
     )
     point_group = Quantity(
-        type=str,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXsample.html#nxsample-point-group-field"
         ],
-        shape=["*"],
         description=("Crystallographic point group, deprecated if space_group present"),
         a_nexus_field=NeXusField(
             name="point_group",

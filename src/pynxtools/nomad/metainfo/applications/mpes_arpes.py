@@ -24,6 +24,7 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 
 import numpy as np
+from nomad.datamodel.hdf5 import HDF5Reference
 from nomad.datamodel.metainfo.annotations import (
     ELNAnnotation,
     ELNComponentEnum,
@@ -1459,12 +1460,10 @@ class MpesArpesData(MpesData):
         ),
     )
     energy = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXmpes_arpes.html#nxmpes_arpes-entry-data-energy-field"
         ],
-        dimensionality="[mass] * [length] ** 2 / [time] ** 2",
-        unit="eV",
         description=("Values on the energy axis."),
         a_nexus_field=NeXusField(
             name="energy",
@@ -1515,12 +1514,10 @@ class MpesArpesData(MpesData):
         ),
     )
     angular0 = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXmpes_arpes.html#nxmpes_arpes-entry-data-angular0-field"
         ],
-        dimensionality="[angle]",
-        unit="radian",
         description=("Trace of the first angular axis."),
         a_nexus_field=NeXusField(
             name="angular0",
@@ -1551,12 +1548,10 @@ class MpesArpesData(MpesData):
         description="Number of dimensions of angular0 in the HDF5 file.",
     )
     angular1 = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXmpes_arpes.html#nxmpes_arpes-entry-data-angular1-field"
         ],
-        dimensionality="[angle]",
-        unit="radian",
         description=(
             "Trace of the second axis. Could be linked from the respective "
             "``@reference`` field."
@@ -1590,11 +1585,10 @@ class MpesArpesData(MpesData):
         description="Number of dimensions of angular1 in the HDF5 file.",
     )
     data_quantity = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXmpes_arpes.html#nxmpes_arpes-entry-data-data-field"
         ],
-        flexible_unit=True,
         description=(
             "Represents a measurement of photoemission counts over a "
             "three-dimensional space where the varied axes are energy, and one "

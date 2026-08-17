@@ -28,6 +28,7 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 
 import numpy as np
+from nomad.datamodel.hdf5 import HDF5Reference
 from nomad.datamodel.metainfo.annotations import (
     ELNAnnotation,
     ELNComponentEnum,
@@ -261,13 +262,11 @@ class SpmTemperatureSensorData(Data):
     )
 
     DATA = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXspm_temperature_sensor.html#nxspm_temperature_sensor-data-data-field"
         ],
         variable=True,
-        dimensionality="[temperature]",
-        unit="kelvin",
         description=("Temperature data collected during the scan."),
         a_nexus_field=NeXusField(
             name="DATA",
@@ -298,12 +297,11 @@ class SpmTemperatureSensorData(Data):
         description="Number of dimensions of DATA in the HDF5 file.",
     )
     AXISNAME = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXspm_temperature_sensor.html#nxspm_temperature_sensor-data-axisname-field"
         ],
         variable=True,
-        flexible_unit=True,
         description=("independent axis data like time or position or bias voltage."),
         a_nexus_field=NeXusField(
             name="AXISNAME",

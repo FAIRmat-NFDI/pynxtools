@@ -28,6 +28,7 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 
 import numpy as np
+from nomad.datamodel.hdf5 import HDF5Reference
 from nomad.datamodel.metainfo.annotations import (
     ELNAnnotation,
     ELNComponentEnum,
@@ -157,12 +158,10 @@ class XasPfy(Xas):
         ),
     )
     intensity = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXxas_pfy.html#nxxas_pfy-entry-intensity-field"
         ],
-        flexible_unit=True,
-        shape=["*"],
         description=(
             "The ratio :math:`I_f/I_0`, where :math:`I_f` is the selected "
             "fluorescence intensity and :math:`I_0` is the incident beam "
@@ -177,13 +176,10 @@ class XasPfy(Xas):
         ),
     )
     emission_energy_window = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXxas_pfy.html#nxxas_pfy-entry-emission-energy-window-field"
         ],
-        dimensionality="[mass] * [length] ** 2 / [time] ** 2",
-        unit="eV",
-        shape=[2],
         description=(
             "The lower and upper bounds :math:`[e_{min}, e_{max}]` of the "
             "detected emission energy window. This is the energy range over "
@@ -1215,13 +1211,10 @@ class XasPfyBeamlineCoordinateSystem(CoordinateSystem):
         ),
     )
     x = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXxas_pfy.html#nxxas_pfy-entry-beamline-coordinate-system-x-field"
         ],
-        dimensionality="[length]",
-        unit="m",
-        shape=[3],
         a_nexus_field=NeXusField(
             name="x",
             type="NX_NUMBER",
@@ -1231,13 +1224,10 @@ class XasPfyBeamlineCoordinateSystem(CoordinateSystem):
         ),
     )
     y = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXxas_pfy.html#nxxas_pfy-entry-beamline-coordinate-system-y-field"
         ],
-        dimensionality="[length]",
-        unit="m",
-        shape=[3],
         a_nexus_field=NeXusField(
             name="y",
             type="NX_NUMBER",
@@ -1247,13 +1237,10 @@ class XasPfyBeamlineCoordinateSystem(CoordinateSystem):
         ),
     )
     z = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXxas_pfy.html#nxxas_pfy-entry-beamline-coordinate-system-z-field"
         ],
-        dimensionality="[length]",
-        unit="m",
-        shape=[3],
         a_nexus_field=NeXusField(
             name="z",
             type="NX_NUMBER",
@@ -1877,12 +1864,10 @@ class XasPfyInstrumentI0(Detector):
     )
 
     data_quantity = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXxas_pfy.html#nxxas_pfy-entry-instrument-i0-data-field"
         ],
-        flexible_unit=True,
-        shape=["*"],
         a_nexus_field=NeXusField(
             name="data",
             type="NX_NUMBER",
@@ -2323,12 +2308,10 @@ class XasPfyInstrumentIfluor(Detector):
     )
 
     data_quantity = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXxas_pfy.html#nxxas_pfy-entry-instrument-ifluor-data-field"
         ],
-        flexible_unit=True,
-        shape=["*"],
         a_nexus_field=NeXusField(
             name="data",
             type="NX_NUMBER",
@@ -2338,13 +2321,10 @@ class XasPfyInstrumentIfluor(Detector):
         ),
     )
     dead_time = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXxas_pfy.html#nxxas_pfy-entry-instrument-ifluor-dead-time-field"
         ],
-        dimensionality="[time]",
-        unit="second",
-        shape=["*"],
         description=("Detector dead time per energy point."),
         a_nexus_field=NeXusField(
             name="dead_time",
@@ -2355,13 +2335,10 @@ class XasPfyInstrumentIfluor(Detector):
         ),
     )
     count_time = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXxas_pfy.html#nxxas_pfy-entry-instrument-ifluor-count-time-field"
         ],
-        dimensionality="[time]",
-        unit="second",
-        shape=["*"],
         description=("Detector live time per energy point."),
         a_nexus_field=NeXusField(
             name="count_time",
@@ -2661,11 +2638,10 @@ class XasPfyCollection(Collection):
     )
 
     detector_channels = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXxas_pfy.html#nxxas_pfy-entry-collection-detector-channels-field"
         ],
-        shape=["*", "*"],
         description=(
             "Raw channel counts per incident energy point for the selected "
             "channels of an energy-dispersive detector. Only the channels within "
@@ -2681,11 +2657,10 @@ class XasPfyCollection(Collection):
         ),
     )
     detector_roi = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXxas_pfy.html#nxxas_pfy-entry-collection-detector-roi-field"
         ],
-        shape=["*", "*", "*"],
         description=(
             "Raw detector image within the ROI per incident energy point. Axis 0 "
             "is the energy scan axis; axes 1 and 2 span the 2D pixel grid of the "

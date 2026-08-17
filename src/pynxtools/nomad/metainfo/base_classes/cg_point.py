@@ -24,6 +24,7 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 
 import numpy as np
+from nomad.datamodel.hdf5 import HDF5Reference
 from nomad.datamodel.metainfo.annotations import (
     ELNAnnotation,
     ELNComponentEnum,
@@ -79,12 +80,10 @@ class CgPoint(CgPrimitive):
     )
 
     position = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXcg_point.html#nxcg_point-position-field"
         ],
-        flexible_unit=True,
-        shape=["*", "*"],
         description=("Coordinates of the points."),
         a_nexus_field=NeXusField(
             name="position",
@@ -95,13 +94,10 @@ class CgPoint(CgPrimitive):
         ),
     )
     time = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXcg_point.html#nxcg_point-time-field"
         ],
-        dimensionality="[time]",
-        unit="second",
-        shape=["*"],
         description=(
             "(Elapsed) time for each point. If the field time is needed "
             "contextualize the time_offset relative to which time values are "
@@ -116,11 +112,10 @@ class CgPoint(CgPrimitive):
         ),
     )
     timestamp = Quantity(
-        type=Datetime,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXcg_point.html#nxcg_point-timestamp-field"
         ],
-        shape=["*"],
         description=("ISO8601 with local time zone offset for each point."),
         a_nexus_field=NeXusField(
             name="timestamp",

@@ -28,6 +28,7 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 
 import numpy as np
+from nomad.datamodel.hdf5 import HDF5Reference
 from nomad.datamodel.metainfo.annotations import (
     ELNAnnotation,
     ELNComponentEnum,
@@ -237,13 +238,10 @@ class MicrostructurePfPf(Data):
     )
 
     intensity = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXmicrostructure_pf.html#nxmicrostructure_pf-pf-intensity-field"
         ],
-        dimensionality="dimensionless",
-        unit="dimensionless",
-        shape=["*", "*"],
         description=("Pole figure intensity."),
         a_nexus_field=NeXusField(
             name="intensity",
@@ -270,12 +268,10 @@ class MicrostructurePfPf(Data):
         description="Number of dimensions of intensity in the HDF5 file.",
     )
     axis_y = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXmicrostructure_pf.html#nxmicrostructure_pf-pf-axis-y-field"
         ],
-        flexible_unit=True,
-        shape=["*"],
         description=(
             "Pixel center along y direction in the equatorial plane of a "
             "stereographic projection of the unit sphere."
@@ -305,12 +301,10 @@ class MicrostructurePfPf(Data):
         description="Number of dimensions of axis_y in the HDF5 file.",
     )
     axis_x = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXmicrostructure_pf.html#nxmicrostructure_pf-pf-axis-x-field"
         ],
-        flexible_unit=True,
-        shape=["*"],
         description=(
             "Pixel center along x direction in the equatorial plane of a "
             "stereographic projection of the unit sphere."

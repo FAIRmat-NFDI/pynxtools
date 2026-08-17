@@ -24,6 +24,7 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 
 import numpy as np
+from nomad.datamodel.hdf5 import HDF5Reference
 from nomad.datamodel.metainfo.annotations import (
     ELNAnnotation,
     ELNComponentEnum,
@@ -1035,12 +1036,10 @@ class OpticalSpectroscopyInstrumentBeamTYPE(Beam):
         ),
     )
     incident_polarization = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXoptical_spectroscopy.html#nxoptical_spectroscopy-entry-instrument-beam-type-incident-polarization-field"
         ],
-        flexible_unit=True,
-        shape=["*", 2],
         a_nexus_field=NeXusField(
             name="incident_polarization",
             type="NX_NUMBER",
@@ -1050,13 +1049,10 @@ class OpticalSpectroscopyInstrumentBeamTYPE(Beam):
         ),
     )
     extent = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXoptical_spectroscopy.html#nxoptical_spectroscopy-entry-instrument-beam-type-extent-field"
         ],
-        dimensionality="[length]",
-        unit="m",
-        shape=["*", 2],
         a_nexus_field=NeXusField(
             name="extent",
             type="NX_FLOAT",
@@ -1277,7 +1273,7 @@ class OpticalSpectroscopyInstrumentDetectorTYPERawData(Data):
         ),
     )
     raw = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXoptical_spectroscopy.html#nxoptical_spectroscopy-entry-instrument-detector-type-raw-data-raw-field"
         ],
@@ -2104,12 +2100,10 @@ class OpticalSpectroscopyInstrumentTemperatureSensor(Sensor):
         ),
     )
     value = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXoptical_spectroscopy.html#nxoptical_spectroscopy-entry-instrument-temperature-sensor-value-field"
         ],
-        flexible_unit=True,
-        shape=["*"],
         a_nexus_field=NeXusField(
             name="value",
             type="NX_FLOAT",
@@ -3070,13 +3064,10 @@ class OpticalSpectroscopySampleEnvironment(Environment):
         ),
     )
     sample_medium_refractive_indices = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXoptical_spectroscopy.html#nxoptical_spectroscopy-entry-sample-environment-sample-medium-refractive-indices-field"
         ],
-        dimensionality="dimensionless",
-        unit="dimensionless",
-        shape=[2, "*"],
         description=(
             "Array of pairs of complex refractive indices n + ik of the medium "
             "for every measured spectral point/wavelength/energy. Only necessary "
@@ -3197,12 +3188,10 @@ class OpticalSpectroscopyMeasurementDataCalibrationTYPEWavelengthCalibration(
     )
 
     calibrated_axis = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXoptical_spectroscopy.html#nxoptical_spectroscopy-entry-measurement-data-calibration-type-wavelength-calibration-calibrated-axis-field"
         ],
-        flexible_unit=True,
-        shape=["*"],
         description=("Calibrated wavelength axis."),
         a_nexus_field=NeXusField(
             name="calibrated_axis",
@@ -3241,13 +3230,10 @@ class OpticalSpectroscopyDerivedParameters(Process):
     )
 
     depolarization = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXoptical_spectroscopy.html#nxoptical_spectroscopy-entry-derived-parameters-depolarization-field"
         ],
-        dimensionality="dimensionless",
-        unit="dimensionless",
-        shape=["*", 1, "*"],
         description=("Light loss due to depolarization as a value in [0-1]."),
         a_nexus_field=NeXusField(
             name="depolarization",
@@ -3258,13 +3244,10 @@ class OpticalSpectroscopyDerivedParameters(Process):
         ),
     )
     jones_quality_factor = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXoptical_spectroscopy.html#nxoptical_spectroscopy-entry-derived-parameters-jones-quality-factor-field"
         ],
-        dimensionality="dimensionless",
-        unit="dimensionless",
-        shape=["*", 1, "*"],
         description=("Jones quality factor."),
         a_nexus_field=NeXusField(
             name="jones_quality_factor",
@@ -3275,13 +3258,10 @@ class OpticalSpectroscopyDerivedParameters(Process):
         ),
     )
     reflectivity = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXoptical_spectroscopy.html#nxoptical_spectroscopy-entry-derived-parameters-reflectivity-field"
         ],
-        dimensionality="dimensionless",
-        unit="dimensionless",
-        shape=["*", 1, "*"],
         description=("Reflectivity."),
         a_nexus_field=NeXusField(
             name="reflectivity",
@@ -3292,13 +3272,10 @@ class OpticalSpectroscopyDerivedParameters(Process):
         ),
     )
     transmittance = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXoptical_spectroscopy.html#nxoptical_spectroscopy-entry-derived-parameters-transmittance-field"
         ],
-        dimensionality="dimensionless",
-        unit="dimensionless",
-        shape=["*", 1, "*"],
         description=("Transmittance."),
         a_nexus_field=NeXusField(
             name="transmittance",

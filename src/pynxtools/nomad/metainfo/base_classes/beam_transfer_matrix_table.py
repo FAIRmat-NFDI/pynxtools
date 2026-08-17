@@ -24,6 +24,7 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 
 import numpy as np
+from nomad.datamodel.hdf5 import HDF5Reference
 from nomad.datamodel.metainfo.annotations import (
     ELNAnnotation,
     ELNComponentEnum,
@@ -95,11 +96,10 @@ class BeamTransferMatrixTable(Object):
         ),
     )
     matrix_elements = Quantity(
-        type=str,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXbeam_transfer_matrix_table.html#nxbeam_transfer_matrix_table-matrix-elements-field"
         ],
-        shape=["*"],
         description=(
             "Please list in this array the column and row names used in your "
             "actual data. That is in the case of aperture ['diameter'] or focal "
@@ -114,12 +114,11 @@ class BeamTransferMatrixTable(Object):
         ),
     )
     TRANSFER_MATRIX = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXbeam_transfer_matrix_table.html#nxbeam_transfer_matrix_table-transfer-matrix-field"
         ],
         variable=True,
-        shape=["*", "*"],
         description=(
             "Contains the datastructure which relates beam properties of an "
             "input and output beam as result of the input beam interaction with "

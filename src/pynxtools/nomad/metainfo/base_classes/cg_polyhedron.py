@@ -24,6 +24,7 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 
 import numpy as np
+from nomad.datamodel.hdf5 import HDF5Reference
 from nomad.datamodel.metainfo.annotations import (
     ELNAnnotation,
     ELNComponentEnum,
@@ -115,13 +116,10 @@ class CgPolyhedron(CgPrimitive):
     )
 
     number_of_faces = Quantity(
-        type=np.int64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXcg_polyhedron.html#nxcg_polyhedron-number-of-faces-field"
         ],
-        dimensionality="dimensionless",
-        unit="dimensionless",
-        shape=["*"],
         description=(
             "The number of faces for each polyhedron. Faces of adjoining "
             "polyhedra are counted for each polyhedron."
@@ -135,13 +133,10 @@ class CgPolyhedron(CgPrimitive):
         ),
     )
     face_area = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXcg_polyhedron.html#nxcg_polyhedron-face-area-field"
         ],
-        dimensionality="[length] ** 2",
-        unit="m ** 2",
-        shape=["*"],
         description=("Area of each of faces."),
         a_nexus_field=NeXusField(
             name="face_area",
@@ -171,13 +166,10 @@ class CgPolyhedron(CgPrimitive):
         ),
     )
     edge_length = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXcg_polyhedron.html#nxcg_polyhedron-edge-length-field"
         ],
-        dimensionality="[length]",
-        unit="m",
-        shape=["*"],
         description=("Length of each edge."),
         a_nexus_field=NeXusField(
             name="edge_length",

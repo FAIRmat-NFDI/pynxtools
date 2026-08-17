@@ -24,6 +24,7 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 
 import numpy as np
+from nomad.datamodel.hdf5 import HDF5Reference
 from nomad.datamodel.metainfo.annotations import (
     ELNAnnotation,
     ELNComponentEnum,
@@ -234,11 +235,10 @@ class Guide(Component):
         ),
     )
     m_value = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXguide.html#nxguide-m-value-field"
         ],
-        shape=["*"],
         description=(
             "The ``m`` value for a supermirror, which defines the supermirror "
             "regime in multiples of the critical angle of Nickel."
@@ -251,11 +251,10 @@ class Guide(Component):
         ),
     )
     substrate_material = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXguide.html#nxguide-substrate-material-field"
         ],
-        shape=["*"],
         description=("TODO: documentation needed"),
         a_nexus_field=NeXusField(
             name="substrate_material",
@@ -265,13 +264,10 @@ class Guide(Component):
         ),
     )
     substrate_thickness = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXguide.html#nxguide-substrate-thickness-field"
         ],
-        dimensionality="[length]",
-        unit="m",
-        shape=["*"],
         description=("TODO: documentation needed"),
         a_nexus_field=NeXusField(
             name="substrate_thickness",
@@ -282,11 +278,10 @@ class Guide(Component):
         ),
     )
     coating_material = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXguide.html#nxguide-coating-material-field"
         ],
-        shape=["*"],
         description=("TODO: documentation needed"),
         a_nexus_field=NeXusField(
             name="coating_material",
@@ -296,13 +291,10 @@ class Guide(Component):
         ),
     )
     substrate_roughness = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXguide.html#nxguide-substrate-roughness-field"
         ],
-        dimensionality="[length]",
-        unit="m",
-        shape=["*"],
         description=("TODO: documentation needed"),
         a_nexus_field=NeXusField(
             name="substrate_roughness",
@@ -313,13 +305,10 @@ class Guide(Component):
         ),
     )
     coating_roughness = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXguide.html#nxguide-coating-roughness-field"
         ],
-        dimensionality="[length]",
-        unit="m",
-        shape=["*"],
         description=("TODO: documentation needed"),
         a_nexus_field=NeXusField(
             name="coating_roughness",
@@ -472,11 +461,10 @@ class GuideReflectivity(Data):
         ),
     )
     data_quantity = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXguide.html#nxguide-reflectivity-data-field"
         ],
-        shape=["*", "*"],
         description=("reflectivity of each surface as a function of wavelength"),
         a_nexus_field=NeXusField(
             name="data",
@@ -502,12 +490,10 @@ class GuideReflectivity(Data):
         description="Number of dimensions of data_quantity in the HDF5 file.",
     )
     surface = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXguide.html#nxguide-reflectivity-surface-field"
         ],
-        flexible_unit=True,
-        shape=["*"],
         description=(
             "List of surfaces. Probably best to use index numbers but the "
             "specification is very loose."
@@ -537,13 +523,10 @@ class GuideReflectivity(Data):
         description="Number of dimensions of surface in the HDF5 file.",
     )
     wavelength = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXguide.html#nxguide-reflectivity-wavelength-field"
         ],
-        dimensionality="[length]",
-        unit="angstrom",
-        shape=["*"],
         description=("wavelengths at which reflectivity was measured"),
         a_nexus_field=NeXusField(
             name="wavelength",

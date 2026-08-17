@@ -28,6 +28,7 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 
 import numpy as np
+from nomad.datamodel.hdf5 import HDF5Reference
 from nomad.datamodel.metainfo.annotations import (
     ELNAnnotation,
     ELNComponentEnum,
@@ -641,12 +642,10 @@ class SensorScanInstrumentEnvironmentSensor(Sensor):
     )
 
     value = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXsensor_scan.html#nxsensor_scan-entry-instrument-environment-sensor-value-field"
         ],
-        flexible_unit=True,
-        shape=["*"],
         description=(
             "For each point in the scan space, either the nominal setpoint of an "
             "independently scanned controller or a representative average value "

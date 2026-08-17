@@ -24,6 +24,7 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 
 import numpy as np
+from nomad.datamodel.hdf5 import HDF5Reference
 from nomad.datamodel.metainfo.annotations import (
     ELNAnnotation,
     ELNComponentEnum,
@@ -197,11 +198,10 @@ class CgPrimitive(Object):
         a_display={"unit": "dimensionless"},
     )
     indices = Quantity(
-        type=np.int64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXcg_primitive.html#nxcg_primitive-indices-field"
         ],
-        shape=["*"],
         description=("Identifier of each member for explicit indexing."),
         a_nexus_field=NeXusField(
             name="indices",
@@ -211,12 +211,10 @@ class CgPrimitive(Object):
         ),
     )
     center = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXcg_primitive.html#nxcg_primitive-center-field"
         ],
-        flexible_unit=True,
-        shape=["*", "*"],
         description=("The center of each primitive"),
         a_nexus_field=NeXusField(
             name="center",
@@ -227,11 +225,10 @@ class CgPrimitive(Object):
         ),
     )
     is_center_of_mass = Quantity(
-        type=bool,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXcg_primitive.html#nxcg_primitive-is-center-of-mass-field"
         ],
-        shape=["*"],
         description=("True if the center is a center of mass."),
         a_nexus_field=NeXusField(
             name="is_center_of_mass",
@@ -241,13 +238,10 @@ class CgPrimitive(Object):
         ),
     )
     shape = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXcg_primitive.html#nxcg_primitive-shape-field"
         ],
-        dimensionality="[length]",
-        unit="m",
-        shape=["*", "*"],
         description=("Shape of each primitive"),
         a_nexus_field=NeXusField(
             name="shape",
@@ -258,13 +252,10 @@ class CgPrimitive(Object):
         ),
     )
     length = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXcg_primitive.html#nxcg_primitive-length-field"
         ],
-        dimensionality="[length]",
-        unit="m",
-        shape=["*"],
         description=(
             "Length of each primitive Often the term is associated with the "
             "assumption that one edge is parallel to an axis of the coordinate "
@@ -279,13 +270,10 @@ class CgPrimitive(Object):
         ),
     )
     width = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXcg_primitive.html#nxcg_primitive-width-field"
         ],
-        dimensionality="[length]",
-        unit="m",
-        shape=["*"],
         description=(
             "Width of each primitive Often the term is associated with the "
             "assumption that one edge is parallel to an axis of the coordinate "
@@ -300,13 +288,10 @@ class CgPrimitive(Object):
         ),
     )
     height = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXcg_primitive.html#nxcg_primitive-height-field"
         ],
-        dimensionality="[length]",
-        unit="m",
-        shape=["*"],
         description=(
             "Height of each primitive Often the term is associated with the "
             "assumption that one edge is parallel to an axis of the coordinate "
@@ -321,11 +306,10 @@ class CgPrimitive(Object):
         ),
     )
     is_closed = Quantity(
-        type=bool,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXcg_primitive.html#nxcg_primitive-is-closed-field"
         ],
-        shape=["*"],
         description=(
             "True if primitive is closed such that it has properties like area "
             "or volume."
@@ -338,12 +322,10 @@ class CgPrimitive(Object):
         ),
     )
     volume = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXcg_primitive.html#nxcg_primitive-volume-field"
         ],
-        flexible_unit=True,
-        shape=["*"],
         description=(
             "Volume of each primitive. Set to NaN if does not apply for "
             "primitives for which is_closed is False. Volume is an N-D concept "
@@ -359,13 +341,10 @@ class CgPrimitive(Object):
         ),
     )
     area = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXcg_primitive.html#nxcg_primitive-area-field"
         ],
-        dimensionality="[length] ** 2",
-        unit="m ** 2",
-        shape=["*"],
         description=(
             "Alias for surface_area of each primitive. Set to NaN if does not "
             "apply for primitives for which is_closed is False."
@@ -379,13 +358,10 @@ class CgPrimitive(Object):
         ),
     )
     orientation = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXcg_primitive.html#nxcg_primitive-orientation-field"
         ],
-        dimensionality="dimensionless",
-        unit="dimensionless",
-        shape=["*", "*"],
         description=(
             "Direction unit vector which points along the longest principal axis "
             "of each primitive. Use the depends_on attribute to specify in which "

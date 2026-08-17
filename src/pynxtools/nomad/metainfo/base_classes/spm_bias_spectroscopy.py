@@ -28,6 +28,7 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 
 import numpy as np
+from nomad.datamodel.hdf5 import HDF5Reference
 from nomad.datamodel.metainfo.annotations import (
     ELNAnnotation,
     ELNComponentEnum,
@@ -510,13 +511,10 @@ class SpmBiasSpectroscopyBiasSweepSpatialLocation(CoordinateSystem):
     )
 
     x = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXspm_bias_spectroscopy.html#nxspm_bias_spectroscopy-bias-sweep-spatial-location-x-field"
         ],
-        dimensionality="[length]",
-        unit="m",
-        shape=[3],
         a_nexus_field=NeXusField(
             name="x",
             type="NX_NUMBER",
@@ -526,13 +524,10 @@ class SpmBiasSpectroscopyBiasSweepSpatialLocation(CoordinateSystem):
         ),
     )
     y = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXspm_bias_spectroscopy.html#nxspm_bias_spectroscopy-bias-sweep-spatial-location-y-field"
         ],
-        dimensionality="[length]",
-        unit="m",
-        shape=[3],
         a_nexus_field=NeXusField(
             name="y",
             type="NX_NUMBER",
@@ -542,13 +537,10 @@ class SpmBiasSpectroscopyBiasSweepSpatialLocation(CoordinateSystem):
         ),
     )
     z = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXspm_bias_spectroscopy.html#nxspm_bias_spectroscopy-bias-sweep-spatial-location-z-field"
         ],
-        dimensionality="[length]",
-        unit="m",
-        shape=[3],
         a_nexus_field=NeXusField(
             name="z",
             type="NX_NUMBER",

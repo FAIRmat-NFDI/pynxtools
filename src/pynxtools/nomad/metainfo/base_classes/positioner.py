@@ -24,6 +24,7 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 
 import numpy as np
+from nomad.datamodel.hdf5 import HDF5Reference
 from nomad.datamodel.metainfo.annotations import (
     ELNAnnotation,
     ELNComponentEnum,
@@ -104,12 +105,10 @@ class Positioner(Component):
         ),
     )
     value = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXpositioner.html#nxpositioner-value-field"
         ],
-        flexible_unit=True,
-        shape=["*"],
         description=("best known value of positioner - need [n] as may be scanned"),
         a_nexus_field=NeXusField(
             name="value",
@@ -120,12 +119,10 @@ class Positioner(Component):
         ),
     )
     raw_value = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXpositioner.html#nxpositioner-raw-value-field"
         ],
-        flexible_unit=True,
-        shape=["*"],
         description=("raw value of positioner - need [n] as may be scanned"),
         a_nexus_field=NeXusField(
             name="raw_value",
@@ -136,12 +133,10 @@ class Positioner(Component):
         ),
     )
     target_value = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXpositioner.html#nxpositioner-target-value-field"
         ],
-        flexible_unit=True,
-        shape=["*"],
         description=(
             "targeted (commanded) value of positioner - need [n] as may be scanned"
         ),
@@ -154,12 +149,10 @@ class Positioner(Component):
         ),
     )
     tolerance = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXpositioner.html#nxpositioner-tolerance-field"
         ],
-        flexible_unit=True,
-        shape=["*"],
         description=("maximum allowable difference between target_value and value"),
         a_nexus_field=NeXusField(
             name="tolerance",

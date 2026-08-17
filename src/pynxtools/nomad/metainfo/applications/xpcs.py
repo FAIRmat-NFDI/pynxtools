@@ -28,6 +28,7 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 
 import numpy as np
+from nomad.datamodel.hdf5 import HDF5Reference
 from nomad.datamodel.metainfo.annotations import (
     ELNAnnotation,
     ELNComponentEnum,
@@ -273,12 +274,10 @@ class XpcsData(Data):
     )
 
     frame_sum = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXxpcs.html#nxxpcs-entry-data-frame-sum-field"
         ],
-        dimensionality="dimensionless",
-        unit="dimensionless",
         description=(
             "Two-dimensional summation along the frames stack. sum of intensity "
             'v. time (in the units of "frames")'
@@ -312,12 +311,10 @@ class XpcsData(Data):
         description="Number of dimensions of frame_sum in the HDF5 file.",
     )
     frame_average = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXxpcs.html#nxxpcs-entry-data-frame-average-field"
         ],
-        dimensionality="dimensionless",
-        unit="dimensionless",
         description=(
             "Two-dimensional average along the frames stack. average intensity "
             'v. time (in the units of "frames")'
@@ -351,12 +348,10 @@ class XpcsData(Data):
         description="Number of dimensions of frame_average in the HDF5 file.",
     )
     g2 = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXxpcs.html#nxxpcs-entry-data-g2-field"
         ],
-        dimensionality="dimensionless",
-        unit="dimensionless",
         description=(
             "normalized intensity auto-correlation function, see Lumma, Rev. "
             "Sci. Instr. (2000), Eq 1 .. math:: g_2(\\boldsymbol Q,t) = \\frac{ "
@@ -436,12 +431,10 @@ class XpcsData(Data):
         ),
     )
     g2_derr = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXxpcs.html#nxxpcs-entry-data-g2-derr-field"
         ],
-        dimensionality="dimensionless",
-        unit="dimensionless",
         description=(
             "error values for the :math:`g_2` values. The derivation of the "
             "error is left up to the implemented code. Symmetric error will be "
@@ -494,11 +487,10 @@ class XpcsData(Data):
         ),
     )
     G2_unnormalized = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXxpcs.html#nxxpcs-entry-data-g2-unnormalized-field"
         ],
-        flexible_unit=True,
         description=(
             "unnormalized intensity auto-correlation function. Specifically, "
             "``g2`` without the denominator. The data should be in the same "
@@ -549,12 +541,10 @@ class XpcsData(Data):
         ),
     )
     delay_difference = Quantity(
-        type=np.int64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXxpcs.html#nxxpcs-entry-data-delay-difference-field"
         ],
-        dimensionality="dimensionless",
-        unit="dimensionless",
         description=(
             "delay_difference (also known as delay or lag step) This is "
             'quantized difference so that the "step" between two consecutive '
@@ -634,11 +624,10 @@ class XpcsTwotime(Data):
     )
 
     two_time_corr_func = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXxpcs.html#nxxpcs-entry-twotime-two-time-corr-func-field"
         ],
-        flexible_unit=True,
         description=(
             "two-time correlation of speckle intensity for a given q-bin or roi "
             "(represented by the nth roi_map value) See Fluerasu, Phys Rev E "
@@ -783,12 +772,10 @@ class XpcsTwotime(Data):
         ),
     )
     g2_from_two_time_corr_func = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXxpcs.html#nxxpcs-entry-twotime-g2-from-two-time-corr-func-field"
         ],
-        dimensionality="dimensionless",
-        unit="dimensionless",
         description=(
             "frame weighted average along the diagonal direction in "
             "``two_time_corr_func`` The data format and description should be "
@@ -896,12 +883,10 @@ class XpcsTwotime(Data):
         ),
     )
     g2_err_from_two_time_corr_func = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXxpcs.html#nxxpcs-entry-twotime-g2-err-from-two-time-corr-func-field"
         ],
-        dimensionality="dimensionless",
-        unit="dimensionless",
         description=(
             "error values for the :math:`g_2` values. The derivation of the "
             "error is left up to the implemented code. Symmetric error will be "
@@ -960,12 +945,10 @@ class XpcsTwotime(Data):
         ),
     )
     g2_from_two_time_corr_func_partials = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXxpcs.html#nxxpcs-entry-twotime-g2-from-two-time-corr-func-partials-field"
         ],
-        dimensionality="dimensionless",
-        unit="dimensionless",
         description=(
             "subset of frame weighted average along the diagonal direction in "
             "``two_time_corr_func`` Time slicing along the diagonal can be very "
@@ -1043,12 +1026,10 @@ class XpcsTwotime(Data):
         ),
     )
     g2_err_from_two_time_corr_func_partials = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXxpcs.html#nxxpcs-entry-twotime-g2-err-from-two-time-corr-func-partials-field"
         ],
-        dimensionality="dimensionless",
-        unit="dimensionless",
         description=(
             "error values for the :math:`g_2` values. The derivation of the "
             "error is left up to the implemented code. Symmetric error will be "
@@ -1139,13 +1120,10 @@ class XpcsInstrumentIncidentBeam(Beam):
     )
 
     incident_energy = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXxpcs.html#nxxpcs-entry-instrument-incident-beam-incident-energy-field"
         ],
-        dimensionality="[mass] * [length] ** 2 / [time] ** 2",
-        unit="eV",
-        shape=["*"],
         description=("Incident beam line energy (either keV or eV)."),
         a_nexus_field=NeXusField(
             name="incident_energy",
@@ -1199,13 +1177,10 @@ class XpcsInstrumentIncidentBeam(Beam):
         ),
     )
     extent = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXxpcs.html#nxxpcs-entry-instrument-incident-beam-extent-field"
         ],
-        dimensionality="[length]",
-        unit="m",
-        shape=["*", 2],
         description=("Size (2-D) of the beam at this position."),
         a_nexus_field=NeXusField(
             name="extent",
@@ -1290,13 +1265,10 @@ class XpcsInstrumentDetector(Detector):
         ),
     )
     count_time = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXxpcs.html#nxxpcs-entry-instrument-detector-count-time-field"
         ],
-        dimensionality="[time]",
-        unit="second",
-        shape=["*"],
         description=("Exposure time of frames, s."),
         a_nexus_field=NeXusField(
             name="count_time",

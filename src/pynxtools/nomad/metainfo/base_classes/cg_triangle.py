@@ -24,6 +24,7 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 
 import numpy as np
+from nomad.datamodel.hdf5 import HDF5Reference
 from nomad.datamodel.metainfo.annotations import (
     ELNAnnotation,
     ELNComponentEnum,
@@ -122,13 +123,10 @@ class CgTriangle(CgPrimitive):
         a_display={"unit": "dimensionless"},
     )
     edge_length = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXcg_triangle.html#nxcg_triangle-edge-length-field"
         ],
-        dimensionality="[length]",
-        unit="m",
-        shape=["*", 3],
         description=(
             "Length of the edges of each triangle. For each triangle values are "
             "reported via traversing the vertices in the sequence as these are "
@@ -143,13 +141,10 @@ class CgTriangle(CgPrimitive):
         ),
     )
     interior_angle = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXcg_triangle.html#nxcg_triangle-interior-angle-field"
         ],
-        dimensionality="[angle]",
-        unit="radian",
-        shape=["*", 3],
         description=(
             "Interior angles of each triangle. For each triangle values are "
             "reported for the angle opposite to the respective edges in the "

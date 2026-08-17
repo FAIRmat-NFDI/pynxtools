@@ -24,6 +24,7 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 
 import numpy as np
+from nomad.datamodel.hdf5 import HDF5Reference
 from nomad.datamodel.metainfo.annotations import (
     ELNAnnotation,
     ELNComponentEnum,
@@ -143,13 +144,10 @@ class OpticalLens(Component):
         a_display={"unit": "m"},
     )
     reflectance = Quantity(
-        type=str,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXoptical_lens.html#nxoptical_lens-reflectance-field"
         ],
-        dimensionality="dimensionless",
-        unit="dimensionless",
-        shape=["*"],
         description=("Reflectance of the lens at given spectral values."),
         a_nexus_field=NeXusField(
             name="reflectance",
@@ -160,13 +158,10 @@ class OpticalLens(Component):
         ),
     )
     transmission = Quantity(
-        type=str,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXoptical_lens.html#nxoptical_lens-transmission-field"
         ],
-        dimensionality="dimensionless",
-        unit="dimensionless",
-        shape=["*"],
         description=("Transmission of the lens at given spectral values."),
         a_nexus_field=NeXusField(
             name="transmission",
@@ -177,13 +172,10 @@ class OpticalLens(Component):
         ),
     )
     focal_length = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXoptical_lens.html#nxoptical_lens-focal-length-field"
         ],
-        dimensionality="[length]",
-        unit="m",
-        shape=[2],
         description=(
             "Focal length of the lens on the front side (first value), i.e. "
             "where the beam is incident, and on the back side (second value)."
@@ -341,13 +333,10 @@ class OpticalLensSubstrate(Sample):
         a_display={"unit": "m"},
     )
     index_of_refraction = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXoptical_lens.html#nxoptical_lens-substrate-index-of-refraction-field"
         ],
-        dimensionality="dimensionless",
-        unit="dimensionless",
-        shape=[2, "*"],
         description=(
             "Complex index of refraction of the lens material. Specify at given "
             "wavelength (or energy, wavenumber etc.) values."
@@ -445,13 +434,10 @@ class OpticalLensCoating(Sample):
         a_display={"unit": "m"},
     )
     index_of_refraction_coating = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXoptical_lens.html#nxoptical_lens-coating-index-of-refraction-coating-field"
         ],
-        dimensionality="dimensionless",
-        unit="dimensionless",
-        shape=[2, "*"],
         description=(
             "Complex index of refraction of the coating. Specify at given "
             "spectral values (wavelength, energy, wavenumber etc.)."

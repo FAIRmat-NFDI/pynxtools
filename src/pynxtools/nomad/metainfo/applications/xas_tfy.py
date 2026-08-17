@@ -28,6 +28,7 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 
 import numpy as np
+from nomad.datamodel.hdf5 import HDF5Reference
 from nomad.datamodel.metainfo.annotations import (
     ELNAnnotation,
     ELNComponentEnum,
@@ -117,12 +118,10 @@ class XasTfy(Xas):
         ),
     )
     intensity = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXxas_tfy.html#nxxas_tfy-entry-intensity-field"
         ],
-        flexible_unit=True,
-        shape=["*"],
         description=("The absorption coefficient :math:`\\mu(E) \\propto I_f/I_0`."),
         a_nexus_field=NeXusField(
             name="intensity",
@@ -191,12 +190,10 @@ class XasTfyInstrumentI0(Detector):
     )
 
     data_quantity = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXxas_tfy.html#nxxas_tfy-entry-instrument-i0-data-field"
         ],
-        flexible_unit=True,
-        shape=["*"],
         a_nexus_field=NeXusField(
             name="data",
             type="NX_NUMBER",
@@ -228,12 +225,10 @@ class XasTfyInstrumentIfluor(Detector):
     )
 
     data_quantity = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXxas_tfy.html#nxxas_tfy-entry-instrument-ifluor-data-field"
         ],
-        flexible_unit=True,
-        shape=["*"],
         a_nexus_field=NeXusField(
             name="data",
             type="NX_NUMBER",

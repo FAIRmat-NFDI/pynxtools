@@ -28,6 +28,7 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 
 import numpy as np
+from nomad.datamodel.hdf5 import HDF5Reference
 from nomad.datamodel.metainfo.annotations import (
     ELNAnnotation,
     ELNComponentEnum,
@@ -230,13 +231,10 @@ class ApmParaprobeTessellatorResultsTessellationIDWall(CgHexahedron):
     )
 
     closest_corner = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_tessellator_results.html#nxapm_paraprobe_tessellator_results-entry-tessellationid-wall-closest-corner-field"
         ],
-        dimensionality="[length]",
-        unit="m",
-        shape=[3],
         description=(
             "Coordinate triplet of the corner that lays closest to the origin of "
             "the *paraprobe* coordinate system."
@@ -250,13 +248,10 @@ class ApmParaprobeTessellatorResultsTessellationIDWall(CgHexahedron):
         ),
     )
     farthest_corner = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_tessellator_results.html#nxapm_paraprobe_tessellator_results-entry-tessellationid-wall-farthest-corner-field"
         ],
-        dimensionality="[length]",
-        unit="m",
-        shape=[3],
         description=(
             "Coordinate triplet of the corner that lays farthest away from the "
             "origin of the *paraprobe* coordinate system."
@@ -333,13 +328,10 @@ class ApmParaprobeTessellatorResultsTessellationIDVoronoiCells(CgPolyhedron):
         a_display={"unit": "dimensionless"},
     )
     volume = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_tessellator_results.html#nxapm_paraprobe_tessellator_results-entry-tessellationid-voronoi-cells-volume-field"
         ],
-        dimensionality="[length] ** 3",
-        unit="m ** 3",
-        shape=["*"],
         description=("Volume of each Voronoi cell."),
         a_nexus_field=NeXusField(
             name="volume",
@@ -350,13 +342,10 @@ class ApmParaprobeTessellatorResultsTessellationIDVoronoiCells(CgPolyhedron):
         ),
     )
     process_id = Quantity(
-        type=np.int64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_tessellator_results.html#nxapm_paraprobe_tessellator_results-entry-tessellationid-voronoi-cells-process-id-field"
         ],
-        dimensionality="dimensionless",
-        unit="dimensionless",
-        shape=["*"],
         description=("Which MPI process computed which Voronoi cell."),
         a_nexus_field=NeXusField(
             name="process_id",
@@ -367,13 +356,10 @@ class ApmParaprobeTessellatorResultsTessellationIDVoronoiCells(CgPolyhedron):
         ),
     )
     thread_id = Quantity(
-        type=np.int64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_tessellator_results.html#nxapm_paraprobe_tessellator_results-entry-tessellationid-voronoi-cells-thread-id-field"
         ],
-        dimensionality="dimensionless",
-        unit="dimensionless",
-        shape=["*"],
         description=("Which OpenMP thread computed which Voronoi cell."),
         a_nexus_field=NeXusField(
             name="thread_id",
@@ -384,13 +370,10 @@ class ApmParaprobeTessellatorResultsTessellationIDVoronoiCells(CgPolyhedron):
         ),
     )
     number_of_faces = Quantity(
-        type=np.int64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_tessellator_results.html#nxapm_paraprobe_tessellator_results-entry-tessellationid-voronoi-cells-number-of-faces-field"
         ],
-        dimensionality="dimensionless",
-        unit="dimensionless",
-        shape=["*"],
         description=(
             "The number of faces for each cell. Faces of adjoining polyhedra are "
             "counted for each polyhedron. This field can be used to interpret "
@@ -425,13 +408,10 @@ class ApmParaprobeTessellatorResultsTessellationIDVoronoiCells(CgPolyhedron):
         a_display={"unit": "dimensionless"},
     )
     xdmf_topology = Quantity(
-        type=np.int64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_tessellator_results.html#nxapm_paraprobe_tessellator_results-entry-tessellationid-voronoi-cells-xdmf-topology-field"
         ],
-        dimensionality="dimensionless",
-        unit="dimensionless",
-        shape=["*"],
         description=(
             "Sequence of tuples, concatenated in the order of the Voronoi cells. "
             "Each tuple contains encodes information to visualize using XDMF: "
@@ -448,13 +428,10 @@ class ApmParaprobeTessellatorResultsTessellationIDVoronoiCells(CgPolyhedron):
         ),
     )
     xdmf_cell_id = Quantity(
-        type=np.int64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_tessellator_results.html#nxapm_paraprobe_tessellator_results-entry-tessellationid-voronoi-cells-xdmf-cell-id-field"
         ],
-        dimensionality="dimensionless",
-        unit="dimensionless",
-        shape=["*"],
         description=(
             "Sequence of cell identifier, concatenated such that each face is "
             "associated with its cell. Given that paraprobe-tessellator assigns "
@@ -498,13 +475,10 @@ class ApmParaprobeTessellatorResultsTessellationIDVoronoiCellsPolyhedra(
     )
 
     number_of_vertices = Quantity(
-        type=np.int64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_tessellator_results.html#nxapm_paraprobe_tessellator_results-entry-tessellationid-voronoi-cells-polyhedra-number-of-vertices-field"
         ],
-        dimensionality="dimensionless",
-        unit="dimensionless",
-        shape=["*"],
         a_nexus_field=NeXusField(
             name="number_of_vertices",
             type="NX_UINT",
@@ -563,12 +537,10 @@ class ApmParaprobeTessellatorResultsTessellationIDVoronoiCellsPolyhedra(
         ),
     )
     vertices = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_tessellator_results.html#nxapm_paraprobe_tessellator_results-entry-tessellationid-voronoi-cells-polyhedra-vertices-field"
         ],
-        flexible_unit=True,
-        shape=["*", "*"],
         a_nexus_field=NeXusField(
             name="vertices",
             type="NX_FLOAT",
@@ -606,13 +578,10 @@ class ApmParaprobeTessellatorResultsTessellationIDWallContactGlobal(
     )
 
     number_of_objects = Quantity(
-        type=np.int64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_tessellator_results.html#nxapm_paraprobe_tessellator_results-entry-tessellationid-wall-contact-global-number-of-objects-field"
         ],
-        dimensionality="dimensionless",
-        unit="dimensionless",
-        shape=["*"],
         a_nexus_field=NeXusField(
             name="number_of_objects",
             type="NX_UINT",
@@ -684,13 +653,10 @@ class ApmParaprobeTessellatorResultsTessellationIDWallContactLeft(CsFilterBoolea
     )
 
     number_of_objects = Quantity(
-        type=np.int64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_tessellator_results.html#nxapm_paraprobe_tessellator_results-entry-tessellationid-wall-contact-left-number-of-objects-field"
         ],
-        dimensionality="dimensionless",
-        unit="dimensionless",
-        shape=["*"],
         a_nexus_field=NeXusField(
             name="number_of_objects",
             type="NX_UINT",
@@ -762,13 +728,10 @@ class ApmParaprobeTessellatorResultsTessellationIDWallContactRight(CsFilterBoole
     )
 
     number_of_objects = Quantity(
-        type=np.int64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_tessellator_results.html#nxapm_paraprobe_tessellator_results-entry-tessellationid-wall-contact-right-number-of-objects-field"
         ],
-        dimensionality="dimensionless",
-        unit="dimensionless",
-        shape=["*"],
         a_nexus_field=NeXusField(
             name="number_of_objects",
             type="NX_UINT",
@@ -840,13 +803,10 @@ class ApmParaprobeTessellatorResultsTessellationIDWallContactFront(CsFilterBoole
     )
 
     number_of_objects = Quantity(
-        type=np.int64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_tessellator_results.html#nxapm_paraprobe_tessellator_results-entry-tessellationid-wall-contact-front-number-of-objects-field"
         ],
-        dimensionality="dimensionless",
-        unit="dimensionless",
-        shape=["*"],
         a_nexus_field=NeXusField(
             name="number_of_objects",
             type="NX_UINT",
@@ -918,13 +878,10 @@ class ApmParaprobeTessellatorResultsTessellationIDWallContactRear(CsFilterBoolea
     )
 
     number_of_objects = Quantity(
-        type=np.int64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_tessellator_results.html#nxapm_paraprobe_tessellator_results-entry-tessellationid-wall-contact-rear-number-of-objects-field"
         ],
-        dimensionality="dimensionless",
-        unit="dimensionless",
-        shape=["*"],
         a_nexus_field=NeXusField(
             name="number_of_objects",
             type="NX_UINT",
@@ -998,13 +955,10 @@ class ApmParaprobeTessellatorResultsTessellationIDWallContactBottom(
     )
 
     number_of_objects = Quantity(
-        type=np.int64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_tessellator_results.html#nxapm_paraprobe_tessellator_results-entry-tessellationid-wall-contact-bottom-number-of-objects-field"
         ],
-        dimensionality="dimensionless",
-        unit="dimensionless",
-        shape=["*"],
         a_nexus_field=NeXusField(
             name="number_of_objects",
             type="NX_UINT",
@@ -1076,13 +1030,10 @@ class ApmParaprobeTessellatorResultsTessellationIDWallContactTop(CsFilterBoolean
     )
 
     number_of_objects = Quantity(
-        type=np.int64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_tessellator_results.html#nxapm_paraprobe_tessellator_results-entry-tessellationid-wall-contact-top-number-of-objects-field"
         ],
-        dimensionality="dimensionless",
-        unit="dimensionless",
-        shape=["*"],
         a_nexus_field=NeXusField(
             name="number_of_objects",
             type="NX_UINT",

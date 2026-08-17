@@ -28,6 +28,7 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 
 import numpy as np
+from nomad.datamodel.hdf5 import HDF5Reference
 from nomad.datamodel.metainfo.annotations import (
     ELNAnnotation,
     ELNComponentEnum,
@@ -177,13 +178,10 @@ class BeamSplitter(Component):
         ),
     )
     splitting_ratio = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXbeam_splitter.html#nxbeam_splitter-splitting-ratio-field"
         ],
-        dimensionality="dimensionless",
-        unit="dimensionless",
-        shape=["*"],
         description=(
             "Beam splitting ratio(s) for the various outputs (i.e. the paths of "
             "the beam after being split by the beam splitter). The order of the "
@@ -222,13 +220,10 @@ class BeamSplitter(Component):
         a_display={"unit": "dimensionless"},
     )
     wavelength_range = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXbeam_splitter.html#nxbeam_splitter-wavelength-range-field"
         ],
-        dimensionality="[length]",
-        unit="angstrom",
-        shape=[2],
         description=(
             "Wavelength range for which the beam splitter is designed. Enter the "
             "minimum and maximum values of the wavelength range. Alternatively, "
@@ -244,13 +239,10 @@ class BeamSplitter(Component):
         ),
     )
     optical_loss = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXbeam_splitter.html#nxbeam_splitter-optical-loss-field"
         ],
-        dimensionality="dimensionless",
-        unit="dimensionless",
-        shape=["*"],
         description=(
             "Optical loss of the beam splitter for the various outputs (i.e. the "
             "paths of the beam after being split by the beam splitter). The "
@@ -309,14 +301,11 @@ class BeamSplitter(Component):
         a_display={"unit": "radian"},
     )
     AOI_range = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXbeam_splitter.html#nxbeam_splitter-aoi-range-field"
         ],
         variable=True,
-        dimensionality="[angle]",
-        unit="radian",
-        shape=[2],
         description=(
             "Range of the angles of incidence (AOI) for which the beam splitter "
             "can be operated. Specify the minimum and maximum angles of the "
@@ -331,13 +320,10 @@ class BeamSplitter(Component):
         ),
     )
     reflectance = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXbeam_splitter.html#nxbeam_splitter-reflectance-field"
         ],
-        dimensionality="dimensionless",
-        unit="dimensionless",
-        shape=["*"],
         description=("Reflectance of the beam splitter at given spectral values."),
         a_nexus_field=NeXusField(
             name="reflectance",
@@ -348,13 +334,10 @@ class BeamSplitter(Component):
         ),
     )
     transmission = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXbeam_splitter.html#nxbeam_splitter-transmission-field"
         ],
-        dimensionality="dimensionless",
-        unit="dimensionless",
-        shape=["*", "*"],
         description=(
             "Transmission at given spectral values for the various outputs (i.e. "
             "the paths of the beam after being split by the beam splitter). The "
@@ -440,11 +423,10 @@ class BeamSplitterShape(Shape):
         ),
     )
     size = Quantity(
-        type=str,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXbeam_splitter.html#nxbeam_splitter-shape-size-field"
         ],
-        shape=["*", "*"],
         description=(
             "Physical extent of the beam splitter device. The beam splitter "
             "might be made up of one or more objects (NX_objects). The meaning "
@@ -531,13 +513,10 @@ class BeamSplitterSubstrate(Sample):
         ),
     )
     substrate_thickness = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXbeam_splitter.html#nxbeam_splitter-substrate-substrate-thickness-field"
         ],
-        dimensionality="[length]",
-        unit="m",
-        shape=[2],
         description=(
             "Thickness of the beam splitter substrate. Define the minimum and "
             "maximum thickness (for a wedged geometry). For a homogeneous "
@@ -553,13 +532,10 @@ class BeamSplitterSubstrate(Sample):
         ),
     )
     index_of_refraction_substrate = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXbeam_splitter.html#nxbeam_splitter-substrate-index-of-refraction-substrate-field"
         ],
-        dimensionality="dimensionless",
-        unit="dimensionless",
-        shape=[2, "*"],
         description=(
             "Complex index of refraction of the beam splitter substrate. Specify "
             "at given spectral values (e.g. wavelength, energy, wavenumber "
@@ -655,13 +631,10 @@ class BeamSplitterCoating(Sample):
         a_display={"unit": "m"},
     )
     wavelength_range_coating = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXbeam_splitter.html#nxbeam_splitter-coating-wavelength-range-coating-field"
         ],
-        dimensionality="[length]",
-        unit="angstrom",
-        shape=[2],
         description=(
             "Wavelength range for which the coating is designed. Enter the "
             "minimum and maximum values of the wavelength range."
@@ -675,13 +648,10 @@ class BeamSplitterCoating(Sample):
         ),
     )
     index_of_refraction_coating = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXbeam_splitter.html#nxbeam_splitter-coating-index-of-refraction-coating-field"
         ],
-        dimensionality="dimensionless",
-        unit="dimensionless",
-        shape=[2, "*"],
         description=(
             "Complex index of refraction of the coating. Specify at given "
             "spectral values (e.g. wavelength, energy, wavenumber etc.)."

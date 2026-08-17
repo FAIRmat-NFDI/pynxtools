@@ -24,6 +24,7 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 
 import numpy as np
+from nomad.datamodel.hdf5 import HDF5Reference
 from nomad.datamodel.metainfo.annotations import (
     ELNAnnotation,
     ELNComponentEnum,
@@ -412,11 +413,10 @@ class TomoprocData(Data):
     )
 
     data_quantity = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXtomoproc.html#nxtomoproc-entry-data-data-field"
         ],
-        shape=["*", "*", "*"],
         description=(
             "This is the reconstructed volume. This can be different things. "
             "Please indicate in the unit attribute what physical quantity this "
@@ -494,12 +494,10 @@ class TomoprocData(Data):
         ),
     )
     x = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXtomoproc.html#nxtomoproc-entry-data-x-field"
         ],
-        flexible_unit=True,
-        shape=["*"],
         description=(
             "This is an array holding the values to use for the x-axis of data. "
             "The units must be appropriate for the measurement."
@@ -529,12 +527,10 @@ class TomoprocData(Data):
         description="Number of dimensions of x in the HDF5 file.",
     )
     y = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXtomoproc.html#nxtomoproc-entry-data-y-field"
         ],
-        flexible_unit=True,
-        shape=["*"],
         description=(
             "This is an array holding the values to use for the y-axis of data. "
             "The units must be appropriate for the measurement."
@@ -564,12 +560,10 @@ class TomoprocData(Data):
         description="Number of dimensions of y in the HDF5 file.",
     )
     z = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXtomoproc.html#nxtomoproc-entry-data-z-field"
         ],
-        flexible_unit=True,
-        shape=["*"],
         description=(
             "This is an array holding the values to use for the z-axis of data. "
             "The units must be appropriate for the measurement."

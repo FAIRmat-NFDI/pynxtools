@@ -24,6 +24,7 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 
 import numpy as np
+from nomad.datamodel.hdf5 import HDF5Reference
 from nomad.datamodel.metainfo.annotations import (
     ELNAnnotation,
     ELNComponentEnum,
@@ -276,12 +277,10 @@ class TofsingleInstrumentDetector(Detector):
     )
 
     data_quantity = Quantity(
-        type=np.int64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXtofsingle.html#nxtofsingle-entry-instrument-detector-data-field"
         ],
-        flexible_unit=True,
-        shape=["*", "*", "*"],
         a_nexus_field=NeXusField(
             name="data",
             type="NX_INT",
@@ -291,13 +290,10 @@ class TofsingleInstrumentDetector(Detector):
         ),
     )
     distance = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXtofsingle.html#nxtofsingle-entry-instrument-detector-distance-field"
         ],
-        dimensionality="[length]",
-        unit="m",
-        shape=[1],
         description=("Distance to sample for the center of the detector"),
         a_nexus_field=NeXusField(
             name="distance",
@@ -308,13 +304,10 @@ class TofsingleInstrumentDetector(Detector):
         ),
     )
     time_of_flight = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXtofsingle.html#nxtofsingle-entry-instrument-detector-time-of-flight-field"
         ],
-        dimensionality="[time]",
-        unit="second",
-        shape=["*"],
         a_nexus_field=NeXusField(
             name="time_of_flight",
             type="NX_FLOAT",
@@ -324,13 +317,10 @@ class TofsingleInstrumentDetector(Detector):
         ),
     )
     polar_angle = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXtofsingle.html#nxtofsingle-entry-instrument-detector-polar-angle-field"
         ],
-        dimensionality="[angle]",
-        unit="radian",
-        shape=["*"],
         description=("polar angle for each detector element"),
         a_nexus_field=NeXusField(
             name="polar_angle",
@@ -341,13 +331,10 @@ class TofsingleInstrumentDetector(Detector):
         ),
     )
     azimuthal_angle = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXtofsingle.html#nxtofsingle-entry-instrument-detector-azimuthal-angle-field"
         ],
-        dimensionality="[angle]",
-        unit="radian",
-        shape=["*"],
         description=("azimuthal angle for each detector element"),
         a_nexus_field=NeXusField(
             name="azimuthal_angle",
@@ -485,12 +472,10 @@ class TofsingleMonitor(Monitor):
         a_display={"unit": "m"},
     )
     data_quantity = Quantity(
-        type=np.int64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXtofsingle.html#nxtofsingle-entry-monitor-data-field"
         ],
-        flexible_unit=True,
-        shape=["*"],
         a_nexus_field=NeXusField(
             name="data",
             type="NX_INT",
@@ -500,13 +485,10 @@ class TofsingleMonitor(Monitor):
         ),
     )
     time_of_flight = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXtofsingle.html#nxtofsingle-entry-monitor-time-of-flight-field"
         ],
-        dimensionality="[time]",
-        unit="second",
-        shape=["*"],
         a_nexus_field=NeXusField(
             name="time_of_flight",
             type="NX_FLOAT",
@@ -534,12 +516,10 @@ class TofsingleData(Data):
     )
 
     data_quantity = Quantity(
-        type=np.int64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXtofsingle.html#nxtofsingle-entry-data-data-link"
         ],
-        shape=["*", "*", "*"],
-        flexible_unit=True,
         a_nexus_link=NeXusLink(
             name="data",
             target="/NXentry/NXinstrument/NXdetector/data",
@@ -547,13 +527,10 @@ class TofsingleData(Data):
         ),
     )
     time_of_flight = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXtofsingle.html#nxtofsingle-entry-data-time-of-flight-link"
         ],
-        dimensionality="[time]",
-        unit="second",
-        shape=["*"],
         a_nexus_link=NeXusLink(
             name="time_of_flight",
             target="/NXentry/NXinstrument/NXdetector/time_of_flight",

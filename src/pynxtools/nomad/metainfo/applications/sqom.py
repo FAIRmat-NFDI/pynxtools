@@ -24,6 +24,7 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 
 import numpy as np
+from nomad.datamodel.hdf5 import HDF5Reference
 from nomad.datamodel.metainfo.annotations import (
     ELNAnnotation,
     ELNComponentEnum,
@@ -426,11 +427,10 @@ class SqomData(Data):
     )
 
     data_quantity = Quantity(
-        type=np.int64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXsqom.html#nxsqom-entry-data-data-field"
         ],
-        shape=["*"],
         description=("This is the intensity for each point in QE"),
         a_nexus_field=NeXusField(
             name="data",
@@ -456,13 +456,10 @@ class SqomData(Data):
         description="Number of dimensions of data_quantity in the HDF5 file.",
     )
     qx = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXsqom.html#nxsqom-entry-data-qx-field"
         ],
-        dimensionality="1 / [length]",
-        unit="1 / angstrom",
-        shape=["*"],
         description=("Positions for the first dimension of Q"),
         a_nexus_field=NeXusField(
             name="qx",
@@ -489,13 +486,10 @@ class SqomData(Data):
         description="Number of dimensions of qx in the HDF5 file.",
     )
     qy = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXsqom.html#nxsqom-entry-data-qy-field"
         ],
-        dimensionality="1 / [length]",
-        unit="1 / angstrom",
-        shape=["*"],
         description=("Positions for the the second dimension of Q"),
         a_nexus_field=NeXusField(
             name="qy",
@@ -522,13 +516,10 @@ class SqomData(Data):
         description="Number of dimensions of qy in the HDF5 file.",
     )
     qz = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXsqom.html#nxsqom-entry-data-qz-field"
         ],
-        dimensionality="1 / [length]",
-        unit="1 / angstrom",
-        shape=["*"],
         description=("Positions for the the third dimension of Q"),
         a_nexus_field=NeXusField(
             name="qz",
@@ -555,13 +546,10 @@ class SqomData(Data):
         description="Number of dimensions of qz in the HDF5 file.",
     )
     en = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXsqom.html#nxsqom-entry-data-en-field"
         ],
-        dimensionality="[mass] * [length] ** 2 / [time] ** 2",
-        unit="eV",
-        shape=["*"],
         description=("Values for the energy transfer for each point"),
         a_nexus_field=NeXusField(
             name="en",

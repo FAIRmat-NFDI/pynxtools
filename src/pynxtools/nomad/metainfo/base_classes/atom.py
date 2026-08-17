@@ -24,6 +24,7 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 
 import numpy as np
+from nomad.datamodel.hdf5 import HDF5Reference
 from nomad.datamodel.metainfo.annotations import (
     ELNAnnotation,
     ELNComponentEnum,
@@ -218,11 +219,10 @@ class Atom(Object):
         a_display={"unit": "m ** 3"},
     )
     indices = Quantity(
-        type=str,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXatom.html#nxatom-indices-field"
         ],
-        shape=["*"],
         description=(
             "Index for each atom at locations as detailed by position. Indices "
             "can be used as identifier and thus names for individual atoms."
@@ -235,13 +235,10 @@ class Atom(Object):
         ),
     )
     type = Quantity(
-        type=np.int64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXatom.html#nxatom-type-field"
         ],
-        dimensionality="dimensionless",
-        unit="dimensionless",
-        shape=["*"],
         description=(
             "Nuclide information for each atom at locations as detailed by "
             "position. One `approach "
@@ -258,12 +255,10 @@ class Atom(Object):
         ),
     )
     position = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXatom.html#nxatom-position-field"
         ],
-        flexible_unit=True,
-        shape=["*", "*"],
         description=("Position of each atom."),
         a_nexus_field=NeXusField(
             name="position",
@@ -296,13 +291,10 @@ class Atom(Object):
         ),
     )
     occupancy = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXatom.html#nxatom-occupancy-field"
         ],
-        dimensionality="dimensionless",
-        unit="dimensionless",
-        shape=["*"],
         description=(
             "Relative occupancy of the atom position. This field is useful for "
             "specifying the atomic motif in instances of :ref:`NXunit_cell`."
@@ -316,13 +308,10 @@ class Atom(Object):
         ),
     )
     nuclide_hash = Quantity(
-        type=np.int64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXatom.html#nxatom-nuclide-hash-field"
         ],
-        dimensionality="dimensionless",
-        unit="dimensionless",
-        shape=["*"],
         description=(
             "Vector of nuclide hash values. The vector is sorted in decreasing "
             "order. Individual hash values :math:`H` `encode "
@@ -358,13 +347,10 @@ class Atom(Object):
         ),
     )
     nuclide_list = Quantity(
-        type=np.int64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXatom.html#nxatom-nuclide-list-field"
         ],
-        dimensionality="dimensionless",
-        unit="dimensionless",
-        shape=["*", 2],
         description=(
             "Table which decodes the entries in nuclide_hash into a "
             "human-readable matrix instances for either nuclides or elements. "
@@ -387,12 +373,10 @@ class Atom(Object):
         ),
     )
     mass_to_charge_range = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXatom.html#nxatom-mass-to-charge-range-field"
         ],
-        flexible_unit=True,
-        shape=["*", 2],
         description=(
             "Associated lower :math:`{\\frac{m}{q}}_{min}` and upper "
             ":math:`{\\frac{m}{q}}_{max}` bounds of the mass-to-charge-state "

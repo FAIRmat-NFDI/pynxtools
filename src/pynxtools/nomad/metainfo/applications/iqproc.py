@@ -24,6 +24,7 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 
 import numpy as np
+from nomad.datamodel.hdf5 import HDF5Reference
 from nomad.datamodel.metainfo.annotations import (
     ELNAnnotation,
     ELNComponentEnum,
@@ -425,11 +426,10 @@ class IqprocData(Data):
     )
 
     data_quantity = Quantity(
-        type=np.int64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXiqproc.html#nxiqproc-entry-data-data-field"
         ],
-        shape=["*", "*", "*"],
         description=(
             "This is I(Q). The client has to analyse the dimensions of I(Q). "
             "Often, multiple I(Q) for various environment conditions are "
@@ -461,11 +461,10 @@ class IqprocData(Data):
         description="Number of dimensions of data_quantity in the HDF5 file.",
     )
     variable = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXiqproc.html#nxiqproc-entry-data-variable-field"
         ],
-        shape=["*"],
         a_nexus_field=NeXusField(
             name="variable",
             type="NX_NUMBER",
@@ -510,11 +509,10 @@ class IqprocData(Data):
         ),
     )
     qx = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXiqproc.html#nxiqproc-entry-data-qx-field"
         ],
-        shape=["*"],
         description=("Values for the first dimension of Q"),
         a_nexus_field=NeXusField(
             name="qx",
@@ -540,11 +538,10 @@ class IqprocData(Data):
         description="Number of dimensions of qx in the HDF5 file.",
     )
     qy = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXiqproc.html#nxiqproc-entry-data-qy-field"
         ],
-        shape=["*"],
         description=("Values for the second dimension of Q"),
         a_nexus_field=NeXusField(
             name="qy",

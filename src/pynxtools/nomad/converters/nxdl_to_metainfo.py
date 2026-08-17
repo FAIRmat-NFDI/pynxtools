@@ -106,6 +106,14 @@ class QuantityContext:
     # True for numeric array fields inside NXdata-derived classes — the generator
     # emits parallel {name}__mean/__min/__max/__size/__ndim scalar quantities.
     has_statistics: bool = False
+    # True for any shape-ful (array-like) quantity: the generated Quantity itself
+    # is emitted as type=HDF5Reference (a path string into the source .nxs file)
+    # instead of python_type. python_type/shape/dimensionality/default_unit/
+    # flexible_unit are left as the real NXDL-derived values regardless — the
+    # __min/__max statistics quantities (which reuse python_type) and
+    # a_nexus_field/a_nexus_attribute (which read the raw node/unit category
+    # directly) still need them.
+    is_hdf5_reference: bool = False
 
 
 @dataclass
@@ -597,6 +605,13 @@ def _build_quantity_from_node(
         eln_component=eln_component,
         eln_default=eln_default,
         has_statistics=has_statistics,
+        # HDF5 attributes aren't independently addressable HDF5 objects, so
+        # HDF5Reference (which points at a group/dataset path) doesn't apply
+        # to them regardless of shape -- only fields become HDF5Reference.
+        # NXdata's own signal/axes fields (AXISNAME, DATA) declare no NXDL
+        # <dimensions> -- their rank is only known at parse time -- so
+        # is_effectively_array covers them too, same as has_statistics above.
+        is_hdf5_reference=isinstance(node, NXTreeField) and is_effectively_array,
     )
 
 

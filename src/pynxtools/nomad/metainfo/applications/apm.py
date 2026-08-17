@@ -24,6 +24,7 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 
 import numpy as np
+from nomad.datamodel.hdf5 import HDF5Reference
 from nomad.datamodel.metainfo.annotations import (
     ELNAnnotation,
     ELNComponentEnum,
@@ -1983,13 +1984,10 @@ class ApmNAMED_reference_frameID(CoordinateSystem):
         ),
     )
     x = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-named-reference-frameid-x-field"
         ],
-        dimensionality="[length]",
-        unit="m",
-        shape=[3],
         a_nexus_field=NeXusField(
             name="x",
             type="NX_NUMBER",
@@ -2014,13 +2012,10 @@ class ApmNAMED_reference_frameID(CoordinateSystem):
         ),
     )
     y = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-named-reference-frameid-y-field"
         ],
-        dimensionality="[length]",
-        unit="m",
-        shape=[3],
         a_nexus_field=NeXusField(
             name="y",
             type="NX_NUMBER",
@@ -2045,13 +2040,10 @@ class ApmNAMED_reference_frameID(CoordinateSystem):
         ),
     )
     z = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-named-reference-frameid-z-field"
         ],
-        dimensionality="[length]",
-        unit="m",
-        shape=[3],
         a_nexus_field=NeXusField(
             name="z",
             type="NX_NUMBER",
@@ -3694,13 +3686,10 @@ class ApmMeasurementEventIDInstrumentPulser(Component):
         a_display={"unit": "dimensionless"},
     )
     pulse_voltage = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-measurement-eventid-instrument-pulser-pulse-voltage-field"
         ],
-        dimensionality="[mass] * [length] ** 2 / [time] ** 3 / [current]",
-        unit="volt",
-        shape=["*"],
         a_nexus_field=NeXusField(
             name="pulse_voltage",
             type="NX_FLOAT",
@@ -3710,13 +3699,10 @@ class ApmMeasurementEventIDInstrumentPulser(Component):
         ),
     )
     pulse_number = Quantity(
-        type=np.int64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-measurement-eventid-instrument-pulser-pulse-number-field"
         ],
-        dimensionality="dimensionless",
-        unit="dimensionless",
-        shape=["*"],
         a_nexus_field=NeXusField(
             name="pulse_number",
             type="NX_UINT",
@@ -3726,13 +3712,10 @@ class ApmMeasurementEventIDInstrumentPulser(Component):
         ),
     )
     standing_voltage = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-measurement-eventid-instrument-pulser-standing-voltage-field"
         ],
-        dimensionality="[mass] * [length] ** 2 / [time] ** 3 / [current]",
-        unit="volt",
-        shape=["*"],
         a_nexus_field=NeXusField(
             name="standing_voltage",
             type="NX_FLOAT",
@@ -3801,13 +3784,10 @@ class ApmMeasurementEventIDInstrumentPulserSourceID(Source):
         a_display={"unit": "watt"},
     )
     pulse_energy = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-measurement-eventid-instrument-pulser-sourceid-pulse-energy-field"
         ],
-        dimensionality="[mass] * [length] ** 2 / [time] ** 2",
-        unit="eV",
-        shape=["*"],
         a_nexus_field=NeXusField(
             name="pulse_energy",
             type="NX_FLOAT",
@@ -3874,13 +3854,10 @@ class ApmMeasurementEventIDInstrumentStageTemperatureSensor(Sensor):
         ),
     )
     value = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-measurement-eventid-instrument-stage-temperature-sensor-value-field"
         ],
-        dimensionality="[temperature]",
-        unit="kelvin",
-        shape=["*"],
         a_nexus_field=NeXusField(
             name="value",
             type="NX_FLOAT",
@@ -3947,13 +3924,10 @@ class ApmMeasurementEventIDInstrumentAnalysisChamberPressureSensor(Sensor):
         ),
     )
     value = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-measurement-eventid-instrument-analysis-chamber-pressure-sensor-value-field"
         ],
-        dimensionality="[mass] / [length] / [time] ** 2",
-        unit="mbar",
-        shape=["*"],
         a_nexus_field=NeXusField(
             name="value",
             type="NX_FLOAT",
@@ -4084,7 +4058,7 @@ class ApmMeasurementStandingVoltageTime(Data):
         ),
     )
     title = Quantity(
-        type=str,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-measurement-standing-voltage-time-title-field"
         ],
@@ -4099,7 +4073,7 @@ class ApmMeasurementStandingVoltageTime(Data):
         ),
     )
     elapsed_time = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-measurement-standing-voltage-time-elapsed-time-field"
         ],
@@ -4162,7 +4136,7 @@ class ApmMeasurementStandingVoltageTime(Data):
         ),
     )
     standing_voltage = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-measurement-standing-voltage-time-standing-voltage-field"
         ],
@@ -4296,7 +4270,7 @@ class ApmMeasurementPulseFrequencyTime(Data):
         ),
     )
     title = Quantity(
-        type=str,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-measurement-pulse-frequency-time-title-field"
         ],
@@ -4311,7 +4285,7 @@ class ApmMeasurementPulseFrequencyTime(Data):
         ),
     )
     elapsed_time = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-measurement-pulse-frequency-time-elapsed-time-field"
         ],
@@ -4374,7 +4348,7 @@ class ApmMeasurementPulseFrequencyTime(Data):
         ),
     )
     pulse_frequency = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-measurement-pulse-frequency-time-pulse-frequency-field"
         ],
@@ -4508,7 +4482,7 @@ class ApmMeasurementDetectionRateTime(Data):
         ),
     )
     title = Quantity(
-        type=str,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-measurement-detection-rate-time-title-field"
         ],
@@ -4523,7 +4497,7 @@ class ApmMeasurementDetectionRateTime(Data):
         ),
     )
     elapsed_time = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-measurement-detection-rate-time-elapsed-time-field"
         ],
@@ -4586,7 +4560,7 @@ class ApmMeasurementDetectionRateTime(Data):
         ),
     )
     detection_rate = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-measurement-detection-rate-time-detection-rate-field"
         ],
@@ -4720,7 +4694,7 @@ class ApmMeasurementDetectionRateSetTime(Data):
         ),
     )
     title = Quantity(
-        type=str,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-measurement-detection-rate-set-time-title-field"
         ],
@@ -4735,7 +4709,7 @@ class ApmMeasurementDetectionRateSetTime(Data):
         ),
     )
     elapsed_time = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-measurement-detection-rate-set-time-elapsed-time-field"
         ],
@@ -4798,7 +4772,7 @@ class ApmMeasurementDetectionRateSetTime(Data):
         ),
     )
     detection_rate_set = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-measurement-detection-rate-set-time-detection-rate-set-field"
         ],
@@ -4932,7 +4906,7 @@ class ApmMeasurementPressureTime(Data):
         ),
     )
     title = Quantity(
-        type=str,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-measurement-pressure-time-title-field"
         ],
@@ -4947,7 +4921,7 @@ class ApmMeasurementPressureTime(Data):
         ),
     )
     elapsed_time = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-measurement-pressure-time-elapsed-time-field"
         ],
@@ -5010,7 +4984,7 @@ class ApmMeasurementPressureTime(Data):
         ),
     )
     pressure = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-measurement-pressure-time-pressure-field"
         ],
@@ -5144,7 +5118,7 @@ class ApmMeasurementSpecimenVoltageTime(Data):
         ),
     )
     title = Quantity(
-        type=str,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-measurement-specimen-voltage-time-title-field"
         ],
@@ -5159,7 +5133,7 @@ class ApmMeasurementSpecimenVoltageTime(Data):
         ),
     )
     elapsed_time = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-measurement-specimen-voltage-time-elapsed-time-field"
         ],
@@ -5222,7 +5196,7 @@ class ApmMeasurementSpecimenVoltageTime(Data):
         ),
     )
     specimen_voltage = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-measurement-specimen-voltage-time-specimen-voltage-field"
         ],
@@ -5356,7 +5330,7 @@ class ApmMeasurementSpecimenTemperatureTime(Data):
         ),
     )
     title = Quantity(
-        type=str,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-measurement-specimen-temperature-time-title-field"
         ],
@@ -5371,7 +5345,7 @@ class ApmMeasurementSpecimenTemperatureTime(Data):
         ),
     )
     elapsed_time = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-measurement-specimen-temperature-time-elapsed-time-field"
         ],
@@ -5434,7 +5408,7 @@ class ApmMeasurementSpecimenTemperatureTime(Data):
         ),
     )
     specimen_temperature = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-measurement-specimen-temperature-time-specimen-temperature-field"
         ],
@@ -5568,7 +5542,7 @@ class ApmMeasurementAmbientTemperatureTime(Data):
         ),
     )
     title = Quantity(
-        type=str,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-measurement-ambient-temperature-time-title-field"
         ],
@@ -5583,7 +5557,7 @@ class ApmMeasurementAmbientTemperatureTime(Data):
         ),
     )
     elapsed_time = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-measurement-ambient-temperature-time-elapsed-time-field"
         ],
@@ -5646,7 +5620,7 @@ class ApmMeasurementAmbientTemperatureTime(Data):
         ),
     )
     ambient_temperature = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-measurement-ambient-temperature-time-ambient-temperature-field"
         ],
@@ -5780,7 +5754,7 @@ class ApmMeasurementReflectronVoltageTime(Data):
         ),
     )
     title = Quantity(
-        type=str,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-measurement-reflectron-voltage-time-title-field"
         ],
@@ -5795,7 +5769,7 @@ class ApmMeasurementReflectronVoltageTime(Data):
         ),
     )
     elapsed_time = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-measurement-reflectron-voltage-time-elapsed-time-field"
         ],
@@ -5858,7 +5832,7 @@ class ApmMeasurementReflectronVoltageTime(Data):
         ),
     )
     reflectron_voltage = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-measurement-reflectron-voltage-time-reflectron-voltage-field"
         ],
@@ -5992,7 +5966,7 @@ class ApmMeasurementXstagePositionTime(Data):
         ),
     )
     title = Quantity(
-        type=str,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-measurement-xstage-position-time-title-field"
         ],
@@ -6007,7 +5981,7 @@ class ApmMeasurementXstagePositionTime(Data):
         ),
     )
     elapsed_time = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-measurement-xstage-position-time-elapsed-time-field"
         ],
@@ -6070,7 +6044,7 @@ class ApmMeasurementXstagePositionTime(Data):
         ),
     )
     xstage_position = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-measurement-xstage-position-time-xstage-position-field"
         ],
@@ -6204,7 +6178,7 @@ class ApmMeasurementYstagePositionTime(Data):
         ),
     )
     title = Quantity(
-        type=str,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-measurement-ystage-position-time-title-field"
         ],
@@ -6219,7 +6193,7 @@ class ApmMeasurementYstagePositionTime(Data):
         ),
     )
     elapsed_time = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-measurement-ystage-position-time-elapsed-time-field"
         ],
@@ -6282,7 +6256,7 @@ class ApmMeasurementYstagePositionTime(Data):
         ),
     )
     ystage_position = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-measurement-ystage-position-time-ystage-position-field"
         ],
@@ -6416,7 +6390,7 @@ class ApmMeasurementZstagePositionTime(Data):
         ),
     )
     title = Quantity(
-        type=str,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-measurement-zstage-position-time-title-field"
         ],
@@ -6431,7 +6405,7 @@ class ApmMeasurementZstagePositionTime(Data):
         ),
     )
     elapsed_time = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-measurement-zstage-position-time-elapsed-time-field"
         ],
@@ -6494,7 +6468,7 @@ class ApmMeasurementZstagePositionTime(Data):
         ),
     )
     zstage_position = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-measurement-zstage-position-time-zstage-position-field"
         ],
@@ -6628,7 +6602,7 @@ class ApmMeasurementStandingVoltageSequence(Data):
         ),
     )
     title = Quantity(
-        type=str,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-measurement-standing-voltage-sequence-title-field"
         ],
@@ -6643,7 +6617,7 @@ class ApmMeasurementStandingVoltageSequence(Data):
         ),
     )
     event_id = Quantity(
-        type=np.int64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-measurement-standing-voltage-sequence-event-id-field"
         ],
@@ -6706,7 +6680,7 @@ class ApmMeasurementStandingVoltageSequence(Data):
         ),
     )
     standing_voltage = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-measurement-standing-voltage-sequence-standing-voltage-field"
         ],
@@ -6840,7 +6814,7 @@ class ApmMeasurementPulseFrequencySequence(Data):
         ),
     )
     title = Quantity(
-        type=str,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-measurement-pulse-frequency-sequence-title-field"
         ],
@@ -6855,7 +6829,7 @@ class ApmMeasurementPulseFrequencySequence(Data):
         ),
     )
     event_id = Quantity(
-        type=np.int64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-measurement-pulse-frequency-sequence-event-id-field"
         ],
@@ -6918,7 +6892,7 @@ class ApmMeasurementPulseFrequencySequence(Data):
         ),
     )
     pulse_frequency = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-measurement-pulse-frequency-sequence-pulse-frequency-field"
         ],
@@ -7052,7 +7026,7 @@ class ApmMeasurementDetectionRateSequence(Data):
         ),
     )
     title = Quantity(
-        type=str,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-measurement-detection-rate-sequence-title-field"
         ],
@@ -7067,7 +7041,7 @@ class ApmMeasurementDetectionRateSequence(Data):
         ),
     )
     event_id = Quantity(
-        type=np.int64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-measurement-detection-rate-sequence-event-id-field"
         ],
@@ -7130,7 +7104,7 @@ class ApmMeasurementDetectionRateSequence(Data):
         ),
     )
     detection_rate = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-measurement-detection-rate-sequence-detection-rate-field"
         ],
@@ -7264,7 +7238,7 @@ class ApmMeasurementDetectionRateSetSequence(Data):
         ),
     )
     title = Quantity(
-        type=str,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-measurement-detection-rate-set-sequence-title-field"
         ],
@@ -7279,7 +7253,7 @@ class ApmMeasurementDetectionRateSetSequence(Data):
         ),
     )
     event_id = Quantity(
-        type=np.int64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-measurement-detection-rate-set-sequence-event-id-field"
         ],
@@ -7342,7 +7316,7 @@ class ApmMeasurementDetectionRateSetSequence(Data):
         ),
     )
     detection_rate_set = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-measurement-detection-rate-set-sequence-detection-rate-set-field"
         ],
@@ -7476,7 +7450,7 @@ class ApmMeasurementPressureSequence(Data):
         ),
     )
     title = Quantity(
-        type=str,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-measurement-pressure-sequence-title-field"
         ],
@@ -7491,7 +7465,7 @@ class ApmMeasurementPressureSequence(Data):
         ),
     )
     event_id = Quantity(
-        type=np.int64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-measurement-pressure-sequence-event-id-field"
         ],
@@ -7554,7 +7528,7 @@ class ApmMeasurementPressureSequence(Data):
         ),
     )
     pressure = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-measurement-pressure-sequence-pressure-field"
         ],
@@ -7688,7 +7662,7 @@ class ApmMeasurementSpecimenVoltageSequence(Data):
         ),
     )
     title = Quantity(
-        type=str,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-measurement-specimen-voltage-sequence-title-field"
         ],
@@ -7703,7 +7677,7 @@ class ApmMeasurementSpecimenVoltageSequence(Data):
         ),
     )
     event_id = Quantity(
-        type=np.int64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-measurement-specimen-voltage-sequence-event-id-field"
         ],
@@ -7766,7 +7740,7 @@ class ApmMeasurementSpecimenVoltageSequence(Data):
         ),
     )
     specimen_voltage = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-measurement-specimen-voltage-sequence-specimen-voltage-field"
         ],
@@ -7900,7 +7874,7 @@ class ApmMeasurementSpecimenTemperatureSequence(Data):
         ),
     )
     title = Quantity(
-        type=str,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-measurement-specimen-temperature-sequence-title-field"
         ],
@@ -7915,7 +7889,7 @@ class ApmMeasurementSpecimenTemperatureSequence(Data):
         ),
     )
     event_id = Quantity(
-        type=np.int64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-measurement-specimen-temperature-sequence-event-id-field"
         ],
@@ -7978,7 +7952,7 @@ class ApmMeasurementSpecimenTemperatureSequence(Data):
         ),
     )
     specimen_temperature = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-measurement-specimen-temperature-sequence-specimen-temperature-field"
         ],
@@ -8112,7 +8086,7 @@ class ApmMeasurementAmbientTemperatureSequence(Data):
         ),
     )
     title = Quantity(
-        type=str,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-measurement-ambient-temperature-sequence-title-field"
         ],
@@ -8127,7 +8101,7 @@ class ApmMeasurementAmbientTemperatureSequence(Data):
         ),
     )
     event_id = Quantity(
-        type=np.int64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-measurement-ambient-temperature-sequence-event-id-field"
         ],
@@ -8190,7 +8164,7 @@ class ApmMeasurementAmbientTemperatureSequence(Data):
         ),
     )
     ambient_temperature = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-measurement-ambient-temperature-sequence-ambient-temperature-field"
         ],
@@ -8324,7 +8298,7 @@ class ApmMeasurementReflectronVoltageSequence(Data):
         ),
     )
     title = Quantity(
-        type=str,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-measurement-reflectron-voltage-sequence-title-field"
         ],
@@ -8339,7 +8313,7 @@ class ApmMeasurementReflectronVoltageSequence(Data):
         ),
     )
     event_id = Quantity(
-        type=np.int64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-measurement-reflectron-voltage-sequence-event-id-field"
         ],
@@ -8402,7 +8376,7 @@ class ApmMeasurementReflectronVoltageSequence(Data):
         ),
     )
     reflectron_voltage = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-measurement-reflectron-voltage-sequence-reflectron-voltage-field"
         ],
@@ -8536,7 +8510,7 @@ class ApmMeasurementXstagePositionSequence(Data):
         ),
     )
     title = Quantity(
-        type=str,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-measurement-xstage-position-sequence-title-field"
         ],
@@ -8551,7 +8525,7 @@ class ApmMeasurementXstagePositionSequence(Data):
         ),
     )
     event_id = Quantity(
-        type=np.int64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-measurement-xstage-position-sequence-event-id-field"
         ],
@@ -8614,7 +8588,7 @@ class ApmMeasurementXstagePositionSequence(Data):
         ),
     )
     xstage_position = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-measurement-xstage-position-sequence-xstage-position-field"
         ],
@@ -8748,7 +8722,7 @@ class ApmMeasurementYstagePositionSequence(Data):
         ),
     )
     title = Quantity(
-        type=str,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-measurement-ystage-position-sequence-title-field"
         ],
@@ -8763,7 +8737,7 @@ class ApmMeasurementYstagePositionSequence(Data):
         ),
     )
     event_id = Quantity(
-        type=np.int64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-measurement-ystage-position-sequence-event-id-field"
         ],
@@ -8826,7 +8800,7 @@ class ApmMeasurementYstagePositionSequence(Data):
         ),
     )
     ystage_position = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-measurement-ystage-position-sequence-ystage-position-field"
         ],
@@ -8960,7 +8934,7 @@ class ApmMeasurementZstagePositionSequence(Data):
         ),
     )
     title = Quantity(
-        type=str,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-measurement-zstage-position-sequence-title-field"
         ],
@@ -8975,7 +8949,7 @@ class ApmMeasurementZstagePositionSequence(Data):
         ),
     )
     event_id = Quantity(
-        type=np.int64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-measurement-zstage-position-sequence-event-id-field"
         ],
@@ -9038,7 +9012,7 @@ class ApmMeasurementZstagePositionSequence(Data):
         ),
     )
     zstage_position = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-measurement-zstage-position-sequence-zstage-position-field"
         ],
@@ -9251,13 +9225,10 @@ class ApmAtomProbeIDInitialSpecimenImage2d(Data):
         ),
     )
     real = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-atom-probeid-initial-specimen-image-2d-real-field"
         ],
-        dimensionality="dimensionless",
-        unit="dimensionless",
-        shape=["*", "*"],
         a_nexus_field=NeXusField(
             name="real",
             type="NX_NUMBER",
@@ -9283,12 +9254,10 @@ class ApmAtomProbeIDInitialSpecimenImage2d(Data):
         description="Number of dimensions of real in the HDF5 file.",
     )
     axis_j = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-atom-probeid-initial-specimen-image-2d-axis-j-field"
         ],
-        flexible_unit=True,
-        shape=["*"],
         a_nexus_field=NeXusField(
             name="axis_j",
             type="NX_NUMBER",
@@ -9346,12 +9315,10 @@ class ApmAtomProbeIDInitialSpecimenImage2d(Data):
         ),
     )
     axis_i = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-atom-probeid-initial-specimen-image-2d-axis-i-field"
         ],
-        flexible_unit=True,
-        shape=["*"],
         a_nexus_field=NeXusField(
             name="axis_i",
             type="NX_NUMBER",
@@ -9495,13 +9462,10 @@ class ApmAtomProbeIDFinalSpecimenImage2d(Data):
         ),
     )
     real = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-atom-probeid-final-specimen-image-2d-real-field"
         ],
-        dimensionality="dimensionless",
-        unit="dimensionless",
-        shape=["*", "*"],
         a_nexus_field=NeXusField(
             name="real",
             type="NX_NUMBER",
@@ -9527,12 +9491,10 @@ class ApmAtomProbeIDFinalSpecimenImage2d(Data):
         description="Number of dimensions of real in the HDF5 file.",
     )
     axis_j = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-atom-probeid-final-specimen-image-2d-axis-j-field"
         ],
-        flexible_unit=True,
-        shape=["*"],
         a_nexus_field=NeXusField(
             name="axis_j",
             type="NX_NUMBER",
@@ -9590,12 +9552,10 @@ class ApmAtomProbeIDFinalSpecimenImage2d(Data):
         ),
     )
     axis_i = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-atom-probeid-final-specimen-image-2d-axis-i-field"
         ],
-        flexible_unit=True,
-        shape=["*"],
         a_nexus_field=NeXusField(
             name="axis_i",
             type="NX_NUMBER",
@@ -9733,11 +9693,10 @@ class ApmAtomProbeIDRawData(Process):
         ),
     )
     dld_wire_names = Quantity(
-        type=str,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-atom-probeid-raw-data-dld-wire-names-field"
         ],
-        shape=["*", 2],
         description=(
             "Alias tuple, typical for the begin and the end of each DLD wire of "
             "the detector. Order follows arrival_time_pairs. The order of the "
@@ -9752,13 +9711,10 @@ class ApmAtomProbeIDRawData(Process):
         ),
     )
     arrival_time_pairs = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-atom-probeid-raw-data-arrival-time-pairs-field"
         ],
-        dimensionality="[time]",
-        unit="second",
-        shape=["*", "*", 2],
         description=(
             "Raw readings from the analog-to-digital-converter timing circuits "
             "of the detector wires."
@@ -9980,13 +9936,10 @@ class ApmAtomProbeIDHitFinding(Process):
         ),
     )
     hit_positions = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-atom-probeid-hit-finding-hit-positions-field"
         ],
-        dimensionality="[length]",
-        unit="m",
-        shape=["*", 2],
         description=(
             "Evaluated ion impact coordinates on the detector. Use the "
             "depends_on field to specify which reference frame the positions are "
@@ -10146,11 +10099,10 @@ class ApmAtomProbeIDHitFinding(Process):
         a_display={"unit": "dimensionless"},
     )
     hit_quality_type = Quantity(
-        type=str,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-atom-probeid-hit-finding-hit-quality-type-field"
         ],
-        shape=["*"],
         description=(
             "Hit quality is an integer that specifies which category/type a hit "
             "was assigned to. This field lists the human-readable, possibly "
@@ -10172,13 +10124,10 @@ class ApmAtomProbeIDHitFinding(Process):
         ),
     )
     hit_quality = Quantity(
-        type=np.int64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-atom-probeid-hit-finding-hit-quality-field"
         ],
-        dimensionality="dimensionless",
-        unit="dimensionless",
-        shape=["*"],
         description=(
             "Hit quality identifier for each pulse. Identifier has to be within "
             "hit_quality_type."
@@ -10192,13 +10141,10 @@ class ApmAtomProbeIDHitFinding(Process):
         ),
     )
     hit_multiplicity = Quantity(
-        type=np.int64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-atom-probeid-hit-finding-hit-multiplicity-field"
         ],
-        dimensionality="dimensionless",
-        unit="dimensionless",
-        shape=["*"],
         description=(
             "The number of ions determined to have been collected on the same "
             "pulse. These ions may hit different pixels, or even the same "
@@ -10414,13 +10360,10 @@ class ApmAtomProbeIDHitSpatialFiltering(Process):
         a_display={"unit": "dimensionless"},
     )
     evaporation_id = Quantity(
-        type=np.int64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-atom-probeid-hit-spatial-filtering-evaporation-id-field"
         ],
-        dimensionality="dimensionless",
-        unit="dimensionless",
-        shape=["*"],
         description=(
             "There are two possibilities to report evaporation_id values: If "
             "evaporation_id_offset is provided, the evaporation_id values are "
@@ -10699,11 +10642,10 @@ class ApmAtomProbeIDVoltageAndBowl(Process):
         ),
     )
     raw_tof = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-atom-probeid-voltage-and-bowl-raw-tof-field"
         ],
-        shape=["*"],
         description=("Raw time-of-flight data without corrections."),
         a_nexus_field=NeXusField(
             name="raw_tof",
@@ -10733,11 +10675,10 @@ class ApmAtomProbeIDVoltageAndBowl(Process):
         a_display={"unit": "second"},
     )
     calibrated_tof = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-atom-probeid-voltage-and-bowl-calibrated-tof-field"
         ],
-        shape=["*"],
         description=("Calibrated time-of-flight."),
         a_nexus_field=NeXusField(
             name="calibrated_tof",
@@ -10963,12 +10904,10 @@ class ApmAtomProbeIDMassToChargeConversion(Process):
         ),
     )
     mass_to_charge = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-atom-probeid-mass-to-charge-conversion-mass-to-charge-field"
         ],
-        flexible_unit=True,
-        shape=["*"],
         a_nexus_field=NeXusField(
             name="mass_to_charge",
             type="NX_FLOAT",
@@ -11152,12 +11091,10 @@ class ApmAtomProbeIDMassToChargeConversionConfig(Parameters):
         ),
     )
     mass_resolution = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-atom-probeid-mass-to-charge-conversion-config-mass-resolution-field"
         ],
-        flexible_unit=True,
-        shape=["*"],
         description=(
             "Inverse of the mass resolution :math:`\\frac{M}{\\Delta M}` as "
             "mentioned by `T. Blum et al. "
@@ -11183,12 +11120,10 @@ class ApmAtomProbeIDMassToChargeConversionConfig(Parameters):
         ),
     )
     mass_resolution_fw = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-atom-probeid-mass-to-charge-conversion-config-mass-resolution-fw-field"
         ],
-        flexible_unit=True,
-        shape=["*"],
         description=(
             "The full width at which :math:`{\\Delta M}_{fw}` fraction of "
             "maximum this value was defined. Examples are at tenth "
@@ -11232,13 +11167,10 @@ class ApmAtomProbeIDMassToChargeConversionConfigMassResolutionION(Atom):
     )
 
     nuclide_hash = Quantity(
-        type=np.int64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-atom-probeid-mass-to-charge-conversion-config-mass-resolutionion-nuclide-hash-field"
         ],
-        dimensionality="dimensionless",
-        unit="dimensionless",
-        shape=["*"],
         a_nexus_field=NeXusField(
             name="nuclide_hash",
             type="NX_UINT",
@@ -11318,13 +11250,10 @@ class ApmAtomProbeIDReconstruction(ApmReconstruction):
         ),
     )
     reconstructed_positions = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-atom-probeid-reconstruction-reconstructed-positions-field"
         ],
-        dimensionality="[length]",
-        unit="m",
-        shape=["*", 3],
         a_nexus_field=NeXusField(
             name="reconstructed_positions",
             type="NX_FLOAT",
@@ -11987,7 +11916,7 @@ class ApmAtomProbeIDReconstructionNaiveDiscretizationData(Data):
         ),
     )
     title = Quantity(
-        type=str,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-atom-probeid-reconstruction-naive-discretization-data-title-field"
         ],
@@ -12002,11 +11931,10 @@ class ApmAtomProbeIDReconstructionNaiveDiscretizationData(Data):
         ),
     )
     intensity = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-atom-probeid-reconstruction-naive-discretization-data-intensity-field"
         ],
-        shape=["*", "*", "*"],
         a_nexus_field=NeXusField(
             name="intensity",
             type="NX_NUMBER",
@@ -12031,11 +11959,10 @@ class ApmAtomProbeIDReconstructionNaiveDiscretizationData(Data):
         description="Number of dimensions of intensity in the HDF5 file.",
     )
     axis_z = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-atom-probeid-reconstruction-naive-discretization-data-axis-z-field"
         ],
-        shape=["*"],
         a_nexus_field=NeXusField(
             name="axis_z",
             type="NX_FLOAT",
@@ -12092,11 +12019,10 @@ class ApmAtomProbeIDReconstructionNaiveDiscretizationData(Data):
         ),
     )
     axis_y = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-atom-probeid-reconstruction-naive-discretization-data-axis-y-field"
         ],
-        shape=["*"],
         a_nexus_field=NeXusField(
             name="axis_y",
             type="NX_FLOAT",
@@ -12153,11 +12079,10 @@ class ApmAtomProbeIDReconstructionNaiveDiscretizationData(Data):
         ),
     )
     axis_x = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-atom-probeid-reconstruction-naive-discretization-data-axis-x-field"
         ],
-        shape=["*"],
         a_nexus_field=NeXusField(
             name="axis_x",
             type="NX_FLOAT",
@@ -12612,7 +12537,7 @@ class ApmAtomProbeIDRangingMassToChargeDistributionMassSpectrum(Data):
         ),
     )
     title = Quantity(
-        type=str,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-atom-probeid-ranging-mass-to-charge-distribution-mass-spectrum-title-field"
         ],
@@ -12627,11 +12552,10 @@ class ApmAtomProbeIDRangingMassToChargeDistributionMassSpectrum(Data):
         ),
     )
     intensity = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-atom-probeid-ranging-mass-to-charge-distribution-mass-spectrum-intensity-field"
         ],
-        shape=["*"],
         a_nexus_field=NeXusField(
             name="intensity",
             type="NX_NUMBER",
@@ -12672,11 +12596,10 @@ class ApmAtomProbeIDRangingMassToChargeDistributionMassSpectrum(Data):
         ),
     )
     axis_mass_to_charge = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-atom-probeid-ranging-mass-to-charge-distribution-mass-spectrum-axis-mass-to-charge-field"
         ],
-        shape=["*"],
         a_nexus_field=NeXusField(
             name="axis_mass_to_charge",
             type="NX_FLOAT",
@@ -13215,13 +13138,10 @@ class ApmAtomProbeIDRangingPeakIdentification(Process):
         a_display={"unit": "dimensionless"},
     )
     iontypes = Quantity(
-        type=np.int64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-atom-probeid-ranging-peak-identification-iontypes-field"
         ],
-        dimensionality="dimensionless",
-        unit="dimensionless",
-        shape=["*"],
         description=(
             "The iontype identifier for each ion that was best matching; stored "
             "in the order of the evaporation_id. The value zero is reserved for "
@@ -13321,13 +13241,10 @@ class ApmAtomProbeIDRangingPeakIdentificationIonID(Atom):
     )
 
     nuclide_hash = Quantity(
-        type=np.int64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-atom-probeid-ranging-peak-identification-ionid-nuclide-hash-field"
         ],
-        dimensionality="dimensionless",
-        unit="dimensionless",
-        shape=["*"],
         a_nexus_field=NeXusField(
             name="nuclide_hash",
             type="NX_UINT",
@@ -13356,12 +13273,10 @@ class ApmAtomProbeIDRangingPeakIdentificationIonID(Atom):
         a_display={"unit": "dimensionless"},
     )
     mass_to_charge_range = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-atom-probeid-ranging-peak-identification-ionid-mass-to-charge-range-field"
         ],
-        flexible_unit=True,
-        shape=["*", 2],
         a_nexus_field=NeXusField(
             name="mass_to_charge_range",
             type="NX_FLOAT",
@@ -13371,13 +13286,10 @@ class ApmAtomProbeIDRangingPeakIdentificationIonID(Atom):
         ),
     )
     nuclide_list = Quantity(
-        type=np.int64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-atom-probeid-ranging-peak-identification-ionid-nuclide-list-field"
         ],
-        dimensionality="dimensionless",
-        unit="dimensionless",
-        shape=["*", 2],
         a_nexus_field=NeXusField(
             name="nuclide_list",
             type="NX_UINT",
@@ -13427,13 +13339,10 @@ class ApmAtomProbeIDRangingPeakIdentificationIonIDChargeStateAnalysis(
     )
 
     charge_state = Quantity(
-        type=np.int64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-atom-probeid-ranging-peak-identification-ionid-charge-state-analysis-charge-state-field"
         ],
-        dimensionality="dimensionless",
-        unit="dimensionless",
-        shape=["*"],
         a_nexus_field=NeXusField(
             name="charge_state",
             type="NX_INT",
@@ -13443,13 +13352,10 @@ class ApmAtomProbeIDRangingPeakIdentificationIonIDChargeStateAnalysis(
         ),
     )
     nuclide_hash = Quantity(
-        type=np.int64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-atom-probeid-ranging-peak-identification-ionid-charge-state-analysis-nuclide-hash-field"
         ],
-        dimensionality="dimensionless",
-        unit="dimensionless",
-        shape=["*", "*"],
         a_nexus_field=NeXusField(
             name="nuclide_hash",
             type="NX_UINT",
@@ -13459,13 +13365,10 @@ class ApmAtomProbeIDRangingPeakIdentificationIonIDChargeStateAnalysis(
         ),
     )
     mass = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-atom-probeid-ranging-peak-identification-ionid-charge-state-analysis-mass-field"
         ],
-        dimensionality="[mass]",
-        unit="gram",
-        shape=["*"],
         a_nexus_field=NeXusField(
             name="mass",
             type="NX_FLOAT",
@@ -13475,13 +13378,10 @@ class ApmAtomProbeIDRangingPeakIdentificationIonIDChargeStateAnalysis(
         ),
     )
     natural_abundance_product = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-atom-probeid-ranging-peak-identification-ionid-charge-state-analysis-natural-abundance-product-field"
         ],
-        dimensionality="dimensionless",
-        unit="dimensionless",
-        shape=["*"],
         a_nexus_field=NeXusField(
             name="natural_abundance_product",
             type="NX_FLOAT",
@@ -13491,13 +13391,10 @@ class ApmAtomProbeIDRangingPeakIdentificationIonIDChargeStateAnalysis(
         ),
     )
     shortest_half_life = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-atom-probeid-ranging-peak-identification-ionid-charge-state-analysis-shortest-half-life-field"
         ],
-        dimensionality="[time]",
-        unit="second",
-        shape=["*"],
         a_nexus_field=NeXusField(
             name="shortest_half_life",
             type="NX_FLOAT",
@@ -13525,13 +13422,10 @@ class ApmAtomProbeIDRangingPeakIdentificationIonIDChargeStateAnalysisConfig(Para
     )
 
     nuclides = Quantity(
-        type=np.int64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-atom-probeid-ranging-peak-identification-ionid-charge-state-analysis-config-nuclides-field"
         ],
-        dimensionality="dimensionless",
-        unit="dimensionless",
-        shape=["*"],
         a_nexus_field=NeXusField(
             name="nuclides",
             type="NX_UINT",
@@ -13541,12 +13435,10 @@ class ApmAtomProbeIDRangingPeakIdentificationIonIDChargeStateAnalysisConfig(Para
         ),
     )
     mass_to_charge_range = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-atom-probeid-ranging-peak-identification-ionid-charge-state-analysis-config-mass-to-charge-range-field"
         ],
-        flexible_unit=True,
-        shape=[2],
         a_nexus_field=NeXusField(
             name="mass_to_charge_range",
             type="NX_FLOAT",

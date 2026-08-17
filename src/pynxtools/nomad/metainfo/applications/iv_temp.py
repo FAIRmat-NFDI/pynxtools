@@ -28,6 +28,7 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 
 import numpy as np
+from nomad.datamodel.hdf5 import HDF5Reference
 from nomad.datamodel.metainfo.annotations import (
     ELNAnnotation,
     ELNComponentEnum,
@@ -318,7 +319,7 @@ class IvTempData(Data):
     )
 
     temperature = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXiv_temp.html#nxiv_temp-entry-data-temperature-field"
         ],
@@ -349,7 +350,7 @@ class IvTempData(Data):
         description="Number of dimensions of temperature in the HDF5 file.",
     )
     voltage = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXiv_temp.html#nxiv_temp-entry-data-voltage-field"
         ],
@@ -380,11 +381,10 @@ class IvTempData(Data):
         description="Number of dimensions of voltage in the HDF5 file.",
     )
     current = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXiv_temp.html#nxiv_temp-entry-data-current-field"
         ],
-        shape=["*", "*"],
         a_nexus_field=NeXusField(
             name="current",
             type="NX_NUMBER",

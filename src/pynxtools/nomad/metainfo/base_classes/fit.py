@@ -24,6 +24,7 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 
 import numpy as np
+from nomad.datamodel.hdf5 import HDF5Reference
 from nomad.datamodel.metainfo.annotations import (
     ELNAnnotation,
     ELNComponentEnum,
@@ -200,11 +201,10 @@ class FitData(Data):
     )
 
     input_independent = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXfit.html#nxfit-data-input-independent-field"
         ],
-        flexible_unit=True,
         description=(
             "Independent variable(s) for this fit procedure, representing the "
             "values to be fitted by the ``global_fit_function``."
@@ -237,11 +237,10 @@ class FitData(Data):
         description="Number of dimensions of input_independent in the HDF5 file.",
     )
     input_dependent = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXfit.html#nxfit-data-input-dependent-field"
         ],
-        flexible_unit=True,
         description=(
             "Dependent variable(s) for this fit procedure (i.e., the observed data)."
         ),
@@ -273,11 +272,10 @@ class FitData(Data):
         description="Number of dimensions of input_dependent in the HDF5 file.",
     )
     fit_sum = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXfit.html#nxfit-data-fit-sum-field"
         ],
-        flexible_unit=True,
         description=(
             "Resulting fit obtained by evaluating the ``global_fit_function`` at "
             "the points specified in ``input_independent`` using the optimized "
@@ -312,11 +310,10 @@ class FitData(Data):
         description="Number of dimensions of fit_sum in the HDF5 file.",
     )
     residual = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXfit.html#nxfit-data-residual-field"
         ],
-        flexible_unit=True,
         description=(
             "The difference between the observed data (``input_dependent``) and "
             "the predicted fit values (``fit_sum``). A lower magnitude of "

@@ -28,6 +28,7 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 
 import numpy as np
+from nomad.datamodel.hdf5 import HDF5Reference
 from nomad.datamodel.metainfo.annotations import (
     ELNAnnotation,
     ELNComponentEnum,
@@ -155,12 +156,10 @@ class XasHerfd(Xas):
         ),
     )
     intensity = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXxas_herfd.html#nxxas_herfd-entry-intensity-field"
         ],
-        flexible_unit=True,
-        shape=["*"],
         description=(
             "The ratio :math:`I_f/I_0`, where :math:`I_f` is the fluorescence "
             "intensity diffracted by the crystal analyzer(s) and :math:`I_0` is "
@@ -1206,13 +1205,10 @@ class XasHerfdBeamlineCoordinateSystem(CoordinateSystem):
         ),
     )
     x = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXxas_herfd.html#nxxas_herfd-entry-beamline-coordinate-system-x-field"
         ],
-        dimensionality="[length]",
-        unit="m",
-        shape=[3],
         a_nexus_field=NeXusField(
             name="x",
             type="NX_NUMBER",
@@ -1222,13 +1218,10 @@ class XasHerfdBeamlineCoordinateSystem(CoordinateSystem):
         ),
     )
     y = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXxas_herfd.html#nxxas_herfd-entry-beamline-coordinate-system-y-field"
         ],
-        dimensionality="[length]",
-        unit="m",
-        shape=[3],
         a_nexus_field=NeXusField(
             name="y",
             type="NX_NUMBER",
@@ -1238,13 +1231,10 @@ class XasHerfdBeamlineCoordinateSystem(CoordinateSystem):
         ),
     )
     z = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXxas_herfd.html#nxxas_herfd-entry-beamline-coordinate-system-z-field"
         ],
-        dimensionality="[length]",
-        unit="m",
-        shape=[3],
         a_nexus_field=NeXusField(
             name="z",
             type="NX_NUMBER",
@@ -1957,12 +1947,10 @@ class XasHerfdInstrumentI0(Detector):
     )
 
     data_quantity = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXxas_herfd.html#nxxas_herfd-entry-instrument-i0-data-field"
         ],
-        flexible_unit=True,
-        shape=["*"],
         a_nexus_field=NeXusField(
             name="data",
             type="NX_NUMBER",
@@ -2123,13 +2111,10 @@ class XasHerfdInstrumentAnalyzerCRYSTAL(Crystal):
         ),
     )
     reflection = Quantity(
-        type=np.int64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXxas_herfd.html#nxxas_herfd-entry-instrument-analyzercrystal-reflection-field"
         ],
-        dimensionality="dimensionless",
-        unit="dimensionless",
-        shape=[3],
         description=("Miller indices (hkl) values of the nominal reflection."),
         a_nexus_field=NeXusField(
             name="reflection",
@@ -2160,13 +2145,10 @@ class XasHerfdInstrumentAnalyzerCRYSTAL(Crystal):
         a_display={"unit": "m"},
     )
     bragg_angle = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXxas_herfd.html#nxxas_herfd-entry-instrument-analyzercrystal-bragg-angle-field"
         ],
-        dimensionality="[angle]",
-        unit="radian",
-        shape=["*"],
         description=("Bragg angle :math:`\\theta_B` of the nominal reflection."),
         a_nexus_field=NeXusField(
             name="bragg_angle",
@@ -2567,12 +2549,10 @@ class XasHerfdInstrumentIfluor(Detector):
     )
 
     data_quantity = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXxas_herfd.html#nxxas_herfd-entry-instrument-ifluor-data-field"
         ],
-        flexible_unit=True,
-        shape=["*"],
         a_nexus_field=NeXusField(
             name="data",
             type="NX_NUMBER",
@@ -2861,11 +2841,10 @@ class XasHerfdCollection(Collection):
     )
 
     raw_data = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXxas_herfd.html#nxxas_herfd-entry-collection-raw-data-field"
         ],
-        shape=["*", "*"],
         description=(
             "Raw fluorescence counts per incident energy point for each crystal "
             "analyzer, before normalization by the incident beam intensity and "
