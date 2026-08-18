@@ -277,6 +277,14 @@ def _get_app_index() -> dict[str, type]:
     return _APP_INDEX
 
 
+def _get_nx_class(hdf_node: h5py.Group) -> str:
+    """Return the NX_class attribute as a string."""
+    nx_class = hdf_node.attrs.get("NX_class", b"")
+    if not nx_class:
+        return ""
+    return nx_class.decode() if isinstance(nx_class, bytes) else str(nx_class)
+
+
 # ---------------------------------------------------------------------------
 # Pre-scan visitor (stateless helper)
 # ---------------------------------------------------------------------------
@@ -295,16 +303,7 @@ class _PrescanVisitor(NexusVisitor):
         self.entry_definitions: dict[str, str | None] = {}
 
     def on_prescan_group(self, hdf_path: str, hdf_node: h5py.Group) -> None:
-        nx_class_raw = hdf_node.attrs.get("NX_class", b"")
-        nx_class = (
-            (
-                nx_class_raw.decode()
-                if isinstance(nx_class_raw, bytes)
-                else str(nx_class_raw)
-            )
-            if nx_class_raw
-            else ""
-        )
+        nx_class = _get_nx_class(hdf_node)
 
         if nx_class != "NXentry":
             return
@@ -431,16 +430,7 @@ class NomadVisitorV2(NexusVisitor):
             parent_section = self._sections.get(parent_path)
             if parent_section is None:
                 return
-            nx_class_raw = hdf_node.attrs.get("NX_class", b"")
-            nx_class = (
-                (
-                    nx_class_raw.decode()
-                    if isinstance(nx_class_raw, bytes)
-                    else str(nx_class_raw)
-                )
-                if nx_class_raw
-                else ""
-            )
+            nx_class = _get_nx_class(hdf_node)
             section = self._resolve_or_create_group(
                 hdf_path, group_name, nx_class, parent_section
             )

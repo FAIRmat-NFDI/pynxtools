@@ -132,7 +132,11 @@ def test_arpes_example(arpes_archive):
     assert source.type == "Free Electron Laser"
 
     # Unit check
-    assert instrument.analyser.entrance_slit_size == ureg.Quantity("750 micrometer")
+    actual_slit_size = instrument.analyser.entrance_slit_size
+    expected_slit_size = ureg.Quantity("750 micrometer")
+    assert actual_slit_size.to(expected_slit_size.units).magnitude == pytest.approx(
+        expected_slit_size.magnitude
+    )
 
     # Data
     assert hasattr(arpes_entry, "data")
@@ -142,7 +146,6 @@ def test_arpes_example(arpes_archive):
     assert data.nx_name == "data"
 
     assert len(data.AXISNAME) == 3
-    # there is still a bug in the variadic name resolution, so skip these
     assert data.delays is not None
     assert data.angles.check("1/Å")
     # ToDo: if AXISNAME and DATA can be resolved properly, extend this!
