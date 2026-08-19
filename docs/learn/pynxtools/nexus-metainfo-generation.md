@@ -489,20 +489,36 @@ treated as unbounded.
 
 ## Shape representation
 
-NXDL `<dimensions>` elements map to `shape` on the generated `Quantity`. Concrete
-integer sizes are preserved as-is. Unbounded or symbolically-named dimensions (e.g.
-`nP`, `nz`) become the wildcard `"*"`. NOMAD does not interpret NeXus symbol names.
-Symbol definitions from the NXDL `<symbols>` block are preserved in
-`NeXusDefinition.symbols` on the class `m_def`.
+NXDL `<dimensions>` elements map to `shape` on the generated `Quantity` —
+for **attributes** only. An attribute is not an addressable HDF5 object, so
+it keeps its array value directly:
 
 ```python
-# NXDL: <dimensions rank="2"><dim index="1" value="nP"/><dim index="2" value="3"/></dimensions>
-data = Quantity(
+# NXDL <attribute> with <dimensions rank="1"><dim index="1" value="n"/></dimensions>
+some_attr = Quantity(
     type=np.float64,
-    shape=["*", 3],
+    shape=["*"],
     ...
 )
 ```
+
+**Fields** become `HDF5Reference`-typed instead, whenever they are array-valued —
+either because the NXDL declares `<dimensions>`, or, inside an `NXdata`-derived class, because rank is only known at parse time (e.g. `NXdata`'s own `DATA`/`AXISNAME` fields, which declare no `<dimensions>` at all). The array is never copied into the archive. The `Quantity` instead stores a reference string to the dataset in the source HDF5/NeXus file (`<file>#/<hdf5_path>`), resolved at parse time in `pynxtools/nomad/parsers/parser_v2.py`. `shape`, `unit`, `dimensionality`, and `flexible_unit` don't apply to a reference and are omitted. No ELN component is attached — there is nothing to edit.
+
+```python
+# NXDL: <field name="data" type="NX_FLOAT" units="NX_ANY"> inside an NXdata group
+data = Quantity(
+    type=HDF5Reference,
+    links=[...],
+    ...
+)
+```
+
+Concrete integer dimension sizes are preserved as-is on attributes; unbounded
+or symbolically-named dimensions (e.g. `nP`, `nz`) become the wildcard `"*"`.
+NOMAD does not interpret NeXus symbol names. Symbol definitions from the NXDL
+`<symbols>` block are preserved in `NeXusDefinition.symbols` on the class
+`m_def`.
 
 ---
 
