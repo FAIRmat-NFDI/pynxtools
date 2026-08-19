@@ -577,10 +577,6 @@ class CansasData(Data):
             optionality="required",
             units="NX_PER_LENGTH",
         ),
-        a_eln=ELNAnnotation(
-            component=ELNComponentEnum.NumberEditQuantity,
-        ),
-        a_display={"unit": "1 / m"},
     )
     Q__min = Quantity(
         type=np.float64,
@@ -766,9 +762,6 @@ class CansasData(Data):
             name_type="specified",
             optionality="required",
         ),
-        a_eln=ELNAnnotation(
-            component=ELNComponentEnum.NumberEditQuantity,
-        ),
     )
     I__min = Quantity(
         type=np.float64,
@@ -886,9 +879,6 @@ class CansasData(Data):
             name_type="specified",
             optionality="optional",
         ),
-        a_eln=ELNAnnotation(
-            component=ELNComponentEnum.NumberEditQuantity,
-        ),
     )
     Idev__min = Quantity(
         type=np.float64,
@@ -951,10 +941,6 @@ class CansasData(Data):
             optionality="optional",
             units="NX_PER_LENGTH",
         ),
-        a_eln=ELNAnnotation(
-            component=ELNComponentEnum.NumberEditQuantity,
-        ),
-        a_display={"unit": "1 / m"},
     )
     Qdev__min = Quantity(
         type=np.float64,
@@ -1015,10 +1001,6 @@ class CansasData(Data):
             optionality="optional",
             units="NX_PER_LENGTH",
         ),
-        a_eln=ELNAnnotation(
-            component=ELNComponentEnum.NumberEditQuantity,
-        ),
-        a_display={"unit": "1 / m"},
     )
     dQw__min = Quantity(
         type=np.float64,
@@ -1079,10 +1061,6 @@ class CansasData(Data):
             optionality="optional",
             units="NX_PER_LENGTH",
         ),
-        a_eln=ELNAnnotation(
-            component=ELNComponentEnum.NumberEditQuantity,
-        ),
-        a_display={"unit": "1 / m"},
     )
     dQl__min = Quantity(
         type=np.float64,
@@ -1140,10 +1118,6 @@ class CansasData(Data):
             optionality="optional",
             units="NX_PER_LENGTH",
         ),
-        a_eln=ELNAnnotation(
-            component=ELNComponentEnum.NumberEditQuantity,
-        ),
-        a_display={"unit": "1 / m"},
     )
     Qmean__min = Quantity(
         type=np.float64,
@@ -1200,10 +1174,6 @@ class CansasData(Data):
             optionality="optional",
             units="NX_DIMENSIONLESS",
         ),
-        a_eln=ELNAnnotation(
-            component=ELNComponentEnum.NumberEditQuantity,
-        ),
-        a_display={"unit": "dimensionless"},
     )
     ShadowFactor__min = Quantity(
         type=np.float64,
@@ -2669,10 +2639,6 @@ class CansasTransmissionSpectrum(Data):
             optionality="required",
             units="NX_WAVELENGTH",
         ),
-        a_eln=ELNAnnotation(
-            component=ELNComponentEnum.NumberEditQuantity,
-        ),
-        a_display={"unit": "angstrom"},
     )
     lambda_quantity__min = Quantity(
         type=np.float64,
@@ -2706,10 +2672,6 @@ class CansasTransmissionSpectrum(Data):
             optionality="required",
             units="NX_DIMENSIONLESS",
         ),
-        a_eln=ELNAnnotation(
-            component=ELNComponentEnum.NumberEditQuantity,
-        ),
-        a_display={"unit": "dimensionless"},
     )
     T__min = Quantity(
         type=np.float64,
@@ -2770,10 +2732,6 @@ class CansasTransmissionSpectrum(Data):
             optionality="required",
             units="NX_DIMENSIONLESS",
         ),
-        a_eln=ELNAnnotation(
-            component=ELNComponentEnum.NumberEditQuantity,
-        ),
-        a_display={"unit": "dimensionless"},
     )
     Tdev__min = Quantity(
         type=np.float64,

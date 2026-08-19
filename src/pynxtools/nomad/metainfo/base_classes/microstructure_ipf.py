@@ -296,10 +296,6 @@ class MicrostructureIpfMap(Data):
             optionality="optional",
             units="NX_UNITLESS",
         ),
-        a_eln=ELNAnnotation(
-            component=ELNComponentEnum.NumberEditQuantity,
-        ),
-        a_display={"unit": "dimensionless"},
     )
     data_quantity__min = Quantity(
         type=np.float64,

@@ -615,9 +615,6 @@ class StxmData(Data):
                 "generic scan",
             ],
         ),
-        a_eln=ELNAnnotation(
-            component=ELNComponentEnum.EnumEditQuantity,
-        ),
     )
     data_quantity = Quantity(
         type=HDF5Reference,
@@ -640,9 +637,6 @@ class StxmData(Data):
             type="NX_NUMBER",
             name_type="specified",
             optionality="required",
-        ),
-        a_eln=ELNAnnotation(
-            component=ELNComponentEnum.NumberEditQuantity,
         ),
     )
     data_quantity__min = Quantity(

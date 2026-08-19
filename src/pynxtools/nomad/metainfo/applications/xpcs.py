@@ -289,10 +289,6 @@ class XpcsData(Data):
             optionality="optional",
             units="NX_COUNT",
         ),
-        a_eln=ELNAnnotation(
-            component=ELNComponentEnum.NumberEditQuantity,
-        ),
-        a_display={"unit": "dimensionless"},
     )
     frame_sum__min = Quantity(
         type=np.float64,
@@ -326,10 +322,6 @@ class XpcsData(Data):
             optionality="optional",
             units="NX_COUNT",
         ),
-        a_eln=ELNAnnotation(
-            component=ELNComponentEnum.NumberEditQuantity,
-        ),
-        a_display={"unit": "dimensionless"},
     )
     frame_average__min = Quantity(
         type=np.float64,
@@ -385,10 +377,6 @@ class XpcsData(Data):
             optionality="optional",
             units="NX_DIMENSIONLESS",
         ),
-        a_eln=ELNAnnotation(
-            component=ELNComponentEnum.NumberEditQuantity,
-        ),
-        a_display={"unit": "dimensionless"},
     )
     g2__min = Quantity(
         type=np.float64,
@@ -448,10 +436,6 @@ class XpcsData(Data):
             optionality="optional",
             units="NX_DIMENSIONLESS",
         ),
-        a_eln=ELNAnnotation(
-            component=ELNComponentEnum.NumberEditQuantity,
-        ),
-        a_display={"unit": "dimensionless"},
     )
     g2_derr__min = Quantity(
         type=np.float64,
@@ -502,9 +486,6 @@ class XpcsData(Data):
             name_type="specified",
             optionality="optional",
             units="NX_ANY",
-        ),
-        a_eln=ELNAnnotation(
-            component=ELNComponentEnum.NumberEditQuantity,
         ),
     )
     G2_unnormalized__min = Quantity(
@@ -561,10 +542,6 @@ class XpcsData(Data):
             optionality="optional",
             units="NX_COUNT",
         ),
-        a_eln=ELNAnnotation(
-            component=ELNComponentEnum.NumberEditQuantity,
-        ),
-        a_display={"unit": "dimensionless"},
     )
     delay_difference__min = Quantity(
         type=np.int64,
@@ -661,9 +638,6 @@ class XpcsTwotime(Data):
             name_type="specified",
             optionality="optional",
             units="NX_ANY",
-        ),
-        a_eln=ELNAnnotation(
-            component=ELNComponentEnum.NumberEditQuantity,
         ),
     )
     two_time_corr_func__min = Quantity(
@@ -796,10 +770,6 @@ class XpcsTwotime(Data):
             optionality="optional",
             units="NX_DIMENSIONLESS",
         ),
-        a_eln=ELNAnnotation(
-            component=ELNComponentEnum.NumberEditQuantity,
-        ),
-        a_display={"unit": "dimensionless"},
     )
     g2_from_two_time_corr_func__min = Quantity(
         type=np.float64,
@@ -899,10 +869,6 @@ class XpcsTwotime(Data):
             optionality="optional",
             units="NX_DIMENSIONLESS",
         ),
-        a_eln=ELNAnnotation(
-            component=ELNComponentEnum.NumberEditQuantity,
-        ),
-        a_display={"unit": "dimensionless"},
     )
     g2_err_from_two_time_corr_func__min = Quantity(
         type=np.float64,
@@ -970,10 +936,6 @@ class XpcsTwotime(Data):
             optionality="optional",
             units="NX_DIMENSIONLESS",
         ),
-        a_eln=ELNAnnotation(
-            component=ELNComponentEnum.NumberEditQuantity,
-        ),
-        a_display={"unit": "dimensionless"},
     )
     g2_from_two_time_corr_func_partials__min = Quantity(
         type=np.float64,
@@ -1042,10 +1004,6 @@ class XpcsTwotime(Data):
             optionality="optional",
             units="NX_DIMENSIONLESS",
         ),
-        a_eln=ELNAnnotation(
-            component=ELNComponentEnum.NumberEditQuantity,
-        ),
-        a_display={"unit": "dimensionless"},
     )
     g2_err_from_two_time_corr_func_partials__min = Quantity(
         type=np.float64,

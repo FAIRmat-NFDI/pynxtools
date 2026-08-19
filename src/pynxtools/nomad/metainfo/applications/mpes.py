@@ -2659,9 +2659,6 @@ class MpesInstrumentElectronanalyzerElectronDetectorRawData(Data):
             name_type="specified",
             optionality="required",
         ),
-        a_eln=ELNAnnotation(
-            component=ELNComponentEnum.NumberEditQuantity,
-        ),
     )
     raw__min = Quantity(
         type=np.float64,
@@ -2691,9 +2688,6 @@ class MpesInstrumentElectronanalyzerElectronDetectorRawData(Data):
             name_type="specified",
             optionality="optional",
         ),
-        a_eln=ELNAnnotation(
-            component=ELNComponentEnum.NumberEditQuantity,
-        ),
     )
     pixel_x__min = Quantity(
         type=np.int64,
@@ -2722,9 +2716,6 @@ class MpesInstrumentElectronanalyzerElectronDetectorRawData(Data):
             type="NX_POSINT",
             name_type="specified",
             optionality="optional",
-        ),
-        a_eln=ELNAnnotation(
-            component=ELNComponentEnum.NumberEditQuantity,
         ),
     )
     pixel_y__min = Quantity(
@@ -2756,10 +2747,6 @@ class MpesInstrumentElectronanalyzerElectronDetectorRawData(Data):
             optionality="recommended",
             units="NX_ENERGY",
         ),
-        a_eln=ELNAnnotation(
-            component=ELNComponentEnum.NumberEditQuantity,
-        ),
-        a_display={"unit": "eV"},
     )
     energy__min = Quantity(
         type=np.float64,
@@ -2813,10 +2800,6 @@ class MpesInstrumentElectronanalyzerElectronDetectorRawData(Data):
             optionality="optional",
             units="NX_ENERGY",
         ),
-        a_eln=ELNAnnotation(
-            component=ELNComponentEnum.NumberEditQuantity,
-        ),
-        a_display={"unit": "eV"},
     )
     photon_energy__min = Quantity(
         type=np.float64,
@@ -2856,10 +2839,6 @@ class MpesInstrumentElectronanalyzerElectronDetectorRawData(Data):
             optionality="optional",
             units="NX_WAVENUMBER",
         ),
-        a_eln=ELNAnnotation(
-            component=ELNComponentEnum.NumberEditQuantity,
-        ),
-        a_display={"unit": "1 / angstrom"},
     )
     kx__min = Quantity(
         type=np.float64,
@@ -2895,10 +2874,6 @@ class MpesInstrumentElectronanalyzerElectronDetectorRawData(Data):
             optionality="optional",
             units="NX_WAVENUMBER",
         ),
-        a_eln=ELNAnnotation(
-            component=ELNComponentEnum.NumberEditQuantity,
-        ),
-        a_display={"unit": "1 / angstrom"},
     )
     ky__min = Quantity(
         type=np.float64,
@@ -2934,10 +2909,6 @@ class MpesInstrumentElectronanalyzerElectronDetectorRawData(Data):
             optionality="optional",
             units="NX_WAVENUMBER",
         ),
-        a_eln=ELNAnnotation(
-            component=ELNComponentEnum.NumberEditQuantity,
-        ),
-        a_display={"unit": "1 / angstrom"},
     )
     kz__min = Quantity(
         type=np.float64,
@@ -2979,10 +2950,6 @@ class MpesInstrumentElectronanalyzerElectronDetectorRawData(Data):
             optionality="optional",
             units="NX_WAVENUMBER",
         ),
-        a_eln=ELNAnnotation(
-            component=ELNComponentEnum.NumberEditQuantity,
-        ),
-        a_display={"unit": "1 / angstrom"},
     )
     k_parallel__min = Quantity(
         type=np.float64,
@@ -3023,10 +2990,6 @@ class MpesInstrumentElectronanalyzerElectronDetectorRawData(Data):
             optionality="optional",
             units="NX_WAVENUMBER",
         ),
-        a_eln=ELNAnnotation(
-            component=ELNComponentEnum.NumberEditQuantity,
-        ),
-        a_display={"unit": "1 / angstrom"},
     )
     k_perpendicular__min = Quantity(
         type=np.float64,
@@ -3066,10 +3029,6 @@ class MpesInstrumentElectronanalyzerElectronDetectorRawData(Data):
             optionality="optional",
             units="NX_ANGLE",
         ),
-        a_eln=ELNAnnotation(
-            component=ELNComponentEnum.NumberEditQuantity,
-        ),
-        a_display={"unit": "radian"},
     )
     angular0__min = Quantity(
         type=np.float64,
@@ -3106,10 +3065,6 @@ class MpesInstrumentElectronanalyzerElectronDetectorRawData(Data):
             optionality="optional",
             units="NX_ANGLE",
         ),
-        a_eln=ELNAnnotation(
-            component=ELNComponentEnum.NumberEditQuantity,
-        ),
-        a_display={"unit": "radian"},
     )
     angular1__min = Quantity(
         type=np.float64,
@@ -3149,10 +3104,6 @@ class MpesInstrumentElectronanalyzerElectronDetectorRawData(Data):
             optionality="optional",
             units="NX_LENGTH",
         ),
-        a_eln=ELNAnnotation(
-            component=ELNComponentEnum.NumberEditQuantity,
-        ),
-        a_display={"unit": "m"},
     )
     spatial0__min = Quantity(
         type=np.float64,
@@ -3189,10 +3140,6 @@ class MpesInstrumentElectronanalyzerElectronDetectorRawData(Data):
             optionality="optional",
             units="NX_LENGTH",
         ),
-        a_eln=ELNAnnotation(
-            component=ELNComponentEnum.NumberEditQuantity,
-        ),
-        a_display={"unit": "m"},
     )
     spatial1__min = Quantity(
         type=np.float64,
@@ -3228,10 +3175,6 @@ class MpesInstrumentElectronanalyzerElectronDetectorRawData(Data):
             optionality="optional",
             units="NX_TIME",
         ),
-        a_eln=ELNAnnotation(
-            component=ELNComponentEnum.NumberEditQuantity,
-        ),
-        a_display={"unit": "second"},
     )
     delay__min = Quantity(
         type=np.float64,
@@ -3267,10 +3210,6 @@ class MpesInstrumentElectronanalyzerElectronDetectorRawData(Data):
             optionality="optional",
             units="NX_TIME",
         ),
-        a_eln=ELNAnnotation(
-            component=ELNComponentEnum.NumberEditQuantity,
-        ),
-        a_display={"unit": "second"},
     )
     temperature__min = Quantity(
         type=np.float64,
@@ -5427,9 +5366,6 @@ class MpesData(Data):
             optionality="required",
             units="NX_ANY",
         ),
-        a_eln=ELNAnnotation(
-            component=ELNComponentEnum.NumberEditQuantity,
-        ),
     )
     data_quantity__min = Quantity(
         type=np.float64,
@@ -5460,10 +5396,6 @@ class MpesData(Data):
             optionality="recommended",
             units="NX_ENERGY",
         ),
-        a_eln=ELNAnnotation(
-            component=ELNComponentEnum.NumberEditQuantity,
-        ),
-        a_display={"unit": "eV"},
     )
     energy__min = Quantity(
         type=np.float64,
@@ -5532,10 +5464,6 @@ class MpesData(Data):
             optionality="optional",
             units="NX_ENERGY",
         ),
-        a_eln=ELNAnnotation(
-            component=ELNComponentEnum.NumberEditQuantity,
-        ),
-        a_display={"unit": "eV"},
     )
     photon_energy__min = Quantity(
         type=np.float64,
@@ -5574,10 +5502,6 @@ class MpesData(Data):
             optionality="optional",
             units="NX_WAVENUMBER",
         ),
-        a_eln=ELNAnnotation(
-            component=ELNComponentEnum.NumberEditQuantity,
-        ),
-        a_display={"unit": "1 / angstrom"},
     )
     kx__min = Quantity(
         type=np.float64,
@@ -5612,10 +5536,6 @@ class MpesData(Data):
             optionality="optional",
             units="NX_WAVENUMBER",
         ),
-        a_eln=ELNAnnotation(
-            component=ELNComponentEnum.NumberEditQuantity,
-        ),
-        a_display={"unit": "1 / angstrom"},
     )
     ky__min = Quantity(
         type=np.float64,
@@ -5650,10 +5570,6 @@ class MpesData(Data):
             optionality="optional",
             units="NX_WAVENUMBER",
         ),
-        a_eln=ELNAnnotation(
-            component=ELNComponentEnum.NumberEditQuantity,
-        ),
-        a_display={"unit": "1 / angstrom"},
     )
     kz__min = Quantity(
         type=np.float64,
@@ -5694,10 +5610,6 @@ class MpesData(Data):
             optionality="optional",
             units="NX_WAVENUMBER",
         ),
-        a_eln=ELNAnnotation(
-            component=ELNComponentEnum.NumberEditQuantity,
-        ),
-        a_display={"unit": "1 / angstrom"},
     )
     k_parallel__min = Quantity(
         type=np.float64,
@@ -5737,10 +5649,6 @@ class MpesData(Data):
             optionality="optional",
             units="NX_WAVENUMBER",
         ),
-        a_eln=ELNAnnotation(
-            component=ELNComponentEnum.NumberEditQuantity,
-        ),
-        a_display={"unit": "1 / angstrom"},
     )
     k_perpendicular__min = Quantity(
         type=np.float64,
@@ -5780,10 +5688,6 @@ class MpesData(Data):
             optionality="optional",
             units="NX_ANGLE",
         ),
-        a_eln=ELNAnnotation(
-            component=ELNComponentEnum.NumberEditQuantity,
-        ),
-        a_display={"unit": "radian"},
     )
     angular0__min = Quantity(
         type=np.float64,
@@ -5819,10 +5723,6 @@ class MpesData(Data):
             optionality="optional",
             units="NX_ANGLE",
         ),
-        a_eln=ELNAnnotation(
-            component=ELNComponentEnum.NumberEditQuantity,
-        ),
-        a_display={"unit": "radian"},
     )
     angular1__min = Quantity(
         type=np.float64,
@@ -5862,10 +5762,6 @@ class MpesData(Data):
             optionality="optional",
             units="NX_LENGTH",
         ),
-        a_eln=ELNAnnotation(
-            component=ELNComponentEnum.NumberEditQuantity,
-        ),
-        a_display={"unit": "m"},
     )
     spatial0__min = Quantity(
         type=np.float64,
@@ -5901,10 +5797,6 @@ class MpesData(Data):
             optionality="optional",
             units="NX_LENGTH",
         ),
-        a_eln=ELNAnnotation(
-            component=ELNComponentEnum.NumberEditQuantity,
-        ),
-        a_display={"unit": "m"},
     )
     spatial1__min = Quantity(
         type=np.float64,
@@ -5938,10 +5830,6 @@ class MpesData(Data):
             optionality="optional",
             units="NX_TIME",
         ),
-        a_eln=ELNAnnotation(
-            component=ELNComponentEnum.NumberEditQuantity,
-        ),
-        a_display={"unit": "second"},
     )
     delay__min = Quantity(
         type=np.float64,
@@ -5977,10 +5865,6 @@ class MpesData(Data):
             optionality="optional",
             units="NX_TIME",
         ),
-        a_eln=ELNAnnotation(
-            component=ELNComponentEnum.NumberEditQuantity,
-        ),
-        a_display={"unit": "second"},
     )
     temperature__min = Quantity(
         type=np.float64,

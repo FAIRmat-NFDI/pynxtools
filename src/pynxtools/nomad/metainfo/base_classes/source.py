@@ -941,9 +941,6 @@ class SourceBunchPattern(Data):
             name_type="specified",
             optionality="optional",
         ),
-        a_eln=ELNAnnotation(
-            component=ELNComponentEnum.NumberEditQuantity,
-        ),
     )
     title__min = Quantity(
         type=np.float64,

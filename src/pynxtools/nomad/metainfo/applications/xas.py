@@ -527,9 +527,6 @@ class XasData(Data):
                 "Transmission",
             ],
         ),
-        a_eln=ELNAnnotation(
-            component=ELNComponentEnum.EnumEditQuantity,
-        ),
     )
 
     energy = Quantity(

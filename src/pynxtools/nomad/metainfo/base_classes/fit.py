@@ -216,9 +216,6 @@ class FitData(Data):
             optionality="optional",
             units="NX_ANY",
         ),
-        a_eln=ELNAnnotation(
-            component=ELNComponentEnum.NumberEditQuantity,
-        ),
     )
     input_independent__min = Quantity(
         type=np.float64,
@@ -250,9 +247,6 @@ class FitData(Data):
             name_type="specified",
             optionality="optional",
             units="NX_ANY",
-        ),
-        a_eln=ELNAnnotation(
-            component=ELNComponentEnum.NumberEditQuantity,
         ),
     )
     input_dependent__min = Quantity(
@@ -289,9 +283,6 @@ class FitData(Data):
             optionality="optional",
             units="NX_ANY",
         ),
-        a_eln=ELNAnnotation(
-            component=ELNComponentEnum.NumberEditQuantity,
-        ),
     )
     fit_sum__min = Quantity(
         type=np.float64,
@@ -325,9 +316,6 @@ class FitData(Data):
             name_type="specified",
             optionality="optional",
             units="NX_ANY",
-        ),
-        a_eln=ELNAnnotation(
-            component=ELNComponentEnum.NumberEditQuantity,
         ),
     )
     residual__min = Quantity(

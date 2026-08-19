@@ -1046,9 +1046,6 @@ class MicrostructureScoreResultsSpatiotemporalIDSummaryStatisticsKinetics(Data):
             name_type="specified",
             optionality="recommended",
         ),
-        a_eln=ELNAnnotation(
-            component=ELNComponentEnum.StringEditQuantity,
-        ),
     )
     time = Quantity(
         type=HDF5Reference,
@@ -1204,10 +1201,6 @@ class MicrostructureScoreResultsSpatiotemporalIDSummaryStatisticsStress(Data):
             optionality="required",
             enumeration=["cauchy"],
         ),
-        a_eln=ELNAnnotation(
-            component=ELNComponentEnum.EnumEditQuantity,
-            default="cauchy",
-        ),
     )
     tensor = Quantity(
         type=HDF5Reference,
@@ -1268,9 +1261,6 @@ class MicrostructureScoreResultsSpatiotemporalIDSummaryStatisticsStrain(Data):
             type="NX_CHAR",
             name_type="specified",
             optionality="required",
-        ),
-        a_eln=ELNAnnotation(
-            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
     tensor = Quantity(

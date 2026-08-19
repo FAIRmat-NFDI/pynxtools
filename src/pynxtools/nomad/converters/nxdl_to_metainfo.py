@@ -495,13 +495,18 @@ def _eln_component_for(
     name_type: str | None,
     scalar_items: list[str] | None,
     field_name: str = "",
+    is_hdf5_reference: bool = False,
 ) -> tuple[str | None, str | None]:
     """Return (eln_component, eln_default) for a generated Quantity.
 
-    Returns (None, None) for arrays, variadic quantities, Bytes, and link targets.
+    Returns (None, None) for arrays, variadic quantities, Bytes, link targets,
+    and HDF5Reference quantities -- the value is a reference string, not
+    something a user edits, so no ELN component ever applies.
     Single-value MEnum fields get their sole enum string as ``eln_default``.
     String fields whose name contains "description" get RichTextEditQuantity.
     """
+    if is_hdf5_reference:
+        return None, None
     if shape:  # non-empty list → array; None or [] → scalar
         return None, None
     if (name_type or "specified") in ("any", "partial"):
@@ -570,15 +575,24 @@ def _build_quantity_from_node(
     else:
         python_type = nx_type_to_source(node.dtype)
 
-    eln_component, eln_default = _eln_component_for(
-        python_type, shape, node.name_type, scalar_items, field_name=node.name or ""
-    )
-
     # Only NXdata fields receive statistics. Since signals and axes are always
     # array-valued by convention, treat missing <dimensions> as "array of unknown
     # rank" for this decision only; the Quantity.shape remains the explicit NXDL shape.
     is_effectively_array = bool(shape) or (
         is_nxdata_class and isinstance(node, NXTreeField)
+    )
+    # HDF5 attributes aren't independently addressable HDF5 objects, so
+    # HDF5Reference (which points at a group/dataset path) doesn't apply
+    # to them regardless of shape -- only fields become HDF5Reference.
+    is_hdf5_reference = isinstance(node, NXTreeField) and is_effectively_array
+
+    eln_component, eln_default = _eln_component_for(
+        python_type,
+        shape,
+        node.name_type,
+        scalar_items,
+        field_name=node.name or "",
+        is_hdf5_reference=is_hdf5_reference,
     )
 
     has_statistics = (
@@ -605,13 +619,7 @@ def _build_quantity_from_node(
         eln_component=eln_component,
         eln_default=eln_default,
         has_statistics=has_statistics,
-        # HDF5 attributes aren't independently addressable HDF5 objects, so
-        # HDF5Reference (which points at a group/dataset path) doesn't apply
-        # to them regardless of shape -- only fields become HDF5Reference.
-        # NXdata's own signal/axes fields (AXISNAME, DATA) declare no NXDL
-        # <dimensions> -- their rank is only known at parse time -- so
-        # is_effectively_array covers them too, same as has_statistics above.
-        is_hdf5_reference=isinstance(node, NXTreeField) and is_effectively_array,
+        is_hdf5_reference=is_hdf5_reference,
     )
 
 

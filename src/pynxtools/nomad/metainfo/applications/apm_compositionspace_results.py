@@ -968,9 +968,6 @@ class ApmCompositionspaceResultsAutophaseResult(Data):
             name_type="specified",
             optionality="recommended",
         ),
-        a_eln=ELNAnnotation(
-            component=ELNComponentEnum.StringEditQuantity,
-        ),
     )
     axis_feature_indices = Quantity(
         type=HDF5Reference,
@@ -1220,9 +1217,6 @@ class ApmCompositionspaceResultsSegmentationPcaResult(Data):
             name_type="specified",
             optionality="recommended",
         ),
-        a_eln=ELNAnnotation(
-            component=ELNComponentEnum.StringEditQuantity,
-        ),
     )
     axis_explained_variance = Quantity(
         type=HDF5Reference,
@@ -1467,9 +1461,6 @@ class ApmCompositionspaceResultsSegmentationIcOptResult(Data):
             type="NX_CHAR",
             name_type="specified",
             optionality="recommended",
-        ),
-        a_eln=ELNAnnotation(
-            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
     axis_aic = Quantity(

@@ -4068,9 +4068,6 @@ class ApmMeasurementStandingVoltageTime(Data):
             name_type="specified",
             optionality="required",
         ),
-        a_eln=ELNAnnotation(
-            component=ELNComponentEnum.StringEditQuantity,
-        ),
     )
     elapsed_time = Quantity(
         type=HDF5Reference,
@@ -4082,9 +4079,6 @@ class ApmMeasurementStandingVoltageTime(Data):
             type="NX_FLOAT",
             name_type="specified",
             optionality="required",
-        ),
-        a_eln=ELNAnnotation(
-            component=ELNComponentEnum.NumberEditQuantity,
         ),
     )
     elapsed_time__min = Quantity(
@@ -4145,9 +4139,6 @@ class ApmMeasurementStandingVoltageTime(Data):
             type="NX_FLOAT",
             name_type="specified",
             optionality="required",
-        ),
-        a_eln=ELNAnnotation(
-            component=ELNComponentEnum.NumberEditQuantity,
         ),
     )
     standing_voltage__min = Quantity(
@@ -4280,9 +4271,6 @@ class ApmMeasurementPulseFrequencyTime(Data):
             name_type="specified",
             optionality="required",
         ),
-        a_eln=ELNAnnotation(
-            component=ELNComponentEnum.StringEditQuantity,
-        ),
     )
     elapsed_time = Quantity(
         type=HDF5Reference,
@@ -4294,9 +4282,6 @@ class ApmMeasurementPulseFrequencyTime(Data):
             type="NX_FLOAT",
             name_type="specified",
             optionality="required",
-        ),
-        a_eln=ELNAnnotation(
-            component=ELNComponentEnum.NumberEditQuantity,
         ),
     )
     elapsed_time__min = Quantity(
@@ -4357,9 +4342,6 @@ class ApmMeasurementPulseFrequencyTime(Data):
             type="NX_FLOAT",
             name_type="specified",
             optionality="required",
-        ),
-        a_eln=ELNAnnotation(
-            component=ELNComponentEnum.NumberEditQuantity,
         ),
     )
     pulse_frequency__min = Quantity(
@@ -4492,9 +4474,6 @@ class ApmMeasurementDetectionRateTime(Data):
             name_type="specified",
             optionality="required",
         ),
-        a_eln=ELNAnnotation(
-            component=ELNComponentEnum.StringEditQuantity,
-        ),
     )
     elapsed_time = Quantity(
         type=HDF5Reference,
@@ -4506,9 +4485,6 @@ class ApmMeasurementDetectionRateTime(Data):
             type="NX_FLOAT",
             name_type="specified",
             optionality="required",
-        ),
-        a_eln=ELNAnnotation(
-            component=ELNComponentEnum.NumberEditQuantity,
         ),
     )
     elapsed_time__min = Quantity(
@@ -4569,9 +4545,6 @@ class ApmMeasurementDetectionRateTime(Data):
             type="NX_FLOAT",
             name_type="specified",
             optionality="required",
-        ),
-        a_eln=ELNAnnotation(
-            component=ELNComponentEnum.NumberEditQuantity,
         ),
     )
     detection_rate__min = Quantity(
@@ -4704,9 +4677,6 @@ class ApmMeasurementDetectionRateSetTime(Data):
             name_type="specified",
             optionality="required",
         ),
-        a_eln=ELNAnnotation(
-            component=ELNComponentEnum.StringEditQuantity,
-        ),
     )
     elapsed_time = Quantity(
         type=HDF5Reference,
@@ -4718,9 +4688,6 @@ class ApmMeasurementDetectionRateSetTime(Data):
             type="NX_FLOAT",
             name_type="specified",
             optionality="required",
-        ),
-        a_eln=ELNAnnotation(
-            component=ELNComponentEnum.NumberEditQuantity,
         ),
     )
     elapsed_time__min = Quantity(
@@ -4781,9 +4748,6 @@ class ApmMeasurementDetectionRateSetTime(Data):
             type="NX_FLOAT",
             name_type="specified",
             optionality="required",
-        ),
-        a_eln=ELNAnnotation(
-            component=ELNComponentEnum.NumberEditQuantity,
         ),
     )
     detection_rate_set__min = Quantity(
@@ -4916,9 +4880,6 @@ class ApmMeasurementPressureTime(Data):
             name_type="specified",
             optionality="required",
         ),
-        a_eln=ELNAnnotation(
-            component=ELNComponentEnum.StringEditQuantity,
-        ),
     )
     elapsed_time = Quantity(
         type=HDF5Reference,
@@ -4930,9 +4891,6 @@ class ApmMeasurementPressureTime(Data):
             type="NX_FLOAT",
             name_type="specified",
             optionality="required",
-        ),
-        a_eln=ELNAnnotation(
-            component=ELNComponentEnum.NumberEditQuantity,
         ),
     )
     elapsed_time__min = Quantity(
@@ -4993,9 +4951,6 @@ class ApmMeasurementPressureTime(Data):
             type="NX_FLOAT",
             name_type="specified",
             optionality="required",
-        ),
-        a_eln=ELNAnnotation(
-            component=ELNComponentEnum.NumberEditQuantity,
         ),
     )
     pressure__min = Quantity(
@@ -5128,9 +5083,6 @@ class ApmMeasurementSpecimenVoltageTime(Data):
             name_type="specified",
             optionality="required",
         ),
-        a_eln=ELNAnnotation(
-            component=ELNComponentEnum.StringEditQuantity,
-        ),
     )
     elapsed_time = Quantity(
         type=HDF5Reference,
@@ -5142,9 +5094,6 @@ class ApmMeasurementSpecimenVoltageTime(Data):
             type="NX_FLOAT",
             name_type="specified",
             optionality="required",
-        ),
-        a_eln=ELNAnnotation(
-            component=ELNComponentEnum.NumberEditQuantity,
         ),
     )
     elapsed_time__min = Quantity(
@@ -5205,9 +5154,6 @@ class ApmMeasurementSpecimenVoltageTime(Data):
             type="NX_FLOAT",
             name_type="specified",
             optionality="required",
-        ),
-        a_eln=ELNAnnotation(
-            component=ELNComponentEnum.NumberEditQuantity,
         ),
     )
     specimen_voltage__min = Quantity(
@@ -5340,9 +5286,6 @@ class ApmMeasurementSpecimenTemperatureTime(Data):
             name_type="specified",
             optionality="required",
         ),
-        a_eln=ELNAnnotation(
-            component=ELNComponentEnum.StringEditQuantity,
-        ),
     )
     elapsed_time = Quantity(
         type=HDF5Reference,
@@ -5354,9 +5297,6 @@ class ApmMeasurementSpecimenTemperatureTime(Data):
             type="NX_FLOAT",
             name_type="specified",
             optionality="required",
-        ),
-        a_eln=ELNAnnotation(
-            component=ELNComponentEnum.NumberEditQuantity,
         ),
     )
     elapsed_time__min = Quantity(
@@ -5417,9 +5357,6 @@ class ApmMeasurementSpecimenTemperatureTime(Data):
             type="NX_FLOAT",
             name_type="specified",
             optionality="required",
-        ),
-        a_eln=ELNAnnotation(
-            component=ELNComponentEnum.NumberEditQuantity,
         ),
     )
     specimen_temperature__min = Quantity(
@@ -5552,9 +5489,6 @@ class ApmMeasurementAmbientTemperatureTime(Data):
             name_type="specified",
             optionality="required",
         ),
-        a_eln=ELNAnnotation(
-            component=ELNComponentEnum.StringEditQuantity,
-        ),
     )
     elapsed_time = Quantity(
         type=HDF5Reference,
@@ -5566,9 +5500,6 @@ class ApmMeasurementAmbientTemperatureTime(Data):
             type="NX_FLOAT",
             name_type="specified",
             optionality="required",
-        ),
-        a_eln=ELNAnnotation(
-            component=ELNComponentEnum.NumberEditQuantity,
         ),
     )
     elapsed_time__min = Quantity(
@@ -5629,9 +5560,6 @@ class ApmMeasurementAmbientTemperatureTime(Data):
             type="NX_FLOAT",
             name_type="specified",
             optionality="required",
-        ),
-        a_eln=ELNAnnotation(
-            component=ELNComponentEnum.NumberEditQuantity,
         ),
     )
     ambient_temperature__min = Quantity(
@@ -5764,9 +5692,6 @@ class ApmMeasurementReflectronVoltageTime(Data):
             name_type="specified",
             optionality="required",
         ),
-        a_eln=ELNAnnotation(
-            component=ELNComponentEnum.StringEditQuantity,
-        ),
     )
     elapsed_time = Quantity(
         type=HDF5Reference,
@@ -5778,9 +5703,6 @@ class ApmMeasurementReflectronVoltageTime(Data):
             type="NX_FLOAT",
             name_type="specified",
             optionality="required",
-        ),
-        a_eln=ELNAnnotation(
-            component=ELNComponentEnum.NumberEditQuantity,
         ),
     )
     elapsed_time__min = Quantity(
@@ -5841,9 +5763,6 @@ class ApmMeasurementReflectronVoltageTime(Data):
             type="NX_FLOAT",
             name_type="specified",
             optionality="required",
-        ),
-        a_eln=ELNAnnotation(
-            component=ELNComponentEnum.NumberEditQuantity,
         ),
     )
     reflectron_voltage__min = Quantity(
@@ -5976,9 +5895,6 @@ class ApmMeasurementXstagePositionTime(Data):
             name_type="specified",
             optionality="required",
         ),
-        a_eln=ELNAnnotation(
-            component=ELNComponentEnum.StringEditQuantity,
-        ),
     )
     elapsed_time = Quantity(
         type=HDF5Reference,
@@ -5990,9 +5906,6 @@ class ApmMeasurementXstagePositionTime(Data):
             type="NX_FLOAT",
             name_type="specified",
             optionality="required",
-        ),
-        a_eln=ELNAnnotation(
-            component=ELNComponentEnum.NumberEditQuantity,
         ),
     )
     elapsed_time__min = Quantity(
@@ -6053,9 +5966,6 @@ class ApmMeasurementXstagePositionTime(Data):
             type="NX_FLOAT",
             name_type="specified",
             optionality="required",
-        ),
-        a_eln=ELNAnnotation(
-            component=ELNComponentEnum.NumberEditQuantity,
         ),
     )
     xstage_position__min = Quantity(
@@ -6188,9 +6098,6 @@ class ApmMeasurementYstagePositionTime(Data):
             name_type="specified",
             optionality="required",
         ),
-        a_eln=ELNAnnotation(
-            component=ELNComponentEnum.StringEditQuantity,
-        ),
     )
     elapsed_time = Quantity(
         type=HDF5Reference,
@@ -6202,9 +6109,6 @@ class ApmMeasurementYstagePositionTime(Data):
             type="NX_FLOAT",
             name_type="specified",
             optionality="required",
-        ),
-        a_eln=ELNAnnotation(
-            component=ELNComponentEnum.NumberEditQuantity,
         ),
     )
     elapsed_time__min = Quantity(
@@ -6265,9 +6169,6 @@ class ApmMeasurementYstagePositionTime(Data):
             type="NX_FLOAT",
             name_type="specified",
             optionality="required",
-        ),
-        a_eln=ELNAnnotation(
-            component=ELNComponentEnum.NumberEditQuantity,
         ),
     )
     ystage_position__min = Quantity(
@@ -6400,9 +6301,6 @@ class ApmMeasurementZstagePositionTime(Data):
             name_type="specified",
             optionality="required",
         ),
-        a_eln=ELNAnnotation(
-            component=ELNComponentEnum.StringEditQuantity,
-        ),
     )
     elapsed_time = Quantity(
         type=HDF5Reference,
@@ -6414,9 +6312,6 @@ class ApmMeasurementZstagePositionTime(Data):
             type="NX_FLOAT",
             name_type="specified",
             optionality="required",
-        ),
-        a_eln=ELNAnnotation(
-            component=ELNComponentEnum.NumberEditQuantity,
         ),
     )
     elapsed_time__min = Quantity(
@@ -6477,9 +6372,6 @@ class ApmMeasurementZstagePositionTime(Data):
             type="NX_FLOAT",
             name_type="specified",
             optionality="required",
-        ),
-        a_eln=ELNAnnotation(
-            component=ELNComponentEnum.NumberEditQuantity,
         ),
     )
     zstage_position__min = Quantity(
@@ -6612,9 +6504,6 @@ class ApmMeasurementStandingVoltageSequence(Data):
             name_type="specified",
             optionality="required",
         ),
-        a_eln=ELNAnnotation(
-            component=ELNComponentEnum.StringEditQuantity,
-        ),
     )
     event_id = Quantity(
         type=HDF5Reference,
@@ -6626,9 +6515,6 @@ class ApmMeasurementStandingVoltageSequence(Data):
             type="NX_UINT",
             name_type="specified",
             optionality="required",
-        ),
-        a_eln=ELNAnnotation(
-            component=ELNComponentEnum.NumberEditQuantity,
         ),
     )
     event_id__min = Quantity(
@@ -6689,9 +6575,6 @@ class ApmMeasurementStandingVoltageSequence(Data):
             type="NX_FLOAT",
             name_type="specified",
             optionality="required",
-        ),
-        a_eln=ELNAnnotation(
-            component=ELNComponentEnum.NumberEditQuantity,
         ),
     )
     standing_voltage__min = Quantity(
@@ -6824,9 +6707,6 @@ class ApmMeasurementPulseFrequencySequence(Data):
             name_type="specified",
             optionality="required",
         ),
-        a_eln=ELNAnnotation(
-            component=ELNComponentEnum.StringEditQuantity,
-        ),
     )
     event_id = Quantity(
         type=HDF5Reference,
@@ -6838,9 +6718,6 @@ class ApmMeasurementPulseFrequencySequence(Data):
             type="NX_UINT",
             name_type="specified",
             optionality="required",
-        ),
-        a_eln=ELNAnnotation(
-            component=ELNComponentEnum.NumberEditQuantity,
         ),
     )
     event_id__min = Quantity(
@@ -6901,9 +6778,6 @@ class ApmMeasurementPulseFrequencySequence(Data):
             type="NX_FLOAT",
             name_type="specified",
             optionality="required",
-        ),
-        a_eln=ELNAnnotation(
-            component=ELNComponentEnum.NumberEditQuantity,
         ),
     )
     pulse_frequency__min = Quantity(
@@ -7036,9 +6910,6 @@ class ApmMeasurementDetectionRateSequence(Data):
             name_type="specified",
             optionality="required",
         ),
-        a_eln=ELNAnnotation(
-            component=ELNComponentEnum.StringEditQuantity,
-        ),
     )
     event_id = Quantity(
         type=HDF5Reference,
@@ -7050,9 +6921,6 @@ class ApmMeasurementDetectionRateSequence(Data):
             type="NX_UINT",
             name_type="specified",
             optionality="required",
-        ),
-        a_eln=ELNAnnotation(
-            component=ELNComponentEnum.NumberEditQuantity,
         ),
     )
     event_id__min = Quantity(
@@ -7113,9 +6981,6 @@ class ApmMeasurementDetectionRateSequence(Data):
             type="NX_FLOAT",
             name_type="specified",
             optionality="required",
-        ),
-        a_eln=ELNAnnotation(
-            component=ELNComponentEnum.NumberEditQuantity,
         ),
     )
     detection_rate__min = Quantity(
@@ -7248,9 +7113,6 @@ class ApmMeasurementDetectionRateSetSequence(Data):
             name_type="specified",
             optionality="required",
         ),
-        a_eln=ELNAnnotation(
-            component=ELNComponentEnum.StringEditQuantity,
-        ),
     )
     event_id = Quantity(
         type=HDF5Reference,
@@ -7262,9 +7124,6 @@ class ApmMeasurementDetectionRateSetSequence(Data):
             type="NX_UINT",
             name_type="specified",
             optionality="required",
-        ),
-        a_eln=ELNAnnotation(
-            component=ELNComponentEnum.NumberEditQuantity,
         ),
     )
     event_id__min = Quantity(
@@ -7325,9 +7184,6 @@ class ApmMeasurementDetectionRateSetSequence(Data):
             type="NX_FLOAT",
             name_type="specified",
             optionality="required",
-        ),
-        a_eln=ELNAnnotation(
-            component=ELNComponentEnum.NumberEditQuantity,
         ),
     )
     detection_rate_set__min = Quantity(
@@ -7460,9 +7316,6 @@ class ApmMeasurementPressureSequence(Data):
             name_type="specified",
             optionality="required",
         ),
-        a_eln=ELNAnnotation(
-            component=ELNComponentEnum.StringEditQuantity,
-        ),
     )
     event_id = Quantity(
         type=HDF5Reference,
@@ -7474,9 +7327,6 @@ class ApmMeasurementPressureSequence(Data):
             type="NX_UINT",
             name_type="specified",
             optionality="required",
-        ),
-        a_eln=ELNAnnotation(
-            component=ELNComponentEnum.NumberEditQuantity,
         ),
     )
     event_id__min = Quantity(
@@ -7537,9 +7387,6 @@ class ApmMeasurementPressureSequence(Data):
             type="NX_FLOAT",
             name_type="specified",
             optionality="required",
-        ),
-        a_eln=ELNAnnotation(
-            component=ELNComponentEnum.NumberEditQuantity,
         ),
     )
     pressure__min = Quantity(
@@ -7672,9 +7519,6 @@ class ApmMeasurementSpecimenVoltageSequence(Data):
             name_type="specified",
             optionality="required",
         ),
-        a_eln=ELNAnnotation(
-            component=ELNComponentEnum.StringEditQuantity,
-        ),
     )
     event_id = Quantity(
         type=HDF5Reference,
@@ -7686,9 +7530,6 @@ class ApmMeasurementSpecimenVoltageSequence(Data):
             type="NX_UINT",
             name_type="specified",
             optionality="required",
-        ),
-        a_eln=ELNAnnotation(
-            component=ELNComponentEnum.NumberEditQuantity,
         ),
     )
     event_id__min = Quantity(
@@ -7749,9 +7590,6 @@ class ApmMeasurementSpecimenVoltageSequence(Data):
             type="NX_FLOAT",
             name_type="specified",
             optionality="required",
-        ),
-        a_eln=ELNAnnotation(
-            component=ELNComponentEnum.NumberEditQuantity,
         ),
     )
     specimen_voltage__min = Quantity(
@@ -7884,9 +7722,6 @@ class ApmMeasurementSpecimenTemperatureSequence(Data):
             name_type="specified",
             optionality="required",
         ),
-        a_eln=ELNAnnotation(
-            component=ELNComponentEnum.StringEditQuantity,
-        ),
     )
     event_id = Quantity(
         type=HDF5Reference,
@@ -7898,9 +7733,6 @@ class ApmMeasurementSpecimenTemperatureSequence(Data):
             type="NX_UINT",
             name_type="specified",
             optionality="required",
-        ),
-        a_eln=ELNAnnotation(
-            component=ELNComponentEnum.NumberEditQuantity,
         ),
     )
     event_id__min = Quantity(
@@ -7961,9 +7793,6 @@ class ApmMeasurementSpecimenTemperatureSequence(Data):
             type="NX_FLOAT",
             name_type="specified",
             optionality="required",
-        ),
-        a_eln=ELNAnnotation(
-            component=ELNComponentEnum.NumberEditQuantity,
         ),
     )
     specimen_temperature__min = Quantity(
@@ -8096,9 +7925,6 @@ class ApmMeasurementAmbientTemperatureSequence(Data):
             name_type="specified",
             optionality="required",
         ),
-        a_eln=ELNAnnotation(
-            component=ELNComponentEnum.StringEditQuantity,
-        ),
     )
     event_id = Quantity(
         type=HDF5Reference,
@@ -8110,9 +7936,6 @@ class ApmMeasurementAmbientTemperatureSequence(Data):
             type="NX_UINT",
             name_type="specified",
             optionality="required",
-        ),
-        a_eln=ELNAnnotation(
-            component=ELNComponentEnum.NumberEditQuantity,
         ),
     )
     event_id__min = Quantity(
@@ -8173,9 +7996,6 @@ class ApmMeasurementAmbientTemperatureSequence(Data):
             type="NX_FLOAT",
             name_type="specified",
             optionality="required",
-        ),
-        a_eln=ELNAnnotation(
-            component=ELNComponentEnum.NumberEditQuantity,
         ),
     )
     ambient_temperature__min = Quantity(
@@ -8308,9 +8128,6 @@ class ApmMeasurementReflectronVoltageSequence(Data):
             name_type="specified",
             optionality="required",
         ),
-        a_eln=ELNAnnotation(
-            component=ELNComponentEnum.StringEditQuantity,
-        ),
     )
     event_id = Quantity(
         type=HDF5Reference,
@@ -8322,9 +8139,6 @@ class ApmMeasurementReflectronVoltageSequence(Data):
             type="NX_UINT",
             name_type="specified",
             optionality="required",
-        ),
-        a_eln=ELNAnnotation(
-            component=ELNComponentEnum.NumberEditQuantity,
         ),
     )
     event_id__min = Quantity(
@@ -8385,9 +8199,6 @@ class ApmMeasurementReflectronVoltageSequence(Data):
             type="NX_FLOAT",
             name_type="specified",
             optionality="required",
-        ),
-        a_eln=ELNAnnotation(
-            component=ELNComponentEnum.NumberEditQuantity,
         ),
     )
     reflectron_voltage__min = Quantity(
@@ -8520,9 +8331,6 @@ class ApmMeasurementXstagePositionSequence(Data):
             name_type="specified",
             optionality="required",
         ),
-        a_eln=ELNAnnotation(
-            component=ELNComponentEnum.StringEditQuantity,
-        ),
     )
     event_id = Quantity(
         type=HDF5Reference,
@@ -8534,9 +8342,6 @@ class ApmMeasurementXstagePositionSequence(Data):
             type="NX_UINT",
             name_type="specified",
             optionality="required",
-        ),
-        a_eln=ELNAnnotation(
-            component=ELNComponentEnum.NumberEditQuantity,
         ),
     )
     event_id__min = Quantity(
@@ -8597,9 +8402,6 @@ class ApmMeasurementXstagePositionSequence(Data):
             type="NX_FLOAT",
             name_type="specified",
             optionality="required",
-        ),
-        a_eln=ELNAnnotation(
-            component=ELNComponentEnum.NumberEditQuantity,
         ),
     )
     xstage_position__min = Quantity(
@@ -8732,9 +8534,6 @@ class ApmMeasurementYstagePositionSequence(Data):
             name_type="specified",
             optionality="required",
         ),
-        a_eln=ELNAnnotation(
-            component=ELNComponentEnum.StringEditQuantity,
-        ),
     )
     event_id = Quantity(
         type=HDF5Reference,
@@ -8746,9 +8545,6 @@ class ApmMeasurementYstagePositionSequence(Data):
             type="NX_UINT",
             name_type="specified",
             optionality="required",
-        ),
-        a_eln=ELNAnnotation(
-            component=ELNComponentEnum.NumberEditQuantity,
         ),
     )
     event_id__min = Quantity(
@@ -8809,9 +8605,6 @@ class ApmMeasurementYstagePositionSequence(Data):
             type="NX_FLOAT",
             name_type="specified",
             optionality="required",
-        ),
-        a_eln=ELNAnnotation(
-            component=ELNComponentEnum.NumberEditQuantity,
         ),
     )
     ystage_position__min = Quantity(
@@ -8944,9 +8737,6 @@ class ApmMeasurementZstagePositionSequence(Data):
             name_type="specified",
             optionality="required",
         ),
-        a_eln=ELNAnnotation(
-            component=ELNComponentEnum.StringEditQuantity,
-        ),
     )
     event_id = Quantity(
         type=HDF5Reference,
@@ -8958,9 +8748,6 @@ class ApmMeasurementZstagePositionSequence(Data):
             type="NX_UINT",
             name_type="specified",
             optionality="required",
-        ),
-        a_eln=ELNAnnotation(
-            component=ELNComponentEnum.NumberEditQuantity,
         ),
     )
     event_id__min = Quantity(
@@ -9021,9 +8808,6 @@ class ApmMeasurementZstagePositionSequence(Data):
             type="NX_FLOAT",
             name_type="specified",
             optionality="required",
-        ),
-        a_eln=ELNAnnotation(
-            component=ELNComponentEnum.NumberEditQuantity,
         ),
     )
     zstage_position__min = Quantity(
@@ -11926,9 +11710,6 @@ class ApmAtomProbeIDReconstructionNaiveDiscretizationData(Data):
             name_type="specified",
             optionality="recommended",
         ),
-        a_eln=ELNAnnotation(
-            component=ELNComponentEnum.StringEditQuantity,
-        ),
     )
     intensity = Quantity(
         type=HDF5Reference,
@@ -12546,9 +12327,6 @@ class ApmAtomProbeIDRangingMassToChargeDistributionMassSpectrum(Data):
             type="NX_CHAR",
             name_type="specified",
             optionality="recommended",
-        ),
-        a_eln=ELNAnnotation(
-            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
     intensity = Quantity(

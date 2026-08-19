@@ -1002,9 +1002,6 @@ class EmCalorimetryIntegrationResultBACKGROUND(Data):
             name_type="specified",
             optionality="required",
         ),
-        a_eln=ELNAnnotation(
-            component=ELNComponentEnum.StringEditQuantity,
-        ),
     )
     intensity = Quantity(
         type=HDF5Reference,

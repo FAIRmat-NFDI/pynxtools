@@ -786,9 +786,6 @@ class Data(Object, basesections.ActivityResult):
             optionality="optional",
             deprecated="Use ``DATA_errors`` instead (NIAC2018)",
         ),
-        a_eln=ELNAnnotation(
-            component=ELNComponentEnum.NumberEditQuantity,
-        ),
     )
     errors__min = Quantity(
         type=np.float64,
@@ -913,9 +910,6 @@ class Data(Object, basesections.ActivityResult):
             optionality="optional",
             deprecated="Use FIELDNAME_scaling_factor instead",
         ),
-        a_eln=ELNAnnotation(
-            component=ELNComponentEnum.NumberEditQuantity,
-        ),
     )
     scaling_factor__min = Quantity(
         type=np.float64,
@@ -951,9 +945,6 @@ class Data(Object, basesections.ActivityResult):
             optionality="optional",
             deprecated="Use FIELDNAME_offset instead",
         ),
-        a_eln=ELNAnnotation(
-            component=ELNComponentEnum.NumberEditQuantity,
-        ),
     )
     offset__min = Quantity(
         type=np.float64,
@@ -982,9 +973,6 @@ class Data(Object, basesections.ActivityResult):
             type="NX_CHAR_OR_NUMBER",
             name_type="specified",
             optionality="optional",
-        ),
-        a_eln=ELNAnnotation(
-            component=ELNComponentEnum.NumberEditQuantity,
         ),
     )
     title__min = Quantity(

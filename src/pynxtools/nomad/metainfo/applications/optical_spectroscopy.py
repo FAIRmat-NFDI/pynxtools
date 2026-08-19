@@ -1284,9 +1284,6 @@ class OpticalSpectroscopyInstrumentDetectorTYPERawData(Data):
             name_type="specified",
             optionality="required",
         ),
-        a_eln=ELNAnnotation(
-            component=ELNComponentEnum.NumberEditQuantity,
-        ),
     )
     raw__min = Quantity(
         type=np.float64,
