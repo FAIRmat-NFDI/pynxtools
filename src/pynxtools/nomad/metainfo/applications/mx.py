@@ -273,9 +273,6 @@ class MxData(Data):
             name_type="specified",
             optionality="recommended",
         ),
-        a_eln=ELNAnnotation(
-            component=ELNComponentEnum.NumberEditQuantity,
-        ),
     )
     data_quantity__min = Quantity(
         type=np.float64,
@@ -327,9 +324,6 @@ class MxData(Data):
             name_type="specified",
             optionality="optional",
         ),
-        a_eln=ELNAnnotation(
-            component=ELNComponentEnum.NumberEditQuantity,
-        ),
     )
     data_scaling_factor__min = Quantity(
         type=np.float64,
@@ -362,9 +356,6 @@ class MxData(Data):
             type="NX_NUMBER",
             name_type="specified",
             optionality="optional",
-        ),
-        a_eln=ELNAnnotation(
-            component=ELNComponentEnum.NumberEditQuantity,
         ),
     )
     data_offset__min = Quantity(

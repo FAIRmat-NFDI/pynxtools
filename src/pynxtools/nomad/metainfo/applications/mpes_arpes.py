@@ -1472,10 +1472,6 @@ class MpesArpesData(MpesData):
             optionality="required",
             units="NX_ENERGY",
         ),
-        a_eln=ELNAnnotation(
-            component=ELNComponentEnum.NumberEditQuantity,
-        ),
-        a_display={"unit": "eV"},
     )
     energy__min = Quantity(
         type=np.float64,
@@ -1526,10 +1522,6 @@ class MpesArpesData(MpesData):
             optionality="required",
             units="NX_ANGLE",
         ),
-        a_eln=ELNAnnotation(
-            component=ELNComponentEnum.NumberEditQuantity,
-        ),
-        a_display={"unit": "radian"},
     )
     angular0__min = Quantity(
         type=np.float64,
@@ -1563,10 +1555,6 @@ class MpesArpesData(MpesData):
             optionality="required",
             units="NX_ANGLE",
         ),
-        a_eln=ELNAnnotation(
-            component=ELNComponentEnum.NumberEditQuantity,
-        ),
-        a_display={"unit": "radian"},
     )
     angular1__min = Quantity(
         type=np.float64,
@@ -1602,9 +1590,6 @@ class MpesArpesData(MpesData):
             name_type="specified",
             optionality="required",
             units="NX_ANY",
-        ),
-        a_eln=ELNAnnotation(
-            component=ELNComponentEnum.NumberEditQuantity,
         ),
     )
     data_quantity__min = Quantity(

@@ -599,9 +599,6 @@ class MicrostructureKanapyResultsMicrostructureIDGridStructure(Data):
             name_type="specified",
             optionality="required",
         ),
-        a_eln=ELNAnnotation(
-            component=ELNComponentEnum.StringEditQuantity,
-        ),
     )
     indices_crystal = Quantity(
         type=HDF5Reference,
@@ -616,10 +613,6 @@ class MicrostructureKanapyResultsMicrostructureIDGridStructure(Data):
             optionality="required",
             units="NX_UNITLESS",
         ),
-        a_eln=ELNAnnotation(
-            component=ELNComponentEnum.NumberEditQuantity,
-        ),
-        a_display={"unit": "dimensionless"},
     )
     indices_crystal__min = Quantity(
         type=np.int64,

@@ -621,9 +621,6 @@ class EllipsometryDataCollection(OpticalSpectroscopyData):
             name_type="specified",
             optionality="recommended",
         ),
-        a_eln=ELNAnnotation(
-            component=ELNComponentEnum.NumberEditQuantity,
-        ),
     )
     data_identifier__min = Quantity(
         type=np.float64,
@@ -668,9 +665,6 @@ class EllipsometryDataCollection(OpticalSpectroscopyData):
                 "N/C/S",
                 "raw data",
             ],
-        ),
-        a_eln=ELNAnnotation(
-            component=ELNComponentEnum.EnumEditQuantity,
         ),
     )
     NAME_spectrum = Quantity(
@@ -901,9 +895,6 @@ class EllipsometryDataCollection(OpticalSpectroscopyData):
             type="NX_CHAR_OR_NUMBER",
             name_type="specified",
             optionality="optional",
-        ),
-        a_eln=ELNAnnotation(
-            component=ELNComponentEnum.NumberEditQuantity,
         ),
     )
     reference_data_link__min = Quantity(

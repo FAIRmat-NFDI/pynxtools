@@ -1209,9 +1209,6 @@ class EmEbsdIndexingRoi(Data):
             optionality="optional",
             enumeration=["band_contrast", "confidence_index", "mean_angular_deviation"],
         ),
-        a_eln=ELNAnnotation(
-            component=ELNComponentEnum.EnumEditQuantity,
-        ),
     )
     title = Quantity(
         type=HDF5Reference,
@@ -1224,9 +1221,6 @@ class EmEbsdIndexingRoi(Data):
             type="NX_CHAR",
             name_type="specified",
             optionality="optional",
-        ),
-        a_eln=ELNAnnotation(
-            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
     data_quantity = Quantity(

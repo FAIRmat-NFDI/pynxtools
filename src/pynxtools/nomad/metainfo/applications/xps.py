@@ -1207,9 +1207,6 @@ class XpsFitData(Data):
             optionality="required",
             units="NX_ANY",
         ),
-        a_eln=ELNAnnotation(
-            component=ELNComponentEnum.NumberEditQuantity,
-        ),
     )
     input_dependent__min = Quantity(
         type=np.float64,
@@ -1243,10 +1240,6 @@ class XpsFitData(Data):
             optionality="required",
             units="NX_ENERGY",
         ),
-        a_eln=ELNAnnotation(
-            component=ELNComponentEnum.NumberEditQuantity,
-        ),
-        a_display={"unit": "eV"},
     )
     input_independent__min = Quantity(
         type=np.float64,
@@ -1276,9 +1269,6 @@ class XpsFitData(Data):
             optionality="required",
             units="NX_ANY",
         ),
-        a_eln=ELNAnnotation(
-            component=ELNComponentEnum.NumberEditQuantity,
-        ),
     )
     fit_sum__min = Quantity(
         type=np.float64,
@@ -1307,9 +1297,6 @@ class XpsFitData(Data):
             name_type="specified",
             optionality="recommended",
             units="NX_ANY",
-        ),
-        a_eln=ELNAnnotation(
-            component=ELNComponentEnum.NumberEditQuantity,
         ),
     )
     residual__min = Quantity(
@@ -1445,10 +1432,6 @@ class XpsFitPeakPEAKData(Data):
             optionality="required",
             units="NX_ENERGY",
         ),
-        a_eln=ELNAnnotation(
-            component=ELNComponentEnum.NumberEditQuantity,
-        ),
-        a_display={"unit": "eV"},
     )
     position__min = Quantity(
         type=np.float64,
@@ -1483,9 +1466,6 @@ class XpsFitPeakPEAKData(Data):
             name_type="specified",
             optionality="required",
             units="NX_ANY",
-        ),
-        a_eln=ELNAnnotation(
-            component=ELNComponentEnum.NumberEditQuantity,
         ),
     )
     intensity__min = Quantity(
@@ -1761,10 +1741,6 @@ class XpsFitBackgroundBACKGROUNDData(Data):
             optionality="required",
             units="NX_ENERGY",
         ),
-        a_eln=ELNAnnotation(
-            component=ELNComponentEnum.NumberEditQuantity,
-        ),
-        a_display={"unit": "eV"},
     )
     position__min = Quantity(
         type=np.float64,
@@ -1793,9 +1769,6 @@ class XpsFitBackgroundBACKGROUNDData(Data):
             name_type="specified",
             optionality="required",
             units="NX_ANY",
-        ),
-        a_eln=ELNAnnotation(
-            component=ELNComponentEnum.NumberEditQuantity,
         ),
     )
     intensity__min = Quantity(
@@ -2327,10 +2300,6 @@ class XpsData(MpesData):
             optionality="required",
             units="NX_ENERGY",
         ),
-        a_eln=ELNAnnotation(
-            component=ELNComponentEnum.NumberEditQuantity,
-        ),
-        a_display={"unit": "eV"},
     )
     energy__min = Quantity(
         type=np.float64,

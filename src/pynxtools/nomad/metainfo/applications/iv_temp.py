@@ -329,9 +329,6 @@ class IvTempData(Data):
             name_type="specified",
             optionality="required",
         ),
-        a_eln=ELNAnnotation(
-            component=ELNComponentEnum.NumberEditQuantity,
-        ),
     )
     temperature__min = Quantity(
         type=np.float64,
@@ -359,9 +356,6 @@ class IvTempData(Data):
             type="NX_NUMBER",
             name_type="specified",
             optionality="required",
-        ),
-        a_eln=ELNAnnotation(
-            component=ELNComponentEnum.NumberEditQuantity,
         ),
     )
     voltage__min = Quantity(

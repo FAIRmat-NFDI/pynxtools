@@ -987,9 +987,6 @@ class XrdPanExperimentResult(XrdData):
             optionality="optional",
             units="NX_ANY",
         ),
-        a_eln=ELNAnnotation(
-            component=ELNComponentEnum.NumberEditQuantity,
-        ),
     )
     q_parallel__min = Quantity(
         type=np.float64,
@@ -1022,9 +1019,6 @@ class XrdPanExperimentResult(XrdData):
             name_type="specified",
             optionality="optional",
             units="NX_ANY",
-        ),
-        a_eln=ELNAnnotation(
-            component=ELNComponentEnum.NumberEditQuantity,
         ),
     )
     q_perpendicular__min = Quantity(
@@ -1061,9 +1055,6 @@ class XrdPanExperimentResult(XrdData):
             name_type="specified",
             optionality="optional",
             units="NX_ANY",
-        ),
-        a_eln=ELNAnnotation(
-            component=ELNComponentEnum.NumberEditQuantity,
         ),
     )
     q_norm__min = Quantity(
@@ -1121,9 +1112,6 @@ class XrdPanQData(XrdData):
             name_type="specified",
             optionality="optional",
         ),
-        a_eln=ELNAnnotation(
-            component=ELNComponentEnum.NumberEditQuantity,
-        ),
     )
     q__min = Quantity(
         type=np.float64,
@@ -1157,9 +1145,6 @@ class XrdPanQData(XrdData):
             type="NX_FLOAT",
             name_type="specified",
             optionality="optional",
-        ),
-        a_eln=ELNAnnotation(
-            component=ELNComponentEnum.NumberEditQuantity,
         ),
     )
     intensity__min = Quantity(
@@ -1196,9 +1181,6 @@ class XrdPanQData(XrdData):
             name_type="specified",
             optionality="optional",
         ),
-        a_eln=ELNAnnotation(
-            component=ELNComponentEnum.NumberEditQuantity,
-        ),
     )
     q_parallel__min = Quantity(
         type=np.float64,
@@ -1232,9 +1214,6 @@ class XrdPanQData(XrdData):
             type="NX_FLOAT",
             name_type="specified",
             optionality="optional",
-        ),
-        a_eln=ELNAnnotation(
-            component=ELNComponentEnum.NumberEditQuantity,
         ),
     )
     q_perpendicular__min = Quantity(

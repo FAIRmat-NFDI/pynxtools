@@ -253,10 +253,6 @@ class SpeData(Data):
             optionality="required",
             units="NX_ANGLE",
         ),
-        a_eln=ELNAnnotation(
-            component=ELNComponentEnum.NumberEditQuantity,
-        ),
-        a_display={"unit": "radian"},
     )
     azimuthal__min = Quantity(
         type=np.float64,
@@ -286,10 +282,6 @@ class SpeData(Data):
             optionality="required",
             units="NX_ANGLE",
         ),
-        a_eln=ELNAnnotation(
-            component=ELNComponentEnum.NumberEditQuantity,
-        ),
-        a_display={"unit": "radian"},
     )
     azimuthal_width__min = Quantity(
         type=np.float64,
@@ -319,10 +311,6 @@ class SpeData(Data):
             optionality="required",
             units="NX_ANGLE",
         ),
-        a_eln=ELNAnnotation(
-            component=ELNComponentEnum.NumberEditQuantity,
-        ),
-        a_display={"unit": "radian"},
     )
     polar__min = Quantity(
         type=np.float64,
@@ -352,10 +340,6 @@ class SpeData(Data):
             optionality="required",
             units="NX_ANGLE",
         ),
-        a_eln=ELNAnnotation(
-            component=ELNComponentEnum.NumberEditQuantity,
-        ),
-        a_display={"unit": "radian"},
     )
     polar_width__min = Quantity(
         type=np.float64,
@@ -385,10 +369,6 @@ class SpeData(Data):
             optionality="required",
             units="NX_LENGTH",
         ),
-        a_eln=ELNAnnotation(
-            component=ELNComponentEnum.NumberEditQuantity,
-        ),
-        a_display={"unit": "m"},
     )
     distance__min = Quantity(
         type=np.float64,
@@ -417,9 +397,6 @@ class SpeData(Data):
             name_type="specified",
             optionality="required",
         ),
-        a_eln=ELNAnnotation(
-            component=ELNComponentEnum.NumberEditQuantity,
-        ),
     )
     data_quantity__min = Quantity(
         type=np.float64,
@@ -447,9 +424,6 @@ class SpeData(Data):
             type="NX_NUMBER",
             name_type="specified",
             optionality="required",
-        ),
-        a_eln=ELNAnnotation(
-            component=ELNComponentEnum.NumberEditQuantity,
         ),
     )
     error__min = Quantity(
@@ -480,10 +454,6 @@ class SpeData(Data):
             optionality="required",
             units="NX_ENERGY",
         ),
-        a_eln=ELNAnnotation(
-            component=ELNComponentEnum.NumberEditQuantity,
-        ),
-        a_display={"unit": "eV"},
     )
     energy__min = Quantity(
         type=np.float64,

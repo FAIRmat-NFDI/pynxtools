@@ -1698,9 +1698,6 @@ class MicrostructureScoreConfigDispersoidDragZenerSmithRadiusEvolution(Data):
             name_type="specified",
             optionality="required",
         ),
-        a_eln=ELNAnnotation(
-            component=ELNComponentEnum.StringEditQuantity,
-        ),
     )
     time = Quantity(
         type=HDF5Reference,
@@ -1957,9 +1954,6 @@ class MicrostructureScoreConfigTimeTemperature(Data):
             type="NX_CHAR",
             name_type="specified",
             optionality="required",
-        ),
-        a_eln=ELNAnnotation(
-            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
     time = Quantity(

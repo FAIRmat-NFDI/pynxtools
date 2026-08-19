@@ -169,9 +169,6 @@ class PeakData(Data):
             optionality="optional",
             units="NX_ANY",
         ),
-        a_eln=ELNAnnotation(
-            component=ELNComponentEnum.NumberEditQuantity,
-        ),
     )
     position__min = Quantity(
         type=np.float64,
@@ -204,9 +201,6 @@ class PeakData(Data):
             name_type="specified",
             optionality="optional",
             units="NX_ANY",
-        ),
-        a_eln=ELNAnnotation(
-            component=ELNComponentEnum.NumberEditQuantity,
         ),
     )
     intensity__min = Quantity(

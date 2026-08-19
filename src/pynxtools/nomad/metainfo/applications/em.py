@@ -5440,9 +5440,6 @@ class EmMeasurementEventIDImageIDImage1d(Data):
             name_type="specified",
             optionality="recommended",
         ),
-        a_eln=ELNAnnotation(
-            component=ELNComponentEnum.StringEditQuantity,
-        ),
     )
     real = Quantity(
         type=HDF5Reference,
@@ -5739,9 +5736,6 @@ class EmMeasurementEventIDImageIDImage2d(Data):
             name_type="specified",
             optionality="recommended",
         ),
-        a_eln=ELNAnnotation(
-            component=ELNComponentEnum.StringEditQuantity,
-        ),
     )
     real = Quantity(
         type=HDF5Reference,
@@ -5888,9 +5882,6 @@ class EmMeasurementEventIDImageIDImage2d(Data):
             type="NX_COMPLEX",
             name_type="specified",
             optionality="optional",
-        ),
-        a_eln=ELNAnnotation(
-            component=ELNComponentEnum.NumberEditQuantity,
         ),
     )
     magnitude__min = Quantity(
@@ -6084,9 +6075,6 @@ class EmMeasurementEventIDImageIDImage3d(Data):
             type="NX_CHAR",
             name_type="specified",
             optionality="recommended",
-        ),
-        a_eln=ELNAnnotation(
-            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
     real = Quantity(
@@ -6473,9 +6461,6 @@ class EmMeasurementEventIDImageIDImage4d(Data):
             type="NX_CHAR",
             name_type="specified",
             optionality="recommended",
-        ),
-        a_eln=ELNAnnotation(
-            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
     real = Quantity(
@@ -6908,9 +6893,6 @@ class EmMeasurementEventIDImageIDStack1d(Data):
             name_type="specified",
             optionality="recommended",
         ),
-        a_eln=ELNAnnotation(
-            component=ELNComponentEnum.StringEditQuantity,
-        ),
     )
     real = Quantity(
         type=HDF5Reference,
@@ -7296,9 +7278,6 @@ class EmMeasurementEventIDImageIDStack2d(Data):
             type="NX_CHAR",
             name_type="specified",
             optionality="recommended",
-        ),
-        a_eln=ELNAnnotation(
-            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
     real = Quantity(
@@ -7730,9 +7709,6 @@ class EmMeasurementEventIDImageIDStack3d(Data):
             type="NX_CHAR",
             name_type="specified",
             optionality="recommended",
-        ),
-        a_eln=ELNAnnotation(
-            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
     real = Quantity(
@@ -8399,9 +8375,6 @@ class EmMeasurementEventIDSpectrumIDSpectrum0d(Data):
             name_type="specified",
             optionality="recommended",
         ),
-        a_eln=ELNAnnotation(
-            component=ELNComponentEnum.StringEditQuantity,
-        ),
     )
     intensity = Quantity(
         type=HDF5Reference,
@@ -8562,9 +8535,6 @@ class EmMeasurementEventIDSpectrumIDSpectrum1d(Data):
             type="NX_CHAR",
             name_type="specified",
             optionality="recommended",
-        ),
-        a_eln=ELNAnnotation(
-            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
     intensity = Quantity(
@@ -8771,9 +8741,6 @@ class EmMeasurementEventIDSpectrumIDSpectrum2d(Data):
             type="NX_CHAR",
             name_type="specified",
             optionality="recommended",
-        ),
-        a_eln=ELNAnnotation(
-            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
     intensity = Quantity(
@@ -9025,9 +8992,6 @@ class EmMeasurementEventIDSpectrumIDSpectrum3d(Data):
             type="NX_CHAR",
             name_type="specified",
             optionality="recommended",
-        ),
-        a_eln=ELNAnnotation(
-            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
     intensity = Quantity(
@@ -9325,9 +9289,6 @@ class EmMeasurementEventIDSpectrumIDStack0d(Data):
             name_type="specified",
             optionality="recommended",
         ),
-        a_eln=ELNAnnotation(
-            component=ELNComponentEnum.StringEditQuantity,
-        ),
     )
     intensity = Quantity(
         type=HDF5Reference,
@@ -9534,9 +9495,6 @@ class EmMeasurementEventIDSpectrumIDStack1d(Data):
             name_type="specified",
             optionality="recommended",
         ),
-        a_eln=ELNAnnotation(
-            component=ELNComponentEnum.StringEditQuantity,
-        ),
     )
     intensity = Quantity(
         type=HDF5Reference,
@@ -9548,9 +9506,6 @@ class EmMeasurementEventIDSpectrumIDStack1d(Data):
             type="NX_NUMBER",
             name_type="specified",
             optionality="required",
-        ),
-        a_eln=ELNAnnotation(
-            component=ELNComponentEnum.NumberEditQuantity,
         ),
     )
     intensity__min = Quantity(
@@ -9596,9 +9551,6 @@ class EmMeasurementEventIDSpectrumIDStack1d(Data):
             name_type="specified",
             optionality="required",
         ),
-        a_eln=ELNAnnotation(
-            component=ELNComponentEnum.NumberEditQuantity,
-        ),
     )
     indices_spectrum__min = Quantity(
         type=np.int64,
@@ -9643,9 +9595,6 @@ class EmMeasurementEventIDSpectrumIDStack1d(Data):
             name_type="specified",
             optionality="required",
         ),
-        a_eln=ELNAnnotation(
-            component=ELNComponentEnum.NumberEditQuantity,
-        ),
     )
     axis_i__min = Quantity(
         type=np.float64,
@@ -9689,9 +9638,6 @@ class EmMeasurementEventIDSpectrumIDStack1d(Data):
             type="NX_NUMBER",
             name_type="specified",
             optionality="required",
-        ),
-        a_eln=ELNAnnotation(
-            component=ELNComponentEnum.NumberEditQuantity,
         ),
     )
     axis_energy__min = Quantity(
@@ -9795,9 +9741,6 @@ class EmMeasurementEventIDSpectrumIDStack2d(Data):
             type="NX_CHAR",
             name_type="specified",
             optionality="recommended",
-        ),
-        a_eln=ELNAnnotation(
-            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
     intensity = Quantity(
@@ -10094,9 +10037,6 @@ class EmMeasurementEventIDSpectrumIDStack3d(Data):
             type="NX_CHAR",
             name_type="specified",
             optionality="recommended",
-        ),
-        a_eln=ELNAnnotation(
-            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
     intensity = Quantity(
@@ -15114,9 +15054,6 @@ class EmRoiIDEbsdIndexingPhaseIDIpfIDMap(Data):
             name_type="specified",
             optionality="recommended",
         ),
-        a_eln=ELNAnnotation(
-            component=ELNComponentEnum.StringEditQuantity,
-        ),
     )
     data_quantity = Quantity(
         type=HDF5Reference,
@@ -15130,10 +15067,6 @@ class EmRoiIDEbsdIndexingPhaseIDIpfIDMap(Data):
             optionality="required",
             units="NX_UNITLESS",
         ),
-        a_eln=ELNAnnotation(
-            component=ELNComponentEnum.NumberEditQuantity,
-        ),
-        a_display={"unit": "dimensionless"},
     )
     data_quantity__min = Quantity(
         type=np.float64,
@@ -15371,9 +15304,6 @@ class EmRoiIDEbsdIndexingPhaseIDIpfIDLegend(Data):
             type="NX_CHAR",
             name_type="specified",
             optionality="recommended",
-        ),
-        a_eln=ELNAnnotation(
-            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
     data_quantity = Quantity(
@@ -15751,9 +15681,6 @@ class EmRoiIDEbsdIndexingPhaseIDOdfIDPhiTwoPlot(Data):
             name_type="specified",
             optionality="recommended",
         ),
-        a_eln=ELNAnnotation(
-            component=ELNComponentEnum.StringEditQuantity,
-        ),
     )
     intensity = Quantity(
         type=HDF5Reference,
@@ -16005,9 +15932,6 @@ class EmRoiIDEbsdIndexingRoi(Data):
             name_type="specified",
             optionality="recommended",
         ),
-        a_eln=ELNAnnotation(
-            component=ELNComponentEnum.StringEditQuantity,
-        ),
     )
     descriptor = Quantity(
         type=HDF5Reference,
@@ -16020,9 +15944,6 @@ class EmRoiIDEbsdIndexingRoi(Data):
             name_type="specified",
             optionality="recommended",
             enumeration=["band_contrast", "confidence_index", "mean_angular_deviation"],
-        ),
-        a_eln=ELNAnnotation(
-            component=ELNComponentEnum.EnumEditQuantity,
         ),
     )
     data_quantity = Quantity(
@@ -16064,9 +15985,6 @@ class EmRoiIDEbsdIndexingRoi(Data):
             type="NX_NUMBER",
             name_type="specified",
             optionality="optional",
-        ),
-        a_eln=ELNAnnotation(
-            component=ELNComponentEnum.NumberEditQuantity,
         ),
     )
     axis_z__min = Quantity(
@@ -16326,9 +16244,6 @@ class EmRoiIDEdsIndexingSummary(Data):
             name_type="specified",
             optionality="recommended",
         ),
-        a_eln=ELNAnnotation(
-            component=ELNComponentEnum.StringEditQuantity,
-        ),
     )
     intensity = Quantity(
         type=HDF5Reference,
@@ -16369,9 +16284,6 @@ class EmRoiIDEdsIndexingSummary(Data):
             type="NX_CHAR",
             name_type="specified",
             optionality="required",
-        ),
-        a_eln=ELNAnnotation(
-            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
     axis_energy__long_name = Quantity(
@@ -16513,9 +16425,6 @@ class EmRoiIDEdsIndexingElementSpecificMapImage2d(Data):
             type="NX_CHAR",
             name_type="specified",
             optionality="recommended",
-        ),
-        a_eln=ELNAnnotation(
-            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
     intensity = Quantity(
@@ -16851,9 +16760,6 @@ class EmRoiIDTomoReconstructionIDTomogram(Data):
             type="NX_CHAR",
             name_type="specified",
             optionality="recommended",
-        ),
-        a_eln=ELNAnnotation(
-            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
     intensity = Quantity(
