@@ -129,6 +129,20 @@ class Spm(SensorScan):
         repeats=True,
         variable=True,
     )
+    citeID = SubSection(
+        section_def="pynxtools.nomad.metainfo.base_classes.cite.Cite",
+        repeats=True,
+        variable=True,
+        description=(
+            "The citation information for the experiment, e.g., author names."
+        ),
+        a_nexus_group=NeXusGroup(
+            nx_class="NXcite",
+            name="citeID",
+            name_type="partial",
+            optionality="recommended",
+        ),
+    )
     reproducibility_indicators = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.spm.SpmReproducibilityIndicators",
         repeats=False,
@@ -1114,7 +1128,7 @@ class SpmInstrumentScanEnvironmentSpmScanControlScanRegion(SpmScanRegion):
             name="scan_start_x",
             type="NX_NUMBER",
             name_type="specified",
-            optionality="required",
+            optionality="recommended",
             units="NX_LENGTH",
         ),
         a_eln=ELNAnnotation(
@@ -1134,7 +1148,7 @@ class SpmInstrumentScanEnvironmentSpmScanControlScanRegion(SpmScanRegion):
             name="scan_start_y",
             type="NX_NUMBER",
             name_type="specified",
-            optionality="required",
+            optionality="recommended",
             units="NX_LENGTH",
         ),
         a_eln=ELNAnnotation(
@@ -1154,7 +1168,7 @@ class SpmInstrumentScanEnvironmentSpmScanControlScanRegion(SpmScanRegion):
             name="scan_end_x",
             type="NX_NUMBER",
             name_type="specified",
-            optionality="required",
+            optionality="recommended",
             units="NX_LENGTH",
         ),
         a_eln=ELNAnnotation(
@@ -1174,7 +1188,7 @@ class SpmInstrumentScanEnvironmentSpmScanControlScanRegion(SpmScanRegion):
             name="scan_end_y",
             type="NX_NUMBER",
             name_type="specified",
-            optionality="required",
+            optionality="recommended",
             units="NX_LENGTH",
         ),
         a_eln=ELNAnnotation(
@@ -2226,6 +2240,20 @@ class SpmSample(SensorScanSample):
         ),
     )
 
+    history = SubSection(
+        section_def="pynxtools.nomad.metainfo.base_classes.history.History",
+        repeats=False,
+        description=(
+            "A set of physical processes that occurred to the sample "
+            "prior/during experiment."
+        ),
+        a_nexus_group=NeXusGroup(
+            nx_class="NXhistory",
+            name="history",
+            name_type="specified",
+            optionality="recommended",
+        ),
+    )
     sample_environment = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.spm.SpmSampleSampleEnvironment",
         repeats=False,

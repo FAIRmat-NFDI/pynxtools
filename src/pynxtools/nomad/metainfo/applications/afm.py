@@ -49,6 +49,9 @@ from pynxtools.nomad.metainfo.applications.spm import (
     Spm,
     SpmInstrument,
     SpmInstrumentScanEnvironment,
+    SpmInstrumentScanEnvironmentSpmScanControl,
+    SpmInstrumentScanEnvironmentSpmScanControlMeshSCAN,
+    SpmInstrumentScanEnvironmentSpmScanControlScanRegion,
     SpmReproducibilityIndicators,
     SpmResolutionIndicators,
 )
@@ -68,6 +71,30 @@ __all__ = ["Afm"]
 class Afm(Spm):
     """
     An application definition to describe atomic force microscopy (AFM).
+
+    In AFM a sharp tip mounted on a flexible cantilever senses the tip-sample
+    interaction force. This application definition covers two complementary
+    classes of AFM experiments:
+
+    1. Imaging (raster scan): the tip is scanned over the sample surface in a
+    raster (mesh) pattern while a feedback loop keeps a chosen setpoint of the
+    positioner constant. This yields maps of the surface topography together
+    with the accompanying channels such as amplitude, phase, frequency shift or
+    deflection error. Such experiments are described by the :ref:`meshSCAN
+    </NXafm/ENTRY/INSTRUMENT/SCAN_ENVIRONMENT/SPM_SCAN_CONTROL/meshSCAN-group>`
+    scan pattern group.
+
+    2. Force spectroscopy (single point): the lateral position of the tip is
+    kept fixed and the tip-sample distance is ramped along z while the
+    cantilever deflection is recorded, giving a force-distance (force-versus-z)
+    curve for the approach and the retract (retrace) segment. Such experiments
+    are described by the :ref:`point_forceSCAN
+    </NXafm/ENTRY/INSTRUMENT/SCAN_ENVIRONMENT/SPM_SCAN_CONTROL/point_forceSCAN-group>`
+    scan pattern group.
+
+    Both classes can be combined within a single experiment, as in force-volume
+    mapping or peak force tapping, where a force-distance curve is recorded at
+    every point of a raster grid.
     """
 
     m_def = Section(
@@ -477,11 +504,12 @@ class AfmInstrumentSpmCantileverCantileverOscillator(SpmCantileverOscillator):
     oscillator properties.
 
     A cantilever can be used in direct contact mode to detect interaction
-    forces or oscillated close to its resonance frequency. Changes in the
-    oscillation amplitude, phase (between oscillated tail and moving tip) or
-    resonance frequency are very sensitive to changes in the interaction
-    potential field, giving rise of various measurement modes, such as
-    non-contact or intermittent-contact (tapping) modes.
+    forces or oscillated close to its resonance frequency near to surface in
+    non-contact mode or in tapping mode. Changes in the oscillation amplitude,
+    phase (between oscillated tail and moving tip) or resonance frequency are
+    very sensitive to changes in the interaction potential field, giving rise
+    of various measurement modes, such as non-contact or intermittent-contact
+    (tapping) modes.
     """
 
     m_def = Section(
@@ -501,19 +529,17 @@ class AfmInstrumentSpmCantileverCantileverOscillator(SpmCantileverOscillator):
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXafm.html#nxafm-entry-instrument-spm-cantilever-cantilever-oscillator-reference-amplitude-field"
         ],
-        dimensionality="[length]",
-        unit="m",
+        flexible_unit=True,
         a_nexus_field=NeXusField(
             name="reference_amplitude",
             type="NX_NUMBER",
             name_type="specified",
             optionality="recommended",
-            units="NX_LENGTH",
+            units="NX_ANY",
         ),
         a_eln=ELNAnnotation(
             component=ELNComponentEnum.NumberEditQuantity,
         ),
-        a_display={"unit": "m"},
     )
     reference_frequency = Quantity(
         type=np.float64,
@@ -576,6 +602,11 @@ class AfmInstrumentScanEnvironment(SpmInstrumentScanEnvironment):
         ),
     )
 
+    spm_scan_control = SubSection(
+        section_def="pynxtools.nomad.metainfo.applications.afm.AfmInstrumentScanEnvironmentSpmScanControl",
+        repeats=True,
+        variable=True,
+    )
     XYpiezo_sensor = SubSection(
         section_def="pynxtools.nomad.metainfo.base_classes.spm_piezo_sensor.SpmPiezoSensor",
         repeats=True,
@@ -602,6 +633,329 @@ class AfmInstrumentScanEnvironment(SpmInstrumentScanEnvironment):
             name="head_temperature_sensor",
             name_type="specified",
             optionality="optional",
+        ),
+    )
+
+    def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
+        super().normalize(archive, logger)
+
+
+class AfmInstrumentScanEnvironmentSpmScanControl(
+    SpmInstrumentScanEnvironmentSpmScanControl
+):
+    """
+    The scan control information related to the scan pattern and scan area.
+    """
+
+    m_def = Section(
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXafm.html#nxafm-entry-instrument-scan-environment-spm-scan-control-group"
+        ],
+        variable=True,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXspm_scan_control",
+            name=None,
+            name_type="any",
+            optionality="required",
+        ),
+    )
+
+    scan_region = SubSection(
+        section_def="pynxtools.nomad.metainfo.applications.afm.AfmInstrumentScanEnvironmentSpmScanControlScanRegion",
+        repeats=False,
+    )
+    meshSCAN = SubSection(
+        section_def="pynxtools.nomad.metainfo.base_classes.spm_scan_pattern.SpmScanPattern",
+        repeats=True,
+        variable=True,
+        description=(
+            "The mesh scan is a common technique used in AFM for imaging of the "
+            "surface of given sample in a grid pattern. This group is required "
+            "to be present if the AFM experiment is associated with a raster "
+            "scan, which includes contact mode, non-contact mode, tapping mode "
+            "and peak force tapping mode."
+        ),
+        a_nexus_group=NeXusGroup(
+            nx_class="NXspm_scan_pattern",
+            name="meshSCAN",
+            name_type="partial",
+            optionality="optional",
+        ),
+    )
+    point_forceSCAN = SubSection(
+        section_def="pynxtools.nomad.metainfo.applications.afm.AfmInstrumentScanEnvironmentSpmScanControlPointForceSCAN",
+        repeats=True,
+        variable=True,
+    )
+
+    def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
+        super().normalize(archive, logger)
+
+
+class AfmInstrumentScanEnvironmentSpmScanControlScanRegion(
+    SpmInstrumentScanEnvironmentSpmScanControlScanRegion
+):
+    """
+    The scan region (phase space or sub-phase space) is the region where the
+    scan is performed.
+    """
+
+    m_def = Section(
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXafm.html#nxafm-entry-instrument-scan-environment-spm-scan-control-scan-region-group"
+        ],
+        a_nexus_group=NeXusGroup(
+            nx_class="NXspm_scan_region",
+            name="scan_region",
+            name_type="specified",
+            optionality="required",
+        ),
+    )
+
+    scan_start_x = Quantity(
+        type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXafm.html#nxafm-entry-instrument-scan-environment-spm-scan-control-scan-region-scan-start-x-field"
+        ],
+        dimensionality="[length]",
+        unit="m",
+        description=("The start of the scan in x direction (for afm raster scan)"),
+        a_nexus_field=NeXusField(
+            name="scan_start_x",
+            type="NX_NUMBER",
+            name_type="specified",
+            optionality="recommended",
+            units="NX_LENGTH",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "m"},
+    )
+    scan_start_y = Quantity(
+        type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXafm.html#nxafm-entry-instrument-scan-environment-spm-scan-control-scan-region-scan-start-y-field"
+        ],
+        dimensionality="[length]",
+        unit="m",
+        description=("The start of the scan in y direction (for afm raster scan)."),
+        a_nexus_field=NeXusField(
+            name="scan_start_y",
+            type="NX_NUMBER",
+            name_type="specified",
+            optionality="recommended",
+            units="NX_LENGTH",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "m"},
+    )
+    scan_start_z = Quantity(
+        type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXafm.html#nxafm-entry-instrument-scan-environment-spm-scan-control-scan-region-scan-start-z-field"
+        ],
+        dimensionality="[length]",
+        unit="m",
+        description=(
+            "The start of the scan in z direction (for point force spectroscopy)."
+        ),
+        a_nexus_field=NeXusField(
+            name="scan_start_z",
+            type="NX_NUMBER",
+            name_type="specified",
+            optionality="recommended",
+            units="NX_LENGTH",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "m"},
+    )
+    scan_end_x = Quantity(
+        type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXafm.html#nxafm-entry-instrument-scan-environment-spm-scan-control-scan-region-scan-end-x-field"
+        ],
+        dimensionality="[length]",
+        unit="m",
+        description=("The end of the scan in x direction (for afm raster scan)."),
+        a_nexus_field=NeXusField(
+            name="scan_end_x",
+            type="NX_NUMBER",
+            name_type="specified",
+            optionality="recommended",
+            units="NX_LENGTH",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "m"},
+    )
+    scan_end_y = Quantity(
+        type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXafm.html#nxafm-entry-instrument-scan-environment-spm-scan-control-scan-region-scan-end-y-field"
+        ],
+        dimensionality="[length]",
+        unit="m",
+        description=("The end of the scan in y direction (for afm raster scan)."),
+        a_nexus_field=NeXusField(
+            name="scan_end_y",
+            type="NX_NUMBER",
+            name_type="specified",
+            optionality="recommended",
+            units="NX_LENGTH",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "m"},
+    )
+    scan_end_z = Quantity(
+        type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXafm.html#nxafm-entry-instrument-scan-environment-spm-scan-control-scan-region-scan-end-z-field"
+        ],
+        dimensionality="[length]",
+        unit="m",
+        description=(
+            "The end of the scan in z direction (for point force spectroscopy)."
+        ),
+        a_nexus_field=NeXusField(
+            name="scan_end_z",
+            type="NX_NUMBER",
+            name_type="specified",
+            optionality="recommended",
+            units="NX_LENGTH",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "m"},
+    )
+
+    def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
+        super().normalize(archive, logger)
+
+
+class AfmInstrumentScanEnvironmentSpmScanControlPointForceSCAN(
+    SpmInstrumentScanEnvironmentSpmScanControlMeshSCAN
+):
+    """
+    The scan data from point force spectroscopy, force between the tip and the
+    sample at a specific point: 1. approach 2. retrace.
+
+    This group is required to be present if the AFM experiment is associated
+    with point force spectroscopy.
+    """
+
+    m_def = Section(
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXafm.html#nxafm-entry-instrument-scan-environment-spm-scan-control-point-forcescan-group"
+        ],
+        variable=True,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXspm_scan_pattern",
+            name="point_forceSCAN",
+            name_type="partial",
+            optionality="optional",
+        ),
+    )
+
+    scan_points_z = Quantity(
+        type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXafm.html#nxafm-entry-instrument-scan-environment-spm-scan-control-point-forcescan-scan-points-z-field"
+        ],
+        description=(
+            "The number of points scanned in z direction, approach and retrace "
+            "are same."
+        ),
+        a_nexus_field=NeXusField(
+            name="scan_points_z",
+            type="NX_NUMBER",
+            name_type="specified",
+            optionality="recommended",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+    )
+    scan_points_approach = Quantity(
+        type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXafm.html#nxafm-entry-instrument-scan-environment-spm-scan-control-point-forcescan-scan-points-approach-field"
+        ],
+        description=("The number of points scanned in approach."),
+        a_nexus_field=NeXusField(
+            name="scan_points_approach",
+            type="NX_NUMBER",
+            name_type="specified",
+            optionality="recommended",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+    )
+    scan_points_retrace = Quantity(
+        type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXafm.html#nxafm-entry-instrument-scan-environment-spm-scan-control-point-forcescan-scan-points-retrace-field"
+        ],
+        description=("The number of points scanned in retrace."),
+        a_nexus_field=NeXusField(
+            name="scan_points_retrace",
+            type="NX_NUMBER",
+            name_type="specified",
+            optionality="recommended",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+    )
+    forward_speed_approach = Quantity(
+        type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXafm.html#nxafm-entry-instrument-scan-environment-spm-scan-control-point-forcescan-forward-speed-approach-field"
+        ],
+        flexible_unit=True,
+        description=(
+            "The speed of the cantilever tip during approach in point force "
+            "spectroscopy."
+        ),
+        a_nexus_field=NeXusField(
+            name="forward_speed_approach",
+            type="NX_NUMBER",
+            name_type="specified",
+            optionality="recommended",
+            units="NX_ANY",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+    )
+    backward_speed_retrace = Quantity(
+        type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXafm.html#nxafm-entry-instrument-scan-environment-spm-scan-control-point-forcescan-backward-speed-retrace-field"
+        ],
+        flexible_unit=True,
+        description=(
+            "The speed of the cantilever tip during retract in point force "
+            "spectroscopy."
+        ),
+        a_nexus_field=NeXusField(
+            name="backward_speed_retrace",
+            type="NX_NUMBER",
+            name_type="specified",
+            optionality="recommended",
+            units="NX_ANY",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
         ),
     )
 
