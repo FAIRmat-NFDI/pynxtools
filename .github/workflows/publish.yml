@@ -20,10 +20,6 @@ jobs:
         with:
           fetch-depth: 0
           submodules: recursive
-      - name: Install uv and set the python version to ${{ env.python-version }}
-        uses: astral-sh/setup-uv@v5
-        with:
-          python-version: ${{ env.python-version }}
       - name: Git tag version
         id: git_tag_version
         run: |
