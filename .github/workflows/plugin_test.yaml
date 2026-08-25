@@ -23,12 +23,12 @@ jobs:
           - plugin: pynxtools-apm
             branch: main
             tests_to_run: tests/.
-          # - plugin: pynxtools-ellips
-          #   branch: main
-          #   tests_to_run: tests/.
-          # - plugin: pynxtools-em
-          #   branch: main
-          #   tests_to_run: tests/.
+          - plugin: pynxtools-ellips
+            branch: main
+            tests_to_run: tests/.
+          - plugin: pynxtools-em
+            branch: main
+            tests_to_run: tests/.
           - plugin: pynxtools-igor
             branch: main
             tests_to_run: tests/.
