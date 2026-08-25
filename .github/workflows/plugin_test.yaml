@@ -21,31 +21,31 @@ jobs:
       matrix:
         include:
           - plugin: pynxtools-apm
-            branch: main
+            ref: v0.5.3
             tests_to_run: tests/.
           - plugin: pynxtools-ellips
-            branch: main
+            ref: v0.1.3
             tests_to_run: tests/.
           - plugin: pynxtools-em
-            branch: main
+            ref: v0.4.6
             tests_to_run: tests/.
           - plugin: pynxtools-igor
-            branch: main
+            ref: v0.1.6
             tests_to_run: tests/.
           - plugin: pynxtools-mpes
-            branch: main
+            ref: v0.2.8
             tests_to_run: tests/.
           - plugin: pynxtools-raman
-            branch: main
+            ref: v0.1.3
             tests_to_run: tests/.
           - plugin: pynxtools-spm
-            branch: BrukerFile
+            ref: BrukerFile
             tests_to_run: tests/.
           - plugin: pynxtools-xps
-            branch: main
+            ref: v0.6.2
             tests_to_run: tests/.
           - plugin: pynxtools-xrd
-            branch: main
+            ref: v0.0.8
             tests_to_run: tests/.
 
     steps:
@@ -69,7 +69,7 @@ jobs:
           fetch-depth: 0
           repository: FAIRmat-NFDI/${{ matrix.plugin }}
           path: ${{ matrix.plugin }}
-          ref: ${{ matrix.branch }}
+          ref: ${{ matrix.ref }}
       - name: Install nomad
         run: |
           uv pip install nomad-lab[infrastructure]@git+https://gitlab.mpcdf.mpg.de/nomad-lab/nomad-FAIR.git
