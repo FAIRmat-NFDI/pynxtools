@@ -77,26 +77,25 @@ class SpmCantileverOscillator(Object):
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXspm_cantilever_oscillator.html#nxspm_cantilever_oscillator-reference-amplitude-field"
         ],
-        dimensionality="[length]",
-        unit="m",
+        flexible_unit=True,
         description=(
-            "The reference amplitude (also called drive amplitude) of the "
-            "cantilever. This is the amplitude of the cantilever oscillation "
-            "when no external forces are acting on it. Note: At least one from "
-            "reference_amplitude, reference_frequency, or reference_phase is "
-            "expected."
+            "The electrical (voltage) or mechanical (displacement) amplitude of "
+            "the reference (drive) signal used to oscillate the cantilever. It "
+            "is typically the interaction force or electrical voltage applied to "
+            "the excitation piezo that drives the cantilever at or near its "
+            "resonance frequency. Note: At least one from reference_amplitude, "
+            "reference_frequency, or reference_phase is expected."
         ),
         a_nexus_field=NeXusField(
             name="reference_amplitude",
             type="NX_NUMBER",
             name_type="specified",
             optionality="optional",
-            units="NX_LENGTH",
+            units="NX_ANY",
         ),
         a_eln=ELNAnnotation(
             component=ELNComponentEnum.NumberEditQuantity,
         ),
-        a_display={"unit": "m"},
     )
     reference_frequency = Quantity(
         type=np.float64,
@@ -253,44 +252,45 @@ class SpmCantileverOscillator(Object):
         ),
         a_display={"unit": "hertz"},
     )
-    target_amplitude = Quantity(
+    amplitude_setpoint = Quantity(
         type=np.float64,
         links=[
-            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXspm_cantilever_oscillator.html#nxspm_cantilever_oscillator-target-amplitude-field"
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXspm_cantilever_oscillator.html#nxspm_cantilever_oscillator-amplitude-setpoint-field"
         ],
-        dimensionality="[length]",
-        unit="m",
+        flexible_unit=True,
         description=(
-            "The target amplitude of the cantilever to scan on each scan point. "
-            "This field is same as the reference amplitude in the non-contact "
-            "mode."
+            "The amplitude setpoint is a target or desired electrical or "
+            "mechanical amplitude obtained in the feedback loop of the "
+            "cantilever's piezo system. It is constantly compared to the RMS "
+            "amplitude of the cantilever's oscillation to adjust the drive "
+            "voltage and maintain a stable oscillation amplitude. This field is "
+            "same as the reference amplitude in the non-contact mode."
         ),
         a_nexus_field=NeXusField(
-            name="target_amplitude",
+            name="amplitude_setpoint",
             type="NX_NUMBER",
             name_type="specified",
             optionality="optional",
-            units="NX_LENGTH",
+            units="NX_ANY",
         ),
         a_eln=ELNAnnotation(
             component=ELNComponentEnum.NumberEditQuantity,
         ),
-        a_display={"unit": "m"},
     )
-    target_frequency = Quantity(
+    frequency_setpoint = Quantity(
         type=np.float64,
         links=[
-            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXspm_cantilever_oscillator.html#nxspm_cantilever_oscillator-target-frequency-field"
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXspm_cantilever_oscillator.html#nxspm_cantilever_oscillator-frequency-setpoint-field"
         ],
         dimensionality="1 / [time]",
         unit="hertz",
         description=(
-            "The target frequency of the cantilever to scan on each scan point. "
-            "This field is same as the reference frequency in the non-contact "
-            "mode"
+            "The frequency setpoint is the target or desired frequency of the "
+            "cantilever. This field is same as the reference frequency in the "
+            "non-contact mode"
         ),
         a_nexus_field=NeXusField(
-            name="target_frequency",
+            name="frequency_setpoint",
             type="NX_NUMBER",
             name_type="specified",
             optionality="optional",
