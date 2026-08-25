@@ -24,11 +24,11 @@ import importlib.util
 import logging
 import os
 import sys
-import xml.etree.ElementTree as ET
 
 import blosc2
 import h5py
 import hdf5plugin
+import lxml.etree as ET
 import numpy as np
 
 from pynxtools.dataconverter import helpers
@@ -45,6 +45,7 @@ from pynxtools.dataconverter.exceptions import InvalidDictProvided
 from pynxtools.definitions.dev_tools.utils.nxdl_utils import (
     NxdlAttributeNotFoundError,
     get_node_at_nxdl_path,
+    get_nxdl_element_type,
 )
 
 logger = logging.getLogger("pynxtools")  # pylint: disable=C0103
@@ -292,23 +293,31 @@ class Writer:
                         return DEFAULT_COMPRESSION_FILTER
         return "no_compression"
 
-    def __nxdl_to_attrs(self, path: str = "/") -> dict:
+    def __nxdl_to_attrs(self, path: str = "/") -> tuple[str | None, dict | None]:
         """
-        Return a dictionary of all the attributes at the given path in the NXDL and
-        the required attribute values that were requested in the NXDL from the data.
+        Resolve the NXDL concept at the given path and return a
+        ``(concept_type, attrs)`` tuple:
 
-        If an NXDL attribute was not found, it returns None.
+        - concept_type is None if the path does not resolve to any NXDL
+          concept at all (e.g. a genuinely undocumented, user-defined path).
+        - concept_type is the NXDL element type (e.g. "group", "field") of
+          the resolved concept otherwise, together with its XML attributes
+          and the required attribute values that were requested in the NXDL
+          from the data.
         """
         nxdl_path = helpers.convert_data_converter_dict_to_nxdl_path(path)
 
         try:
             elem = get_node_at_nxdl_path(nxdl_path, elem=copy.deepcopy(self.nxdl_data))
         except NxdlAttributeNotFoundError:
-            return None
+            return None, None
+
+        concept_type = get_nxdl_element_type(elem)
+
+        attrs = dict(elem.attrib)
 
         # Remove the name attribute as we only use it to name the HDF5 entry
-        if "name" in elem.attrib.keys():
-            del elem.attrib["name"]
+        attrs.pop("name", None)
 
         # Fetch values for required attributes requested by the NXDL
         for attr in elem.findall(f"{self.nxs_namespace}attribute"):
@@ -316,9 +325,9 @@ class Writer:
             key = f"{path}/@{name}"
             if key in self.data:
                 value = self.data[key]
-                elem.attrib[name] = str(value) if isinstance(value, list) else value
+                attrs[name] = str(value) if isinstance(value, list) else value
 
-        return elem.attrib
+        return concept_type, attrs
 
     def ensure_and_get_parent_node(
         self, path: str, undocumented_paths
@@ -338,9 +347,9 @@ class Writer:
                         )
                         return None
 
-                    attrs = self.__nxdl_to_attrs(parent_path)
+                    concept_type, attrs = self.__nxdl_to_attrs(parent_path)
 
-                    if attrs is not None:
+                    if concept_type == "group":
                         if nx_class := attrs.get("type"):
                             if "NX_class" not in grp.attrs:
                                 grp.attrs["NX_class"] = nx_class
@@ -350,9 +359,26 @@ class Writer:
                                         f"Prevented the overwriting of attribute {parent_path}/@NXclass"
                                     )
                         else:
-                            logger.error(
-                                f"No attribute 'NX_class' could be written for {parent_path}."
+                            # The NXDL schema requires every group element to
+                            # declare a type, so this should be unreachable
+                            # for a genuine group concept.
+                            raise NxdlAttributeNotFoundError(
+                                f"Group '{parent_path}' is defined in the NXDL but "
+                                "declares no 'type', so no NX_class attribute could "
+                                "be written for it."
                             )
+                    elif concept_type is None and not any(
+                        p == parent_path or p.startswith(f"{parent_path}/")
+                        for p in undocumented_paths
+                    ):
+                        raise NxdlAttributeNotFoundError(
+                            f"Group '{parent_path}' is required by the NXDL/application "
+                            "definition but its NX_class could not be resolved."
+                        )
+                    # else: the concept at this path is documented but not a
+                    # group (e.g. a field is being written as if it were a
+                    # group); that structural mismatch is reported by
+                    # validation, so there is no NX_class to write here.
                     return grp
                 else:
                     if self.append:
