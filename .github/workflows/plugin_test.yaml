@@ -7,7 +7,7 @@ on:
   push:
     branches: [master]
   pull_request:
-    branches: [master]
+    branches: [master, 'pynxtools-0_15_0']
 
 env:
   python-version: 3.12

@@ -7,6 +7,7 @@ on:
   pull_request:
     branches:
       - master
+      - pynxtools-0_15_0
     # Run workflow only when there are changes in pyproject.toml
     # paths:
     #   - 'pyproject.toml'
