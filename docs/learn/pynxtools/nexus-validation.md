@@ -58,7 +58,7 @@ In addition to the validation tools mentioned above, there is another utility in
 
 ## Limitations
 
-While we try to cover most NeXus use cases in the validation, there are some checks that we do not apply consistently yet. These limitations are mostly due to inconsistencies in the standard or because a feature is seldomly used (like [NeXus choices](https://manual.nexusformat.org/nxdl_desc.html#choicetype)). We are looking forward to resolving such ambiguities with the NeXus community going forward, after which a more rigorous implementation in the validation software is possible.
+While we try to cover most NeXus use cases in the validation, there are some checks that we do not apply consistently yet. These limitations are mostly due to inconsistencies in the standard or because a feature is seldom used (like [NeXus choices](https://manual.nexusformat.org/nxdl_desc.html#choicetype)). We are looking forward to resolving such ambiguities with the NeXus community going forward, after which a more rigorous implementation in the validation software is possible.
 
 ## Other validation software
 
