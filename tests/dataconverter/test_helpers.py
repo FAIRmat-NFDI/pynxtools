@@ -136,7 +136,12 @@ def test_path_in_data_dict(nxdl_path, expected, template):
     assert helpers.path_in_data_dict(nxdl_path, tuple(template.keys())) == expected
 
 
-def test_list_hdf5_paths_uses_nxclass_group_names(tmp_path):
+def test_list_hdf5_paths(tmp_path):
+    """Test the listing of hdf5 datasets.
+
+    Empty groups are ignored, while paths for real datasets such as entries and
+    child groups are included in the mapping produced by list_hdf5_paths.
+    """
     filename = tmp_path / "test.nxs"
     with h5py.File(filename, "w") as f:
         entry = f.create_group("entry")
@@ -145,13 +150,16 @@ def test_list_hdf5_paths_uses_nxclass_group_names(tmp_path):
         child = entry.create_group("child")
         child.attrs["NX_class"] = "NXgroup"
         child.create_dataset("value", data=42)
+        empty_child = entry.create_group("empty_child")
+        empty_child.attrs["NX_class"] = "NXgroup"
 
     paths = helpers.list_hdf5_paths(filename)
 
-    assert "/ENTRY[entry]" in paths
-    assert "/ENTRY[entry]/data" in paths
-    assert "/ENTRY[entry]/GROUP[child]" in paths
-    assert "/ENTRY[entry]/GROUP[child]/value" in paths
+    assert "/ENTRY[entry]/data" in paths.keys()
+    assert paths["/ENTRY[entry]/data"] == "@data:entry/data"
+    assert "/ENTRY[entry]/GROUP[child]/value" in paths.keys()
+    assert paths["/ENTRY[entry]/GROUP[child]/value"] == "@data:entry/child/value"
+    assert "/ENTRY[entry]/GROUP[empty_child]" not in paths.keys()
 
 
 def test_atom_type_extractor_and_hill_conversion():

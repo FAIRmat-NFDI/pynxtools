@@ -34,7 +34,6 @@ import numpy as np
 import xarray
 import yaml
 from mergedeep import merge
-import h5py
 
 from pynxtools.dataconverter import hdfdict
 from pynxtools.dataconverter.helpers import decode_if_bytes
