@@ -147,9 +147,12 @@ def test_list_hdf5_paths(tmp_path):
         entry = f.create_group("entry")
         entry.attrs["NX_class"] = "NXentry"
         entry.create_dataset("data", data=[1, 2, 3])[()]
+        entry["data"].attrs["units"] = "eV"
         child = entry.create_group("child")
         child.attrs["NX_class"] = "NXgroup"
+        child.attrs["description"] = "child group"
         child.create_dataset("value", data=42)
+        child["value"].attrs["units"] = "counts"
         empty_child = entry.create_group("empty_child")
         empty_child.attrs["NX_class"] = "NXgroup"
 
@@ -157,8 +160,14 @@ def test_list_hdf5_paths(tmp_path):
 
     assert "/ENTRY[entry]/data" in paths.keys()
     assert paths["/ENTRY[entry]/data"] == "@data:entry/data"
+    assert "/ENTRY[entry]/data/@units" in paths.keys()
+    assert paths["/ENTRY[entry]/data/@units"] == "@data:entry/data@units"
     assert "/ENTRY[entry]/GROUP[child]/value" in paths.keys()
     assert paths["/ENTRY[entry]/GROUP[child]/value"] == "@data:entry/child/value"
+    assert "/ENTRY[entry]/GROUP[child]/@description" in paths.keys()
+    assert paths["/ENTRY[entry]/GROUP[child]/@description"] == "@data:entry/child@description"
+    assert "/ENTRY[entry]/GROUP[child]/value/@units" in paths.keys()
+    assert paths["/ENTRY[entry]/GROUP[child]/value/@units"] == "@data:entry/child/value@units"
     assert "/ENTRY[entry]/GROUP[empty_child]" not in paths.keys()
 
 
