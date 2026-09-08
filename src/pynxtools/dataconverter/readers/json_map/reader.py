@@ -29,6 +29,7 @@ import pickle
 import warnings
 from typing import Any
 
+import h5py
 import numpy as np
 import xarray
 import yaml
@@ -248,6 +249,32 @@ class JsonMapReader(MultiFormatReader):
             file_path, lazy=False, unpacker=unpack_hdf_dataset_for_json_map
         )
         merge(self.data, hdf)
+
+        # hdfdict.load() only round-trips pynxtools' own TYPE marker, not
+        # general HDF5 attributes (e.g. a dataset's "units"). Walk the file
+        # separately with h5py and merge those in as "<name>@<attr>" keys so
+        # they're reachable via "@data:path/to/name@attr" config tokens.
+        def _insert_attrs_from_h5(h5group, parent_dict):
+            for name, item in h5group.items():
+                if name not in parent_dict:
+                    parent_dict[name] = {}
+                for attr_name, attr_value in item.attrs.items():
+                    parent_dict[f"{name}@{attr_name}"] = decode_if_bytes(attr_value)
+                if isinstance(item, h5py.Group):
+                    if not isinstance(parent_dict.get(name), dict):
+                        parent_dict[name] = {}
+                    _insert_attrs_from_h5(item, parent_dict[name])
+
+        try:
+            with h5py.File(file_path, "r") as h5f:
+                _insert_attrs_from_h5(h5f, self.data)
+        except Exception:
+            logger.warning(
+                "Could not read HDF5 attributes from %s; @data:...@attr "
+                "config tokens for this file will not resolve.",
+                file_path,
+            )
+
         if "entry@" in self.data and "partial" in self.data["entry@"]:
             self.partials.extend(self.data["entry@"]["partial"])
         return {}
