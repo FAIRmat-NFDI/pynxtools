@@ -24,6 +24,7 @@ nav:
     - pynxtools:
       - how-tos/pynxtools/build-a-plugin.md
       - how-tos/pynxtools/use-multi-format-reader.md
+      - how-tos/pynxtools/restructure-data-inside-hdf5-nexus-files.md
       - how-tos/pynxtools/implement-a-visitor.md
       - how-tos/pynxtools/using-pynxtools-test-framework.md
       - how-tos/pynxtools/run-tests-in-parallel.md
