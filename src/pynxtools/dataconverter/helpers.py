@@ -701,7 +701,7 @@ def convert_data_dict_path_to_hdf5_path(path) -> str:
 
 
 def _format_hdf5_group_name(group_name: str, nx_class: str | None) -> str:
-    """Return a renamed group when an NX class is available."""
+    """Return a group possibly renamed with its NX class name."""
     if not nx_class:
         return group_name
 
@@ -716,7 +716,7 @@ def convert_hdf5_path_to_data_dict_path(h5file: h5py.File, path: str) -> str:
 
     Group names that contain an NX_class (or NXclass) attribute are renamed using
     the class name with the original group name in square brackets:
-    /entry -> /Entry[entry]
+    /entry -> /ENTRY[entry]
     """
     parts = []
     current = h5file
@@ -725,10 +725,9 @@ def convert_hdf5_path_to_data_dict_path(h5file: h5py.File, path: str) -> str:
             continue
         current = current[part]
         if isinstance(current, h5py.Group):
-            nx_class = decode_if_bytes(
-                current.attrs.get("NX_class") or current.attrs.get("NXclass")
-            )
-            parts.append(_format_hdf5_group_name(part, nx_class))
+            if "NX_class" in current.attrs:
+                nx_class = decode_if_bytes(current.attrs.get("NX_class"))
+                parts.append(_format_hdf5_group_name(part, nx_class))
         else:
             parts.append(part)
     return "/" + "/".join(parts) if parts else "/"
@@ -737,13 +736,13 @@ def convert_hdf5_path_to_data_dict_path(h5file: h5py.File, path: str) -> str:
 def list_hdf5_paths(file_path) -> dict[str, str]:
     """Return a mapping of data-converter-style paths to HDF5 '@data:' paths.
 
-    The returned dict maps the original data-converter-style path (as used
+    The returned dict contains a mapping of data-converter config-file-style paths (as used
     elsewhere in this module) to a normalized HDF5 path string prefixed with
-    `@data:`. Group class names are removed (so NX-class decorated group names
+    `@data:`, which can be used by the JSON map reader. Group class names are removed (so NX-class decorated group names
     like `ENTRY[entry]` become `entry`), trailing slashes are removed, and
     attribute paths use an `@` between the dataset/group and the attribute
     name (e.g. `@data:/entry/sample@attr`). For root attributes the base path
-    portion is omitted (e.g. `@data:@NX_class`).
+    portion is omitted (e.g. `@data:@default`).
     """
     mapping: dict[str, str] = {}
     with h5py.File(file_path, "r") as h5file:
@@ -752,7 +751,7 @@ def list_hdf5_paths(file_path) -> dict[str, str]:
             data_path = convert_hdf5_path_to_data_dict_path(h5file, name)
             # compute the hdf5-style base path without NX-class decorations
             hdf5_base = convert_data_dict_path_to_hdf5_path(data_path).rstrip("/")
-            # strip leading slash from the hdf5 path per requested format
+            # strip leading slash from the hdf5 path
             hdf5_base = hdf5_base.lstrip("/")
 
             # only include dataset entries, not groups
@@ -761,6 +760,7 @@ def list_hdf5_paths(file_path) -> dict[str, str]:
 
             # attributes live on the object; produce values with '@' before attr
             for attr_name in obj.attrs:
+                # ignore NX_class attributes, as they are part of the key
                 if attr_name.startswith("NX_") or attr_name.startswith("nx_"):
                     continue
                 attr_name_dec = decode_if_bytes(attr_name)
