@@ -85,13 +85,15 @@ def convert():
 
 
 @click.command("list_keys")
-@click.argument("file_path", type=click.Path(exists=True, dir_okay=False, readable=True))
+@click.argument(
+    "file_path", type=click.Path(exists=True, dir_okay=False, readable=True)
+)
 def list_keys(file_path: str):
     """Print all HDF5 dataset and attribute paths as JSON.
 
     The output mirrors the mapping returned by
     ``pynxtools.dataconverter.helpers.list_hdf5_paths``.
-    It can be used in conjunction with the json_map reader 
+    It can be used in conjunction with the json_map reader
     to restructure data from hdf5/nxs files.
     """
     payload = helpers.list_hdf5_paths(file_path)

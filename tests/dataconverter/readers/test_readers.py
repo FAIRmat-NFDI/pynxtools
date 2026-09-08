@@ -262,6 +262,12 @@ def test_json_map_reader_restructures_hdf5_paths_from_saved_config(tmp_path):
     )
 
     np.testing.assert_array_equal(
-        reader.get_data("", config["/ENTRY[entry]/SAMPLE[sample]/temperature"][6:]), np.array([1.0, 2.0, 3.0])
+        reader.get_data("", config["/ENTRY[entry]/SAMPLE[sample]/temperature"][6:]),
+        np.array([1.0, 2.0, 3.0]),
     )
-    assert reader.get_data("", config["/ENTRY[entry]/SAMPLE[sample]/temperature/@units"][6:]) == "eV"
+    assert (
+        reader.get_data(
+            "", config["/ENTRY[entry]/SAMPLE[sample]/temperature/@units"][6:]
+        )
+        == "eV"
+    )

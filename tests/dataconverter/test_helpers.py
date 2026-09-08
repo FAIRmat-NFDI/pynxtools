@@ -168,9 +168,15 @@ def test_list_hdf5_paths(tmp_path):
     assert "/ENTRY[entry]/GROUP[child]/value" in paths.keys()
     assert paths["/ENTRY[entry]/GROUP[child]/value"] == "@data:entry/child/value"
     assert "/ENTRY[entry]/GROUP[child]/@description" in paths.keys()
-    assert paths["/ENTRY[entry]/GROUP[child]/@description"] == "@data:entry/child@description"
+    assert (
+        paths["/ENTRY[entry]/GROUP[child]/@description"]
+        == "@data:entry/child@description"
+    )
     assert "/ENTRY[entry]/GROUP[child]/value/@units" in paths.keys()
-    assert paths["/ENTRY[entry]/GROUP[child]/value/@units"] == "@data:entry/child/value@units"
+    assert (
+        paths["/ENTRY[entry]/GROUP[child]/value/@units"]
+        == "@data:entry/child/value@units"
+    )
     assert "/ENTRY[entry]/GROUP[empty_child]" not in paths.keys()
 
 
