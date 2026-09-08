@@ -6,7 +6,7 @@
 
 """CLI commands for NeXus data conversion and validation.
 
-Exposes two top-level symbols consumed by the ``pynx`` group:
+Exposes three top-level symbols consumed by the ``pynx`` group:
 
 ``convert``
     Click group for all conversion-related sub-commands (``pynx convert``).
@@ -15,6 +15,10 @@ Exposes two top-level symbols consumed by the ``pynx`` group:
 
 ``validate``
     Standalone command to validate a NeXus HDF5 file (``pynx validate``).
+
+``list_keys``
+    Print the HDF5 key mapping produced by ``list_hdf5_paths`` as JSON
+    (``pynx list_keys FILE.nxs``).
 """
 
 import json
@@ -78,6 +82,20 @@ def convert():
             "Use 'pynx convert' instead.",
             err=True,
         )
+
+
+@click.command("list_keys")
+@click.argument("file_path", type=click.Path(exists=True, dir_okay=False, readable=True))
+def list_keys(file_path: str):
+    """Print all HDF5 dataset and attribute paths as JSON.
+
+    The output mirrors the mapping returned by
+    ``pynxtools.dataconverter.helpers.list_hdf5_paths``.
+    It can be used in conjunction with the json_map reader 
+    to restructure data from hdf5/nxs files.
+    """
+    payload = helpers.list_hdf5_paths(file_path)
+    click.echo(json.dumps(payload, indent=2, sort_keys=True))
 
 
 @convert.command("run")

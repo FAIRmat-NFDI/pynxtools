@@ -6,6 +6,7 @@
 
 """Test cases for the helper functions used by the DataConverter."""
 
+import json
 import logging
 import os
 import re
@@ -15,7 +16,9 @@ import xml.etree.ElementTree as ET
 import h5py
 import numpy as np
 import pytest
+from click.testing import CliRunner
 
+from pynxtools.cli import pynx
 from pynxtools.dataconverter import helpers
 from pynxtools.dataconverter.template import Template
 
@@ -169,6 +172,24 @@ def test_list_hdf5_paths(tmp_path):
     assert "/ENTRY[entry]/GROUP[child]/value/@units" in paths.keys()
     assert paths["/ENTRY[entry]/GROUP[child]/value/@units"] == "@data:entry/child/value@units"
     assert "/ENTRY[entry]/GROUP[empty_child]" not in paths.keys()
+
+
+def test_list_keys_cli(tmp_path):
+    """List generated HDF5 keys via the top-level pynx CLI."""
+    filename = tmp_path / "test.nxs"
+    with h5py.File(filename, "w") as f:
+        entry = f.create_group("entry")
+        entry.attrs["NX_class"] = "NXentry"
+        entry.create_dataset("data", data=[1, 2, 3])
+        entry["data"].attrs["units"] = "eV"
+
+    runner = CliRunner()
+    result = runner.invoke(pynx, ["list_keys", str(filename)])
+
+    assert result.exit_code == 0, result.output
+    payload = json.loads(result.output)
+    assert payload["/ENTRY[entry]/data"] == "@data:entry/data"
+    assert payload["/ENTRY[entry]/data/@units"] == "@data:entry/data@units"
 
 
 def test_atom_type_extractor_and_hill_conversion():
