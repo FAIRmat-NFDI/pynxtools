@@ -7,6 +7,7 @@
 """Test cases for readers used for the DataConverter"""
 
 import glob
+import json
 import logging
 import os
 import shutil
@@ -219,3 +220,48 @@ def test_json_map_reader_hdf5_unpacker_decodes_text_bytes_only(tmp_path):
     # Float array unchanged
     assert isinstance(float_array, np.ndarray)
     assert np.issubdtype(float_array.dtype, np.floating)
+
+
+def test_json_map_reader_restructures_hdf5_paths_from_saved_config(tmp_path):
+    """Test the "copy mode" of the json map reader.
+    Save a generated config, remap a concept, and replace a value with a constant."""
+    from pynxtools.dataconverter.helpers import save_hdf5_paths_to_json
+    from pynxtools.dataconverter.readers.json_map.reader import JsonMapReader
+
+    source_path = tmp_path / "source.nxs"
+    with h5py.File(source_path, "w") as h5f:
+        entry = h5f.create_group("entry")
+        entry.attrs["NX_class"] = "NXentry"
+        data = entry.create_dataset("measurement", data=np.array([1.0, 2.0, 3.0]))
+        data.attrs["units"] = "eV"
+
+    config_path = save_hdf5_paths_to_json(source_path, tmp_path / "source.config.json")
+
+    with open(config_path, encoding="utf-8") as f:
+        config = json.load(f)
+
+    # Remap the target concept by changing the key path.
+    config["/ENTRY[entry]/SAMPLE[sample]/temperature"] = config.pop(
+        "/ENTRY[entry]/measurement"
+    )
+    config["/ENTRY[entry]/SAMPLE[sample]/temperature/@units"] = config.pop(
+        "/ENTRY[entry]/measurement/@units"
+    )
+
+    # Replace another source value with a literal constant.
+    config["/ENTRY[entry]/INSTRUMENT[instrument]/detector/count_time"] = 42
+
+    with open(config_path, "w", encoding="utf-8") as f:
+        json.dump(config, f, indent=2)
+
+    reader = JsonMapReader()
+    reader.set_config_file(str(config_path))
+    reader.read(
+        template=_make_nxdl_template("NXtest"),
+        file_paths=(str(source_path),),
+    )
+
+    np.testing.assert_array_equal(
+        reader.get_data("", config["/ENTRY[entry]/SAMPLE[sample]/temperature"][6:]), np.array([1.0, 2.0, 3.0])
+    )
+    assert reader.get_data("", config["/ENTRY[entry]/SAMPLE[sample]/temperature/@units"][6:]) == "eV"
