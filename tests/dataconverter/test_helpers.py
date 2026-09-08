@@ -192,6 +192,15 @@ def test_list_keys_cli(tmp_path):
     assert payload["/ENTRY[entry]/data/@units"] == "@data:entry/data@units"
 
 
+def test_list_hdf5_paths_rejects_invalid_hdf5(tmp_path):
+    """Non-HDF5 files should raise a clear validation error."""
+    invalid_file = tmp_path / "not_a_hdf5.txt"
+    invalid_file.write_text("not a valid hdf5 file", encoding="utf-8")
+
+    with pytest.raises(ValueError, match="valid HDF5"):
+        helpers.list_hdf5_paths(invalid_file)
+
+
 def test_atom_type_extractor_and_hill_conversion():
     """
     Test atom type extractor and conversion to hill

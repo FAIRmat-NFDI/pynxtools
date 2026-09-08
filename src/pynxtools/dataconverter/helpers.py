@@ -724,10 +724,9 @@ def convert_hdf5_path_to_data_dict_path(h5file: h5py.File, path: str) -> str:
         if part == "":
             continue
         current = current[part]
-        if isinstance(current, h5py.Group):
-            if "NX_class" in current.attrs:
-                nx_class = decode_if_bytes(current.attrs.get("NX_class"))
-                parts.append(_format_hdf5_group_name(part, nx_class))
+        if isinstance(current, h5py.Group) and "NX_class" in current.attrs:
+            nx_class = decode_if_bytes(current.attrs.get("NX_class"))
+            parts.append(_format_hdf5_group_name(part, nx_class))
         else:
             parts.append(part)
     return "/" + "/".join(parts) if parts else "/"
@@ -744,31 +743,34 @@ def list_hdf5_paths(file_path) -> dict[str, str]:
     name (e.g. `@data:/entry/sample@attr`). For root attributes the base path
     portion is omitted (e.g. `@data:@default`).
     """
-    mapping: dict[str, str] = {}
-    with h5py.File(file_path, "r") as h5file:
+    try:
+        with h5py.File(file_path, "r") as h5file:
+            mapping: dict[str, str] = {}
 
-        def recurse(name, obj):
-            data_path = convert_hdf5_path_to_data_dict_path(h5file, name)
-            # compute the hdf5-style base path without NX-class decorations
-            hdf5_base = convert_data_dict_path_to_hdf5_path(data_path).rstrip("/")
-            # strip leading slash from the hdf5 path
-            hdf5_base = hdf5_base.lstrip("/")
+            def recurse(name, obj):
+                data_path = convert_hdf5_path_to_data_dict_path(h5file, name)
+                # compute the hdf5-style base path without NX-class decorations
+                hdf5_base = convert_data_dict_path_to_hdf5_path(data_path).rstrip("/")
+                # strip leading slash from the hdf5 path
+                hdf5_base = hdf5_base.lstrip("/")
 
-            # only include dataset entries, not groups
-            if isinstance(obj, h5py.Dataset):
-                mapping[data_path] = f"@data:{hdf5_base}"
+                # only include dataset entries, not groups
+                if isinstance(obj, h5py.Dataset):
+                    mapping[data_path] = f"@data:{hdf5_base}"
 
-            # attributes live on the object; produce values with '@' before attr
-            for attr_name in obj.attrs:
-                # ignore NX_class attributes, as they are part of the key
-                if attr_name.startswith("NX_") or attr_name.startswith("nx_"):
-                    continue
-                attr_name_dec = decode_if_bytes(attr_name)
-                attr_key = f"{data_path}/@{attr_name_dec}"
-                mapping[attr_key] = f"@data:{hdf5_base}@{attr_name_dec}"
+                # attributes live on the object; produce values with '@' before attr
+                for attr_name in obj.attrs:
+                    # ignore NX_class attributes, as they are part of the key
+                    if attr_name.startswith("NX_") or attr_name.startswith("nx_"):
+                        continue
+                    attr_name_dec = decode_if_bytes(attr_name)
+                    attr_key = f"{data_path}/@{attr_name_dec}"
+                    mapping[attr_key] = f"@data:{hdf5_base}@{attr_name_dec}"
 
-        h5file.visititems(recurse)
-    return mapping
+            h5file.visititems(recurse)
+        return mapping
+    except OSError as exc:
+        raise ValueError(f"{file_path} is not a valid HDF5 file.") from exc
 
 
 def save_hdf5_paths_to_json(
