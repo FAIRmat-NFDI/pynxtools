@@ -772,6 +772,26 @@ def list_hdf5_paths(file_path) -> dict[str, str]:
                     attr_key = f"{data_path}/@{attr_name}"
                     mapping[attr_key] = f"@data:{hdf5_base}@{attr_name}"
 
+            # include root-level attributes, but skip the writer-managed NXroot metadata
+            for attr_name in h5file.attrs:
+                attr_name = decode_if_bytes(attr_name)
+                if attr_name.startswith(("NX_", "nx_")):
+                    continue
+                if attr_name in {
+                    "file_name",
+                    "file_time",
+                    "file_update_time",
+                    "NeXus_repository",
+                    "NeXus_release",
+                    "HDF5_Version",
+                    "h5py_version",
+                    "creator",
+                    "creator_version",
+                    "append_mode",
+                }:
+                    continue
+                mapping[f"/@{attr_name}"] = f"@data:@{attr_name}"
+
             h5file.visititems(recurse)
         return mapping
     except OSError as exc:
