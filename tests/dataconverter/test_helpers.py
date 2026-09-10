@@ -147,9 +147,12 @@ def test_list_hdf5_paths(tmp_path):
     """
     filename = tmp_path / "test.nxs"
     with h5py.File(filename, "w") as f:
+        f.attrs["file_description"] = "root attribute"
+        f.attrs["file_name"] = "should be skipped"
         entry = f.create_group("entry")
         entry.attrs["NX_class"] = "NXentry"
-        entry.create_dataset("data", data=[1, 2, 3])[()]
+        entry.attrs["description"] = "an entry"
+        entry.create_dataset("data", data=[1, 2, 3])
         entry["data"].attrs["units"] = "eV"
         child = entry.create_group("child")
         child.attrs["NX_class"] = "NXgroup"
@@ -160,6 +163,23 @@ def test_list_hdf5_paths(tmp_path):
         empty_child.attrs["NX_class"] = "NXgroup"
 
     paths = helpers.list_hdf5_paths(filename)
+
+    # only datasets and attributes are mapped, not bare groups
+    assert "/ENTRY[entry]" not in paths
+    assert "/ENTRY[entry]/GROUP[child]" not in paths
+
+    assert paths["/ENTRY[entry]/data"] == "@data:entry/data"
+    assert paths["/ENTRY[entry]/GROUP[child]/value"] == "@data:entry/child/value"
+
+    # NX_class attributes are skipped, other attributes are kept
+    assert "/ENTRY[entry]/@NX_class" not in paths
+    assert paths["/ENTRY[entry]/@description"] == "@data:entry@description"
+
+    # root-level attributes use the '@data:@attr' shorthand
+    assert paths["/@file_description"] == "@data:@file_description"
+
+    # writer-managed root attributes (see add_default_root_attributes) are skipped
+    assert "/@file_name" not in paths
 
     assert "/ENTRY[entry]/data" in paths.keys()
     assert paths["/ENTRY[entry]/data"] == "@data:entry/data"

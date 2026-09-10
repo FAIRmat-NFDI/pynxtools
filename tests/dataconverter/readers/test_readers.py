@@ -271,3 +271,32 @@ def test_json_map_reader_restructures_hdf5_paths_from_saved_config(tmp_path):
         )
         == "eV"
     )
+
+
+def test_json_map_reader_hdf5_file_loads_attributes(tmp_path):
+    """_handle_hdf5_file exposes group/dataset attributes as '<name>@<attr>' entries.
+
+    Also covers root-level file attributes, stored as '@<attr>' at the top of
+    self.data, and confirms attribute keys are resolvable via the same
+    '@data:' path syntax used for regular data (see get_val_nested_keystring_from_dict).
+    """
+    from pynxtools.dataconverter.readers.json_map.reader import JsonMapReader
+
+    filename = tmp_path / "test.nxs"
+    with h5py.File(filename, "w") as f:
+        f.attrs["file_description"] = "a root attribute"
+        entry = f.create_group("entry")
+        entry.attrs["NX_class"] = "NXentry"
+        dataset = entry.create_dataset("collection_time", data=42)
+        dataset.attrs["units"] = "s"
+        child = entry.create_group("sample")
+        child.attrs["NX_class"] = "NXsample"
+        child.attrs["name"] = "my sample"
+
+    reader = JsonMapReader()
+    reader._handle_hdf5_file(str(filename))
+
+    assert reader.data["@file_description"] == "a root attribute"
+    assert reader.data["entry"]["collection_time@units"] == "s"
+    assert reader.data["entry"]["sample@name"] == "my sample"
+    assert reader.data["entry"]["sample@NX_class"] == "NXsample"

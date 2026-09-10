@@ -741,7 +741,10 @@ def list_hdf5_paths(file_path) -> dict[str, str]:
     like `ENTRY[entry]` become `entry`), trailing slashes are removed, and
     attribute paths use an `@` between the dataset/group and the attribute
     name (e.g. `@data:/entry/sample@attr`). For root attributes the base path
-    portion is omitted (e.g. `@data:@default`).
+    portion is omitted (e.g. a root ``description`` attribute becomes
+    ``@data:@description``). ``NX_class``/``NXclass`` attributes and
+    Root attributes (that add_default_root_attributes() anyway always overwrites on
+    write) are intentionally ignored. Root attributes are not included in visititems().
     """
     try:
         with h5py.File(file_path, "r") as h5file:
@@ -761,11 +764,13 @@ def list_hdf5_paths(file_path) -> dict[str, str]:
                 # attributes live on the object; produce values with '@' before attr
                 for attr_name in obj.attrs:
                     # ignore NX_class attributes, as they are part of the key
-                    if attr_name.startswith("NX_") or attr_name.startswith("nx_"):
+                    attr_name = decode_if_bytes(attr_name)
+
+                    if attr_name.startswith(("NX_", "nx_")):
                         continue
-                    attr_name_dec = decode_if_bytes(attr_name)
-                    attr_key = f"{data_path}/@{attr_name_dec}"
-                    mapping[attr_key] = f"@data:{hdf5_base}@{attr_name_dec}"
+
+                    attr_key = f"{data_path}/@{attr_name}"
+                    mapping[attr_key] = f"@data:{hdf5_base}@{attr_name}"
 
             h5file.visititems(recurse)
         return mapping
