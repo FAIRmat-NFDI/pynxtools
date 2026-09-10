@@ -6,7 +6,7 @@
 
 """CLI commands for NeXus data conversion and validation.
 
-Exposes three top-level symbols consumed by the ``pynx`` group:
+Exposes top-level symbols consumed by the ``pynx`` group:
 
 ``convert``
     Click group for all conversion-related sub-commands (``pynx convert``).
