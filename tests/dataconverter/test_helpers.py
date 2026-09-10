@@ -210,7 +210,7 @@ def test_list_keys_cli(tmp_path):
         entry["data"].attrs["units"] = "eV"
 
     runner = CliRunner()
-    result = runner.invoke(pynx, ["list_keys", str(filename)])
+    result = runner.invoke(pynx, ["list-keys", str(filename)])
 
     assert result.exit_code == 0, result.output
     payload = json.loads(result.output)

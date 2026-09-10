@@ -49,6 +49,7 @@ We are offering a small guide to getting started with NeXus, `pynxtools`, and NO
 
 - [Build your own `pynxtools` plugin](how-tos/pynxtools/build-a-plugin.md)
 - [Use the built-in `MultiFormatReader`](how-tos/pynxtools/use-multi-format-reader.md)
+- [Restructure data inside HDF5/NeXus files](how-tos/pynxtools/restructure-data-inside-hdf5-nexus-files.md)
 - [Implement a custom `NexusVisitor`](how-tos/pynxtools/implement-a-visitor.md)
 - [Test functionality for `pynxtools` plugins](how-tos/pynxtools/using-pynxtools-test-framework.md)
 - [Running `pynxtools` tests in parallel](how-tos/pynxtools/run-tests-in-parallel.md)
