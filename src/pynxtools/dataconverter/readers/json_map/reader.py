@@ -278,3 +278,11 @@ class JsonMapReader(MultiFormatReader):
             for attr_name, attr_value in h5f.attrs.items():
                 self.data[f"@{attr_name}"] = decode_if_bytes(attr_value)
             _insert_attrs_from_h5(h5f, self.data)
+
+        if "entry@" in self.data and "partial" in self.data["entry@"]:
+            self.partials.extend(self.data["entry@"]["partial"])
+        return {}
+
+
+# This has to be set to allow the convert script to use this reader.
+READER = JsonMapReader
