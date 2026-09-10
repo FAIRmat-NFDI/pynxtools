@@ -131,6 +131,28 @@ def get_map_from_partials(partials, template, data):
     return mapping
 
 
+def _insert_attrs_from_h5(h5group, parent_dict: dict) -> None:
+    """Add HDF5 attributes into ``parent_dict`` as ``'<name>@<attr>'`` keys.
+
+    ``hdfdict.load()`` reads dataset and group values but drops their HDF5
+    attributes (e.g. a dataset's ``units``). This walks the file again and
+    stores each attribute under a ``'<name>@<attr>'`` key next to its owner,
+    so a config file can reach it with a ``"@data:path/to/name@attr"`` token.
+    Recurses into subgroups. Dataset values already loaded by ``hdfdict`` are left
+    unchanged.
+    """
+    for name, item in h5group.items():
+        for attr_name, attr_value in item.attrs.items():
+            parent_dict[f"{name}@{attr_name}"] = decode_if_bytes(attr_value)
+
+        if isinstance(item, h5py.Group):
+            child_dict = parent_dict.get(name)
+            if not isinstance(child_dict, dict):
+                child_dict = {}
+                parent_dict[name] = child_dict
+            _insert_attrs_from_h5(item, child_dict)
+
+
 def mapping_to_config(mapping: dict) -> dict:
     """Convert a json_map mapping dict to ``fill_from_config`` format.
 
@@ -250,30 +272,12 @@ class JsonMapReader(MultiFormatReader):
         )
         merge(self.data, hdf)
 
-        # hdfdict.load() only round-trips pynxtools' own TYPE marker, not
-        # general HDF5 attributes (e.g. a dataset's "units"). Walk the file
-        # separately with h5py and merge those in as "<name>@<attr>" keys so
-        # they're reachable via "@data:path/to/name@attr" config tokens.
-        def _insert_attrs_from_h5(h5group, parent_dict):
-            for name, item in h5group.items():
-                if name not in parent_dict:
-                    parent_dict[name] = {}
-                for attr_name, attr_value in item.attrs.items():
-                    parent_dict[f"{name}@{attr_name}"] = decode_if_bytes(attr_value)
-                if isinstance(item, h5py.Group):
-                    if not isinstance(parent_dict.get(name), dict):
-                        parent_dict[name] = {}
-                    _insert_attrs_from_h5(item, parent_dict[name])
-
-        try:
-            with h5py.File(file_path, "r") as h5f:
-                _insert_attrs_from_h5(h5f, self.data)
-        except Exception:
-            logger.warning(
-                "Could not read HDF5 attributes from %s; @data:...@attr "
-                "config tokens for this file will not resolve.",
-                file_path,
-            )
+        # hdfdict already confirmed file_path opens as valid HDF5 above; a
+        # second open here can't fail in a new way, so no need to catch errors.
+        with h5py.File(file_path, "r") as h5f:
+            for attr_name, attr_value in h5f.attrs.items():
+                self.data[f"@{attr_name}"] = decode_if_bytes(attr_value)
+            _insert_attrs_from_h5(h5f, self.data)
 
         if "entry@" in self.data and "partial" in self.data["entry@"]:
             self.partials.extend(self.data["entry@"]["partial"])
