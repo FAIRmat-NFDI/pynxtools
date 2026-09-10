@@ -31,8 +31,7 @@ except ImportError as exc:
 
 REPLACEMENT_FOR_NX = ""
 
-# This is a list of NeXus group names that are not allowed because they are defined as quantities in the BaseSection class.
-UNALLOWED_GROUP_NAMES = {"name", "datetime", "lab_id", "description"}
+UNALLOWED_GROUP_NAMES = {"name", "datetime", "lab_id", "description", "reference"}
 
 NX_TYPES = {  # Primitive Types,  'ISO8601' is the only type not defined here
     "NX_COMPLEX": m_complex128,
@@ -69,11 +68,11 @@ FIELD_STATISTICS: dict[str, dict] = {
 
 def _rename_classes_in_nomad(nx_name: str) -> str:
     """
-    Modify group names that conflict with NOMAD due to being defined as quantities
-    in the BaseSection class by appending '__group' to those names.
+    Append '__group' to a group name that collides with an inherited quantity.
 
-    Some quantities names names are reserved in the BaseSection class (or even higher up in metainfo),
-    and thus require renaming to avoid collisions.
+    Names in UNALLOWED_GROUP_NAMES are quantities on the NOMAD base sections this
+    schema derives from. A group with such a name gets a '__group' suffix so the
+    generated SubSection does not clash with the inherited Quantity.
 
     Args:
         nx_name (str): The original group name.

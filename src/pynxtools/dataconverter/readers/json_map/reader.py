@@ -29,6 +29,7 @@ import pickle
 import warnings
 from typing import Any
 
+import h5py
 import numpy as np
 import xarray
 import yaml
@@ -128,6 +129,28 @@ def get_map_from_partials(partials, template, data):
         mapping[template_path] = path
 
     return mapping
+
+
+def _insert_attrs_from_h5(h5group, parent_dict: dict) -> None:
+    """Add HDF5 attributes into ``parent_dict`` as ``'<name>@<attr>'`` keys.
+
+    ``hdfdict.load()`` reads dataset and group values but drops their HDF5
+    attributes (e.g. a dataset's ``units``). This walks the file again and
+    stores each attribute under a ``'<name>@<attr>'`` key next to its owner,
+    so a config file can reach it with a ``"@data:path/to/name@attr"`` token.
+    Recurses into subgroups. Dataset values already loaded by ``hdfdict`` are left
+    unchanged.
+    """
+    for name, item in h5group.items():
+        for attr_name, attr_value in item.attrs.items():
+            parent_dict[f"{name}@{attr_name}"] = decode_if_bytes(attr_value)
+
+        if isinstance(item, h5py.Group):
+            child_dict = parent_dict.get(name)
+            if not isinstance(child_dict, dict):
+                child_dict = {}
+                parent_dict[name] = child_dict
+            _insert_attrs_from_h5(item, child_dict)
 
 
 def mapping_to_config(mapping: dict) -> dict:
@@ -248,6 +271,14 @@ class JsonMapReader(MultiFormatReader):
             file_path, lazy=False, unpacker=unpack_hdf_dataset_for_json_map
         )
         merge(self.data, hdf)
+
+        # hdfdict already confirmed file_path opens as valid HDF5 above; a
+        # second open here can't fail in a new way, so no need to catch errors.
+        with h5py.File(file_path, "r") as h5f:
+            for attr_name, attr_value in h5f.attrs.items():
+                self.data[f"@{attr_name}"] = decode_if_bytes(attr_value)
+            _insert_attrs_from_h5(h5f, self.data)
+
         if "entry@" in self.data and "partial" in self.data["entry@"]:
             self.partials.extend(self.data["entry@"]["partial"])
         return {}
