@@ -2140,7 +2140,9 @@ def validate_dict_against(
         if "@" in not_visited_key.rsplit("/")[-1]:
             # check that parent exists
             parent_key = not_visited_key.rsplit("/", 1)[0]
-            if (parent_key := not_visited_key.rsplit("/", 1)[0]) not in mapping.keys():
+            # Root-level attributes ("/@attr") have an empty parent key. Their
+            # parent is the NXroot group, which always exists, so keep them.
+            if parent_key and parent_key not in mapping.keys():
                 # check that parent is not a group
                 node = add_best_matches_for(not_visited_key.rsplit("/", 1)[0], tree)
 

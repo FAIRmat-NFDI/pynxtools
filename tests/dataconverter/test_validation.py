@@ -2273,6 +2273,11 @@ def test_validate_data_dict(data_dict, error_messages, caplog, request):
         pytest.param(TEMPLATE, "", id="valid-data-dict"),
         pytest.param(listify_template(TEMPLATE), "", id="lists"),
         pytest.param(
+            alter_dict(TEMPLATE, "/@default", "my_entry"),
+            "",
+            id="root-level-attribute",
+        ),
+        pytest.param(
             alter_dict(
                 TEMPLATE,
                 "/ENTRY[my_entry]/NXODD_name[nxodd_name]/anamethatRENAMES[anamethatichangetothis]",
