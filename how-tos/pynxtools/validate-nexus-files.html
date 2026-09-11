@@ -732,6 +732,34 @@
   
   
     <li class="md-nav__item">
+      <a href="restructure-data-inside-hdf5-nexus-files.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Restructure data inside HDF5/NeXus files
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="implement-a-visitor.html" class="md-nav__link">
         
   
@@ -1275,6 +1303,34 @@
     
   
     NeXus definitions in pynxtools
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../learn/pynxtools/licensing.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Licensing
   
 
     
@@ -1866,27 +1922,27 @@ files from experimental data.</p>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>pynx<span class="w"> </span>validate<span class="w"> </span>--ignore-undocumented<span class="w"> </span>src/pynxtools/data/201805_WSe2_arpes.nxs
 </code></pre></div>
 <div class="result">
-<div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>WARNING: The value at /entry/collection_time should be one of the following Python types: (&lt;class &#39;float&#39;&gt;, &lt;class &#39;numpy.floating&#39;&gt;), as defined in the NXDL as NX_FLOAT.
-<a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>WARNING: The unit &#39;1/Å&#39; at /entry/instrument/analyser/angles/@units does not match with the unit category NX_ANGLE of &#39;angles&#39;.
-<a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a>WARNING: The value at /entry/instrument/beam_probe_0/distance should be one of the following Python types: (&lt;class &#39;float&#39;&gt;, &lt;class &#39;numpy.floating&#39;&gt;), as defined in the NXDL as NX_FLOAT.
-<a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a>WARNING: The value at /entry/instrument/beam_probe_0/pulse_duration should be one of the following Python types: (&lt;class &#39;float&#39;&gt;, &lt;class &#39;numpy.floating&#39;&gt;), as defined in the NXDL as NX_FLOAT.
-<a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a>WARNING: The value at /entry/instrument/beam_pump_0/distance should be one of the following Python types: (&lt;class &#39;float&#39;&gt;, &lt;class &#39;numpy.floating&#39;&gt;), as defined in the NXDL as NX_FLOAT.
-<a id="__codelineno-1-6" name="__codelineno-1-6" href="#__codelineno-1-6"></a>WARNING: The value at /entry/instrument/beam_pump_0/fluence should be one of the following Python types: (&lt;class &#39;float&#39;&gt;, &lt;class &#39;numpy.floating&#39;&gt;), as defined in the NXDL as NX_FLOAT.
-<a id="__codelineno-1-7" name="__codelineno-1-7" href="#__codelineno-1-7"></a>WARNING: The value at /entry/instrument/beam_pump_0/pulse_duration should be one of the following Python types: (&lt;class &#39;float&#39;&gt;, &lt;class &#39;numpy.floating&#39;&gt;), as defined in the NXDL as NX_FLOAT.
-<a id="__codelineno-1-8" name="__codelineno-1-8" href="#__codelineno-1-8"></a>WARNING: The value at /entry/instrument/source/bunch_distance should be one of the following Python types: (&lt;class &#39;float&#39;&gt;, &lt;class &#39;numpy.floating&#39;&gt;), as defined in the NXDL as NX_FLOAT.
-<a id="__codelineno-1-9" name="__codelineno-1-9" href="#__codelineno-1-9"></a>WARNING: The value at /entry/instrument/source/bunch_length should be one of the following Python types: (&lt;class &#39;float&#39;&gt;, &lt;class &#39;numpy.floating&#39;&gt;), as defined in the NXDL as NX_FLOAT.
-<a id="__codelineno-1-10" name="__codelineno-1-10" href="#__codelineno-1-10"></a>WARNING: Reserved suffix &#39;_end&#39; was used in /entry/instrument/source/burst_number_end, but there is no associated field burst_number.
-<a id="__codelineno-1-11" name="__codelineno-1-11" href="#__codelineno-1-11"></a>WARNING: The value at /entry/instrument/source/current should be one of the following Python types: (&lt;class &#39;float&#39;&gt;, &lt;class &#39;numpy.floating&#39;&gt;), as defined in the NXDL as NX_FLOAT.
-<a id="__codelineno-1-12" name="__codelineno-1-12" href="#__codelineno-1-12"></a>WARNING: The value at /entry/instrument/source/energy should be one of the following Python types: (&lt;class &#39;float&#39;&gt;, &lt;class &#39;numpy.floating&#39;&gt;), as defined in the NXDL as NX_FLOAT.
-<a id="__codelineno-1-13" name="__codelineno-1-13" href="#__codelineno-1-13"></a>WARNING: The value at /entry/instrument/source/frequency should be one of the following Python types: (&lt;class &#39;float&#39;&gt;, &lt;class &#39;numpy.floating&#39;&gt;), as defined in the NXDL as NX_FLOAT.
-<a id="__codelineno-1-14" name="__codelineno-1-14" href="#__codelineno-1-14"></a>WARNING: The value &#39;Burst&#39; at /entry/instrument/source/mode does not match with the enumerated items from the open enumeration: [&#39;Single Bunch&#39;, &#39;Multi Bunch&#39;]. When a different value is used, a boolean &#39;custom=True&#39; attribute must be added.
-<a id="__codelineno-1-15" name="__codelineno-1-15" href="#__codelineno-1-15"></a>WARNING: The value &#39;Free Electron Laser&#39; at /entry/instrument/source/type does not match with the enumerated items from the open enumeration: [&#39;Spallation Neutron Source&#39;, &#39;Pulsed Reactor Neutron Source&#39;, &#39;Reactor Neutron Source&#39;, &#39;Synchrotron X-ray Source&#39;, &#39;Pulsed Muon Source&#39;, &#39;Rotating Anode X-ray&#39;, &#39;Fixed Tube X-ray&#39;, &#39;UV Laser&#39;, &#39;Free-Electron Laser&#39;, &#39;Optical Laser&#39;, &#39;Ion Source&#39;, &#39;UV Plasma Source&#39;, &#39;Metal Jet X-ray&#39;, &#39;Laser&#39;, &#39;Dye Laser&#39;, &#39;Broadband Tunable Light Source&#39;, &#39;Halogen Lamp&#39;, &#39;LED&#39;, &#39;Mercury Cadmium Telluride Lamp&#39;, &#39;Deuterium Lamp&#39;, &#39;Xenon Lamp&#39;, &#39;Globar&#39;]. When a different value is used, a boolean &#39;custom=True&#39; attribute must be added.
-<a id="__codelineno-1-16" name="__codelineno-1-16" href="#__codelineno-1-16"></a>WARNING: The value at /entry/instrument/source_pump/bunch_distance should be one of the following Python types: (&lt;class &#39;float&#39;&gt;, &lt;class &#39;numpy.floating&#39;&gt;), as defined in the NXDL as NX_FLOAT.
-<a id="__codelineno-1-17" name="__codelineno-1-17" href="#__codelineno-1-17"></a>WARNING: The value at /entry/instrument/source_pump/bunch_length should be one of the following Python types: (&lt;class &#39;float&#39;&gt;, &lt;class &#39;numpy.floating&#39;&gt;), as defined in the NXDL as NX_FLOAT.
-<a id="__codelineno-1-18" name="__codelineno-1-18" href="#__codelineno-1-18"></a>WARNING: The value at /entry/instrument/source_pump/frequency should be one of the following Python types: (&lt;class &#39;float&#39;&gt;, &lt;class &#39;numpy.floating&#39;&gt;), as defined in the NXDL as NX_FLOAT.
-<a id="__codelineno-1-19" name="__codelineno-1-19" href="#__codelineno-1-19"></a>WARNING: The value &#39;Burst&#39; at /entry/instrument/source_pump/mode does not match with the enumerated items from the open enumeration: [&#39;Single Bunch&#39;, &#39;Multi Bunch&#39;]. When a different value is used, a boolean &#39;custom=True&#39; attribute must be added.
-<a id="__codelineno-1-20" name="__codelineno-1-20" href="#__codelineno-1-20"></a>WARNING: The value &#39;NIR&#39; at /entry/instrument/source_pump/probe should be one of the following: [&#39;x-ray&#39;].
-<a id="__codelineno-1-21" name="__codelineno-1-21" href="#__codelineno-1-21"></a>WARNING: The value &#39;OPCPA&#39; at /entry/instrument/source_pump/type does not match with the enumerated items from the open enumeration: [&#39;Spallation Neutron Source&#39;, &#39;Pulsed Reactor Neutron Source&#39;, &#39;Reactor Neutron Source&#39;, &#39;Synchrotron X-ray Source&#39;, &#39;Pulsed Muon Source&#39;, &#39;Rotating Anode X-ray&#39;, &#39;Fixed Tube X-ray&#39;, &#39;UV Laser&#39;, &#39;Free-Electron Laser&#39;, &#39;Optical Laser&#39;, &#39;Ion Source&#39;, &#39;UV Plasma Source&#39;, &#39;Metal Jet X-ray&#39;, &#39;Laser&#39;, &#39;Dye Laser&#39;, &#39;Broadband Tunable Light Source&#39;, &#39;Halogen Lamp&#39;, &#39;LED&#39;, &#39;Mercury Cadmium Telluride Lamp&#39;, &#39;Deuterium Lamp&#39;, &#39;Xenon Lamp&#39;, &#39;Globar&#39;]. When a different value is used, a boolean &#39;custom=True&#39; attribute must be added.
+<div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>WARNING: The value at /entry/collection_time should be one of the following Python types: (&lt;class 'float'&gt;, &lt;class 'numpy.floating'&gt;), as defined in the NXDL as NX_FLOAT.
+<a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>WARNING: The unit '1/Å' at /entry/instrument/analyser/angles/@units does not match with the unit category NX_ANGLE of 'angles'.
+<a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a>WARNING: The value at /entry/instrument/beam_probe_0/distance should be one of the following Python types: (&lt;class 'float'&gt;, &lt;class 'numpy.floating'&gt;), as defined in the NXDL as NX_FLOAT.
+<a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a>WARNING: The value at /entry/instrument/beam_probe_0/pulse_duration should be one of the following Python types: (&lt;class 'float'&gt;, &lt;class 'numpy.floating'&gt;), as defined in the NXDL as NX_FLOAT.
+<a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a>WARNING: The value at /entry/instrument/beam_pump_0/distance should be one of the following Python types: (&lt;class 'float'&gt;, &lt;class 'numpy.floating'&gt;), as defined in the NXDL as NX_FLOAT.
+<a id="__codelineno-1-6" name="__codelineno-1-6" href="#__codelineno-1-6"></a>WARNING: The value at /entry/instrument/beam_pump_0/fluence should be one of the following Python types: (&lt;class 'float'&gt;, &lt;class 'numpy.floating'&gt;), as defined in the NXDL as NX_FLOAT.
+<a id="__codelineno-1-7" name="__codelineno-1-7" href="#__codelineno-1-7"></a>WARNING: The value at /entry/instrument/beam_pump_0/pulse_duration should be one of the following Python types: (&lt;class 'float'&gt;, &lt;class 'numpy.floating'&gt;), as defined in the NXDL as NX_FLOAT.
+<a id="__codelineno-1-8" name="__codelineno-1-8" href="#__codelineno-1-8"></a>WARNING: The value at /entry/instrument/source/bunch_distance should be one of the following Python types: (&lt;class 'float'&gt;, &lt;class 'numpy.floating'&gt;), as defined in the NXDL as NX_FLOAT.
+<a id="__codelineno-1-9" name="__codelineno-1-9" href="#__codelineno-1-9"></a>WARNING: The value at /entry/instrument/source/bunch_length should be one of the following Python types: (&lt;class 'float'&gt;, &lt;class 'numpy.floating'&gt;), as defined in the NXDL as NX_FLOAT.
+<a id="__codelineno-1-10" name="__codelineno-1-10" href="#__codelineno-1-10"></a>WARNING: Reserved suffix '_end' was used in /entry/instrument/source/burst_number_end, but there is no associated field burst_number.
+<a id="__codelineno-1-11" name="__codelineno-1-11" href="#__codelineno-1-11"></a>WARNING: The value at /entry/instrument/source/current should be one of the following Python types: (&lt;class 'float'&gt;, &lt;class 'numpy.floating'&gt;), as defined in the NXDL as NX_FLOAT.
+<a id="__codelineno-1-12" name="__codelineno-1-12" href="#__codelineno-1-12"></a>WARNING: The value at /entry/instrument/source/energy should be one of the following Python types: (&lt;class 'float'&gt;, &lt;class 'numpy.floating'&gt;), as defined in the NXDL as NX_FLOAT.
+<a id="__codelineno-1-13" name="__codelineno-1-13" href="#__codelineno-1-13"></a>WARNING: The value at /entry/instrument/source/frequency should be one of the following Python types: (&lt;class 'float'&gt;, &lt;class 'numpy.floating'&gt;), as defined in the NXDL as NX_FLOAT.
+<a id="__codelineno-1-14" name="__codelineno-1-14" href="#__codelineno-1-14"></a>WARNING: The value 'Burst' at /entry/instrument/source/mode does not match with the enumerated items from the open enumeration: ['Single Bunch', 'Multi Bunch']. When a different value is used, a boolean 'custom=True' attribute must be added.
+<a id="__codelineno-1-15" name="__codelineno-1-15" href="#__codelineno-1-15"></a>WARNING: The value 'Free Electron Laser' at /entry/instrument/source/type does not match with the enumerated items from the open enumeration: ['Spallation Neutron Source', 'Pulsed Reactor Neutron Source', 'Reactor Neutron Source', 'Synchrotron X-ray Source', 'Pulsed Muon Source', 'Rotating Anode X-ray', 'Fixed Tube X-ray', 'UV Laser', 'Free-Electron Laser', 'Optical Laser', 'Ion Source', 'UV Plasma Source', 'Metal Jet X-ray', 'Laser', 'Dye Laser', 'Broadband Tunable Light Source', 'Halogen Lamp', 'LED', 'Mercury Cadmium Telluride Lamp', 'Deuterium Lamp', 'Xenon Lamp', 'Globar']. When a different value is used, a boolean 'custom=True' attribute must be added.
+<a id="__codelineno-1-16" name="__codelineno-1-16" href="#__codelineno-1-16"></a>WARNING: The value at /entry/instrument/source_pump/bunch_distance should be one of the following Python types: (&lt;class 'float'&gt;, &lt;class 'numpy.floating'&gt;), as defined in the NXDL as NX_FLOAT.
+<a id="__codelineno-1-17" name="__codelineno-1-17" href="#__codelineno-1-17"></a>WARNING: The value at /entry/instrument/source_pump/bunch_length should be one of the following Python types: (&lt;class 'float'&gt;, &lt;class 'numpy.floating'&gt;), as defined in the NXDL as NX_FLOAT.
+<a id="__codelineno-1-18" name="__codelineno-1-18" href="#__codelineno-1-18"></a>WARNING: The value at /entry/instrument/source_pump/frequency should be one of the following Python types: (&lt;class 'float'&gt;, &lt;class 'numpy.floating'&gt;), as defined in the NXDL as NX_FLOAT.
+<a id="__codelineno-1-19" name="__codelineno-1-19" href="#__codelineno-1-19"></a>WARNING: The value 'Burst' at /entry/instrument/source_pump/mode does not match with the enumerated items from the open enumeration: ['Single Bunch', 'Multi Bunch']. When a different value is used, a boolean 'custom=True' attribute must be added.
+<a id="__codelineno-1-20" name="__codelineno-1-20" href="#__codelineno-1-20"></a>WARNING: The value 'NIR' at /entry/instrument/source_pump/probe should be one of the following: ['x-ray'].
+<a id="__codelineno-1-21" name="__codelineno-1-21" href="#__codelineno-1-21"></a>WARNING: The value 'OPCPA' at /entry/instrument/source_pump/type does not match with the enumerated items from the open enumeration: ['Spallation Neutron Source', 'Pulsed Reactor Neutron Source', 'Reactor Neutron Source', 'Synchrotron X-ray Source', 'Pulsed Muon Source', 'Rotating Anode X-ray', 'Fixed Tube X-ray', 'UV Laser', 'Free-Electron Laser', 'Optical Laser', 'Ion Source', 'UV Plasma Source', 'Metal Jet X-ray', 'Laser', 'Dye Laser', 'Broadband Tunable Light Source', 'Halogen Lamp', 'LED', 'Mercury Cadmium Telluride Lamp', 'Deuterium Lamp', 'Xenon Lamp', 'Globar']. When a different value is used, a boolean 'custom=True' attribute must be added.
 <a id="__codelineno-1-22" name="__codelineno-1-22" href="#__codelineno-1-22"></a>WARNING: Invalid: The entry `entry` in file `src/pynxtools/data/201805_WSe2_arpes.nxs` is NOT valid according to the `NXarpes` application definition.
 </code></pre></div>
 </div>
@@ -1903,13 +1959,13 @@ files from experimental data.</p>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>pynx<span class="w"> </span>validate<span class="w"> </span>src/pynxtools/data/201805_WSe2_arpes.nxs
 </code></pre></div>
 <div class="result">
-<div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>WARNING: The value at /entry/collection_time should be one of the following Python types: (&lt;class &#39;float&#39;&gt;, &lt;class &#39;numpy.floating&#39;&gt;), as defined in the NXDL as NX_FLOAT.
+<div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>WARNING: The value at /entry/collection_time should be one of the following Python types: (&lt;class 'float'&gt;, &lt;class 'numpy.floating'&gt;), as defined in the NXDL as NX_FLOAT.
 <a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>The unit /entry/data/data/@units = counts has no documentation.
 <a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a>The unit /entry/data/angles/@units = 1/Å has no documentation.
 <a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a>The unit /entry/data/energies/@units = eV has no documentation.
 <a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a>The unit /entry/data/delays/@units = fs has no documentation.
 <a id="__codelineno-1-6" name="__codelineno-1-6" href="#__codelineno-1-6"></a>WARNING: Field /entry/instrument/analyser/amplifier_type has no documentation.
-<a id="__codelineno-1-7" name="__codelineno-1-7" href="#__codelineno-1-7"></a>WARNING: The unit &#39;1/Å&#39; at /entry/instrument/analyser/angles/@units does not match with the unit category NX_ANGLE of &#39;angles&#39;.
+<a id="__codelineno-1-7" name="__codelineno-1-7" href="#__codelineno-1-7"></a>WARNING: The unit '1/Å' at /entry/instrument/analyser/angles/@units does not match with the unit category NX_ANGLE of 'angles'.
 <a id="__codelineno-1-8" name="__codelineno-1-8" href="#__codelineno-1-8"></a>WARNING: Field /entry/instrument/analyser/contrast_aperture has no documentation.
 <a id="__codelineno-1-9" name="__codelineno-1-9" href="#__codelineno-1-9"></a>WARNING: Field /entry/instrument/analyser/delays has no documentation.
 <a id="__codelineno-1-10" name="__codelineno-1-10" href="#__codelineno-1-10"></a>WARNING: Field /entry/instrument/analyser/detector_type has no documentation.
@@ -1921,20 +1977,20 @@ files from experimental data.</p>
 <a id="__codelineno-1-16" name="__codelineno-1-16" href="#__codelineno-1-16"></a>WARNING: Field /entry/instrument/analyser/projection has no documentation.
 <a id="__codelineno-1-17" name="__codelineno-1-17" href="#__codelineno-1-17"></a>WARNING: Field /entry/instrument/analyser/sensor_count has no documentation.
 <a id="__codelineno-1-18" name="__codelineno-1-18" href="#__codelineno-1-18"></a>WARNING: Field /entry/instrument/analyser/working_distance has no documentation.
-<a id="__codelineno-1-19" name="__codelineno-1-19" href="#__codelineno-1-19"></a>WARNING: The value at /entry/instrument/beam_probe_0/distance should be one of the following Python types: (&lt;class &#39;float&#39;&gt;, &lt;class &#39;numpy.floating&#39;&gt;), as defined in the NXDL as NX_FLOAT.
+<a id="__codelineno-1-19" name="__codelineno-1-19" href="#__codelineno-1-19"></a>WARNING: The value at /entry/instrument/beam_probe_0/distance should be one of the following Python types: (&lt;class 'float'&gt;, &lt;class 'numpy.floating'&gt;), as defined in the NXDL as NX_FLOAT.
 <a id="__codelineno-1-20" name="__codelineno-1-20" href="#__codelineno-1-20"></a>WARNING: Field /entry/instrument/beam_probe_0/photon_energy has no documentation.
 <a id="__codelineno-1-21" name="__codelineno-1-21" href="#__codelineno-1-21"></a>WARNING: Field /entry/instrument/beam_probe_0/polarization_angle has no documentation.
 <a id="__codelineno-1-22" name="__codelineno-1-22" href="#__codelineno-1-22"></a>WARNING: Field /entry/instrument/beam_probe_0/polarization_ellipticity has no documentation.
-<a id="__codelineno-1-23" name="__codelineno-1-23" href="#__codelineno-1-23"></a>WARNING: The value at /entry/instrument/beam_probe_0/pulse_duration should be one of the following Python types: (&lt;class &#39;float&#39;&gt;, &lt;class &#39;numpy.floating&#39;&gt;), as defined in the NXDL as NX_FLOAT.
+<a id="__codelineno-1-23" name="__codelineno-1-23" href="#__codelineno-1-23"></a>WARNING: The value at /entry/instrument/beam_probe_0/pulse_duration should be one of the following Python types: (&lt;class 'float'&gt;, &lt;class 'numpy.floating'&gt;), as defined in the NXDL as NX_FLOAT.
 <a id="__codelineno-1-24" name="__codelineno-1-24" href="#__codelineno-1-24"></a>WARNING: Field /entry/instrument/beam_probe_0/size_x has no documentation.
 <a id="__codelineno-1-25" name="__codelineno-1-25" href="#__codelineno-1-25"></a>WARNING: Field /entry/instrument/beam_probe_0/size_y has no documentation.
 <a id="__codelineno-1-26" name="__codelineno-1-26" href="#__codelineno-1-26"></a>WARNING: Field /entry/instrument/beam_pump_0/center_wavelength has no documentation.
-<a id="__codelineno-1-27" name="__codelineno-1-27" href="#__codelineno-1-27"></a>WARNING: The value at /entry/instrument/beam_pump_0/distance should be one of the following Python types: (&lt;class &#39;float&#39;&gt;, &lt;class &#39;numpy.floating&#39;&gt;), as defined in the NXDL as NX_FLOAT.
-<a id="__codelineno-1-28" name="__codelineno-1-28" href="#__codelineno-1-28"></a>WARNING: The value at /entry/instrument/beam_pump_0/fluence should be one of the following Python types: (&lt;class &#39;float&#39;&gt;, &lt;class &#39;numpy.floating&#39;&gt;), as defined in the NXDL as NX_FLOAT.
+<a id="__codelineno-1-27" name="__codelineno-1-27" href="#__codelineno-1-27"></a>WARNING: The value at /entry/instrument/beam_pump_0/distance should be one of the following Python types: (&lt;class 'float'&gt;, &lt;class 'numpy.floating'&gt;), as defined in the NXDL as NX_FLOAT.
+<a id="__codelineno-1-28" name="__codelineno-1-28" href="#__codelineno-1-28"></a>WARNING: The value at /entry/instrument/beam_pump_0/fluence should be one of the following Python types: (&lt;class 'float'&gt;, &lt;class 'numpy.floating'&gt;), as defined in the NXDL as NX_FLOAT.
 <a id="__codelineno-1-29" name="__codelineno-1-29" href="#__codelineno-1-29"></a>WARNING: Field /entry/instrument/beam_pump_0/photon_energy has no documentation.
 <a id="__codelineno-1-30" name="__codelineno-1-30" href="#__codelineno-1-30"></a>WARNING: Field /entry/instrument/beam_pump_0/polarization_angle has no documentation.
 <a id="__codelineno-1-31" name="__codelineno-1-31" href="#__codelineno-1-31"></a>WARNING: Field /entry/instrument/beam_pump_0/polarization_ellipticity has no documentation.
-<a id="__codelineno-1-32" name="__codelineno-1-32" href="#__codelineno-1-32"></a>WARNING: The value at /entry/instrument/beam_pump_0/pulse_duration should be one of the following Python types: (&lt;class &#39;float&#39;&gt;, &lt;class &#39;numpy.floating&#39;&gt;), as defined in the NXDL as NX_FLOAT.
+<a id="__codelineno-1-32" name="__codelineno-1-32" href="#__codelineno-1-32"></a>WARNING: The value at /entry/instrument/beam_pump_0/pulse_duration should be one of the following Python types: (&lt;class 'float'&gt;, &lt;class 'numpy.floating'&gt;), as defined in the NXDL as NX_FLOAT.
 <a id="__codelineno-1-33" name="__codelineno-1-33" href="#__codelineno-1-33"></a>WARNING: Field /entry/instrument/beam_pump_0/size_x has no documentation.
 <a id="__codelineno-1-34" name="__codelineno-1-34" href="#__codelineno-1-34"></a>WARNING: Field /entry/instrument/beam_pump_0/size_y has no documentation.
 <a id="__codelineno-1-35" name="__codelineno-1-35" href="#__codelineno-1-35"></a>WARNING: Field /entry/instrument/energy_resolution has no documentation.
@@ -1949,29 +2005,29 @@ files from experimental data.</p>
 <a id="__codelineno-1-44" name="__codelineno-1-44" href="#__codelineno-1-44"></a>WARNING: Field /entry/instrument/manipulator/type has no documentation.
 <a id="__codelineno-1-45" name="__codelineno-1-45" href="#__codelineno-1-45"></a>WARNING: Field /entry/instrument/monochromator/slit has no documentation.
 <a id="__codelineno-1-46" name="__codelineno-1-46" href="#__codelineno-1-46"></a>WARNING: Field /entry/instrument/monochromator/slit/y_gap has no documentation.
-<a id="__codelineno-1-47" name="__codelineno-1-47" href="#__codelineno-1-47"></a>WARNING: The value at /entry/instrument/source/bunch_distance should be one of the following Python types: (&lt;class &#39;float&#39;&gt;, &lt;class &#39;numpy.floating&#39;&gt;), as defined in the NXDL as NX_FLOAT.
-<a id="__codelineno-1-48" name="__codelineno-1-48" href="#__codelineno-1-48"></a>WARNING: The value at /entry/instrument/source/bunch_length should be one of the following Python types: (&lt;class &#39;float&#39;&gt;, &lt;class &#39;numpy.floating&#39;&gt;), as defined in the NXDL as NX_FLOAT.
+<a id="__codelineno-1-47" name="__codelineno-1-47" href="#__codelineno-1-47"></a>WARNING: The value at /entry/instrument/source/bunch_distance should be one of the following Python types: (&lt;class 'float'&gt;, &lt;class 'numpy.floating'&gt;), as defined in the NXDL as NX_FLOAT.
+<a id="__codelineno-1-48" name="__codelineno-1-48" href="#__codelineno-1-48"></a>WARNING: The value at /entry/instrument/source/bunch_length should be one of the following Python types: (&lt;class 'float'&gt;, &lt;class 'numpy.floating'&gt;), as defined in the NXDL as NX_FLOAT.
 <a id="__codelineno-1-49" name="__codelineno-1-49" href="#__codelineno-1-49"></a>WARNING: Field /entry/instrument/source/burst_distance has no documentation.
 <a id="__codelineno-1-50" name="__codelineno-1-50" href="#__codelineno-1-50"></a>WARNING: Field /entry/instrument/source/burst_length has no documentation.
 <a id="__codelineno-1-51" name="__codelineno-1-51" href="#__codelineno-1-51"></a>WARNING: Field /entry/instrument/source/burst_number_end has no documentation.
-<a id="__codelineno-1-52" name="__codelineno-1-52" href="#__codelineno-1-52"></a>WARNING: Reserved suffix &#39;_end&#39; was used in /entry/instrument/source/burst_number_end, but there is no associated field burst_number.
+<a id="__codelineno-1-52" name="__codelineno-1-52" href="#__codelineno-1-52"></a>WARNING: Reserved suffix '_end' was used in /entry/instrument/source/burst_number_end, but there is no associated field burst_number.
 <a id="__codelineno-1-53" name="__codelineno-1-53" href="#__codelineno-1-53"></a>WARNING: Field /entry/instrument/source/burst_number_start has no documentation.
-<a id="__codelineno-1-54" name="__codelineno-1-54" href="#__codelineno-1-54"></a>WARNING: The value at /entry/instrument/source/current should be one of the following Python types: (&lt;class &#39;float&#39;&gt;, &lt;class &#39;numpy.floating&#39;&gt;), as defined in the NXDL as NX_FLOAT.
-<a id="__codelineno-1-55" name="__codelineno-1-55" href="#__codelineno-1-55"></a>WARNING: The value at /entry/instrument/source/energy should be one of the following Python types: (&lt;class &#39;float&#39;&gt;, &lt;class &#39;numpy.floating&#39;&gt;), as defined in the NXDL as NX_FLOAT.
-<a id="__codelineno-1-56" name="__codelineno-1-56" href="#__codelineno-1-56"></a>WARNING: The value at /entry/instrument/source/frequency should be one of the following Python types: (&lt;class &#39;float&#39;&gt;, &lt;class &#39;numpy.floating&#39;&gt;), as defined in the NXDL as NX_FLOAT.
-<a id="__codelineno-1-57" name="__codelineno-1-57" href="#__codelineno-1-57"></a>WARNING: The value &#39;Burst&#39; at /entry/instrument/source/mode does not match with the enumerated items from the open enumeration: [&#39;Single Bunch&#39;, &#39;Multi Bunch&#39;]. When a different value is used, a boolean &#39;custom=True&#39; attribute must be added.
+<a id="__codelineno-1-54" name="__codelineno-1-54" href="#__codelineno-1-54"></a>WARNING: The value at /entry/instrument/source/current should be one of the following Python types: (&lt;class 'float'&gt;, &lt;class 'numpy.floating'&gt;), as defined in the NXDL as NX_FLOAT.
+<a id="__codelineno-1-55" name="__codelineno-1-55" href="#__codelineno-1-55"></a>WARNING: The value at /entry/instrument/source/energy should be one of the following Python types: (&lt;class 'float'&gt;, &lt;class 'numpy.floating'&gt;), as defined in the NXDL as NX_FLOAT.
+<a id="__codelineno-1-56" name="__codelineno-1-56" href="#__codelineno-1-56"></a>WARNING: The value at /entry/instrument/source/frequency should be one of the following Python types: (&lt;class 'float'&gt;, &lt;class 'numpy.floating'&gt;), as defined in the NXDL as NX_FLOAT.
+<a id="__codelineno-1-57" name="__codelineno-1-57" href="#__codelineno-1-57"></a>WARNING: The value 'Burst' at /entry/instrument/source/mode does not match with the enumerated items from the open enumeration: ['Single Bunch', 'Multi Bunch']. When a different value is used, a boolean 'custom=True' attribute must be added.
 <a id="__codelineno-1-58" name="__codelineno-1-58" href="#__codelineno-1-58"></a>WARNING: Field /entry/instrument/source/number_of_bursts has no documentation.
-<a id="__codelineno-1-59" name="__codelineno-1-59" href="#__codelineno-1-59"></a>WARNING: The value &#39;Free Electron Laser&#39; at /entry/instrument/source/type does not match with the enumerated items from the open enumeration: [&#39;Spallation Neutron Source&#39;, &#39;Pulsed Reactor Neutron Source&#39;, &#39;Reactor Neutron Source&#39;, &#39;Synchrotron X-ray Source&#39;, &#39;Pulsed Muon Source&#39;, &#39;Rotating Anode X-ray&#39;, &#39;Fixed Tube X-ray&#39;, &#39;UV Laser&#39;, &#39;Free-Electron Laser&#39;, &#39;Optical Laser&#39;, &#39;Ion Source&#39;, &#39;UV Plasma Source&#39;, &#39;Metal Jet X-ray&#39;, &#39;Laser&#39;, &#39;Dye Laser&#39;, &#39;Broadband Tunable Light Source&#39;, &#39;Halogen Lamp&#39;, &#39;LED&#39;, &#39;Mercury Cadmium Telluride Lamp&#39;, &#39;Deuterium Lamp&#39;, &#39;Xenon Lamp&#39;, &#39;Globar&#39;]. When a different value is used, a boolean &#39;custom=True&#39; attribute must be added.
-<a id="__codelineno-1-60" name="__codelineno-1-60" href="#__codelineno-1-60"></a>WARNING: The value at /entry/instrument/source_pump/bunch_distance should be one of the following Python types: (&lt;class &#39;float&#39;&gt;, &lt;class &#39;numpy.floating&#39;&gt;), as defined in the NXDL as NX_FLOAT.
-<a id="__codelineno-1-61" name="__codelineno-1-61" href="#__codelineno-1-61"></a>WARNING: The value at /entry/instrument/source_pump/bunch_length should be one of the following Python types: (&lt;class &#39;float&#39;&gt;, &lt;class &#39;numpy.floating&#39;&gt;), as defined in the NXDL as NX_FLOAT.
+<a id="__codelineno-1-59" name="__codelineno-1-59" href="#__codelineno-1-59"></a>WARNING: The value 'Free Electron Laser' at /entry/instrument/source/type does not match with the enumerated items from the open enumeration: ['Spallation Neutron Source', 'Pulsed Reactor Neutron Source', 'Reactor Neutron Source', 'Synchrotron X-ray Source', 'Pulsed Muon Source', 'Rotating Anode X-ray', 'Fixed Tube X-ray', 'UV Laser', 'Free-Electron Laser', 'Optical Laser', 'Ion Source', 'UV Plasma Source', 'Metal Jet X-ray', 'Laser', 'Dye Laser', 'Broadband Tunable Light Source', 'Halogen Lamp', 'LED', 'Mercury Cadmium Telluride Lamp', 'Deuterium Lamp', 'Xenon Lamp', 'Globar']. When a different value is used, a boolean 'custom=True' attribute must be added.
+<a id="__codelineno-1-60" name="__codelineno-1-60" href="#__codelineno-1-60"></a>WARNING: The value at /entry/instrument/source_pump/bunch_distance should be one of the following Python types: (&lt;class 'float'&gt;, &lt;class 'numpy.floating'&gt;), as defined in the NXDL as NX_FLOAT.
+<a id="__codelineno-1-61" name="__codelineno-1-61" href="#__codelineno-1-61"></a>WARNING: The value at /entry/instrument/source_pump/bunch_length should be one of the following Python types: (&lt;class 'float'&gt;, &lt;class 'numpy.floating'&gt;), as defined in the NXDL as NX_FLOAT.
 <a id="__codelineno-1-62" name="__codelineno-1-62" href="#__codelineno-1-62"></a>WARNING: Field /entry/instrument/source_pump/burst_distance has no documentation.
 <a id="__codelineno-1-63" name="__codelineno-1-63" href="#__codelineno-1-63"></a>WARNING: Field /entry/instrument/source_pump/burst_length has no documentation.
-<a id="__codelineno-1-64" name="__codelineno-1-64" href="#__codelineno-1-64"></a>WARNING: The value at /entry/instrument/source_pump/frequency should be one of the following Python types: (&lt;class &#39;float&#39;&gt;, &lt;class &#39;numpy.floating&#39;&gt;), as defined in the NXDL as NX_FLOAT.
-<a id="__codelineno-1-65" name="__codelineno-1-65" href="#__codelineno-1-65"></a>WARNING: The value &#39;Burst&#39; at /entry/instrument/source_pump/mode does not match with the enumerated items from the open enumeration: [&#39;Single Bunch&#39;, &#39;Multi Bunch&#39;]. When a different value is used, a boolean &#39;custom=True&#39; attribute must be added.
+<a id="__codelineno-1-64" name="__codelineno-1-64" href="#__codelineno-1-64"></a>WARNING: The value at /entry/instrument/source_pump/frequency should be one of the following Python types: (&lt;class 'float'&gt;, &lt;class 'numpy.floating'&gt;), as defined in the NXDL as NX_FLOAT.
+<a id="__codelineno-1-65" name="__codelineno-1-65" href="#__codelineno-1-65"></a>WARNING: The value 'Burst' at /entry/instrument/source_pump/mode does not match with the enumerated items from the open enumeration: ['Single Bunch', 'Multi Bunch']. When a different value is used, a boolean 'custom=True' attribute must be added.
 <a id="__codelineno-1-66" name="__codelineno-1-66" href="#__codelineno-1-66"></a>WARNING: Field /entry/instrument/source_pump/number_of_bursts has no documentation.
-<a id="__codelineno-1-67" name="__codelineno-1-67" href="#__codelineno-1-67"></a>WARNING: The value &#39;NIR&#39; at /entry/instrument/source_pump/probe should be one of the following: [&#39;x-ray&#39;].
+<a id="__codelineno-1-67" name="__codelineno-1-67" href="#__codelineno-1-67"></a>WARNING: The value 'NIR' at /entry/instrument/source_pump/probe should be one of the following: ['x-ray'].
 <a id="__codelineno-1-68" name="__codelineno-1-68" href="#__codelineno-1-68"></a>WARNING: Field /entry/instrument/source_pump/rms_jitter has no documentation.
-<a id="__codelineno-1-69" name="__codelineno-1-69" href="#__codelineno-1-69"></a>WARNING: The value &#39;OPCPA&#39; at /entry/instrument/source_pump/type does not match with the enumerated items from the open enumeration: [&#39;Spallation Neutron Source&#39;, &#39;Pulsed Reactor Neutron Source&#39;, &#39;Reactor Neutron Source&#39;, &#39;Synchrotron X-ray Source&#39;, &#39;Pulsed Muon Source&#39;, &#39;Rotating Anode X-ray&#39;, &#39;Fixed Tube X-ray&#39;, &#39;UV Laser&#39;, &#39;Free-Electron Laser&#39;, &#39;Optical Laser&#39;, &#39;Ion Source&#39;, &#39;UV Plasma Source&#39;, &#39;Metal Jet X-ray&#39;, &#39;Laser&#39;, &#39;Dye Laser&#39;, &#39;Broadband Tunable Light Source&#39;, &#39;Halogen Lamp&#39;, &#39;LED&#39;, &#39;Mercury Cadmium Telluride Lamp&#39;, &#39;Deuterium Lamp&#39;, &#39;Xenon Lamp&#39;, &#39;Globar&#39;]. When a different value is used, a boolean &#39;custom=True&#39; attribute must be added.
+<a id="__codelineno-1-69" name="__codelineno-1-69" href="#__codelineno-1-69"></a>WARNING: The value 'OPCPA' at /entry/instrument/source_pump/type does not match with the enumerated items from the open enumeration: ['Spallation Neutron Source', 'Pulsed Reactor Neutron Source', 'Reactor Neutron Source', 'Synchrotron X-ray Source', 'Pulsed Muon Source', 'Rotating Anode X-ray', 'Fixed Tube X-ray', 'UV Laser', 'Free-Electron Laser', 'Optical Laser', 'Ion Source', 'UV Plasma Source', 'Metal Jet X-ray', 'Laser', 'Dye Laser', 'Broadband Tunable Light Source', 'Halogen Lamp', 'LED', 'Mercury Cadmium Telluride Lamp', 'Deuterium Lamp', 'Xenon Lamp', 'Globar']. When a different value is used, a boolean 'custom=True' attribute must be added.
 <a id="__codelineno-1-70" name="__codelineno-1-70" href="#__codelineno-1-70"></a>WARNING: Field /entry/instrument/spatial_resolution has no documentation.
 <a id="__codelineno-1-71" name="__codelineno-1-71" href="#__codelineno-1-71"></a>WARNING: Field /entry/instrument/temporal_resolution has no documentation.
 <a id="__codelineno-1-72" name="__codelineno-1-72" href="#__codelineno-1-72"></a>WARNING: Field /entry/sample/bias has no documentation.
@@ -2009,10 +2065,10 @@ files from experimental data.</p>
 <a id="__codelineno-1-13" name="__codelineno-1-13" href="#__codelineno-1-13"></a><span class="w">                            </span><span class="na">path. Example input</span><span class="o">:</span><span class="w"> </span><span class="s">/entry/data/delays</span>
 <a id="__codelineno-1-14" name="__codelineno-1-14" href="#__codelineno-1-14"></a><span class="w">  </span><span class="na">-c, --concept TEXT        NXDL concept path. Finds all HDF5 nodes satisfying</span>
 <a id="__codelineno-1-15" name="__codelineno-1-15" href="#__codelineno-1-15"></a><span class="w">                            </span><span class="na">an IS-A relation with the given concept. Two</span>
-<a id="__codelineno-1-16" name="__codelineno-1-16" href="#__codelineno-1-16"></a><span class="w">                            </span><span class="na">forms</span><span class="o">:</span><span class="w"> </span><span class="s">(1) bare class name, e.g. &#39;NXbeam&#39; —</span>
+<a id="__codelineno-1-16" name="__codelineno-1-16" href="#__codelineno-1-16"></a><span class="w">                            </span><span class="na">forms</span><span class="o">:</span><span class="w"> </span><span class="s">(1) bare class name, e.g. 'NXbeam' —</span>
 <a id="__codelineno-1-17" name="__codelineno-1-17" href="#__codelineno-1-17"></a><span class="w">                            </span><span class="na">matches groups by NX_class attribute; (2) appdef</span>
-<a id="__codelineno-1-18" name="__codelineno-1-18" href="#__codelineno-1-18"></a><span class="w">                            </span><span class="na">path, e.g. &#39;NXarpes/ENTRY/INSTRUMENT/analyser&#39; —</span>
-<a id="__codelineno-1-19" name="__codelineno-1-19" href="#__codelineno-1-19"></a><span class="w">                            </span><span class="na">matches groups and fields via the file&#39;s</span>
+<a id="__codelineno-1-18" name="__codelineno-1-18" href="#__codelineno-1-18"></a><span class="w">                            </span><span class="na">path, e.g. 'NXarpes/ENTRY/INSTRUMENT/analyser' —</span>
+<a id="__codelineno-1-19" name="__codelineno-1-19" href="#__codelineno-1-19"></a><span class="w">                            </span><span class="na">matches groups and fields via the file's</span>
 <a id="__codelineno-1-20" name="__codelineno-1-20" href="#__codelineno-1-20"></a><span class="w">                            </span><span class="na">application definition. Fields in base-class-only</span>
 <a id="__codelineno-1-21" name="__codelineno-1-21" href="#__codelineno-1-21"></a><span class="w">                            </span><span class="na">files are not supported by form (1).</span>
 <a id="__codelineno-1-22" name="__codelineno-1-22" href="#__codelineno-1-22"></a><span class="w">  </span><span class="na">--help                    Show this message and exit.</span>
@@ -2096,7 +2152,7 @@ The easiest way is to prefix the <code>pynx read</code> call with <code>MSYS_NO_
 <a id="__codelineno-1-59" name="__codelineno-1-59" href="#__codelineno-1-59"></a>                    describe how the data is to be plotted or even the dimensionality of the plot.
 <a id="__codelineno-1-60" name="__codelineno-1-60" href="#__codelineno-1-60"></a>                    https://www.nexusformat.org/NIAC2018Minutes.html#nxdata-plottype--attribute ..
 <a id="__codelineno-1-61" name="__codelineno-1-61" href="#__codelineno-1-61"></a>                    include:: data/index.rst :start-line: 1 .. admonition:: Example of a simple
-<a id="__codelineno-1-62" name="__codelineno-1-62" href="#__codelineno-1-62"></a>                    curve plot .. code-block:: data:NXdata @signal = &quot;data&quot; @axes = [&quot;x&quot;] data:
+<a id="__codelineno-1-62" name="__codelineno-1-62" href="#__codelineno-1-62"></a>                    curve plot .. code-block:: data:NXdata @signal = "data" @axes = ["x"] data:
 <a id="__codelineno-1-63" name="__codelineno-1-63" href="#__codelineno-1-63"></a>                    float[100] x: float[100] More complex cases are supported * histogram data:
 <a id="__codelineno-1-64" name="__codelineno-1-64" href="#__codelineno-1-64"></a>                    ``x`` has one more value than ``data``. * alternative axes: instead of a single
 <a id="__codelineno-1-65" name="__codelineno-1-65" href="#__codelineno-1-65"></a>                    ``x`` axis you can have several axes, one of which being the default. * signals
@@ -2113,8 +2169,8 @@ The easiest way is to prefix the <code>pynx read</code> call with <code>MSYS_NO_
 <a id="__codelineno-1-76" name="__codelineno-1-76" href="#__codelineno-1-76"></a>                    be used as *secondary plot signals* are provided by the
 <a id="__codelineno-1-77" name="__codelineno-1-77" href="#__codelineno-1-77"></a>                    :ref:`auxiliary_signals&lt;/NXdata@auxiliary_signals-attribute&gt;` attribute. ..
 <a id="__codelineno-1-78" name="__codelineno-1-78" href="#__codelineno-1-78"></a>                    admonition:: An example with three signals, one of which being the default ..
-<a id="__codelineno-1-79" name="__codelineno-1-79" href="#__codelineno-1-79"></a>                    code-block:: data:NXdata @signal = &quot;data1&quot; @auxiliary_signals = [&quot;data2&quot;,
-<a id="__codelineno-1-80" name="__codelineno-1-80" href="#__codelineno-1-80"></a>                    &quot;data3&quot;] data1: float[10,20,30] # the default signal data2: float[10,20,30]
+<a id="__codelineno-1-79" name="__codelineno-1-79" href="#__codelineno-1-79"></a>                    code-block:: data:NXdata @signal = "data1" @auxiliary_signals = ["data2",
+<a id="__codelineno-1-80" name="__codelineno-1-80" href="#__codelineno-1-80"></a>                    "data3"] data1: float[10,20,30] # the default signal data2: float[10,20,30]
 <a id="__codelineno-1-81" name="__codelineno-1-81" href="#__codelineno-1-81"></a>                    data3: float[10,20,30] **Axes:** .. index:: axes (attribute) .. index::
 <a id="__codelineno-1-82" name="__codelineno-1-82" href="#__codelineno-1-82"></a>                    coordinates .. admonition:: Defined by * :ref:`AXISNAME &lt;/NXdata/AXISNAME-
 <a id="__codelineno-1-83" name="__codelineno-1-83" href="#__codelineno-1-83"></a>                    field&gt;` fields * the :ref:`axes &lt;/NXdata@axes-attribute&gt;` attribute *
@@ -2137,10 +2193,10 @@ The easiest way is to prefix the <code>pynx read</code> call with <code>MSYS_NO_
 <a id="__codelineno-1-100" name="__codelineno-1-100" href="#__codelineno-1-100"></a>                    a given :ref:`AXISNAME &lt;/NXdata/AXISNAME-field&gt;` field, the positions of the
 <a id="__codelineno-1-101" name="__codelineno-1-101" href="#__codelineno-1-101"></a>                    :ref:`AXISNAME &lt;/NXdata/AXISNAME-field&gt;` field name in the :ref:`axes
 <a id="__codelineno-1-102" name="__codelineno-1-102" href="#__codelineno-1-102"></a>                    &lt;/NXdata@axes-attribute&gt;` attribute are used. 4. When :ref:`AXISNAME_indices
-<a id="__codelineno-1-103" name="__codelineno-1-103" href="#__codelineno-1-103"></a>                    &lt;/NXdata@AXISNAME_indices-attribute&gt;` is the same as the indices of &quot;AXISNAME&quot;
+<a id="__codelineno-1-103" name="__codelineno-1-103" href="#__codelineno-1-103"></a>                    &lt;/NXdata@AXISNAME_indices-attribute&gt;` is the same as the indices of "AXISNAME"
 <a id="__codelineno-1-104" name="__codelineno-1-104" href="#__codelineno-1-104"></a>                    in the :ref:`axes &lt;/NXdata@axes-attribute&gt;` attribute, there is no need to
 <a id="__codelineno-1-105" name="__codelineno-1-105" href="#__codelineno-1-105"></a>                    provide :ref:`AXISNAME_indices &lt;/NXdata@AXISNAME_indices-attribute&gt;`. 5. The
-<a id="__codelineno-1-106" name="__codelineno-1-106" href="#__codelineno-1-106"></a>                    indices of &quot;AXISNAME&quot; in the :ref:`axes &lt;/NXdata@axes-attribute&gt;` attribute must
+<a id="__codelineno-1-106" name="__codelineno-1-106" href="#__codelineno-1-106"></a>                    indices of "AXISNAME" in the :ref:`axes &lt;/NXdata@axes-attribute&gt;` attribute must
 <a id="__codelineno-1-107" name="__codelineno-1-107" href="#__codelineno-1-107"></a>                    be a subset of :ref:`AXISNAME_indices &lt;/NXdata@AXISNAME_indices-attribute&gt;`. 6.
 <a id="__codelineno-1-108" name="__codelineno-1-108" href="#__codelineno-1-108"></a>                    The shape of an :ref:`AXISNAME &lt;/NXdata/AXISNAME-field&gt;` field must correspond
 <a id="__codelineno-1-109" name="__codelineno-1-109" href="#__codelineno-1-109"></a>                    to the shape of the :ref:`DATA &lt;/NXdata/DATA-field&gt;` dimensions it spans. This
@@ -2159,10 +2215,10 @@ The easiest way is to prefix the <code>pynx read</code> call with <code>MSYS_NO_
 <a id="__codelineno-1-122" name="__codelineno-1-122" href="#__codelineno-1-122"></a>                    attribute&gt;` attribute. 2. A list of all available axes is not provided directly.
 <a id="__codelineno-1-123" name="__codelineno-1-123" href="#__codelineno-1-123"></a>                    All strings in the :ref:`axes &lt;/NXdata@axes-attribute&gt;` attribute (excluding the
 <a id="__codelineno-1-124" name="__codelineno-1-124" href="#__codelineno-1-124"></a>                    “.” string) are axis field names. In addition the prefix of an attribute ending
-<a id="__codelineno-1-125" name="__codelineno-1-125" href="#__codelineno-1-125"></a>                    with the string &quot;_indices&quot; is also an axis field name. .. admonition:: The
+<a id="__codelineno-1-125" name="__codelineno-1-125" href="#__codelineno-1-125"></a>                    with the string "_indices" is also an axis field name. .. admonition:: The
 <a id="__codelineno-1-126" name="__codelineno-1-126" href="#__codelineno-1-126"></a>                    following example covers all axes features supported (see
 <a id="__codelineno-1-127" name="__codelineno-1-127" href="#__codelineno-1-127"></a>                    :ref:`sphx_glr_classes_base_classes_data_plot_fscan2d.py`) .. code-block::
-<a id="__codelineno-1-128" name="__codelineno-1-128" href="#__codelineno-1-128"></a>                    data:NXdata @signal = &quot;data&quot; @axes = [&quot;x_set&quot;, &quot;y_set&quot;, &quot;.&quot;] # default axes for
+<a id="__codelineno-1-128" name="__codelineno-1-128" href="#__codelineno-1-128"></a>                    data:NXdata @signal = "data" @axes = ["x_set", "y_set", "."] # default axes for
 <a id="__codelineno-1-129" name="__codelineno-1-129" href="#__codelineno-1-129"></a>                    all three dimensions @x_encoder_indices = [0, 1] @y_encoder_indices = 1 # or [1]
 <a id="__codelineno-1-130" name="__codelineno-1-130" href="#__codelineno-1-130"></a>                    data: float[10,7,1024] x_encoder: float[11,7] # coordinates along the first and
 <a id="__codelineno-1-131" name="__codelineno-1-131" href="#__codelineno-1-131"></a>                    second dimensions y_encoder: float[7] # coordinates along the second dimension
@@ -2174,13 +2230,13 @@ The easiest way is to prefix the <code>pynx read</code> call with <code>MSYS_NO_
 <a id="__codelineno-1-137" name="__codelineno-1-137" href="#__codelineno-1-137"></a>                    where ``FIELDNAME`` is the name of a :ref:`DATA &lt;/NXdata/DATA-field&gt;` field or
 <a id="__codelineno-1-138" name="__codelineno-1-138" href="#__codelineno-1-138"></a>                    an :ref:`AXISNAME &lt;/NXdata/AXISNAME-field&gt;` field. .. admonition:: An example of
 <a id="__codelineno-1-139" name="__codelineno-1-139" href="#__codelineno-1-139"></a>                    uncertainties on the signal, auxiliary signals and axis coordinates .. code-
-<a id="__codelineno-1-140" name="__codelineno-1-140" href="#__codelineno-1-140"></a>                    block:: data:NXdata @signal = &quot;data1&quot; @auxiliary_signals = [&quot;data2&quot;, &quot;data3&quot;]
-<a id="__codelineno-1-141" name="__codelineno-1-141" href="#__codelineno-1-141"></a>                    @axes = [&quot;x&quot;, &quot;.&quot;, &quot;z&quot;] data1: float[10,20,30] data2: float[10,20,30] data3:
+<a id="__codelineno-1-140" name="__codelineno-1-140" href="#__codelineno-1-140"></a>                    block:: data:NXdata @signal = "data1" @auxiliary_signals = ["data2", "data3"]
+<a id="__codelineno-1-141" name="__codelineno-1-141" href="#__codelineno-1-141"></a>                    @axes = ["x", ".", "z"] data1: float[10,20,30] data2: float[10,20,30] data3:
 <a id="__codelineno-1-142" name="__codelineno-1-142" href="#__codelineno-1-142"></a>                    float[10,20,30] x: float[10] z: float[30] data1_errors: float[10,20,30]
 <a id="__codelineno-1-143" name="__codelineno-1-143" href="#__codelineno-1-143"></a>                    data2_errors: float[10,20,30] data3_errors: float[10,20,30] x_errors: float[10]
 <a id="__codelineno-1-144" name="__codelineno-1-144" href="#__codelineno-1-144"></a>                    z_errors: float[30]
 <a id="__codelineno-1-145" name="__codelineno-1-145" href="#__codelineno-1-145"></a>    NXdata    : [v3] signal=data, 3 axis dataset(s)
-<a id="__codelineno-1-146" name="__codelineno-1-146" href="#__codelineno-1-146"></a>    @axes = [&#39;angles&#39; &#39;energies&#39; &#39;delays&#39;]  [OPTIONAL]
+<a id="__codelineno-1-146" name="__codelineno-1-146" href="#__codelineno-1-146"></a>    @axes = ['angles' 'energies' 'delays']  [OPTIONAL]
 <a id="__codelineno-1-147" name="__codelineno-1-147" href="#__codelineno-1-147"></a>    @signal = data  [OPTIONAL]
 <a id="__codelineno-1-148" name="__codelineno-1-148" href="#__codelineno-1-148"></a>    FIELD /entry/data/angles  shape=(80,)  dtype=float64
 <a id="__codelineno-1-149" name="__codelineno-1-149" href="#__codelineno-1-149"></a>      Dataset referenced as NXdata AXIS #0
@@ -2373,7 +2429,7 @@ The easiest way is to prefix the <code>pynx read</code> call with <code>MSYS_NO_
 <a id="__codelineno-1-336" name="__codelineno-1-336" href="#__codelineno-1-336"></a>                        part of an experiment and so any such scan axes should be allocated to the
 <a id="__codelineno-1-337" name="__codelineno-1-337" href="#__codelineno-1-337"></a>                        first dimensions of the array. Note that in some cases it may be useful to
 <a id="__codelineno-1-338" name="__codelineno-1-338" href="#__codelineno-1-338"></a>                        represent a 2D set of scan points as a single scan-axis in the data array,
-<a id="__codelineno-1-339" name="__codelineno-1-339" href="#__codelineno-1-339"></a>                        especially if the scan pattern doesn&#39;t fit a rectangular array nicely.
+<a id="__codelineno-1-339" name="__codelineno-1-339" href="#__codelineno-1-339"></a>                        especially if the scan pattern doesn't fit a rectangular array nicely.
 <a id="__codelineno-1-340" name="__codelineno-1-340" href="#__codelineno-1-340"></a>                        Repetition of an experiment in a time series tends to be used similar to a
 <a id="__codelineno-1-341" name="__codelineno-1-341" href="#__codelineno-1-341"></a>                        slow scan axis and so will often be in the first dimension of the data
 <a id="__codelineno-1-342" name="__codelineno-1-342" href="#__codelineno-1-342"></a>                        array. The next fastest axes are typically the readout of the detector. A
@@ -2381,7 +2437,7 @@ The easiest way is to prefix the <code>pynx read</code> call with <code>MSYS_NO_
 <a id="__codelineno-1-344" name="__codelineno-1-344" href="#__codelineno-1-344"></a>                        scan point) to the data array, a strip detector will add one dimension, an
 <a id="__codelineno-1-345" name="__codelineno-1-345" href="#__codelineno-1-345"></a>                        imaging detector will add two dimensions (e.g. X, Y axes) and detectors
 <a id="__codelineno-1-346" name="__codelineno-1-346" href="#__codelineno-1-346"></a>                        outputting higher dimensional data will add the corresponding number of
-<a id="__codelineno-1-347" name="__codelineno-1-347" href="#__codelineno-1-347"></a>                        dimensions. Note that the detector dimensions don&#39;t necessarily have to be
+<a id="__codelineno-1-347" name="__codelineno-1-347" href="#__codelineno-1-347"></a>                        dimensions. Note that the detector dimensions don't necessarily have to be
 <a id="__codelineno-1-348" name="__codelineno-1-348" href="#__codelineno-1-348"></a>                        written in order of the actual readout speeds - the slowest to fastest rule
 <a id="__codelineno-1-349" name="__codelineno-1-349" href="#__codelineno-1-349"></a>                        principle is only a guide. Finally, detectors that operate in a time-of-
 <a id="__codelineno-1-350" name="__codelineno-1-350" href="#__codelineno-1-350"></a>                        flight mode, such as a neutron spectrometer or a silicon drift detector
@@ -2946,7 +3002,7 @@ The easiest way is to prefix the <code>pynx read</code> call with <code>MSYS_NO_
 <a id="__codelineno-1-909" name="__codelineno-1-909" href="#__codelineno-1-909"></a>    Concept   : NXentry/ENTRY/run_cycle  [OPTIONAL]
 <a id="__codelineno-1-910" name="__codelineno-1-910" href="#__codelineno-1-910"></a>    Inheritance:
 <a id="__codelineno-1-911" name="__codelineno-1-911" href="#__codelineno-1-911"></a>      NXentry/run_cycle
-<a id="__codelineno-1-912" name="__codelineno-1-912" href="#__codelineno-1-912"></a>        Doc       : Such as &quot;2007-3&quot;. Some user facilities organize their beam time into run cycles.
+<a id="__codelineno-1-912" name="__codelineno-1-912" href="#__codelineno-1-912"></a>        Doc       : Such as "2007-3". Some user facilities organize their beam time into run cycles.
 <a id="__codelineno-1-913" name="__codelineno-1-913" href="#__codelineno-1-913"></a>
 <a id="__codelineno-1-914" name="__codelineno-1-914" href="#__codelineno-1-914"></a>  GROUP /entry/sample [NXsample]  (14 members)
 <a id="__codelineno-1-915" name="__codelineno-1-915" href="#__codelineno-1-915"></a>    Concept   : NXarpes/ENTRY/SAMPLE  [REQUIRED]
@@ -3048,11 +3104,11 @@ The easiest way is to prefix the <code>pynx read</code> call with <code>MSYS_NO_
 <a id="__codelineno-1-1011" name="__codelineno-1-1011" href="#__codelineno-1-1011"></a>
 <a id="__codelineno-1-1012" name="__codelineno-1-1012" href="#__codelineno-1-1012"></a>Signal has been identified: /entry/data/data
 <a id="__codelineno-1-1013" name="__codelineno-1-1013" href="#__codelineno-1-1013"></a>
-<a id="__codelineno-1-1014" name="__codelineno-1-1014" href="#__codelineno-1-1014"></a>For Axis #0, 1 axes have been identified: [&lt;HDF5 dataset &quot;angles&quot;: shape (80,), type &quot;&lt;f8&quot;&gt;]
+<a id="__codelineno-1-1014" name="__codelineno-1-1014" href="#__codelineno-1-1014"></a>For Axis #0, 1 axes have been identified: [&lt;HDF5 dataset "angles": shape (80,), type "&lt;f8"&gt;]
 <a id="__codelineno-1-1015" name="__codelineno-1-1015" href="#__codelineno-1-1015"></a>
-<a id="__codelineno-1-1016" name="__codelineno-1-1016" href="#__codelineno-1-1016"></a>For Axis #1, 1 axes have been identified: [&lt;HDF5 dataset &quot;energies&quot;: shape (146,), type &quot;&lt;f8&quot;&gt;]
+<a id="__codelineno-1-1016" name="__codelineno-1-1016" href="#__codelineno-1-1016"></a>For Axis #1, 1 axes have been identified: [&lt;HDF5 dataset "energies": shape (146,), type "&lt;f8"&gt;]
 <a id="__codelineno-1-1017" name="__codelineno-1-1017" href="#__codelineno-1-1017"></a>
-<a id="__codelineno-1-1018" name="__codelineno-1-1018" href="#__codelineno-1-1018"></a>For Axis #2, 1 axes have been identified: [&lt;HDF5 dataset &quot;delays&quot;: shape (195,), type &quot;&lt;f8&quot;&gt;]
+<a id="__codelineno-1-1018" name="__codelineno-1-1018" href="#__codelineno-1-1018"></a>For Axis #2, 1 axes have been identified: [&lt;HDF5 dataset "delays": shape (195,), type "&lt;f8"&gt;]
 </code></pre></div>
 </div>
 </details>

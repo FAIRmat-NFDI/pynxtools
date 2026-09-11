@@ -728,6 +728,34 @@
   
   
     <li class="md-nav__item">
+      <a href="../how-tos/pynxtools/restructure-data-inside-hdf5-nexus-files.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Restructure data inside HDF5/NeXus files
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../how-tos/pynxtools/implement-a-visitor.html" class="md-nav__link">
         
   
@@ -1152,6 +1180,34 @@
     
   
     NeXus definitions in pynxtools
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../learn/pynxtools/licensing.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Licensing
   
 
     
@@ -2031,29 +2087,29 @@
 <p>There are four ways to fill the right-hand side of a template key:</p>
 <h4 id="1-data-path-data-token">1. Data path (<code>@data:</code> token)<a class="headerlink" href="#1-data-path-data-token" title="Permanent link">&para;</a></h4>
 <p>Use the <code>@data:</code> prefix to point at a path inside your data file:</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="w">  </span><span class="nt">&quot;/ENTRY[entry]/DATA[data]/current_295C&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;@data:entry/data/current_295C&quot;</span><span class="p">,</span>
-<a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a><span class="w">  </span><span class="nt">&quot;/ENTRY[entry]/NXODD_name/posint_value&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;@data:a_level_down/another_level_down/posint_value&quot;</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="w">  </span><span class="nt">"/ENTRY[entry]/DATA[data]/current_295C"</span><span class="p">:</span><span class="w"> </span><span class="s2">"@data:entry/data/current_295C"</span><span class="p">,</span>
+<a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a><span class="w">  </span><span class="nt">"/ENTRY[entry]/NXODD_name/posint_value"</span><span class="p">:</span><span class="w"> </span><span class="s2">"@data:a_level_down/another_level_down/posint_value"</span>
 </code></pre></div>
 <p>The path after <code>@data:</code> is a <code>/</code>-separated key chain into your data dictionary or HDF5 group hierarchy (no leading <code>/</code>). This is the same convention used by all other <code>MultiFormatReader</code>-based plugins (mpes, xps, raman, …).</p>
 <h4 id="2-literal-value">2. Literal value<a class="headerlink" href="#2-literal-value" title="Permanent link">&para;</a></h4>
 <p>Write the value directly for data that is not in your file:</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="w">  </span><span class="nt">&quot;/ENTRY[entry]/PROCESS[process]/program&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Bluesky&quot;</span><span class="p">,</span>
-<a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a><span class="w">  </span><span class="nt">&quot;/ENTRY[entry]/PROCESS[process]/program/@version&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;1.6.7&quot;</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="w">  </span><span class="nt">"/ENTRY[entry]/PROCESS[process]/program"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Bluesky"</span><span class="p">,</span>
+<a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a><span class="w">  </span><span class="nt">"/ENTRY[entry]/PROCESS[process]/program/@version"</span><span class="p">:</span><span class="w"> </span><span class="s2">"1.6.7"</span>
 </code></pre></div>
 <h4 id="3-link-virtual-dataset">3. Link / virtual dataset<a class="headerlink" href="#3-link-virtual-dataset" title="Permanent link">&para;</a></h4>
 <p>Use a JSON object with a <code>"link"</code> callback to reference data in an existing HDF5 file without copying it:</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a><span class="w">  </span><span class="nt">&quot;/ENTRY[entry]/DATA[data]/current_295C&quot;</span><span class="p">:</span><span class="s2">&quot;@link:current.nxs:/entry/data/current_295C&quot;</span><span class="p">,</span>
-<a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a><span class="w">  </span><span class="nt">&quot;/ENTRY[entry]/DATA[data]/current_300C&quot;</span><span class="p">:</span><span class="s2">&quot;@link:current.nxs:/entry/data/current_300C&quot;</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a><span class="w">  </span><span class="nt">"/ENTRY[entry]/DATA[data]/current_295C"</span><span class="p">:</span><span class="s2">"@link:current.nxs:/entry/data/current_295C"</span><span class="p">,</span>
+<a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a><span class="w">  </span><span class="nt">"/ENTRY[entry]/DATA[data]/current_300C"</span><span class="p">:</span><span class="s2">"@link:current.nxs:/entry/data/current_300C"</span>
 </code></pre></div>
 <p>Equivalently, it is also possible to use a dictionary for linking:</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a><span class="w">  </span><span class="nt">&quot;/ENTRY[entry]/DATA[data]/current_295C&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="nt">&quot;link&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;current.nxs:/entry/data/current_295C&quot;</span><span class="p">},</span>
-<a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a><span class="w">  </span><span class="nt">&quot;/ENTRY[entry]/DATA[data]/current_300C&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="nt">&quot;link&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;current.nxs:/entry/data/current_300C&quot;</span><span class="p">},</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a><span class="w">  </span><span class="nt">"/ENTRY[entry]/DATA[data]/current_295C"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="nt">"link"</span><span class="p">:</span><span class="w"> </span><span class="s2">"current.nxs:/entry/data/current_295C"</span><span class="p">},</span>
+<a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a><span class="w">  </span><span class="nt">"/ENTRY[entry]/DATA[data]/current_300C"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="nt">"link"</span><span class="p">:</span><span class="w"> </span><span class="s2">"current.nxs:/entry/data/current_300C"</span><span class="p">},</span>
 </code></pre></div>
 <p>Note: linking only works for HDF5 files. A <code>"shape"</code> key may be added alongside <code>"link"</code> to select a slice (e.g. <code>"shape": "0:100, 0:50"</code>). However, this only works when using the dictionary notation: <code>{"link":&lt;path&gt;, "shape":&lt;shape&gt;}</code>. For the shorthand <code>"@link:&lt;path&gt;"</code> notation, <code>"shape"</code> is not yet supported.</p>
 <h4 id="4-eln-attribute-data">4. ELN / attribute data<a class="headerlink" href="#4-eln-attribute-data" title="Permanent link">&para;</a></h4>
 <p>Other token prefixes allow pulling from ELN files or reader attributes:</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a><span class="w">  </span><span class="nt">&quot;/ENTRY[entry]/title&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;@eln:title&quot;</span><span class="p">,</span>
-<a id="__codelineno-6-2" name="__codelineno-6-2" href="#__codelineno-6-2"></a><span class="w">  </span><span class="nt">&quot;/ENTRY[entry]/start_time/@units&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;@attrs:start_time_units&quot;</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a><span class="w">  </span><span class="nt">"/ENTRY[entry]/title"</span><span class="p">:</span><span class="w"> </span><span class="s2">"@eln:title"</span><span class="p">,</span>
+<a id="__codelineno-6-2" name="__codelineno-6-2" href="#__codelineno-6-2"></a><span class="w">  </span><span class="nt">"/ENTRY[entry]/start_time/@units"</span><span class="p">:</span><span class="w"> </span><span class="s2">"@attrs:start_time_units"</span>
 </code></pre></div>
 <h3 id="examples">Examples<a class="headerlink" href="#examples" title="Permanent link">&para;</a></h3>
 <h4 id="basic-example">Basic example<a class="headerlink" href="#basic-example" title="Permanent link">&para;</a></h4>
@@ -2068,7 +2124,7 @@
 Please migrate to the config file format described above (passed via the <code>-c</code> flag).</p>
 </div>
 <p>For backward compatibility, the reader still accepts <code>.mapping.json</code> files. In this format, data paths are written with a leading <code>/</code> instead of <code>@data:</code>:</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a><span class="w">  </span><span class="nt">&quot;/ENTRY[entry]/DATA[data]/current_295C&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;/entry/data/current_295C&quot;</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a><span class="w">  </span><span class="nt">"/ENTRY[entry]/DATA[data]/current_295C"</span><span class="p">:</span><span class="w"> </span><span class="s2">"/entry/data/current_295C"</span>
 </code></pre></div>
 <p>Using a <code>.mapping.json</code> file will emit a <code>DeprecationWarning</code>.</p>
 <h2 id="the-yamljsonreader">The <a href="https://github.com/FAIRmat-NFDI/pynxtools/blob/master/src/pynxtools/dataconverter/readers/json_yml/reader.py">YamlJsonReader</a><a class="headerlink" href="#the-yamljsonreader" title="Permanent link">&para;</a></h2>

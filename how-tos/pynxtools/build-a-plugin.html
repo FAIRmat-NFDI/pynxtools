@@ -968,6 +968,34 @@
   
   
     <li class="md-nav__item">
+      <a href="restructure-data-inside-hdf5-nexus-files.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Restructure data inside HDF5/NeXus files
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="implement-a-visitor.html" class="md-nav__link">
         
   
@@ -1392,6 +1420,34 @@
     
   
     NeXus definitions in pynxtools
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../learn/pynxtools/licensing.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Licensing
   
 
     
@@ -2065,8 +2121,8 @@
 <a id="__codelineno-0-15" name="__codelineno-0-15" href="#__codelineno-0-15"></a>└── pyproject.toml
 </code></pre></div>
 <p>To identify <code>pynxtools-plugin</code> as a plugin for <code>pynxtools</code>, an entry point must be established (in the <code>pyproject.toml</code> file):</p>
-<div class="highlight"><span class="filename">pyproject.toml</span><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="k">[project.entry-points.</span><span class="s2">&quot;pynxtools.reader&quot;</span><span class="k">]</span>
-<a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a><span class="n">mydatareader</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;pynxtools_plugin.reader:MyDataReader&quot;</span>
+<div class="highlight"><span class="filename">pyproject.toml</span><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="k">[project.entry-points.</span><span class="s2">"pynxtools.reader"</span><span class="k">]</span>
+<a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a><span class="n">mydatareader</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">"pynxtools_plugin.reader:MyDataReader"</span>
 </code></pre></div>
 <p>Note that it is also possible that your plugin contains multiple readers. In that case, each reader must have its unique entry point.</p>
 <p>Here, we will focus mostly on the <code>reader.py</code> file and how to build a reader. For guidelines on how to build the other parts of your plugin, you can have a look here:</p>
@@ -2079,16 +2135,16 @@
 <h2 id="writing-a-reader">Writing a Reader<a class="headerlink" href="#writing-a-reader" title="Permanent link">&para;</a></h2>
 <p>After you have established the main structure, you can start writing your reader. The new reader shall be placed in <code>reader.py</code>.</p>
 <p>Then implement the reader function:</p>
-<div class="highlight"><span class="filename">reader.py</span><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="sd">&quot;&quot;&quot;MyDataReader implementation for the DataConverter to convert mydata to NeXus.&quot;&quot;&quot;</span>
+<div class="highlight"><span class="filename">reader.py</span><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="sd">"""MyDataReader implementation for the DataConverter to convert mydata to NeXus."""</span>
 <a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a><span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Any</span>
 <a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a>
 <a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a><span class="kn">from</span><span class="w"> </span><span class="nn">pynxtools.dataconverter.readers.base.reader</span><span class="w"> </span><span class="kn">import</span> <span class="n">BaseReader</span>
 <a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a>
 <a id="__codelineno-2-6" name="__codelineno-2-6" href="#__codelineno-2-6"></a><span class="k">class</span><span class="w"> </span><span class="nc">MyDataReader</span><span class="p">(</span><span class="n">BaseReader</span><span class="p">):</span>
-<a id="__codelineno-2-7" name="__codelineno-2-7" href="#__codelineno-2-7"></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;MyDataReader implementation for the DataConverter to convert mydata to NeXus.&quot;&quot;&quot;</span>
+<a id="__codelineno-2-7" name="__codelineno-2-7" href="#__codelineno-2-7"></a><span class="w">    </span><span class="sd">"""MyDataReader implementation for the DataConverter to convert mydata to NeXus."""</span>
 <a id="__codelineno-2-8" name="__codelineno-2-8" href="#__codelineno-2-8"></a>
 <a id="__codelineno-2-9" name="__codelineno-2-9" href="#__codelineno-2-9"></a>    <span class="n">supported_nxdls</span> <span class="o">=</span> <span class="p">[</span>
-<a id="__codelineno-2-10" name="__codelineno-2-10" href="#__codelineno-2-10"></a>        <span class="s2">&quot;NXmynxdl&quot;</span> <span class="c1"># this needs to be changed during implementation.</span>
+<a id="__codelineno-2-10" name="__codelineno-2-10" href="#__codelineno-2-10"></a>        <span class="s2">"NXmynxdl"</span> <span class="c1"># this needs to be changed during implementation.</span>
 <a id="__codelineno-2-11" name="__codelineno-2-11" href="#__codelineno-2-11"></a>    <span class="p">]</span>
 <a id="__codelineno-2-12" name="__codelineno-2-12" href="#__codelineno-2-12"></a>
 <a id="__codelineno-2-13" name="__codelineno-2-13" href="#__codelineno-2-13"></a>    <span class="k">def</span><span class="w"> </span><span class="nf">read</span><span class="p">(</span>
@@ -2097,15 +2153,15 @@
 <a id="__codelineno-2-16" name="__codelineno-2-16" href="#__codelineno-2-16"></a>        <span class="n">file_paths</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
 <a id="__codelineno-2-17" name="__codelineno-2-17" href="#__codelineno-2-17"></a>        <span class="n">objects</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
 <a id="__codelineno-2-18" name="__codelineno-2-18" href="#__codelineno-2-18"></a>    <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
-<a id="__codelineno-2-19" name="__codelineno-2-19" href="#__codelineno-2-19"></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;Reads data from given file and returns a filled template dictionary&quot;&quot;&quot;</span>
+<a id="__codelineno-2-19" name="__codelineno-2-19" href="#__codelineno-2-19"></a><span class="w">        </span><span class="sd">"""Reads data from given file and returns a filled template dictionary"""</span>
 <a id="__codelineno-2-20" name="__codelineno-2-20" href="#__codelineno-2-20"></a>        <span class="c1"># Here, you must provide functionality to fill the the template, see below.</span>
 <a id="__codelineno-2-21" name="__codelineno-2-21" href="#__codelineno-2-21"></a>        <span class="c1"># Example:</span>
-<a id="__codelineno-2-22" name="__codelineno-2-22" href="#__codelineno-2-22"></a>        <span class="c1"># template[&quot;/entry/instrument/name&quot;] = &quot;my_instrument&quot;</span>
+<a id="__codelineno-2-22" name="__codelineno-2-22" href="#__codelineno-2-22"></a>        <span class="c1"># template["/entry/instrument/name"] = "my_instrument"</span>
 <a id="__codelineno-2-23" name="__codelineno-2-23" href="#__codelineno-2-23"></a>
 <a id="__codelineno-2-24" name="__codelineno-2-24" href="#__codelineno-2-24"></a>        <span class="k">return</span> <span class="n">template</span>
 <a id="__codelineno-2-25" name="__codelineno-2-25" href="#__codelineno-2-25"></a>
 <a id="__codelineno-2-26" name="__codelineno-2-26" href="#__codelineno-2-26"></a>
-<a id="__codelineno-2-27" name="__codelineno-2-27" href="#__codelineno-2-27"></a><span class="c1"># This has to be set to allow the convert script to use this reader. Set it to &quot;MyDataReader&quot;.</span>
+<a id="__codelineno-2-27" name="__codelineno-2-27" href="#__codelineno-2-27"></a><span class="c1"># This has to be set to allow the convert script to use this reader. Set it to "MyDataReader".</span>
 <a id="__codelineno-2-28" name="__codelineno-2-28" href="#__codelineno-2-28"></a><span class="n">READER</span> <span class="o">=</span> <span class="n">MyDataReader</span>
 </code></pre></div>
 <h3 id="the-reader-template-dictionary">The reader template dictionary<a class="headerlink" href="#the-reader-template-dictionary" title="Permanent link">&para;</a></h3>
@@ -2113,7 +2169,7 @@
 <p>The returned template dictionary should contain keys that exist in the template as defined below. The values of these keys have to be data objects to populate the output NeXus file. They can be lists, numpy arrays, numpy bytes, numpy floats, numpy integers, ... . Practically you can pass any value that can be handled by the <a href="https://www.h5py.org/"><code>h5py</code> package</a>.</p>
 <p>Example for a template entry:</p>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="p">{</span>
-<a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a><span class="w">  </span><span class="nt">&quot;/entry/instrument/source/type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;None&quot;</span>
+<a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a><span class="w">  </span><span class="nt">"/entry/instrument/source/type"</span><span class="p">:</span><span class="w"> </span><span class="s2">"None"</span>
 <a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a><span class="p">}</span>
 </code></pre></div>
 <p>For a given NXDL schema, you can generate an empty template with the command</p>
@@ -2126,25 +2182,25 @@
 <h4 id="naming-of-groups">Naming of groups<a class="headerlink" href="#naming-of-groups" title="Permanent link">&para;</a></h4>
 <p>In case the NXDL does not define a <code>name</code> for the group the requested data belongs to, the template dictionary will list it as <code>/NAME_IN_NXDL[name_in_output_nexus]</code>. You can choose any name you prefer instead of the suggested <code>name_in_output_nexus</code> (see <a href="../../learn/nexus/nexus-rules.html">here</a> for the naming conventions). This allows the reader function to repeat groups defined in the NXDL to be outputted to the NeXus file.</p>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a><span class="p">{</span>
-<a id="__codelineno-6-2" name="__codelineno-6-2" href="#__codelineno-6-2"></a><span class="w">  </span><span class="nt">&quot;/ENTRY[my_entry]/INSTRUMENT[my_instrument]/SOURCE[my_source]/type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;None&quot;</span>
+<a id="__codelineno-6-2" name="__codelineno-6-2" href="#__codelineno-6-2"></a><span class="w">  </span><span class="nt">"/ENTRY[my_entry]/INSTRUMENT[my_instrument]/SOURCE[my_source]/type"</span><span class="p">:</span><span class="w"> </span><span class="s2">"None"</span>
 <a id="__codelineno-6-3" name="__codelineno-6-3" href="#__codelineno-6-3"></a><span class="p">}</span>
 </code></pre></div>
 <h4 id="attributes">Attributes<a class="headerlink" href="#attributes" title="Permanent link">&para;</a></h4>
 <p>For attributes defined in the NXDL, the reader template dictionary will have the associated key with a "@" prefix to the attributes name at the end of the path:</p>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a><span class="p">{</span>
-<a id="__codelineno-7-2" name="__codelineno-7-2" href="#__codelineno-7-2"></a><span class="w">  </span><span class="nt">&quot;/entry/instrument/source/@attribute&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;None&quot;</span>
+<a id="__codelineno-7-2" name="__codelineno-7-2" href="#__codelineno-7-2"></a><span class="w">  </span><span class="nt">"/entry/instrument/source/@attribute"</span><span class="p">:</span><span class="w"> </span><span class="s2">"None"</span>
 <a id="__codelineno-7-3" name="__codelineno-7-3" href="#__codelineno-7-3"></a><span class="p">}</span>
 </code></pre></div>
 <h4 id="units">Units<a class="headerlink" href="#units" title="Permanent link">&para;</a></h4>
 <p>If there is a field defined in the NXDL, the converter expects a filled in <code>/data/@units</code> entry in the template dictionary corresponding to the right <code>/data</code> field unless it is specified as <code>NX_UNITLESS</code> in the NXDL. Otherwise, a warning will be shown.</p>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a><span class="p">{</span>
-<a id="__codelineno-8-2" name="__codelineno-8-2" href="#__codelineno-8-2"></a><span class="w">  </span><span class="nt">&quot;/ENTRY[my_entry]/INSTRUMENT[my_instrument]/SOURCE[my_source]/data&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;None&quot;</span><span class="p">,</span>
-<a id="__codelineno-8-3" name="__codelineno-8-3" href="#__codelineno-8-3"></a><span class="w">  </span><span class="nt">&quot;/ENTRY[my_entry]/INSTRUMENT[my_instrument]/SOURCE[my_source]/data/@units&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Should be set to a string value&quot;</span>
+<a id="__codelineno-8-2" name="__codelineno-8-2" href="#__codelineno-8-2"></a><span class="w">  </span><span class="nt">"/ENTRY[my_entry]/INSTRUMENT[my_instrument]/SOURCE[my_source]/data"</span><span class="p">:</span><span class="w"> </span><span class="s2">"None"</span><span class="p">,</span>
+<a id="__codelineno-8-3" name="__codelineno-8-3" href="#__codelineno-8-3"></a><span class="w">  </span><span class="nt">"/ENTRY[my_entry]/INSTRUMENT[my_instrument]/SOURCE[my_source]/data/@units"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Should be set to a string value"</span>
 <a id="__codelineno-8-4" name="__codelineno-8-4" href="#__codelineno-8-4"></a><span class="p">}</span>
 </code></pre></div>
 <h4 id="links">Links<a class="headerlink" href="#links" title="Permanent link">&para;</a></h4>
 <p>You can also define links by setting the value to sub dictionary object with key <code>link</code>:</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-9-1" name="__codelineno-9-1" href="#__codelineno-9-1"></a><span class="n">template</span><span class="p">[</span><span class="s2">&quot;/entry/instrument/source&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;link&quot;</span><span class="p">:</span> <span class="s2">&quot;/path/to/source/data&quot;</span><span class="p">}</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-9-1" name="__codelineno-9-1" href="#__codelineno-9-1"></a><span class="n">template</span><span class="p">[</span><span class="s2">"/entry/instrument/source"</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span><span class="s2">"link"</span><span class="p">:</span> <span class="s2">"/path/to/source/data"</span><span class="p">}</span>
 </code></pre></div>
 <h3 id="building-off-of-the-basereader">Building off of the BaseReader<a class="headerlink" href="#building-off-of-the-basereader" title="Permanent link">&para;</a></h3>
 <p>When building off the <a href="https://github.com/FAIRmat-NFDI/pynxtools/blob/master/src/pynxtools/dataconverter/readers/base/reader.py"><code>BaseReader</code></a>, the developer has the most flexibility. Any new reader must implement the <code>read</code> function, which must return a filled template object.</p>
@@ -2178,7 +2234,7 @@
 <td><code>--help</code></td>
 <td>boolean</td>
 <td>Show this message and exit.</td>
-<td><code>False</code></td>
+<td><code>Sentinel.UNSET</code></td>
 </tr>
 </tbody>
 </table>
@@ -2210,13 +2266,13 @@
 <td><code>--required</code></td>
 <td>boolean</td>
 <td>Include only required fields.</td>
-<td><code>False</code></td>
+<td><code>Sentinel.UNSET</code></td>
 </tr>
 <tr>
 <td><code>--pythonic</code></td>
 <td>boolean</td>
 <td>Print a Python dict instead of JSON.</td>
-<td><code>False</code></td>
+<td><code>Sentinel.UNSET</code></td>
 </tr>
 <tr>
 <td><code>--output</code></td>
@@ -2228,7 +2284,7 @@
 <td><code>--help</code></td>
 <td>boolean</td>
 <td>Show this message and exit.</td>
-<td><code>False</code></td>
+<td><code>Sentinel.UNSET</code></td>
 </tr>
 </tbody>
 </table>
@@ -2252,7 +2308,7 @@
 <td><code>--help</code></td>
 <td>boolean</td>
 <td>Show this message and exit.</td>
-<td><code>False</code></td>
+<td><code>Sentinel.UNSET</code></td>
 </tr>
 </tbody>
 </table>
@@ -2277,7 +2333,7 @@
 <td><code>--help</code></td>
 <td>boolean</td>
 <td>Show this message and exit.</td>
-<td><code>False</code></td>
+<td><code>Sentinel.UNSET</code></td>
 </tr>
 </tbody>
 </table>
@@ -2367,7 +2423,7 @@
 <td><code>--help</code></td>
 <td>boolean</td>
 <td>Show this message and exit.</td>
-<td><code>False</code></td>
+<td><code>Sentinel.UNSET</code></td>
 </tr>
 </tbody>
 </table>

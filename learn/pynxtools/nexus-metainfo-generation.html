@@ -1,0 +1,3120 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="The documentation of the FAIRmat-NeXus definitions & pynxtools
+">
+      
+      
+        <meta name="author" content="The NOMAD authors">
+      
+      
+      
+      
+      
+        
+      
+      
+      <link rel="icon" href="../../assets/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.7">
+    
+    
+      
+        <title>NeXus Metainfo Generation - Documentation</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../assets/stylesheets/main.ec1eaa64.min.css">
+      
+        
+        <link rel="stylesheet" href="../../assets/stylesheets/palette.ab4e12ef.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Titillium+Web:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Titillium Web";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+      <link rel="stylesheet" href="../../assets/_markdown_exec_pyodide.css">
+    
+      <link rel="stylesheet" href="../../assets/_markdown_exec_ansi.css">
+    
+      <link rel="stylesheet" href="../../stylesheets/extra.css">
+    
+    <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  </head>
+  
+  
+    
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="#2A4CDF" data-md-color-accent="#008A67">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#nexus-metainfo-generation" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+<header class="md-header" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="header.title">
+    <a href="../../index.html" title="Documentation" class="md-header__button md-logo" aria-label="Documentation" data-md-component="logo">
+      
+  <img src="../../assets/nomad-plugin-logo.png" alt="logo">
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            Documentation
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              NeXus Metainfo Generation
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+    
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/FAIRmat-NFDI/pynxtools" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M173.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6m-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3m44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9M252.8 8C114.1 8 8 113.3 8 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C436.2 457.8 504 362.9 504 252 504 113.3 391.5 8 252.8 8M105.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1m-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7m32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1m-11.4-14.7c-1.6 1-1.6 3.6 0 5.9s4.3 3.3 5.6 2.3c1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2"/></svg>
+  </div>
+  <div class="md-source__repository">
+    GitHub
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+
+<nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../../index.html" title="Documentation" class="md-nav__button md-logo" aria-label="Documentation" data-md-component="logo">
+      
+  <img src="../../assets/nomad-plugin-logo.png" alt="logo">
+
+    </a>
+    Documentation
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/FAIRmat-NFDI/pynxtools" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M173.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6m-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3m44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9M252.8 8C114.1 8 8 113.3 8 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C436.2 457.8 504 362.9 504 252 504 113.3 391.5 8 252.8 8M105.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1m-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7m32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1m-11.4-14.7c-1.6 1-1.6 3.6 0 5.9s4.3 3.3 5.6 2.3c1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2"/></svg>
+  </div>
+  <div class="md-source__repository">
+    GitHub
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../index.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Home
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../getting-started.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Getting started
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" >
+        
+          
+          <label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Tutorials
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Tutorials
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../tutorial/installation.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Installation guide
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../tutorial/converting-data-to-nexus.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Converting your research data to NeXus
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../tutorial/writing-an-application-definition.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Writing your first application definition
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../tutorial/build-a-reader.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Building your first pynxtools reader
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../tutorial/bring-your-own-data.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Bring your own data
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../tutorial/nexus-to-nomad.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Uploading NeXus data to NOMAD
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../tutorial/contributing.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Development guide
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4" >
+        
+          
+          <label class="md-nav__link" for="__nav_4" id="__nav_4_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    How-tos
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    How-tos
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4_1" >
+        
+          
+          <label class="md-nav__link" for="__nav_4_1" id="__nav_4_1_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    NeXus
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_4_1_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4_1">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    NeXus
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../how-tos/nexus/write-an-application-definition.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Write an application definition
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4_2" >
+        
+          
+          <label class="md-nav__link" for="__nav_4_2" id="__nav_4_2_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    pynxtools
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_4_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4_2">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    pynxtools
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../how-tos/pynxtools/build-a-plugin.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Build your own pynxtools plugin
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../how-tos/pynxtools/use-multi-format-reader.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Use the MultiFormatReader
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../how-tos/pynxtools/restructure-data-inside-hdf5-nexus-files.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Restructure data inside HDF5/NeXus files
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../how-tos/pynxtools/implement-a-visitor.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Implement a custom NexusVisitor
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../how-tos/pynxtools/using-pynxtools-test-framework.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Test functionality for pynxtools plugins
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../how-tos/pynxtools/run-tests-in-parallel.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Running pynxtools tests in parallel
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../how-tos/pynxtools/create-nexus-files-by-python.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Using Python to create NeXus files
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../how-tos/pynxtools/validate-nexus-files.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Validation of NeXus files
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../how-tos/pynxtools/use-with-nomad.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Use pynxtools with NOMAD
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5" >
+        
+          
+          <label class="md-nav__link" for="__nav_5" id="__nav_5_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Learn
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_5_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_5">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Learn
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5_1" >
+        
+          
+          <label class="md-nav__link" for="__nav_5_1" id="__nav_5_1_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    NeXus
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_5_1_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_5_1">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    NeXus
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../nexus/nexus-primer.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    A primer on NeXus
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../nexus/nexus-rules.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Rules for storing data in NeXus
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5_2" >
+        
+          
+          <label class="md-nav__link" for="__nav_5_2" id="__nav_5_2_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    pynxtools
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_5_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_5_2">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    pynxtools
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="architecture.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    pynxtools architecture
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="nexus-definitions.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    NeXus definitions in pynxtools
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="licensing.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Licensing
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="dataconverter-and-readers.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Data conversion in pynxtools
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="nexus-validation.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Validation of NeXus files in pynxtools
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="multi-format-reader.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    The MultiFormatReader as a reader superclass
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="dataconverter-append-mode.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Dataconverter append mode
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="compression.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Using compression with HDF5
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="versioning.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Note on versioning
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="nomad-integration.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    pynxtools and NOMAD
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="numerics.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Computing statistics for chunked arrays
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_6" >
+        
+          
+          <label class="md-nav__link" for="__nav_6" id="__nav_6_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Reference
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_6_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_6">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Reference
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reference/definitions.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    NeXus definitions
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reference/cli-api.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    API for command line tools
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reference/built-in-readers.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Built-in pynxtools readers
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reference/plugins.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    FAIRmat-supported pynxtools plugins
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#overview" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Overview
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Overview">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#what-this-provides" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        What this provides
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#current-status" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Current status
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#architecture" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Architecture
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#the-nexusnode-layer" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        The NexusNode layer
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="The NexusNode layer">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#why-nexusnode-not-raw-xml" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Why NexusNode, not raw XML
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#generate_tree_from" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        generate_tree_from()
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#node-class-hierarchy" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Node class hierarchy
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#key-attributes-per-class" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Key attributes per class
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Key attributes per class">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#nexusnode-all-subclasses-inherit-these" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        NexusNode (all subclasses inherit these)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#nexusdefinition" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        NexusDefinition
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#nexusgroup" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        NexusGroup
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#nexusfield" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        NexusField
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#nexusattribute" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        NexusAttribute
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#annotation-models" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Annotation models
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Annotation models">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#nexusdefinition_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        NeXusDefinition
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#nexusgroup_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        NeXusGroup
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#nexusfield_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        NeXusField
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#nexusattribute_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        NeXusAttribute
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#nexuslink" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        NeXusLink
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#nexuschoice" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        NeXusChoice
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#summary-annotation-placement" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Summary: annotation placement
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#generated-file-layout" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Generated file layout
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#application-definitions" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Application Definitions
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Application Definitions">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#the-design-principle-xpsentry-not-xpsobject-measurement" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        The design principle: Xps(Entry) not Xps(Object, Measurement)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#example-generated-file-entrypy-excerpt" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Example generated file (entry.py, excerpt)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#named-concepts-vs-cross-file-subsections" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Named concepts vs. cross-file SubSections
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#repeats-derivation" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        repeats derivation
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#shape-representation" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Shape representation
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#units" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Units
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#additive-only-generation" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Additive-only generation
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#cli" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        CLI
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#package-assembly" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Package assembly
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Package assembly">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#base-classes-package" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Base classes package
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#applications-package" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Applications package
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#inheritance-chain" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Inheritance chain
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#naming-conventions" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Naming conventions
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Naming conventions">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#class-names" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Class names
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#quantity-names" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Quantity names
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#subsection-names" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Subsection names
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#field-attribute-quantities" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Field-attribute quantities
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#relation-to-existing-schema" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Relation to existing schema
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#further-reading" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Further reading
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+
+<h1 id="nexus-metainfo-generation">NeXus Metainfo Generation<a class="headerlink" href="#nexus-metainfo-generation" title="Permanent link">&para;</a></h1>
+<div class="admonition warning">
+<p class="admonition-title">In development</p>
+<p>This page describes a new code generation system currently under active development.
+The API, file layout, and generated output may change before this feature is
+officially released.</p>
+</div>
+<hr />
+<h2 id="overview">Overview<a class="headerlink" href="#overview" title="Permanent link">&para;</a></h2>
+<p>The NeXus–NOMAD Metainfo refactor replaces the runtime XML compilation in <code>nomad/schema_packages/schema.py</code>
+with a <strong>persistent code generator</strong> that reads the NeXus definitions through the <code>NexusNode</code> API
+and writes one Python file per NXDL class. Each generated file is a normal importable Python module containing a single NOMAD <code>Section</code> class that carries structured annotations connecting every quantity and group back to its NXDL definition.</p>
+<h3 id="what-this-provides">What this provides<a class="headerlink" href="#what-this-provides" title="Permanent link">&para;</a></h3>
+<ul>
+<li><strong>Importable, type-checkable Python classes</strong>: Each NXDL class becomes a NOMAD <code>Section</code> class
+  in a <code>.py</code> file, with structured annotations connecting every quantity and group back to NXDL.</li>
+<li><strong>Clean naming</strong>: Quantities are named after their NXDL concept (<code>start_time</code>, not <code>start_time__field</code>).</li>
+<li><strong>Two entry points</strong>: <code>nexus_base_classes</code> (142 base classes) and <code>nexus_applications</code> (85 application definitions).</li>
+<li><strong>Application definitions are Entry subclasses</strong>: <code>Xps(Entry)</code> instead of a wrapper where <code>Xps</code> contains <code>XpsEntry</code> (see below).</li>
+<li><strong>Backward compatibility</strong>: The old <code>nexus_schema</code> entry point is untouched; both systems coexist until we are sure the new schema works.</li>
+</ul>
+<h3 id="current-status">Current status<a class="headerlink" href="#current-status" title="Permanent link">&para;</a></h3>
+<ul>
+<li><strong>Phase 1</strong> (complete): 142 NXDL base classes (<code>category="base"</code>) generated and tested.</li>
+<li><strong>Phase 2</strong> (complete): 85 application definitions (<code>category="application"</code>) generated; <code>nexus_applications</code> entry point active.</li>
+</ul>
+<hr />
+<h2 id="architecture">Architecture<a class="headerlink" href="#architecture" title="Permanent link">&para;</a></h2>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>NexusNode API
+<a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>    │  generate_tree_from(nx_name)
+<a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>    │  → NexusDefinition root with NexusGroup/NexusField/NexusAttribute children
+<a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a>    ▼
+<a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a>nxdl_to_metainfo.py             ← generator
+<a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a>    │  build_context(nx_name)   ← builds Jinja2 template context
+<a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a>    │  render(context)          ← Jinja2 + ruff
+<a id="__codelineno-0-8" name="__codelineno-0-8" href="#__codelineno-0-8"></a>    │  write_base_class(nx_name)
+<a id="__codelineno-0-9" name="__codelineno-0-9" href="#__codelineno-0-9"></a>    ▼
+<a id="__codelineno-0-10" name="__codelineno-0-10" href="#__codelineno-0-10"></a>metainfo/&lt;folder&gt;/&lt;stem&gt;.py ← generated Python files (one per NeXus definition) 
+<a id="__codelineno-0-11" name="__codelineno-0-11" href="#__codelineno-0-11"></a>    ▼
+<a id="__codelineno-0-12" name="__codelineno-0-12" href="#__codelineno-0-12"></a>metainfo/_package.py            ← assembles NOMAD Package
+<a id="__codelineno-0-13" name="__codelineno-0-13" href="#__codelineno-0-13"></a>    │  build_package()
+<a id="__codelineno-0-14" name="__codelineno-0-14" href="#__codelineno-0-14"></a>    ▼
+<a id="__codelineno-0-15" name="__codelineno-0-15" href="#__codelineno-0-15"></a>NOMAD Package (section_definitions[])
+</code></pre></div>
+<hr />
+<h2 id="the-nexusnode-layer">The NexusNode layer<a class="headerlink" href="#the-nexusnode-layer" title="Permanent link">&para;</a></h2>
+<h3 id="why-nexusnode-not-raw-xml">Why NexusNode, not raw XML<a class="headerlink" href="#why-nexusnode-not-raw-xml" title="Permanent link">&para;</a></h3>
+<p>All NXDL attribute reading goes through the <code>NexusNode</code> API
+(<code>pynxtools.nexus.nexus_tree</code>). No raw XML attribute access happens inside the
+generator. This gives:</p>
+<ul>
+<li><strong>Inheritance resolution</strong>: NexusNode follows the <code>extends</code> chain and merges attributes
+  from parent classes. The generator never needs to know about inheritance.</li>
+<li><strong>Stable surface</strong>: If the NXDL XML format changes, only <code>nexus_tree.py</code> needs to
+  change; the generator and all generated files stay the same.</li>
+<li><strong>Testability</strong>: unit tests target <code>NexusNode</code> properties, not generator output.</li>
+</ul>
+<h3 id="generate_tree_from"><code>generate_tree_from()</code><a class="headerlink" href="#generate_tree_from" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="kn">from</span><span class="w"> </span><span class="nn">pynxtools.nexus.nexus_tree</span><span class="w"> </span><span class="kn">import</span> <span class="n">generate_tree_from</span>
+<a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a><span class="n">root</span> <span class="o">=</span> <span class="n">generate_tree_from</span><span class="p">(</span><span class="s2">"NXdetector"</span><span class="p">)</span>
+<a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a><span class="nb">print</span><span class="p">(</span><span class="n">root</span><span class="o">.</span><span class="n">nx_type</span><span class="p">)</span>     <span class="c1"># "definition"</span>
+<a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a><span class="nb">print</span><span class="p">(</span><span class="n">root</span><span class="o">.</span><span class="n">category</span><span class="p">)</span>    <span class="c1"># "base"</span>
+<a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a><span class="nb">print</span><span class="p">(</span><span class="n">root</span><span class="o">.</span><span class="n">deprecated</span><span class="p">)</span>  <span class="c1"># None  (or a deprecation string)</span>
+<a id="__codelineno-1-6" name="__codelineno-1-6" href="#__codelineno-1-6"></a><span class="k">for</span> <span class="n">child</span> <span class="ow">in</span> <span class="n">root</span><span class="o">.</span><span class="n">children</span><span class="p">:</span>
+<a id="__codelineno-1-7" name="__codelineno-1-7" href="#__codelineno-1-7"></a>    <span class="nb">print</span><span class="p">(</span><span class="n">child</span><span class="o">.</span><span class="n">nx_type</span><span class="p">,</span> <span class="n">child</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>  <span class="c1"># "field" "data", "group" "NXtransformations", ...</span>
+</code></pre></div>
+<p><code>generate_tree_from(nx_name)</code> is the single entry point into the NexusNode tree. It:</p>
+<ol>
+<li>Calls <code>get_nxdl_root_and_path(nx_name)</code> to load the primary XML element.</li>
+<li>Builds the full inheritance chain via <code>get_all_parents_for()</code>.</li>
+<li>Constructs a <code>NexusDefinition</code> root carrying definition-level metadata.</li>
+<li>Recursively adds <code>NexusGroup</code>, <code>NexusField</code>, <code>NexusAttribute</code>, <code>NexusLink</code>, and
+   <code>NexusChoice</code> children.</li>
+</ol>
+<h3 id="node-class-hierarchy">Node class hierarchy<a class="headerlink" href="#node-class-hierarchy" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>NexusNode (base)
+<a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>├── NexusDefinition   — root of a generated tree; carries category, symbols, ignore_extra_*
+<a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a>├── NexusGroup        — group child; carries nx_class and occurrence_limits
+<a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a>├── NexusChoice       — choice element (multiple allowed types for one slot)
+<a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a>├── NexusLink         — link element
+<a id="__codelineno-2-6" name="__codelineno-2-6" href="#__codelineno-2-6"></a>└── _NexusEntityBase  — shared base for field/attribute
+<a id="__codelineno-2-7" name="__codelineno-2-7" href="#__codelineno-2-7"></a>    ├── NexusField    — field child; additionally carries unit, long_name, interpretation,
+<a id="__codelineno-2-8" name="__codelineno-2-8" href="#__codelineno-2-8"></a>    │                   and deprecated plotting hints (signal, axis, axes, primary)
+<a id="__codelineno-2-9" name="__codelineno-2-9" href="#__codelineno-2-9"></a>    └── NexusAttribute — attribute child; dtype/enum/shape only
+</code></pre></div>
+<h3 id="key-attributes-per-class">Key attributes per class<a class="headerlink" href="#key-attributes-per-class" title="Permanent link">&para;</a></h3>
+<h4 id="nexusnode-all-subclasses-inherit-these"><code>NexusNode</code> (all subclasses inherit these)<a class="headerlink" href="#nexusnode-all-subclasses-inherit-these" title="Permanent link">&para;</a></h4>
+<table>
+<thead>
+<tr>
+<th>Attribute</th>
+<th>Type</th>
+<th>Source (NXDL)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>name</code></td>
+<td><code>str</code></td>
+<td>element <code>@name</code></td>
+</tr>
+<tr>
+<td><code>nx_type</code></td>
+<td><code>str</code></td>
+<td>XML tag (<code>"definition"</code>, <code>"group"</code>, ...)</td>
+</tr>
+<tr>
+<td><code>name_type</code></td>
+<td><code>str</code></td>
+<td><code>@nameType</code> (default <code>"specified"</code>)</td>
+</tr>
+<tr>
+<td><code>optionality</code></td>
+<td><code>str</code></td>
+<td><code>@recommended</code>/<code>@required</code>/<code>@optional</code></td>
+</tr>
+<tr>
+<td><code>variadic</code></td>
+<td><code>bool</code></td>
+<td>derived from <code>name_type</code></td>
+</tr>
+<tr>
+<td><code>deprecated</code></td>
+<td><code>str \ None</code></td>
+<td><code>@deprecated</code></td>
+</tr>
+</tbody>
+</table>
+<h4 id="nexusdefinition"><code>NexusDefinition</code><a class="headerlink" href="#nexusdefinition" title="Permanent link">&para;</a></h4>
+<table>
+<thead>
+<tr>
+<th>Attribute</th>
+<th>Type</th>
+<th>Source (NXDL)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>category</code></td>
+<td><code>str</code></td>
+<td><code>@category</code> (default <code>"base"</code>)</td>
+</tr>
+<tr>
+<td><code>ignore_extra_groups</code></td>
+<td><code>bool</code></td>
+<td><code>@ignoreExtraGroups</code></td>
+</tr>
+<tr>
+<td><code>ignore_extra_fields</code></td>
+<td><code>bool</code></td>
+<td><code>@ignoreExtraFields</code></td>
+</tr>
+<tr>
+<td><code>ignore_extra_attributes</code></td>
+<td><code>bool</code></td>
+<td><code>@ignoreExtraAttributes</code></td>
+</tr>
+<tr>
+<td><code>symbols</code></td>
+<td><code>dict[str, str]</code></td>
+<td><code>&lt;symbols&gt;/&lt;symbol&gt;</code> elements</td>
+</tr>
+</tbody>
+</table>
+<h4 id="nexusgroup"><code>NexusGroup</code><a class="headerlink" href="#nexusgroup" title="Permanent link">&para;</a></h4>
+<table>
+<thead>
+<tr>
+<th>Attribute</th>
+<th>Type</th>
+<th>Source (NXDL)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>nx_class</code></td>
+<td><code>str</code></td>
+<td><code>@type</code></td>
+</tr>
+<tr>
+<td><code>occurrence_limits</code></td>
+<td><code>tuple[int\None, int\None]</code></td>
+<td><code>@minOccurs</code>/<code>@maxOccurs</code></td>
+</tr>
+</tbody>
+</table>
+<h4 id="nexusfield"><code>NexusField</code><a class="headerlink" href="#nexusfield" title="Permanent link">&para;</a></h4>
+<table>
+<thead>
+<tr>
+<th>Attribute</th>
+<th>Type</th>
+<th>Source (NXDL)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>dtype</code></td>
+<td><code>str</code></td>
+<td><code>@type</code> (default <code>"NX_CHAR"</code>)</td>
+</tr>
+<tr>
+<td><code>unit</code></td>
+<td><code>str \ None</code></td>
+<td><code>@units</code></td>
+</tr>
+<tr>
+<td><code>shape</code></td>
+<td><code>tuple \ None</code></td>
+<td><code>&lt;dimensions&gt;</code> element</td>
+</tr>
+<tr>
+<td><code>dim_symbols</code></td>
+<td><code>tuple \ None</code></td>
+<td>symbol names parallel to <code>shape</code></td>
+</tr>
+<tr>
+<td><code>items</code></td>
+<td><code>list[str] \ None</code></td>
+<td><code>&lt;enumeration&gt;/&lt;item&gt;</code></td>
+</tr>
+<tr>
+<td><code>open_enum</code></td>
+<td><code>bool</code></td>
+<td><code>&lt;enumeration open="true"&gt;</code></td>
+</tr>
+<tr>
+<td><code>long_name</code></td>
+<td><code>str \ None</code></td>
+<td><code>@long_name</code></td>
+</tr>
+<tr>
+<td><code>interpretation</code></td>
+<td><code>str \ None</code></td>
+<td><code>@interpretation</code></td>
+</tr>
+</tbody>
+</table>
+<h4 id="nexusattribute"><code>NexusAttribute</code><a class="headerlink" href="#nexusattribute" title="Permanent link">&para;</a></h4>
+<p>Shares <code>dtype</code>, <code>shape</code>, <code>dim_symbols</code>, <code>items</code>, <code>open_enum</code> with <code>NexusField</code>.
+Has no <code>unit</code>, <code>long_name</code>, <code>interpretation</code>, or plotting-hint attributes.</p>
+<hr />
+<h2 id="annotation-models">Annotation models<a class="headerlink" href="#annotation-models" title="Permanent link">&para;</a></h2>
+<p>Six <code>AnnotationModel</code> subclasses (one per NXDL node kind) carry all NeXus-specific metadata on generated sections and quantities. Each annotation is queryable
+at runtime via <code>m_def.m_get_annotations("nexus_field")</code> etc.</p>
+<h3 id="nexusdefinition_1"><code>NeXusDefinition</code><a class="headerlink" href="#nexusdefinition_1" title="Permanent link">&para;</a></h3>
+<p>Attached to <code>Section.m_def</code> of every top-level generated class.</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="k">class</span><span class="w"> </span><span class="nc">NeXusDefinition</span><span class="p">(</span><span class="n">AnnotationModel</span><span class="p">):</span>
+<a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a>    <span class="n">nx_class</span><span class="p">:</span> <span class="nb">str</span>
+<a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a>    <span class="n">category</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="s2">"base"</span><span class="p">,</span> <span class="s2">"application"</span><span class="p">,</span> <span class="s2">"contributed"</span><span class="p">]</span> <span class="o">=</span> <span class="s2">"base"</span>
+<a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a>    <span class="n">restricts</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
+<a id="__codelineno-3-5" name="__codelineno-3-5" href="#__codelineno-3-5"></a>    <span class="n">ignore_extra_groups</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
+<a id="__codelineno-3-6" name="__codelineno-3-6" href="#__codelineno-3-6"></a>    <span class="n">ignore_extra_fields</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
+<a id="__codelineno-3-7" name="__codelineno-3-7" href="#__codelineno-3-7"></a>    <span class="n">ignore_extra_attributes</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
+<a id="__codelineno-3-8" name="__codelineno-3-8" href="#__codelineno-3-8"></a>    <span class="n">symbols</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
+<a id="__codelineno-3-9" name="__codelineno-3-9" href="#__codelineno-3-9"></a>    <span class="n">deprecated</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
+</code></pre></div>
+<h3 id="nexusgroup_1"><code>NeXusGroup</code><a class="headerlink" href="#nexusgroup_1" title="Permanent link">&para;</a></h3>
+<p>On named concept class <code>m_def</code> (group with own quantities, same file) or on the
+<code>SubSection</code> for cross-file group references.</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a><span class="k">class</span><span class="w"> </span><span class="nc">NeXusGroup</span><span class="p">(</span><span class="n">AnnotationModel</span><span class="p">):</span>
+<a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a>    <span class="n">nx_class</span><span class="p">:</span> <span class="nb">str</span>
+<a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a>    <span class="n">name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
+<a id="__codelineno-4-4" name="__codelineno-4-4" href="#__codelineno-4-4"></a>    <span class="n">name_type</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="s2">"specified"</span><span class="p">,</span> <span class="s2">"any"</span><span class="p">,</span> <span class="s2">"partial"</span><span class="p">]</span> <span class="o">=</span> <span class="s2">"specified"</span>
+<a id="__codelineno-4-5" name="__codelineno-4-5" href="#__codelineno-4-5"></a>    <span class="n">optionality</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="s2">"required"</span><span class="p">,</span> <span class="s2">"recommended"</span><span class="p">,</span> <span class="s2">"optional"</span><span class="p">]</span> <span class="o">=</span> <span class="s2">"optional"</span>
+<a id="__codelineno-4-6" name="__codelineno-4-6" href="#__codelineno-4-6"></a>    <span class="n">min_occurs</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
+<a id="__codelineno-4-7" name="__codelineno-4-7" href="#__codelineno-4-7"></a>    <span class="n">max_occurs</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
+<a id="__codelineno-4-8" name="__codelineno-4-8" href="#__codelineno-4-8"></a>    <span class="n">deprecated</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
+</code></pre></div>
+<h3 id="nexusfield_1"><code>NeXusField</code><a class="headerlink" href="#nexusfield_1" title="Permanent link">&para;</a></h3>
+<p>Attached to every <code>Quantity</code> derived from a NXDL <code>&lt;field&gt;</code> element. Fields define the
+type and shape of associated data, which may be scalar or array-valued. Fields may have
+unit categories, interpretation hints, and long names.</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a><span class="k">class</span><span class="w"> </span><span class="nc">NeXusField</span><span class="p">(</span><span class="n">AnnotationModel</span><span class="p">):</span>
+<a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a>    <span class="n">name</span><span class="p">:</span> <span class="nb">str</span>
+<a id="__codelineno-5-3" name="__codelineno-5-3" href="#__codelineno-5-3"></a>    <span class="nb">type</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">"NX_CHAR"</span>
+<a id="__codelineno-5-4" name="__codelineno-5-4" href="#__codelineno-5-4"></a>    <span class="n">units</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
+<a id="__codelineno-5-5" name="__codelineno-5-5" href="#__codelineno-5-5"></a>    <span class="n">name_type</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="s2">"specified"</span><span class="p">,</span> <span class="s2">"any"</span><span class="p">,</span> <span class="s2">"partial"</span><span class="p">]</span> <span class="o">=</span> <span class="s2">"specified"</span>
+<a id="__codelineno-5-6" name="__codelineno-5-6" href="#__codelineno-5-6"></a>    <span class="n">optionality</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="s2">"required"</span><span class="p">,</span> <span class="s2">"recommended"</span><span class="p">,</span> <span class="s2">"optional"</span><span class="p">]</span> <span class="o">=</span> <span class="s2">"optional"</span>
+<a id="__codelineno-5-7" name="__codelineno-5-7" href="#__codelineno-5-7"></a>    <span class="n">enumeration</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
+<a id="__codelineno-5-8" name="__codelineno-5-8" href="#__codelineno-5-8"></a>    <span class="n">open_enum</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
+<a id="__codelineno-5-9" name="__codelineno-5-9" href="#__codelineno-5-9"></a>    <span class="n">interpretation</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
+<a id="__codelineno-5-10" name="__codelineno-5-10" href="#__codelineno-5-10"></a>    <span class="n">long_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
+<a id="__codelineno-5-11" name="__codelineno-5-11" href="#__codelineno-5-11"></a>    <span class="n">deprecated</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
+</code></pre></div>
+<h3 id="nexusattribute_1"><code>NeXusAttribute</code><a class="headerlink" href="#nexusattribute_1" title="Permanent link">&para;</a></h3>
+<p>Attached to every <code>Quantity</code> derived from a NXDL <code>&lt;attribute&gt;</code> element (either
+group-level or field-level). Field-level attributes set <code>parent_field</code> to the
+owning field name (e.g. <code>parent_field="energy"</code> for <code>energy__units</code>).</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a><span class="k">class</span><span class="w"> </span><span class="nc">NeXusAttribute</span><span class="p">(</span><span class="n">AnnotationModel</span><span class="p">):</span>
+<a id="__codelineno-6-2" name="__codelineno-6-2" href="#__codelineno-6-2"></a>    <span class="n">name</span><span class="p">:</span> <span class="nb">str</span>
+<a id="__codelineno-6-3" name="__codelineno-6-3" href="#__codelineno-6-3"></a>    <span class="n">parent_field</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
+<a id="__codelineno-6-4" name="__codelineno-6-4" href="#__codelineno-6-4"></a>    <span class="nb">type</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">"NX_CHAR"</span>
+<a id="__codelineno-6-5" name="__codelineno-6-5" href="#__codelineno-6-5"></a>    <span class="n">name_type</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="s2">"specified"</span><span class="p">,</span> <span class="s2">"any"</span><span class="p">,</span> <span class="s2">"partial"</span><span class="p">]</span> <span class="o">=</span> <span class="s2">"specified"</span>
+<a id="__codelineno-6-6" name="__codelineno-6-6" href="#__codelineno-6-6"></a>    <span class="n">optionality</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="s2">"required"</span><span class="p">,</span> <span class="s2">"recommended"</span><span class="p">,</span> <span class="s2">"optional"</span><span class="p">]</span> <span class="o">=</span> <span class="s2">"optional"</span>
+<a id="__codelineno-6-7" name="__codelineno-6-7" href="#__codelineno-6-7"></a>    <span class="n">enumeration</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
+<a id="__codelineno-6-8" name="__codelineno-6-8" href="#__codelineno-6-8"></a>    <span class="n">open_enum</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
+<a id="__codelineno-6-9" name="__codelineno-6-9" href="#__codelineno-6-9"></a>    <span class="n">deprecated</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
+</code></pre></div>
+<h3 id="nexuslink"><code>NeXusLink</code><a class="headerlink" href="#nexuslink" title="Permanent link">&para;</a></h3>
+<p>Attached to a <code>Quantity(type=str)</code> derived from a NXDL <code>&lt;link&gt;</code> element.
+The <code>target</code> is the schema-level default target path; the parser resolves the
+actual HDF5 target at read time.</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a><span class="k">class</span><span class="w"> </span><span class="nc">NeXusLink</span><span class="p">(</span><span class="n">AnnotationModel</span><span class="p">):</span>
+<a id="__codelineno-7-2" name="__codelineno-7-2" href="#__codelineno-7-2"></a>    <span class="n">name</span><span class="p">:</span> <span class="nb">str</span>
+<a id="__codelineno-7-3" name="__codelineno-7-3" href="#__codelineno-7-3"></a>    <span class="n">target</span><span class="p">:</span> <span class="nb">str</span>
+<a id="__codelineno-7-4" name="__codelineno-7-4" href="#__codelineno-7-4"></a>    <span class="n">optionality</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="s2">"required"</span><span class="p">,</span> <span class="s2">"recommended"</span><span class="p">,</span> <span class="s2">"optional"</span><span class="p">]</span> <span class="o">=</span> <span class="s2">"optional"</span>
+<a id="__codelineno-7-5" name="__codelineno-7-5" href="#__codelineno-7-5"></a>    <span class="n">deprecated</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
+</code></pre></div>
+<h3 id="nexuschoice"><code>NeXusChoice</code><a class="headerlink" href="#nexuschoice" title="Permanent link">&para;</a></h3>
+<p>Attached to each <code>SubSection</code> representing one alternative in a NXDL <code>&lt;choice&gt;</code>
+block. A choice allows exactly one NX class to occupy a named slot. One
+<code>SubSection</code> is generated per alternative; all share the same <code>group_name</code>.</p>
+<p>Naming: <code>{choice_name}_{class_suffix}</code> — e.g. <code>pixel_shape_off_geometry</code> and
+<code>pixel_shape_cylindrical_geometry</code> for <code>&lt;choice name="pixel_shape"&gt;</code>.</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a><span class="k">class</span><span class="w"> </span><span class="nc">NeXusChoice</span><span class="p">(</span><span class="n">AnnotationModel</span><span class="p">):</span>
+<a id="__codelineno-8-2" name="__codelineno-8-2" href="#__codelineno-8-2"></a>    <span class="n">nx_class</span><span class="p">:</span> <span class="nb">str</span>
+<a id="__codelineno-8-3" name="__codelineno-8-3" href="#__codelineno-8-3"></a>    <span class="n">group_name</span><span class="p">:</span> <span class="nb">str</span>
+<a id="__codelineno-8-4" name="__codelineno-8-4" href="#__codelineno-8-4"></a>    <span class="n">optionality</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="s2">"required"</span><span class="p">,</span> <span class="s2">"recommended"</span><span class="p">,</span> <span class="s2">"optional"</span><span class="p">]</span> <span class="o">=</span> <span class="s2">"optional"</span>
+<a id="__codelineno-8-5" name="__codelineno-8-5" href="#__codelineno-8-5"></a>    <span class="n">deprecated</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
+</code></pre></div>
+<h3 id="summary-annotation-placement">Summary: annotation placement<a class="headerlink" href="#summary-annotation-placement" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>NXDL element</th>
+<th>Generated artifact</th>
+<th>Annotation key</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>&lt;definition&gt;</code></td>
+<td>top-level Section class <code>m_def</code></td>
+<td><code>nexus_definition</code></td>
+</tr>
+<tr>
+<td><code>&lt;group&gt;</code> (named concept)</td>
+<td>concept class <code>m_def</code></td>
+<td><code>nexus_group</code></td>
+</tr>
+<tr>
+<td><code>&lt;group&gt;</code> (cross-file)</td>
+<td><code>SubSection</code></td>
+<td><code>nexus_group</code></td>
+</tr>
+<tr>
+<td><code>&lt;field&gt;</code></td>
+<td><code>Quantity</code></td>
+<td><code>nexus_field</code></td>
+</tr>
+<tr>
+<td><code>&lt;attribute&gt;</code></td>
+<td><code>Quantity</code></td>
+<td><code>nexus_attribute</code></td>
+</tr>
+<tr>
+<td><code>&lt;link&gt;</code></td>
+<td><code>Quantity(type=str)</code></td>
+<td><code>nexus_link</code></td>
+</tr>
+<tr>
+<td><code>&lt;choice&gt;</code> alternative</td>
+<td><code>SubSection</code></td>
+<td><code>nexus_choice</code></td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="generated-file-layout">Generated file layout<a class="headerlink" href="#generated-file-layout" title="Permanent link">&para;</a></h2>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-9-1" name="__codelineno-9-1" href="#__codelineno-9-1"></a>src/pynxtools/nomad/
+<a id="__codelineno-9-2" name="__codelineno-9-2" href="#__codelineno-9-2"></a>    annotations.py              # NeXusDefinition + NeXusGroup + NeXusField + NeXusAttribute
+<a id="__codelineno-9-3" name="__codelineno-9-3" href="#__codelineno-9-3"></a>                                #   + NeXusLink + NeXusChoice + registration
+<a id="__codelineno-9-4" name="__codelineno-9-4" href="#__codelineno-9-4"></a>    converters/
+<a id="__codelineno-9-5" name="__codelineno-9-5" href="#__codelineno-9-5"></a>        __init__.py
+<a id="__codelineno-9-6" name="__codelineno-9-6" href="#__codelineno-9-6"></a>        _mapping.py             # nxdl_to_class_name, BASESECTIONS_MAP, type mapping
+<a id="__codelineno-9-7" name="__codelineno-9-7" href="#__codelineno-9-7"></a>        nxdl_to_metainfo.py     # generator: NexusNode → .py via Jinja2
+<a id="__codelineno-9-8" name="__codelineno-9-8" href="#__codelineno-9-8"></a>        templates/
+<a id="__codelineno-9-9" name="__codelineno-9-9" href="#__codelineno-9-9"></a>            nexus.py.j2    # Jinja2 template
+<a id="__codelineno-9-10" name="__codelineno-9-10" href="#__codelineno-9-10"></a>    metainfo/
+<a id="__codelineno-9-11" name="__codelineno-9-11" href="#__codelineno-9-11"></a>        __init__.py             # public API: build_base_classes_package(), build_applications_package()
+<a id="__codelineno-9-12" name="__codelineno-9-12" href="#__codelineno-9-12"></a>        _package.py             # assembles NOMAD Packages
+<a id="__codelineno-9-13" name="__codelineno-9-13" href="#__codelineno-9-13"></a>        base_classes/           # generated base class files
+<a id="__codelineno-9-14" name="__codelineno-9-14" href="#__codelineno-9-14"></a>            __init__.py
+<a id="__codelineno-9-15" name="__codelineno-9-15" href="#__codelineno-9-15"></a>            entry.py            # Entry(Object, basesections.Measurement)
+<a id="__codelineno-9-16" name="__codelineno-9-16" href="#__codelineno-9-16"></a>            sample.py           # Sample(Object, basesections.CompositeSystem)
+<a id="__codelineno-9-17" name="__codelineno-9-17" href="#__codelineno-9-17"></a>            detector.py
+<a id="__codelineno-9-18" name="__codelineno-9-18" href="#__codelineno-9-18"></a>            ...
+<a id="__codelineno-9-19" name="__codelineno-9-19" href="#__codelineno-9-19"></a>        applications/           # generated application definition files
+<a id="__codelineno-9-20" name="__codelineno-9-20" href="#__codelineno-9-20"></a>            __init__.py
+<a id="__codelineno-9-21" name="__codelineno-9-21" href="#__codelineno-9-21"></a>            arpes.py            # Arpes(Entry), application specialization of Entry
+<a id="__codelineno-9-22" name="__codelineno-9-22" href="#__codelineno-9-22"></a>            xps.py              # Xps(Entry), application specialization of Entry
+<a id="__codelineno-9-23" name="__codelineno-9-23" href="#__codelineno-9-23"></a>            ...
+</code></pre></div>
+<hr />
+<h2 id="application-definitions">Application Definitions<a class="headerlink" href="#application-definitions" title="Permanent link">&para;</a></h2>
+<h3 id="the-design-principle-xpsentry-not-xpsobject-measurement">The design principle: <code>Xps(Entry)</code> not <code>Xps(Object, Measurement)</code><a class="headerlink" href="#the-design-principle-xpsentry-not-xpsobject-measurement" title="Permanent link">&para;</a></h3>
+<p>In NeXus, every application definition (e.g. <code>NXxps.nxdl.xml</code>) wraps exactly one <code>NXentry</code> at
+the root level. This is supposed to be a container pattern. However, in practice, no application definition has anything outside of its <code>NXentry</code> group. Therefore, application definitions can be understood as <strong>constraint templates</strong>
+that describe what an <code>NXentry</code> looks like in a specific measurement context.</p>
+<p>Therefore, in Python/NOMAD, application definitions inherit from <code>Entry</code> directly:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-10-1" name="__codelineno-10-1" href="#__codelineno-10-1"></a><span class="k">class</span><span class="w"> </span><span class="nc">Xps</span><span class="p">(</span><span class="n">Entry</span><span class="p">):</span>
+<a id="__codelineno-10-2" name="__codelineno-10-2" href="#__codelineno-10-2"></a>    <span class="n">m_def</span> <span class="o">=</span> <span class="n">Section</span><span class="p">(</span>
+<a id="__codelineno-10-3" name="__codelineno-10-3" href="#__codelineno-10-3"></a>        <span class="n">a_nexus_definition</span><span class="o">=</span><span class="n">NeXusDefinition</span><span class="p">(</span><span class="n">nx_class</span><span class="o">=</span><span class="s2">"NXxps"</span><span class="p">,</span> <span class="n">category</span><span class="o">=</span><span class="s2">"application"</span><span class="p">),</span>
+<a id="__codelineno-10-4" name="__codelineno-10-4" href="#__codelineno-10-4"></a>    <span class="p">)</span>
+<a id="__codelineno-10-5" name="__codelineno-10-5" href="#__codelineno-10-5"></a>    <span class="c1"># SubSections and Quantities from inside NXxps's NXentry group,</span>
+<a id="__codelineno-10-6" name="__codelineno-10-6" href="#__codelineno-10-6"></a>    <span class="c1"># with XPS-specific optionality</span>
+</code></pre></div>
+<ul>
+<li><code>Xps</code> <strong>is</strong> a specialized kind of <code>Entry</code>, not a wrapper around an entry.</li>
+<li>Parser logic is simpler: directly instantiate <code>Xps</code> when an HDF5 file's <code>NX_class</code> attribute says <code>"NXxps"</code>.</li>
+<li>Inheritance chain is clear: <code>Object → Entry → Xps</code>.</li>
+<li>1:1 mapping of NXentry to NOMAD entry is preserved.</li>
+</ul>
+<p><strong>Named concepts</strong> in applications follow the same rule as base classes: a named concept class
+is generated only when a group defines its own quantities. Inherited groups point directly at the
+base class.</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-11-1" name="__codelineno-11-1" href="#__codelineno-11-1"></a><span class="c1"># Generated only if CoordinateSystem has own quantities:</span>
+<a id="__codelineno-11-2" name="__codelineno-11-2" href="#__codelineno-11-2"></a><span class="k">class</span><span class="w"> </span><span class="nc">XpsCoordinateSystem</span><span class="p">(</span><span class="n">CoordinateSystem</span><span class="p">):</span>
+<a id="__codelineno-11-3" name="__codelineno-11-3" href="#__codelineno-11-3"></a>    <span class="c1"># XPS-specific changes to the coordinate_system group</span>
+<a id="__codelineno-11-4" name="__codelineno-11-4" href="#__codelineno-11-4"></a>
+<a id="__codelineno-11-5" name="__codelineno-11-5" href="#__codelineno-11-5"></a><span class="c1"># SubSection on Xps uses it if generated, else references the base:</span>
+<a id="__codelineno-11-6" name="__codelineno-11-6" href="#__codelineno-11-6"></a><span class="n">coordinate_system</span> <span class="o">=</span> <span class="n">SubSection</span><span class="p">(</span><span class="n">section_def</span><span class="o">=</span><span class="n">XpsCoordinateSystem</span><span class="p">)</span>
+</code></pre></div>
+<h3 id="example-generated-file-entrypy-excerpt">Example generated file (<code>entry.py</code>, excerpt)<a class="headerlink" href="#example-generated-file-entrypy-excerpt" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-12-1" name="__codelineno-12-1" href="#__codelineno-12-1"></a><span class="kn">from</span><span class="w"> </span><span class="nn">nomad.datamodel.metainfo</span><span class="w"> </span><span class="kn">import</span> <span class="n">basesections</span>
+<a id="__codelineno-12-2" name="__codelineno-12-2" href="#__codelineno-12-2"></a><span class="kn">from</span><span class="w"> </span><span class="nn">nomad.datamodel.metainfo.basesections</span><span class="w"> </span><span class="kn">import</span> <span class="n">BaseSection</span>
+<a id="__codelineno-12-3" name="__codelineno-12-3" href="#__codelineno-12-3"></a><span class="kn">from</span><span class="w"> </span><span class="nn">pynxtools.nomad.annotations</span><span class="w"> </span><span class="kn">import</span> <span class="n">NeXusDefinition</span><span class="p">,</span> <span class="n">NeXusField</span><span class="p">,</span> <span class="n">NeXusGroup</span>
+<a id="__codelineno-12-4" name="__codelineno-12-4" href="#__codelineno-12-4"></a><span class="kn">from</span><span class="w"> </span><span class="nn">pynxtools.nomad.metainfo.base_classes.object</span><span class="w"> </span><span class="kn">import</span> <span class="n">Object</span>
+<a id="__codelineno-12-5" name="__codelineno-12-5" href="#__codelineno-12-5"></a><span class="kn">from</span><span class="w"> </span><span class="nn">pynxtools.nomad.metainfo.base_classes.user</span><span class="w"> </span><span class="kn">import</span> <span class="n">User</span>
+<a id="__codelineno-12-6" name="__codelineno-12-6" href="#__codelineno-12-6"></a>
+<a id="__codelineno-12-7" name="__codelineno-12-7" href="#__codelineno-12-7"></a><span class="k">class</span><span class="w"> </span><span class="nc">Entry</span><span class="p">(</span><span class="n">Object</span><span class="p">,</span> <span class="n">basesections</span><span class="o">.</span><span class="n">Measurement</span><span class="p">):</span>
+<a id="__codelineno-12-8" name="__codelineno-12-8" href="#__codelineno-12-8"></a><span class="w">    </span><span class="sd">"""Description of a complete, self-consistent measurement."""</span>
+<a id="__codelineno-12-9" name="__codelineno-12-9" href="#__codelineno-12-9"></a>
+<a id="__codelineno-12-10" name="__codelineno-12-10" href="#__codelineno-12-10"></a>    <span class="n">m_def</span> <span class="o">=</span> <span class="n">Section</span><span class="p">(</span>
+<a id="__codelineno-12-11" name="__codelineno-12-11" href="#__codelineno-12-11"></a>        <span class="n">links</span><span class="o">=</span><span class="p">[</span>
+<a id="__codelineno-12-12" name="__codelineno-12-12" href="#__codelineno-12-12"></a>            <span class="s2">"https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXentry.html#nxentry"</span>
+<a id="__codelineno-12-13" name="__codelineno-12-13" href="#__codelineno-12-13"></a>        <span class="p">],</span>
+<a id="__codelineno-12-14" name="__codelineno-12-14" href="#__codelineno-12-14"></a>        <span class="n">categories</span><span class="o">=</span><span class="p">[</span><span class="n">ExperimentCategory</span><span class="p">],</span>
+<a id="__codelineno-12-15" name="__codelineno-12-15" href="#__codelineno-12-15"></a>        <span class="n">a_schema</span><span class="o">=</span><span class="n">SchemaAnnotation</span><span class="p">(</span><span class="n">label</span><span class="o">=</span><span class="s2">"Entry"</span><span class="p">,</span> <span class="n">enabled</span><span class="o">=</span><span class="kc">False</span><span class="p">),</span>
+<a id="__codelineno-12-16" name="__codelineno-12-16" href="#__codelineno-12-16"></a>        <span class="n">a_nexus_definition</span><span class="o">=</span><span class="n">NeXusDefinition</span><span class="p">(</span>
+<a id="__codelineno-12-17" name="__codelineno-12-17" href="#__codelineno-12-17"></a>            <span class="n">nx_class</span><span class="o">=</span><span class="s2">"NXentry"</span><span class="p">,</span>
+<a id="__codelineno-12-18" name="__codelineno-12-18" href="#__codelineno-12-18"></a>            <span class="n">category</span><span class="o">=</span><span class="s2">"base"</span><span class="p">,</span>
+<a id="__codelineno-12-19" name="__codelineno-12-19" href="#__codelineno-12-19"></a>        <span class="p">),</span>
+<a id="__codelineno-12-20" name="__codelineno-12-20" href="#__codelineno-12-20"></a>    <span class="p">)</span>
+<a id="__codelineno-12-21" name="__codelineno-12-21" href="#__codelineno-12-21"></a>
+<a id="__codelineno-12-22" name="__codelineno-12-22" href="#__codelineno-12-22"></a>    <span class="c1"># Cross-file SubSection: a_nexus_group lives on the SubSection itself</span>
+<a id="__codelineno-12-23" name="__codelineno-12-23" href="#__codelineno-12-23"></a>    <span class="c1"># because Detector is defined in a separate file.</span>
+<a id="__codelineno-12-24" name="__codelineno-12-24" href="#__codelineno-12-24"></a>    <span class="n">data</span> <span class="o">=</span> <span class="n">SubSection</span><span class="p">(</span>
+<a id="__codelineno-12-25" name="__codelineno-12-25" href="#__codelineno-12-25"></a>        <span class="n">section_def</span><span class="o">=</span><span class="s2">"pynxtools.nomad.metainfo.base_classes.data.Data"</span><span class="p">,</span>
+<a id="__codelineno-12-26" name="__codelineno-12-26" href="#__codelineno-12-26"></a>        <span class="n">repeats</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+<a id="__codelineno-12-27" name="__codelineno-12-27" href="#__codelineno-12-27"></a>        <span class="n">variable</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+<a id="__codelineno-12-28" name="__codelineno-12-28" href="#__codelineno-12-28"></a>        <span class="n">description</span><span class="o">=</span><span class="p">(</span>
+<a id="__codelineno-12-29" name="__codelineno-12-29" href="#__codelineno-12-29"></a>            <span class="o">...</span>
+<a id="__codelineno-12-30" name="__codelineno-12-30" href="#__codelineno-12-30"></a>        <span class="p">),</span>
+<a id="__codelineno-12-31" name="__codelineno-12-31" href="#__codelineno-12-31"></a>        <span class="n">a_nexus_group</span><span class="o">=</span><span class="n">NeXusGroup</span><span class="p">(</span>
+<a id="__codelineno-12-32" name="__codelineno-12-32" href="#__codelineno-12-32"></a>            <span class="n">nx_class</span><span class="o">=</span><span class="s2">"NXdata"</span><span class="p">,</span>
+<a id="__codelineno-12-33" name="__codelineno-12-33" href="#__codelineno-12-33"></a>            <span class="n">name</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+<a id="__codelineno-12-34" name="__codelineno-12-34" href="#__codelineno-12-34"></a>            <span class="n">name_type</span><span class="o">=</span><span class="s2">"any"</span><span class="p">,</span>
+<a id="__codelineno-12-35" name="__codelineno-12-35" href="#__codelineno-12-35"></a>            <span class="n">optionality</span><span class="o">=</span><span class="s2">"optional"</span><span class="p">,</span>
+<a id="__codelineno-12-36" name="__codelineno-12-36" href="#__codelineno-12-36"></a>        <span class="p">),</span>
+<a id="__codelineno-12-37" name="__codelineno-12-37" href="#__codelineno-12-37"></a>    <span class="p">)</span>
+<a id="__codelineno-12-38" name="__codelineno-12-38" href="#__codelineno-12-38"></a>
+<a id="__codelineno-12-39" name="__codelineno-12-39" href="#__codelineno-12-39"></a>    <span class="c1"># Named concept SubSection: a_nexus_group lives on EntryThumbnail.m_def.</span>
+<a id="__codelineno-12-40" name="__codelineno-12-40" href="#__codelineno-12-40"></a>    <span class="c1"># No description here, EntryThumbnail's own docstring already carries it.</span>
+<a id="__codelineno-12-41" name="__codelineno-12-41" href="#__codelineno-12-41"></a>    <span class="n">thumbnail</span> <span class="o">=</span> <span class="n">SubSection</span><span class="p">(</span>
+<a id="__codelineno-12-42" name="__codelineno-12-42" href="#__codelineno-12-42"></a>        <span class="n">section_def</span><span class="o">=</span><span class="s2">"pynxtools.nomad.metainfo.base_classes.entry.EntryThumbnail"</span><span class="p">,</span>
+<a id="__codelineno-12-43" name="__codelineno-12-43" href="#__codelineno-12-43"></a>        <span class="n">repeats</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+<a id="__codelineno-12-44" name="__codelineno-12-44" href="#__codelineno-12-44"></a>    <span class="p">)</span>
+<a id="__codelineno-12-45" name="__codelineno-12-45" href="#__codelineno-12-45"></a>
+<a id="__codelineno-12-46" name="__codelineno-12-46" href="#__codelineno-12-46"></a>    <span class="n">start_time</span> <span class="o">=</span> <span class="n">Quantity</span><span class="p">(</span>
+<a id="__codelineno-12-47" name="__codelineno-12-47" href="#__codelineno-12-47"></a>        <span class="nb">type</span><span class="o">=</span><span class="n">Datetime</span><span class="p">,</span>
+<a id="__codelineno-12-48" name="__codelineno-12-48" href="#__codelineno-12-48"></a>        <span class="n">links</span><span class="o">=</span><span class="p">[</span>
+<a id="__codelineno-12-49" name="__codelineno-12-49" href="#__codelineno-12-49"></a>            <span class="s2">"https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXentry.html#nxentry-start-time-field"</span>
+<a id="__codelineno-12-50" name="__codelineno-12-50" href="#__codelineno-12-50"></a>        <span class="p">],</span>
+<a id="__codelineno-12-51" name="__codelineno-12-51" href="#__codelineno-12-51"></a>        <span class="n">description</span><span class="o">=</span><span class="p">(</span><span class="s2">"Starting time of measurement"</span><span class="p">),</span>
+<a id="__codelineno-12-52" name="__codelineno-12-52" href="#__codelineno-12-52"></a>        <span class="n">a_nexus_field</span><span class="o">=</span><span class="n">NeXusField</span><span class="p">(</span>
+<a id="__codelineno-12-53" name="__codelineno-12-53" href="#__codelineno-12-53"></a>            <span class="n">name</span><span class="o">=</span><span class="s2">"start_time"</span><span class="p">,</span>
+<a id="__codelineno-12-54" name="__codelineno-12-54" href="#__codelineno-12-54"></a>            <span class="nb">type</span><span class="o">=</span><span class="s2">"NX_DATE_TIME"</span><span class="p">,</span>
+<a id="__codelineno-12-55" name="__codelineno-12-55" href="#__codelineno-12-55"></a>            <span class="n">name_type</span><span class="o">=</span><span class="s2">"specified"</span><span class="p">,</span>
+<a id="__codelineno-12-56" name="__codelineno-12-56" href="#__codelineno-12-56"></a>            <span class="n">optionality</span><span class="o">=</span><span class="s2">"optional"</span><span class="p">,</span>
+<a id="__codelineno-12-57" name="__codelineno-12-57" href="#__codelineno-12-57"></a>        <span class="p">),</span>
+<a id="__codelineno-12-58" name="__codelineno-12-58" href="#__codelineno-12-58"></a>        <span class="n">a_eln</span><span class="o">=</span><span class="n">ELNAnnotation</span><span class="p">(</span>
+<a id="__codelineno-12-59" name="__codelineno-12-59" href="#__codelineno-12-59"></a>            <span class="n">component</span><span class="o">=</span><span class="n">ELNComponentEnum</span><span class="o">.</span><span class="n">DateTimeEditQuantity</span><span class="p">,</span>
+<a id="__codelineno-12-60" name="__codelineno-12-60" href="#__codelineno-12-60"></a>        <span class="p">),</span>
+<a id="__codelineno-12-61" name="__codelineno-12-61" href="#__codelineno-12-61"></a>    <span class="p">)</span>
+<a id="__codelineno-12-62" name="__codelineno-12-62" href="#__codelineno-12-62"></a>
+<a id="__codelineno-12-63" name="__codelineno-12-63" href="#__codelineno-12-63"></a>    <span class="k">def</span><span class="w"> </span><span class="nf">normalize</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">archive</span><span class="p">:</span> <span class="n">EntryArchive</span><span class="p">,</span> <span class="n">logger</span><span class="p">:</span> <span class="n">BoundLogger</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<a id="__codelineno-12-64" name="__codelineno-12-64" href="#__codelineno-12-64"></a>        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">normalize</span><span class="p">(</span><span class="n">archive</span><span class="p">,</span> <span class="n">logger</span><span class="p">)</span>
+<a id="__codelineno-12-65" name="__codelineno-12-65" href="#__codelineno-12-65"></a>        <span class="o">...</span>
+<a id="__codelineno-12-66" name="__codelineno-12-66" href="#__codelineno-12-66"></a>
+<a id="__codelineno-12-67" name="__codelineno-12-67" href="#__codelineno-12-67"></a>
+<a id="__codelineno-12-68" name="__codelineno-12-68" href="#__codelineno-12-68"></a><span class="k">class</span><span class="w"> </span><span class="nc">EntryThumbnail</span><span class="p">(</span><span class="n">Note</span><span class="p">):</span>
+<a id="__codelineno-12-69" name="__codelineno-12-69" href="#__codelineno-12-69"></a><span class="w">    </span><span class="sd">"""</span>
+<a id="__codelineno-12-70" name="__codelineno-12-70" href="#__codelineno-12-70"></a><span class="sd">    A small image that is representative of the entry. An example of this is a</span>
+<a id="__codelineno-12-71" name="__codelineno-12-71" href="#__codelineno-12-71"></a><span class="sd">    640x480 jpeg image automatically produced by a low resolution plot of the</span>
+<a id="__codelineno-12-72" name="__codelineno-12-72" href="#__codelineno-12-72"></a><span class="sd">    NXdata.</span>
+<a id="__codelineno-12-73" name="__codelineno-12-73" href="#__codelineno-12-73"></a><span class="sd">    """</span>
+<a id="__codelineno-12-74" name="__codelineno-12-74" href="#__codelineno-12-74"></a>
+<a id="__codelineno-12-75" name="__codelineno-12-75" href="#__codelineno-12-75"></a>    <span class="n">m_def</span> <span class="o">=</span> <span class="n">Section</span><span class="p">(</span>
+<a id="__codelineno-12-76" name="__codelineno-12-76" href="#__codelineno-12-76"></a>        <span class="n">links</span><span class="o">=</span><span class="p">[</span>
+<a id="__codelineno-12-77" name="__codelineno-12-77" href="#__codelineno-12-77"></a>            <span class="s2">"https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXentry.html#nxentry-thumbnail-group"</span>
+<a id="__codelineno-12-78" name="__codelineno-12-78" href="#__codelineno-12-78"></a>        <span class="p">],</span>
+<a id="__codelineno-12-79" name="__codelineno-12-79" href="#__codelineno-12-79"></a>        <span class="n">a_nexus_group</span><span class="o">=</span><span class="n">NeXusGroup</span><span class="p">(</span>
+<a id="__codelineno-12-80" name="__codelineno-12-80" href="#__codelineno-12-80"></a>            <span class="n">nx_class</span><span class="o">=</span><span class="s2">"NXnote"</span><span class="p">,</span>
+<a id="__codelineno-12-81" name="__codelineno-12-81" href="#__codelineno-12-81"></a>            <span class="n">name</span><span class="o">=</span><span class="s2">"thumbnail"</span><span class="p">,</span>
+<a id="__codelineno-12-82" name="__codelineno-12-82" href="#__codelineno-12-82"></a>            <span class="n">name_type</span><span class="o">=</span><span class="s2">"specified"</span><span class="p">,</span>
+<a id="__codelineno-12-83" name="__codelineno-12-83" href="#__codelineno-12-83"></a>            <span class="n">optionality</span><span class="o">=</span><span class="s2">"optional"</span><span class="p">,</span>
+<a id="__codelineno-12-84" name="__codelineno-12-84" href="#__codelineno-12-84"></a>        <span class="p">),</span>
+<a id="__codelineno-12-85" name="__codelineno-12-85" href="#__codelineno-12-85"></a>    <span class="p">)</span>
+<a id="__codelineno-12-86" name="__codelineno-12-86" href="#__codelineno-12-86"></a>
+<a id="__codelineno-12-87" name="__codelineno-12-87" href="#__codelineno-12-87"></a>    <span class="nb">type</span> <span class="o">=</span> <span class="n">Quantity</span><span class="p">(</span>
+<a id="__codelineno-12-88" name="__codelineno-12-88" href="#__codelineno-12-88"></a>        <span class="nb">type</span><span class="o">=</span><span class="n">MEnum</span><span class="p">([</span><span class="s2">"image/*"</span><span class="p">]),</span>
+<a id="__codelineno-12-89" name="__codelineno-12-89" href="#__codelineno-12-89"></a>        <span class="n">links</span><span class="o">=</span><span class="p">[</span>
+<a id="__codelineno-12-90" name="__codelineno-12-90" href="#__codelineno-12-90"></a>            <span class="s2">"https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXentry.html#nxentry-thumbnail-type-attribute"</span>
+<a id="__codelineno-12-91" name="__codelineno-12-91" href="#__codelineno-12-91"></a>        <span class="p">],</span>
+<a id="__codelineno-12-92" name="__codelineno-12-92" href="#__codelineno-12-92"></a>        <span class="n">description</span><span class="o">=</span><span class="p">(</span><span class="s2">"The mime type should be an ``image/*``"</span><span class="p">),</span>
+<a id="__codelineno-12-93" name="__codelineno-12-93" href="#__codelineno-12-93"></a>        <span class="n">a_nexus_attribute</span><span class="o">=</span><span class="n">NeXusAttribute</span><span class="p">(</span>
+<a id="__codelineno-12-94" name="__codelineno-12-94" href="#__codelineno-12-94"></a>            <span class="n">name</span><span class="o">=</span><span class="s2">"type"</span><span class="p">,</span>
+<a id="__codelineno-12-95" name="__codelineno-12-95" href="#__codelineno-12-95"></a>            <span class="nb">type</span><span class="o">=</span><span class="s2">"NX_CHAR"</span><span class="p">,</span>
+<a id="__codelineno-12-96" name="__codelineno-12-96" href="#__codelineno-12-96"></a>            <span class="n">name_type</span><span class="o">=</span><span class="s2">"specified"</span><span class="p">,</span>
+<a id="__codelineno-12-97" name="__codelineno-12-97" href="#__codelineno-12-97"></a>            <span class="n">optionality</span><span class="o">=</span><span class="s2">"optional"</span><span class="p">,</span>
+<a id="__codelineno-12-98" name="__codelineno-12-98" href="#__codelineno-12-98"></a>            <span class="n">enumeration</span><span class="o">=</span><span class="p">[</span><span class="s2">"image/*"</span><span class="p">],</span>
+<a id="__codelineno-12-99" name="__codelineno-12-99" href="#__codelineno-12-99"></a>            <span class="n">deprecated</span><span class="o">=</span><span class="s2">"Use the `type` field instead"</span><span class="p">,</span>
+<a id="__codelineno-12-100" name="__codelineno-12-100" href="#__codelineno-12-100"></a>        <span class="p">),</span>
+<a id="__codelineno-12-101" name="__codelineno-12-101" href="#__codelineno-12-101"></a>        <span class="n">a_eln</span><span class="o">=</span><span class="n">ELNAnnotation</span><span class="p">(</span>
+<a id="__codelineno-12-102" name="__codelineno-12-102" href="#__codelineno-12-102"></a>            <span class="n">component</span><span class="o">=</span><span class="n">ELNComponentEnum</span><span class="o">.</span><span class="n">EnumEditQuantity</span><span class="p">,</span>
+<a id="__codelineno-12-103" name="__codelineno-12-103" href="#__codelineno-12-103"></a>            <span class="n">default</span><span class="o">=</span><span class="s2">"image/*"</span><span class="p">,</span>
+<a id="__codelineno-12-104" name="__codelineno-12-104" href="#__codelineno-12-104"></a>        <span class="p">),</span>
+<a id="__codelineno-12-105" name="__codelineno-12-105" href="#__codelineno-12-105"></a>    <span class="p">)</span>
+<a id="__codelineno-12-106" name="__codelineno-12-106" href="#__codelineno-12-106"></a>
+<a id="__codelineno-12-107" name="__codelineno-12-107" href="#__codelineno-12-107"></a>    <span class="k">def</span><span class="w"> </span><span class="nf">normalize</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">archive</span><span class="p">:</span> <span class="n">EntryArchive</span><span class="p">,</span> <span class="n">logger</span><span class="p">:</span> <span class="n">BoundLogger</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<a id="__codelineno-12-108" name="__codelineno-12-108" href="#__codelineno-12-108"></a>        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">normalize</span><span class="p">(</span><span class="n">archive</span><span class="p">,</span> <span class="n">logger</span><span class="p">)</span>
+</code></pre></div>
+<h3 id="named-concepts-vs-cross-file-subsections">Named concepts vs. cross-file <code>SubSections</code><a class="headerlink" href="#named-concepts-vs-cross-file-subsections" title="Permanent link">&para;</a></h3>
+<p>A named concept class is generated only when the group defines <strong>its own quantities</strong> that
+differ from the generic class: changed optionality, extra fields, different
+type/units/enumeration, or a description that diverges from the base class. Groups that
+exist purely for occurrence context (e.g. a <code>backgroundBACKGROUND</code> group with no
+additional fields and the same documentation as the base) point their <code>SubSection</code>
+directly at the generic class; no named concept class is generated. This rule also prevents
+circular imports since every class transitively extends <code>Object</code> (the generated <code>NXobject</code>
+class).</p>
+<table>
+<thead>
+<tr>
+<th>SubSection target</th>
+<th><code>a_nexus_group</code> location</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Class defined in <strong>this same file</strong> (named concept)</td>
+<td>On the concept class <code>m_def</code></td>
+</tr>
+<tr>
+<td>Class defined in <strong>another file</strong> (cross-file reference)</td>
+<td>On the <code>SubSection</code></td>
+</tr>
+</tbody>
+</table>
+<p>This means: named concept classes fully self-describe their occurrence context.
+Cross-file <code>SubSections</code> carry the occurrence context because the target class is generic
+and may appear in multiple parent contexts.</p>
+<h3 id="repeats-derivation"><code>repeats</code> derivation<a class="headerlink" href="#repeats-derivation" title="Permanent link">&para;</a></h3>
+<p>The <code>repeats</code> flag on a generated <code>SubSection</code> is derived from the NXDL <code>@maxOccurs</code>
+attribute (via <code>NexusGroup.occurrence_limits[1]</code>):</p>
+<ul>
+<li><code>repeats=True</code> if more than one instance is structurally allowed. This is the case if
+  the group is variadic (<code>name_type</code> is <code>"any"</code> or <code>"partial"</code>) <strong>and</strong> <code>maxOccurs</code>
+  is absent or greater than 1, <strong>or</strong> the group is fixed-name but NXDL explicitly sets
+  <code>maxOccurs &gt; 1</code>.</li>
+<li><code>repeats=False</code> otherwise, including the case where a variadic group has
+  <code>maxOccurs=1</code> (meaning exactly one instance with a user-chosen name is allowed but
+  not more).</li>
+</ul>
+<p><code>None</code> in <code>occurrence_limits</code> means the attribute was absent from the NXDL, which is
+treated as unbounded.</p>
+<hr />
+<h2 id="shape-representation">Shape representation<a class="headerlink" href="#shape-representation" title="Permanent link">&para;</a></h2>
+<p>NXDL <code>&lt;dimensions&gt;</code> elements map to <code>shape</code> on the generated <code>Quantity</code>. Concrete
+integer sizes are preserved as-is. Unbounded or symbolically-named dimensions (e.g.
+<code>nP</code>, <code>nz</code>) become the wildcard <code>"*"</code>. NOMAD does not interpret NeXus symbol names.
+Symbol definitions from the NXDL <code>&lt;symbols&gt;</code> block are preserved in
+<code>NeXusDefinition.symbols</code> on the class <code>m_def</code>.</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-13-1" name="__codelineno-13-1" href="#__codelineno-13-1"></a><span class="c1"># NXDL: &lt;dimensions rank="2"&gt;&lt;dim index="1" value="nP"/&gt;&lt;dim index="2" value="3"/&gt;&lt;/dimensions&gt;</span>
+<a id="__codelineno-13-2" name="__codelineno-13-2" href="#__codelineno-13-2"></a><span class="n">data</span> <span class="o">=</span> <span class="n">Quantity</span><span class="p">(</span>
+<a id="__codelineno-13-3" name="__codelineno-13-3" href="#__codelineno-13-3"></a>    <span class="nb">type</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">,</span>
+<a id="__codelineno-13-4" name="__codelineno-13-4" href="#__codelineno-13-4"></a>    <span class="n">shape</span><span class="o">=</span><span class="p">[</span><span class="s2">"*"</span><span class="p">,</span> <span class="mi">3</span><span class="p">],</span>
+<a id="__codelineno-13-5" name="__codelineno-13-5" href="#__codelineno-13-5"></a>    <span class="o">...</span>
+<a id="__codelineno-13-6" name="__codelineno-13-6" href="#__codelineno-13-6"></a><span class="p">)</span>
+</code></pre></div>
+<hr />
+<h2 id="units">Units<a class="headerlink" href="#units" title="Permanent link">&para;</a></h2>
+<p>A NXDL <code>&lt;field&gt;</code>'s <code>@units</code> category (e.g. <code>NX_ENERGY</code>) maps to <code>dimensionality</code>
+(a pint-parseable dimensionality string) and <code>default_unit</code> on the generated
+<code>Quantity</code>:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-14-1" name="__codelineno-14-1" href="#__codelineno-14-1"></a><span class="c1"># NXDL: &lt;field name="energy" type="NX_FLOAT" units="NX_ENERGY"&gt;</span>
+<a id="__codelineno-14-2" name="__codelineno-14-2" href="#__codelineno-14-2"></a><span class="n">energy</span> <span class="o">=</span> <span class="n">Quantity</span><span class="p">(</span>
+<a id="__codelineno-14-3" name="__codelineno-14-3" href="#__codelineno-14-3"></a>    <span class="nb">type</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">,</span>
+<a id="__codelineno-14-4" name="__codelineno-14-4" href="#__codelineno-14-4"></a>    <span class="n">dimensionality</span><span class="o">=</span><span class="s2">"[mass] * [length] ** 2 / [time] ** 2"</span><span class="p">,</span>
+<a id="__codelineno-14-5" name="__codelineno-14-5" href="#__codelineno-14-5"></a>    <span class="n">unit</span><span class="o">=</span><span class="s2">"joule"</span><span class="p">,</span>
+<a id="__codelineno-14-6" name="__codelineno-14-6" href="#__codelineno-14-6"></a>    <span class="o">...</span>
+<a id="__codelineno-14-7" name="__codelineno-14-7" href="#__codelineno-14-7"></a><span class="p">)</span>
+</code></pre></div>
+<p><code>NX_ANY</code> is different: it means the field's unit is <strong>not fixed by the
+schema at all</strong> — the actual unit varies per file/value. There is no
+<code>dimensionality</code>/<code>unit</code> to assign, so instead the generated <code>Quantity</code> gets
+<code>flexible_unit=True</code> — a first-class NOMAD <code>Quantity</code> parameter for exactly
+this case ("this quantity may have a unit that is not the default unit");
+NOMAD then stores the value in full-storage mode (<code>MQuantity</code>), preserving
+whichever unit was actually written:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-15-1" name="__codelineno-15-1" href="#__codelineno-15-1"></a><span class="c1"># NXDL: &lt;field name="resolution" type="NX_FLOAT" units="NX_ANY"&gt;</span>
+<a id="__codelineno-15-2" name="__codelineno-15-2" href="#__codelineno-15-2"></a><span class="n">resolution</span> <span class="o">=</span> <span class="n">Quantity</span><span class="p">(</span>
+<a id="__codelineno-15-3" name="__codelineno-15-3" href="#__codelineno-15-3"></a>    <span class="nb">type</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">,</span>
+<a id="__codelineno-15-4" name="__codelineno-15-4" href="#__codelineno-15-4"></a>    <span class="n">flexible_unit</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+<a id="__codelineno-15-5" name="__codelineno-15-5" href="#__codelineno-15-5"></a>    <span class="o">...</span>
+<a id="__codelineno-15-6" name="__codelineno-15-6" href="#__codelineno-15-6"></a>    <span class="n">a_eln</span><span class="o">=</span><span class="n">ELNAnnotation</span><span class="p">(</span><span class="n">component</span><span class="o">=</span><span class="n">ELNComponentEnum</span><span class="o">.</span><span class="n">NumberEditQuantity</span><span class="p">),</span>
+<a id="__codelineno-15-7" name="__codelineno-15-7" href="#__codelineno-15-7"></a><span class="p">)</span>
+</code></pre></div>
+<p>No special ELN handling is needed beyond the usual <code>NumberEditQuantity</code>: its
+GUI implementation already supports typing a value together with any unit
+(and a unit-selection dropdown) when the field has no fixed dimensionality —
+exactly the <code>NX_ANY</code> case.</p>
+<hr />
+<h2 id="additive-only-generation">Additive-only generation<a class="headerlink" href="#additive-only-generation" title="Permanent link">&para;</a></h2>
+<p>The generator never removes hand-written additions. When a file already exists:</p>
+<ul>
+<li>If <code>force=False</code> (default): the file is rewritten whenever the generated source differs
+  from the existing file <strong>and</strong> the existing file contains no user-added members (methods
+  or quantities not present in the new output). This means generator-driven changes
+  (descriptions, annotation values, new members) propagate automatically, while files with
+  custom <code>normalize()</code> logic are protected.</li>
+<li>If <code>force=True</code>: the file is always overwritten.</li>
+<li>In <code>dry_run</code> mode: returns <code>True</code> if the file would differ; no disk write occurs.</li>
+</ul>
+<p>User-added members are detected by comparing the set of names in the existing file against
+the set the generator would produce. Any name present in the existing file but absent from
+the new output is considered user-added.</p>
+<hr />
+<h2 id="cli">CLI<a class="headerlink" href="#cli" title="Permanent link">&para;</a></h2>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-16-1" name="__codelineno-16-1" href="#__codelineno-16-1"></a><span class="c1"># Generate one class (base or application)</span>
+<a id="__codelineno-16-2" name="__codelineno-16-2" href="#__codelineno-16-2"></a>pynx<span class="w"> </span>nomad<span class="w"> </span>generate-metainfo<span class="w"> </span>--nxdl<span class="w"> </span>NXentry
+<a id="__codelineno-16-3" name="__codelineno-16-3" href="#__codelineno-16-3"></a>pynx<span class="w"> </span>nomad<span class="w"> </span>generate-metainfo<span class="w"> </span>--nxdl<span class="w"> </span>NXarpes
+<a id="__codelineno-16-4" name="__codelineno-16-4" href="#__codelineno-16-4"></a>
+<a id="__codelineno-16-5" name="__codelineno-16-5" href="#__codelineno-16-5"></a><span class="c1"># Generate all base classes</span>
+<a id="__codelineno-16-6" name="__codelineno-16-6" href="#__codelineno-16-6"></a>pynx<span class="w"> </span>nomad<span class="w"> </span>generate-metainfo<span class="w"> </span>--all-base
+<a id="__codelineno-16-7" name="__codelineno-16-7" href="#__codelineno-16-7"></a>
+<a id="__codelineno-16-8" name="__codelineno-16-8" href="#__codelineno-16-8"></a><span class="c1"># Generate all application definitions</span>
+<a id="__codelineno-16-9" name="__codelineno-16-9" href="#__codelineno-16-9"></a>pynx<span class="w"> </span>nomad<span class="w"> </span>generate-metainfo<span class="w"> </span>--all-applications
+<a id="__codelineno-16-10" name="__codelineno-16-10" href="#__codelineno-16-10"></a>
+<a id="__codelineno-16-11" name="__codelineno-16-11" href="#__codelineno-16-11"></a><span class="c1"># Generate all categories (apps first, then base --force for cross-refs)</span>
+<a id="__codelineno-16-12" name="__codelineno-16-12" href="#__codelineno-16-12"></a>pynx<span class="w"> </span>nomad<span class="w"> </span>generate-metainfo<span class="w"> </span>--all
+<a id="__codelineno-16-13" name="__codelineno-16-13" href="#__codelineno-16-13"></a>
+<a id="__codelineno-16-14" name="__codelineno-16-14" href="#__codelineno-16-14"></a><span class="c1"># CI check: fail if committed files differ from what the generator would produce</span>
+<a id="__codelineno-16-15" name="__codelineno-16-15" href="#__codelineno-16-15"></a>pynx<span class="w"> </span>nomad<span class="w"> </span>generate-metainfo<span class="w"> </span>--all<span class="w"> </span>--dry-run
+<a id="__codelineno-16-16" name="__codelineno-16-16" href="#__codelineno-16-16"></a>
+<a id="__codelineno-16-17" name="__codelineno-16-17" href="#__codelineno-16-17"></a><span class="c1"># Force regeneration (overwrite existing files)</span>
+<a id="__codelineno-16-18" name="__codelineno-16-18" href="#__codelineno-16-18"></a>pynx<span class="w"> </span>nomad<span class="w"> </span>generate-metainfo<span class="w"> </span>--all<span class="w"> </span>--force
+<a id="__codelineno-16-19" name="__codelineno-16-19" href="#__codelineno-16-19"></a>
+<a id="__codelineno-16-20" name="__codelineno-16-20" href="#__codelineno-16-20"></a><span class="c1"># Generate into a different package (e.g. nomad-measurements)</span>
+<a id="__codelineno-16-21" name="__codelineno-16-21" href="#__codelineno-16-21"></a>pynx<span class="w"> </span>nomad<span class="w"> </span>generate-metainfo<span class="w"> </span>--all<span class="w"> </span>--output-dir<span class="w"> </span>../nomad-measurements/nexus/metainfo/base_classes
+</code></pre></div>
+<hr />
+<h2 id="package-assembly">Package assembly<a class="headerlink" href="#package-assembly" title="Permanent link">&para;</a></h2>
+<p><code>metainfo/_package.py</code> imports all generated modules and assembles NOMAD <code>Package</code> objects:</p>
+<h3 id="base-classes-package">Base classes package<a class="headerlink" href="#base-classes-package" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-17-1" name="__codelineno-17-1" href="#__codelineno-17-1"></a><span class="kn">from</span><span class="w"> </span><span class="nn">pynxtools.nomad.metainfo</span><span class="w"> </span><span class="kn">import</span> <span class="n">build_base_classes_package</span>
+<a id="__codelineno-17-2" name="__codelineno-17-2" href="#__codelineno-17-2"></a>
+<a id="__codelineno-17-3" name="__codelineno-17-3" href="#__codelineno-17-3"></a><span class="n">pkg_base</span> <span class="o">=</span> <span class="n">build_base_classes_package</span><span class="p">()</span>
+<a id="__codelineno-17-4" name="__codelineno-17-4" href="#__codelineno-17-4"></a><span class="nb">print</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">pkg_base</span><span class="o">.</span><span class="n">section_definitions</span><span class="p">),</span> <span class="s2">"base sections"</span><span class="p">)</span>
+</code></pre></div>
+<h3 id="applications-package">Applications package<a class="headerlink" href="#applications-package" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-18-1" name="__codelineno-18-1" href="#__codelineno-18-1"></a><span class="kn">from</span><span class="w"> </span><span class="nn">pynxtools.nomad.metainfo</span><span class="w"> </span><span class="kn">import</span> <span class="n">build_applications_package</span>
+<a id="__codelineno-18-2" name="__codelineno-18-2" href="#__codelineno-18-2"></a>
+<a id="__codelineno-18-3" name="__codelineno-18-3" href="#__codelineno-18-3"></a><span class="n">pkg_apps</span> <span class="o">=</span> <span class="n">build_applications_package</span><span class="p">()</span>
+<a id="__codelineno-18-4" name="__codelineno-18-4" href="#__codelineno-18-4"></a><span class="nb">print</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">pkg_apps</span><span class="o">.</span><span class="n">section_definitions</span><span class="p">),</span> <span class="s2">"application sections"</span><span class="p">)</span>
+</code></pre></div>
+<p>During package assembly, <code>__init_metainfo__()</code> resolves all <code>SubSection.section_def</code>
+string fully qualified names (FQNs) into live class references.</p>
+<hr />
+<h2 id="inheritance-chain">Inheritance chain<a class="headerlink" href="#inheritance-chain" title="Permanent link">&para;</a></h2>
+<p>Every generated class extends its <strong>NeXus parent</strong> class (the Python class generated from
+the NXDL <code>extends</code> attribute) and — where a semantic match exists — additionally inherits
+from the corresponding NOMAD base section:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-19-1" name="__codelineno-19-1" href="#__codelineno-19-1"></a><span class="k">class</span><span class="w"> </span><span class="nc">Object</span><span class="p">(</span><span class="n">BaseSection</span><span class="p">):</span> <span class="o">...</span>            <span class="c1"># NXobject → root</span>
+<a id="__codelineno-19-2" name="__codelineno-19-2" href="#__codelineno-19-2"></a><span class="k">class</span><span class="w"> </span><span class="nc">Entry</span><span class="p">(</span><span class="n">Object</span><span class="p">,</span> <span class="n">basesections</span><span class="o">.</span><span class="n">Measurement</span><span class="p">):</span> <span class="o">...</span>
+<a id="__codelineno-19-3" name="__codelineno-19-3" href="#__codelineno-19-3"></a><span class="k">class</span><span class="w"> </span><span class="nc">Sample</span><span class="p">(</span><span class="n">Component</span><span class="p">,</span> <span class="n">basesections</span><span class="o">.</span><span class="n">CompositeSystem</span><span class="p">):</span> <span class="o">...</span>
+<a id="__codelineno-19-4" name="__codelineno-19-4" href="#__codelineno-19-4"></a><span class="k">class</span><span class="w"> </span><span class="nc">SampleComponent</span><span class="p">(</span><span class="n">Component</span><span class="p">,</span> <span class="n">basesections</span><span class="o">.</span><span class="n">Component</span><span class="p">):</span> <span class="o">...</span>
+<a id="__codelineno-19-5" name="__codelineno-19-5" href="#__codelineno-19-5"></a><span class="o">...</span>
+</code></pre></div>
+<p>The NOMAD base section is imported <strong>as the module</strong> (<code>from nomad.datamodel.metainfo import
+basesections</code>) and used as <code>basesections.Measurement</code> in the class signature. This avoids
+name collisions when the generated NeXus class and the NOMAD base share the same Python
+name (e.g. both <code>Component</code>).</p>
+<p>The secondary NOMAD base is only added when the NeXus <code>extends</code> chain does not already
+provide it; thus preventing duplicate entries in the method resolution order (MRO).</p>
+<table>
+<thead>
+<tr>
+<th>NXDL class</th>
+<th>Generated class signature</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>NXobject</code></td>
+<td><code>Object(BaseSection)</code></td>
+</tr>
+<tr>
+<td><code>NXentry</code></td>
+<td><code>Entry(Object, basesections.Measurement)</code></td>
+</tr>
+<tr>
+<td><code>NXprocess</code></td>
+<td><code>Process(Object, basesections.ActivityStep)</code></td>
+</tr>
+<tr>
+<td><code>NXsample</code></td>
+<td><code>Sample(Component, basesections.CompositeSystem)</code></td>
+</tr>
+<tr>
+<td><code>NXsample_component</code></td>
+<td><code>SampleComponent(Component, basesections.Component)</code></td>
+</tr>
+<tr>
+<td><code>NXfabrication</code></td>
+<td><code>Fabrication(Object, basesections.Instrument)</code></td>
+</tr>
+<tr>
+<td><code>NXdata</code></td>
+<td><code>Data(Object, basesections.ActivityResult)</code></td>
+</tr>
+<tr>
+<td>all others</td>
+<td><code>&lt;Class&gt;(Object)</code></td>
+</tr>
+</tbody>
+</table>
+<div class="admonition warning">
+<p class="admonition-title">In development</p>
+<p>This mapping is still being refactored, alongside the refactoring of the Base Sections v2. <code>NXprocess</code>, <code>NXfabrication</code>, and <code>NXdata</code> are especially not mapped in a proper way; this still needs to be addressed later.</p>
+</div>
+<hr />
+<h2 id="naming-conventions">Naming conventions<a class="headerlink" href="#naming-conventions" title="Permanent link">&para;</a></h2>
+<h3 id="class-names">Class names<a class="headerlink" href="#class-names" title="Permanent link">&para;</a></h3>
+<p>Top-level classes — one per generated NXDL class — are camel-cased directly from
+the NXDL name: <code>nxdl_to_class_name("NXmicrostructure_ipf")</code> → <code>"MicrostructureIpf"</code>.</p>
+<p><strong>Named concept classes</strong> are generated for a group occurrence that adds its own
+quantities/children beyond its generic class (e.g. <code>MpesInstrument</code> for the
+<code>INSTRUMENT</code> group inside <code>NXmpes</code>). They are are named <code>{ParentClassName}{Suffix}</code>,
+where <code>Suffix</code> depends on the group's <code>name_type</code>, exactly like <a href="#subsection-names">Subsection
+names</a> below but CamelCased instead of lowercased:</p>
+<ul>
+<li><code>name_type="specified"</code>: suffix from the NXDL name, e.g. <code>temperature_log</code> →
+  <code>TemperatureLog</code> → <code>SampleTemperatureLog</code>.</li>
+<li><code>name_type="any"</code>: suffix from <code>node.name</code> — the NXDL's explicit <code>name=</code>
+  attribute if it has one (e.g. <code>name="BIAS_SWEEP"</code> → <code>BiasSweep</code> →
+  <code>StsInstrumentBiasSweep</code>), otherwise the NX class itself (e.g. any <code>NXlog</code> →
+  <code>Log</code> → <code>ObjectLog</code>).</li>
+<li><code>name_type="partial"</code>: the lower-case prefix of the partial name is
+  CamelCased (splitting on <code>_</code>, same as the "specified" case), then the
+  upper-case marker is appended as-is — e.g. <code>peakPEAK</code> → <code>Peak</code> → <code>FitPeak</code>,
+  or <code>voltage_sensorTAG</code> → <code>VoltageSensorTAG</code> →
+  <code>SpmInstrumentVoltageSensorTAG</code> (not <code>Voltage_sensorTAG</code>, which is what a
+  naive "just uppercase the first letter" rule would produce).</li>
+</ul>
+<p>If the resulting name would equal the base class name itself (circular
+inheritance, e.g. <code>NXapm_measurement</code>'s own <code>measurement</code> child resolving to
+<code>ApmMeasurement</code> == its own base <code>ApmMeasurement</code>), it is re-prefixed with the
+full type-based name instead — e.g. <code>ApmApmMeasurement</code>. This is intentional,
+not a naming bug.</p>
+<h3 id="quantity-names">Quantity names<a class="headerlink" href="#quantity-names" title="Permanent link">&para;</a></h3>
+<p>Field and attribute names are kept as-is (NeXus convention uses snake_case
+throughout). Two cases get a <code>_quantity</code> suffix instead:</p>
+<ul>
+<li><strong>Python keywords</strong>, always — e.g. <code>lambda</code> → <code>lambda_quantity</code>.</li>
+<li><strong>An array-shaped field</strong> named like a NOMAD <code>BaseSection</code> quantity
+  (<code>name</code>, <code>datetime</code>, <code>lab_id</code>, <code>description</code>) — e.g. a <code>shape=["*"]</code> field
+  literally named <code>name</code> → <code>name_quantity</code>.</li>
+</ul>
+<p>A <strong>scalar</strong> field named like one of those four is <em>not</em> suffixed — NOMAD
+allows a subclass to directly override an inherited quantity, replacing it
+cleanly rather than merging or conflicting with it (confirmed by reading
+<code>Section.__init_metainfo__()</code> in <code>nomad/metainfo/metainfo.py</code>: it only raises
+<code>MetainfoError</code> when overriding properties are different <em>kinds</em> — Quantity
+vs. SubSection — never for two Quantities of different type/shape; and
+confirmed type-compatible — <code>str</code>/<code>Datetime</code> as appropriate — across every
+occurrence of these four names in the whole NXDL corpus).</p>
+<p>The array case is still suffixed even though NOMAD itself wouldn't object,
+because <code>BaseSection</code>'s own <code>normalize()</code> and related logic
+(<code>nomad/datamodel/metainfo/basesections.py</code>) treat <code>self.name</code>/
+<code>self.datetime</code>/etc. as scalars throughout its inheritance chain (e.g.
+<code>archive.metadata.entry_name = self.name</code>, <code>Workflow(name=self.name)</code>) — an
+array there is accepted by NOMAD's metaclass but silently wrong at runtime,
+which the generator has no way to rely on NOMAD to catch. This was a real
+case, not hypothetical: <code>NXmicrostructure_score_config</code> had a field literally
+named <code>name</code> holding a one-dimensional array of per-texture-component names
+(one string per entry, deliberately — see
+<a href="https://github.com/FAIRmat-NFDI/nexus_definitions/pull/428">nexus_definitions#428</a>,
+rejected upstream because the array is intentional). That field has since
+been renamed to <code>names</code> upstream, removing the collision at the source, but
+the shape check stays as a general safeguard for any other such field.</p>
+<p>Separately, when a field name collides with a same-class or ancestor
+<code>SubSection</code> name, the field always gets <code>_quantity</code> regardless of shape.
+This collision can't be resolved by overriding — <code>SubSection</code> and <code>Quantity</code>
+are different NOMAD property kinds, and NOMAD rejects the combination outright.
+See <a href="#subsection-names">Subsection names</a> below for the full naming rules,
+including the symmetric case where a named concept group conflicts with an
+ancestor field.</p>
+<h3 id="subsection-names">Subsection names<a class="headerlink" href="#subsection-names" title="Permanent link">&para;</a></h3>
+<p>A group's Python attribute name is always derived from <code>node.name</code> — which
+<code>NexusNode</code> populates with either the NXDL's explicit <code>name=</code> attribute, or
+(when absent) the NeXus class stem in uppercase (e.g. <code>"USER"</code> for any <code>NXuser</code>).
+The three <code>name_type</code> values differ only in <em>casing</em>, not in which name is
+used:</p>
+<ul>
+<li><code>name_type="specified"</code> (a fixed-name group, e.g. <code>instrument</code>): used as-is
+  — NXDL convention already writes these in snake_case.</li>
+<li><code>name_type="any"</code> (a variadic group; instances may use any actual HDF5
+  name): <code>node.name</code> is lowercased. This covers both an anonymous
+  group with no <code>name=</code> attribute at all (e.g. any <code>NXdetector</code> → <code>detector</code>)
+  <em>and</em> an explicitly-named variadic group (e.g. <code>name="BIAS_SWEEP"</code> →
+  <code>bias_sweep</code>).</li>
+<li><code>name_type="partial"</code> (e.g. <code>peakPEAK</code>): used as-is, preserving the mixed
+  case, so the lower-case fixed prefix and the upper-case user-chosen portion
+  both stay visible in the generated code (consistent with the matching
+  concept class name, e.g. <code>FitPeakPEAK</code>).</li>
+</ul>
+<p>The <code>a_nexus_group(name=...)</code> annotation, separately, faithfully records what
+NXDL actually declares: <code>None</code> only for a genuinely anonymous group (no
+<code>name=</code> attribute at all), the literal NXDL name otherwise — so <code>name=None</code>
+for any <code>NXuser</code>, but <code>name="BIAS_SWEEP"</code> for the explicitly-named variadic
+group above, even though both get lower-cased the same way for the Python
+attribute name.</p>
+<p><strong>Exceptions — groups that get a <code>_group</code> suffix instead:</strong></p>
+<p><strong>1. NOMAD BaseSection reserved names.</strong>
+A group literally named <code>name</code>, <code>datetime</code>, <code>lab_id</code>, or <code>description</code> always gets a
+<code>_group</code> suffix (e.g. <code>name</code> → <code>name_group</code>). These four names are occupied structurally,
+not optionally: <code>Object</code>, the universal root all generated classes derive from, itself
+extends <code>basesections.BaseSection</code>, which defines exactly these four <code>Quantity</code> properties.
+A <code>SubSection</code> can never override a same-named <code>Quantity</code> — they're different NOMAD
+property <em>kinds</em>, which NOMAD rejects outright with <code>MetainfoError: Cannot inherit from
+different property types.</code> So while any NXDL <em>field</em> may safely reuse one of these four
+names (NOMAD allows same-kind quantity overriding), a <em>group</em> using one of them always
+needs the suffix.</p>
+<p><strong>2. Named concept groups that conflict with an ancestor field (symmetric inheritance
+rule).</strong>
+When a named concept class defines a group whose name is already used as a field
+(<code>Quantity</code>) on an ancestor class in the NeXus inheritance chain, the <em>group</em> gets a
+<code>_group</code> suffix locally in that named concept class (e.g. <code>program_group</code> for a <code>program</code>
+GROUP in a class that extends <code>NXprocess</code>, which already defines a <code>program</code> field). The
+ancestor class is not modified — it keeps the unqualified name <code>program</code>. This is the
+symmetric counterpart to the field rename rule: whichever concept is higher in the NeXus
+inheritance chain keeps the unqualified name; the lower-level (more specific) concept is
+renamed. The suffix is local to the named concept and does not propagate.</p>
+<h3 id="field-attribute-quantities">Field-attribute quantities<a class="headerlink" href="#field-attribute-quantities" title="Permanent link">&para;</a></h3>
+<p>Attributes that belong to a specific field (e.g. the <code>units</code> attribute of <code>data</code>) are
+emitted as quantities with a double-underscore-separated name:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-20-1" name="__codelineno-20-1" href="#__codelineno-20-1"></a><span class="n">data__units</span> <span class="o">=</span> <span class="n">Quantity</span><span class="p">(</span>
+<a id="__codelineno-20-2" name="__codelineno-20-2" href="#__codelineno-20-2"></a>    <span class="o">...</span><span class="p">,</span>
+<a id="__codelineno-20-3" name="__codelineno-20-3" href="#__codelineno-20-3"></a>    <span class="n">a_nexus_attribute</span><span class="o">=</span><span class="n">NeXusAttribute</span><span class="p">(</span>
+<a id="__codelineno-20-4" name="__codelineno-20-4" href="#__codelineno-20-4"></a>        <span class="n">name</span><span class="o">=</span><span class="s2">"units"</span><span class="p">,</span>
+<a id="__codelineno-20-5" name="__codelineno-20-5" href="#__codelineno-20-5"></a>        <span class="n">parent_field</span><span class="o">=</span><span class="s2">"data"</span><span class="p">,</span>
+<a id="__codelineno-20-6" name="__codelineno-20-6" href="#__codelineno-20-6"></a>        <span class="o">...</span>
+<a id="__codelineno-20-7" name="__codelineno-20-7" href="#__codelineno-20-7"></a>    <span class="p">),</span>
+<a id="__codelineno-20-8" name="__codelineno-20-8" href="#__codelineno-20-8"></a><span class="p">)</span>
+</code></pre></div>
+<hr />
+<h2 id="relation-to-existing-schema">Relation to existing schema<a class="headerlink" href="#relation-to-existing-schema" title="Permanent link">&para;</a></h2>
+<p>The generated <code>metainfo/</code> package co-exists with <code>nomad/schema_packages/schema.py</code>.
+While we are still working on the new schema/parser, we do not touch the existing code path. Once the new NOMAD integration is complete and validated, we will deprecate and eventually remove <code>schema.py</code> and <code>parser.py</code>.</p>
+<hr />
+<h2 id="further-reading">Further reading<a class="headerlink" href="#further-reading" title="Permanent link">&para;</a></h2>
+<ul>
+<li><a href="nomad-integration.html">Learn &gt; pynxtools &gt; NOMAD integration</a></li>
+</ul>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+    
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "../..", "features": ["navigation.instant", "navigation.footer", "content.code.copy", "content.code.annotate", "search.suggest"], "search": "../../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+    
+    
+      <script src="../../assets/javascripts/bundle.d7400e89.min.js"></script>
+      
+        <script src="../../assets/_markdown_exec_pyodide.js"></script>
+      
+        <script src="../../javascript.js"></script>
+      
+        <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+      
+    
+  </body>
+</html>

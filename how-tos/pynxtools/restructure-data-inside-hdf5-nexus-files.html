@@ -14,10 +14,10 @@
       
       
       
-        <link rel="prev" href="using-pynxtools-test-framework.html">
+        <link rel="prev" href="use-multi-format-reader.html">
       
       
-        <link rel="next" href="create-nexus-files-by-python.html">
+        <link rel="next" href="implement-a-visitor.html">
       
       
         
@@ -28,7 +28,7 @@
     
     
       
-        <title>Running pynxtools tests in parallel - Documentation</title>
+        <title>Restructure data inside HDF5/NeXus files - Documentation</title>
       
     
     
@@ -83,7 +83,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#running-pynxtools-tests-in-parallel" class="md-skip">
+        <a href="#restructure-data-inside-hdf5nexus-files" class="md-skip">
           Skip to content
         </a>
       
@@ -115,7 +115,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              Running pynxtools tests in parallel
+              Restructure data inside HDF5/NeXus files
             
           </span>
         </div>
@@ -729,10 +729,37 @@
                 
   
   
+    
   
   
-    <li class="md-nav__item">
-      <a href="restructure-data-inside-hdf5-nexus-files.html" class="md-nav__link">
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Restructure data inside HDF5/NeXus files
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="restructure-data-inside-hdf5-nexus-files.html" class="md-nav__link md-nav__link--active">
         
   
   
@@ -748,6 +775,70 @@
   
 
       </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#1-inspect-the-available-keys" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1) Inspect the available keys
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#2-edit-the-mapping" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2) Edit the mapping
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#3-convert-the-file-using-the-json_map-reader" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3) Convert the file using the json_map reader
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#4-typical-workflow-summary" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4) Typical workflow summary
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
     </li>
   
 
@@ -813,37 +904,10 @@
                 
   
   
-    
   
   
-  
-    <li class="md-nav__item md-nav__item--active">
-      
-      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
-      
-      
-        
-      
-      
-        <label class="md-nav__link md-nav__link--active" for="__toc">
-          
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    Running pynxtools tests in parallel
-  
-
-    
-  </span>
-  
-  
-
-          <span class="md-nav__icon md-icon"></span>
-        </label>
-      
-      <a href="run-tests-in-parallel.html" class="md-nav__link md-nav__link--active">
+    <li class="md-nav__item">
+      <a href="run-tests-in-parallel.html" class="md-nav__link">
         
   
   
@@ -859,48 +923,6 @@
   
 
       </a>
-      
-        
-
-<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
-  
-  
-  
-    
-  
-  
-    <label class="md-nav__title" for="__toc">
-      <span class="md-nav__icon md-icon"></span>
-      Table of contents
-    </label>
-    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
-      
-        <li class="md-nav__item">
-  <a href="#running-tests-sequentially" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Running Tests Sequentially
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#running-tests-in-parallel" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Running Tests in Parallel
-      
-    </span>
-  </a>
-  
-</li>
-      
-    </ul>
-  
-</nav>
-      
     </li>
   
 
@@ -1726,10 +1748,10 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#running-tests-sequentially" class="md-nav__link">
+  <a href="#1-inspect-the-available-keys" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Running Tests Sequentially
+        1) Inspect the available keys
       
     </span>
   </a>
@@ -1737,10 +1759,32 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#running-tests-in-parallel" class="md-nav__link">
+  <a href="#2-edit-the-mapping" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Running Tests in Parallel
+        2) Edit the mapping
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#3-convert-the-file-using-the-json_map-reader" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3) Convert the file using the json_map reader
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#4-typical-workflow-summary" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4) Typical workflow summary
       
     </span>
   </a>
@@ -1764,26 +1808,66 @@
 
 
 
-<h1 id="running-pynxtools-tests-in-parallel">Running <code>pynxtools</code> tests in parallel<a class="headerlink" href="#running-pynxtools-tests-in-parallel" title="Permanent link">&para;</a></h1>
-<p>The <code>pytest</code> framework allows tests to run in sequential and parallel using third-party plugins such as <a href="https://pytest-xdist.readthedocs.io/en/stable/"><code>pytest-xdist</code></a>. In our <code>pytest</code> setup for <code>pynxtools</code>, we use <code>pytest-xdist</code> to execute tests in parallel. To handle shared resources among multiple tests, tests are grouped using the <code>@pytest.mark.xdist_group</code> fixture. This prevents classic race conditions by ensuring that tests sharing the same resources are executed sequentially.</p>
-<h2 id="running-tests-sequentially">Running Tests Sequentially<a class="headerlink" href="#running-tests-sequentially" title="Permanent link">&para;</a></h2>
-<p>In a local setup, tests can be run sequentially using the following command:</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="go">pytest tests</span>
+<h1 id="restructure-data-inside-hdf5nexus-files">Restructure data inside HDF5/NeXus files<a class="headerlink" href="#restructure-data-inside-hdf5nexus-files" title="Permanent link">&para;</a></h1>
+<div class="admonition info">
+<p class="admonition-title">Info</p>
+<p>This how-to shows a practical workflow for restructuring existing HDF5/NeXus data without rewriting the underlying file manually. The starting point is the list of available keys generated by <code>pynx list-keys</code>, followed by a second conversion pass using the <code>json_map</code> reader.</p>
+</div>
+<p>Often, a file contains the right data, but in a different hierarchy or with different names than the target NeXus application definition expects. Instead of constructing a config file by hand to rewrite the data into a valid NeXus tree, pynxtools allows extracting the HDF5 tree structure from an existing <code>.hdf5</code>/<code>.nxs</code> file and create a mapping that allows you to reconstruct the original file using the <code>pynx convert</code> command. By modifying this template config file, the data can be placed into the desired concepts.</p>
+<h2 id="1-inspect-the-available-keys">1) Inspect the available keys<a class="headerlink" href="#1-inspect-the-available-keys" title="Permanent link">&para;</a></h2>
+<p>Start from the file you want to reorganize:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>pynx<span class="w"> </span>list-keys<span class="w"> </span>my_file.nxs
 </code></pre></div>
-<p>This will execute all tests in a sequential manner. For more details, refer to the official documentation:</p>
-<ul>
-<li><a href="https://docs.pytest.org/en/stable/how-to/usage.html">How to invoke pytest</a></li>
-</ul>
-<h2 id="running-tests-in-parallel">Running Tests in Parallel<a class="headerlink" href="#running-tests-in-parallel" title="Permanent link">&para;</a></h2>
-<p>The <code>pytest-xdist</code> plugin can be used to speed up test execution by distributing tests among available workers. To prevent race conditions, tests that share the same resources are grouped using the <code>@pytest.mark.xdist_group(name="group_name")</code> fixture. These grouped tests must be run with the <code>--dist loadgroup</code> flag. For example:</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="go">pytest tests -n auto --dist loadgroup</span>
+<p>This prints a JSON mapping from logical NeXus-style paths to the corresponding HDF5 source paths. The output looks similar to this:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="p">{</span>
+<a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a><span class="w">  </span><span class="nt">"/ENTRY[entry]/data"</span><span class="p">:</span><span class="w"> </span><span class="s2">"@data:entry/data"</span><span class="p">,</span>
+<a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a><span class="w">  </span><span class="nt">"/ENTRY[entry]/data/@units"</span><span class="p">:</span><span class="w"> </span><span class="s2">"@data:entry/data@units"</span><span class="p">,</span>
+<a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a><span class="w">  </span><span class="nt">"/ENTRY[entry]/SAMPLE[sample]/temperature"</span><span class="p">:</span><span class="w"> </span><span class="s2">"@data:entry/sample/temperature"</span><span class="p">,</span>
+<a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a><span class="w">  </span><span class="nt">"/ENTRY[entry]/SAMPLE[sample]/temperature/@units"</span><span class="p">:</span><span class="w"> </span><span class="s2">"@data:entry/sample/temperature@units"</span>
+<a id="__codelineno-1-6" name="__codelineno-1-6" href="#__codelineno-1-6"></a><span class="p">}</span>
 </code></pre></div>
-<p>Here:</p>
+<p>The keys in this mapping correspond to the Nexus concepts and paths as defined in the config files for the <a href="../../learn/pynxtools/multi-format-reader.html">MultiFormatReader</a>. The values are the source paths inside the HDF5 file, using the <code>@data:</code> prefix that the JSON mapping reader provides.</p>
+<p>If you need to keep the output for editing, save it to a file:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>pynx<span class="w"> </span>list-keys<span class="w"> </span>my_file.nxs<span class="w"> </span>--output<span class="w"> </span>keys.json
+</code></pre></div>
+<p>You can then open <code>keys.json</code> and adjust the mapping to match the structure you want in the new NeXus file.</p>
+<h2 id="2-edit-the-mapping">2) Edit the mapping<a class="headerlink" href="#2-edit-the-mapping" title="Permanent link">&para;</a></h2>
+<p>The mapping is meant to be edited by hand. There are two main ways to change it:</p>
 <ul>
-<li>The <code>-n auto</code> flag tells <code>pytest</code> to automatically distribute tests among all available workers.</li>
-<li>The <code>--dist loadgroup</code> flag ensures that tests marked with the same @pytest.mark.xdist_group(name="...") are executed serially.</li>
+<li>Change the key to assign the source value to a different concept.</li>
+<li>Change the value to assign a different source dataset or attribute to an existing concept. You can also replace these keys with new, constant values.</li>
 </ul>
-<p>This setup allows for efficient parallel test execution while maintaining the integrity of tests that depend on shared resources.</p>
+<p>For example:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="p">{</span>
+<a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a><span class="w">  </span><span class="nt">"/ENTRY[entry]/SAMPLE[sample]/temperature"</span><span class="p">:</span><span class="w"> </span><span class="s2">"@data:entry/measurement/temperature"</span><span class="p">,</span>
+<a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a><span class="w">  </span><span class="nt">"/ENTRY[entry]/SAMPLE[sample]/temperature/@units"</span><span class="p">:</span><span class="w"> </span><span class="s2">"@data:entry/measurement/temperature/@units"</span><span class="p">,</span>
+<a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a><span class="w">  </span><span class="nt">"/ENTRY[entry]/INSTRUMENT[instrument]/detector/count_time"</span><span class="p">:</span><span class="w"> </span><span class="s2">"@data:entry/measurement/count_time"</span><span class="p">,</span>
+<a id="__codelineno-3-5" name="__codelineno-3-5" href="#__codelineno-3-5"></a><span class="w">  </span><span class="nt">"/ENTRY[entry]/INSTRUMENT[instrument]/detector/count_time/@units"</span><span class="p">:</span><span class="w"> </span><span class="s2">"ms"</span>
+<a id="__codelineno-3-6" name="__codelineno-3-6" href="#__codelineno-3-6"></a><span class="p">}</span>
+</code></pre></div>
+<p>This tells the dataconverter to put the selected data under different NeXus concepts. If the key is changed, the data is moved to a different location in the target file. If the value is changed, the same concept gets populated from a different source field or constant.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>This is a useful way to reshape a file without modifying the original dataset. The original HDF5 file stays untouched, and the output file created by the conversion step is changed.</p>
+</div>
+<h2 id="3-convert-the-file-using-the-json_map-reader">3) Convert the file using the <code>json_map</code> reader<a class="headerlink" href="#3-convert-the-file-using-the-json_map-reader" title="Permanent link">&para;</a></h2>
+<p>Once the mapping is ready, trigger a conversion that writes a new file using the <code>json_map</code> reader:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a>pynx<span class="w"> </span>convert<span class="w"> </span>my_file.nxs<span class="w"> </span><span class="se">\</span>
+<a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a><span class="w">  </span>-c<span class="w"> </span>keys.json<span class="w"> </span><span class="se">\</span>
+<a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a><span class="w">  </span>--reader<span class="w"> </span>json_map<span class="w"> </span><span class="se">\</span>
+<a id="__codelineno-4-4" name="__codelineno-4-4" href="#__codelineno-4-4"></a><span class="w">  </span>--nxdl<span class="w"> </span>NXyour_application<span class="w"> </span><span class="se">\</span>
+<a id="__codelineno-4-5" name="__codelineno-4-5" href="#__codelineno-4-5"></a><span class="w">  </span>--output<span class="w"> </span>restructured_file.nxs
+</code></pre></div>
+<p>This reads the source file, follows the mapping in <code>keys.json</code>, and writes a new NeXus file that matches the target application definition. The <code>json_map</code> reader is particularly useful here because it applies the mapping literally: it reads the source HDF5 path from the value and writes the result into the target concept defined by the key.</p>
+<h2 id="4-typical-workflow-summary">4) Typical workflow summary<a class="headerlink" href="#4-typical-workflow-summary" title="Permanent link">&para;</a></h2>
+<p>In practice, the workflow is:</p>
+<ol>
+<li>Run <code>pynx list-keys</code> on the original HDF5/NeXus file.</li>
+<li>Save the result and edit the keys and values to match the desired target structure.</li>
+<li>Run <code>pynx convert</code> with <code>--reader json_map</code> and <code>-c</code> pointing to the edited mapping file.</li>
+<li>Inspect the output file and repeat until the resulting hierarchy matches the desired NeXus layout.</li>
+</ol>
+<p>This is a simple and robust way to restructure a file without manually reconstructing the source-to-target mapping from scratch.</p>
 
 
 
@@ -1813,7 +1897,7 @@
       <nav class="md-footer__inner md-grid" aria-label="Footer" >
         
           
-          <a href="using-pynxtools-test-framework.html" class="md-footer__link md-footer__link--prev" aria-label="Previous: Test functionality for pynxtools plugins">
+          <a href="use-multi-format-reader.html" class="md-footer__link md-footer__link--prev" aria-label="Previous: Use the MultiFormatReader">
             <div class="md-footer__button md-icon">
               
               <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
@@ -1823,20 +1907,20 @@
                 Previous
               </span>
               <div class="md-ellipsis">
-                Test functionality for pynxtools plugins
+                Use the MultiFormatReader
               </div>
             </div>
           </a>
         
         
           
-          <a href="create-nexus-files-by-python.html" class="md-footer__link md-footer__link--next" aria-label="Next: Using Python to create NeXus files">
+          <a href="implement-a-visitor.html" class="md-footer__link md-footer__link--next" aria-label="Next: Implement a custom NexusVisitor">
             <div class="md-footer__title">
               <span class="md-footer__direction">
                 Next
               </span>
               <div class="md-ellipsis">
-                Using Python to create NeXus files
+                Implement a custom NexusVisitor
               </div>
             </div>
             <div class="md-footer__button md-icon">

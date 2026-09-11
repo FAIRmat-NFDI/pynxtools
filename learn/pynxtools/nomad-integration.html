@@ -728,6 +728,34 @@
   
   
     <li class="md-nav__item">
+      <a href="../../how-tos/pynxtools/restructure-data-inside-hdf5-nexus-files.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Restructure data inside HDF5/NeXus files
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../../how-tos/pynxtools/implement-a-visitor.html" class="md-nav__link">
         
   
@@ -1156,6 +1184,34 @@
     
   
     NeXus definitions in pynxtools
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="licensing.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Licensing
   
 
     
@@ -1925,7 +1981,7 @@ developed within the FAIRmat consortium. It covers the <em>findable</em> and <em
 <a id="__codelineno-0-21" name="__codelineno-0-21" href="#__codelineno-0-21"></a>NexusParser.parse() — post-processing      ← after full traversal
 <a id="__codelineno-0-22" name="__codelineno-0-22" href="#__codelineno-0-22"></a>    │  reads /ENTRY/definition → archive.metadata.entry_type
 <a id="__codelineno-0-23" name="__codelineno-0-23" href="#__codelineno-0-23"></a>    │  extracts chemical formulas from NXsample / NXsubstance
-<a id="__codelineno-0-24" name="__codelineno-0-24" href="#__codelineno-0-24"></a>    │  sets archive.metadata.domain = &quot;nexus&quot;
+<a id="__codelineno-0-24" name="__codelineno-0-24" href="#__codelineno-0-24"></a>    │  sets archive.metadata.domain = "nexus"
 <a id="__codelineno-0-25" name="__codelineno-0-25" href="#__codelineno-0-25"></a>    │
 <a id="__codelineno-0-26" name="__codelineno-0-26" href="#__codelineno-0-26"></a>    ▼
 <a id="__codelineno-0-27" name="__codelineno-0-27" href="#__codelineno-0-27"></a>NOMAD archive (searchable, versioned, indexed)
@@ -1963,14 +2019,20 @@ You can find more details about this technicality here <a href="numerics.html">L
 <p>The key quantities indexed by the NeXus normalizer depend on the application definition: common entries include technique name (<code>definition</code>), sample identifiers, start time, and instrument names.</p>
 <hr />
 <h2 id="metainfo-nexus-definitions-as-a-nomad-schema">Metainfo: NeXus definitions as a NOMAD schema<a class="headerlink" href="#metainfo-nexus-definitions-as-a-nomad-schema" title="Permanent link">&para;</a></h2>
-<p>NOMAD uses its own schema language (<em>Metainfo</em>) to describe data structures. When <code>pynxtools</code> is loaded as a plugin, all NeXus base classes and application definitions bundled with it are compiled into NOMAD Metainfo sections.</p>
-<p>This means:</p>
+<p>NOMAD uses its own schema language (<em>Metainfo</em>) to describe data structures. When
+<code>pynxtools</code> is loaded as a plugin, all NeXus base classes and application definitions
+bundled with it are compiled from NXDL XML at import time and registered as NOMAD
+<code>Section</code> classes. This compilation is handled by <code>nomad/schema_packages/schema.py</code>.</p>
+<p>The compiled schema makes every NeXus concept searchable in NOMAD:</p>
 <ul>
-<li>Every NeXus field becomes a Metainfo quantity with the correct type and unit.</li>
-<li>Every NeXus base class becomes a NOMAD section.</li>
+<li>Every NeXus group becomes a <code>SubSection</code>.</li>
+<li>Every NeXus field becomes a Metainfo <code>Quantity</code> with the correct Python type and unit.</li>
+<li>Every NeXus attributes becomes a Metainfo <code>Quantity</code>.</li>
+<li>If it is the attribute of a field, it is separated from its parent with two underscores (e.g. <code>AXISNAME__long_name</code>).</li>
+<li>If it is the attribute of a group, it gets added by its name (e.g. <code>Data.axes</code>).</li>
 <li>The application definition specifies which sections and quantities are required.</li>
 </ul>
-<p>The compiled Metainfo can be viewed in the NOMAD GUI at:
+<p>The Metainfo can be browsed in the NOMAD GUI at:
 <code>Analyze → Metainfo → pynxtools</code></p>
 <hr />
 <h2 id="installation">Installation<a class="headerlink" href="#installation" title="Permanent link">&para;</a></h2>
@@ -2012,13 +2074,11 @@ You can find more details about this technicality here <a href="numerics.html">L
 </code></pre></div>
 <hr />
 <h2 id="nomad-oasis-local-deployment">NOMAD OASIS — local deployment<a class="headerlink" href="#nomad-oasis-local-deployment" title="Permanent link">&para;</a></h2>
-<p>NOMAD OASIS is a self-hosted deployment that gives institutions full control over
-their data while retaining compatibility with the public NOMAD instance.</p>
-<p>To include <code>pynxtools</code> in a NOMAD OASIS deployment, add it to the OASIS
-optional dependencies in <code>pyproject.toml</code>:</p>
+<p>NOMAD OASIS is a self-hosted deployment that gives institutions full control over their data while retaining compatibility with the public NOMAD instance.</p>
+<p>To include <code>pynxtools</code> in a NOMAD OASIS deployment, add it to the OASIS optional dependencies in <code>pyproject.toml</code> (under <code>plugins</code>):</p>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a><span class="k">[project.optional-dependencies]</span>
 <a id="__codelineno-6-2" name="__codelineno-6-2" href="#__codelineno-6-2"></a><span class="n">plugins</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">[</span>
-<a id="__codelineno-6-3" name="__codelineno-6-3" href="#__codelineno-6-3"></a><span class="w"> </span><span class="s2">&quot;pynxtools&quot;</span>
+<a id="__codelineno-6-3" name="__codelineno-6-3" href="#__codelineno-6-3"></a><span class="w"> </span><span class="s2">"pynxtools"</span>
 <a id="__codelineno-6-4" name="__codelineno-6-4" href="#__codelineno-6-4"></a><span class="p">]</span>
 </code></pre></div>
 <p>For OASIS setup details see the
@@ -2032,6 +2092,8 @@ optional dependencies in <code>pyproject.toml</code>:</p>
   programmatic upload, OASIS setup, debugging parser output</li>
 <li><a href="https://nomad-lab.eu/prod/v1/docs/">NOMAD documentation</a></li>
 <li><a href="https://nomad-lab.eu/prod/v1/gui/analyze/metainfo/pynxtools">NOMAD Metainfo browser</a></li>
+<li><a href="nexus-metainfo-generation.html">Learn → pynxtools → NeXus Metainfo Generation</a> —
+  upcoming code-generation system (in development)</li>
 </ul>
 
 

@@ -732,6 +732,34 @@
   
   
     <li class="md-nav__item">
+      <a href="restructure-data-inside-hdf5-nexus-files.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Restructure data inside HDF5/NeXus files
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="implement-a-visitor.html" class="md-nav__link">
         
   
@@ -1306,6 +1334,34 @@
   
   
     <li class="md-nav__item">
+      <a href="../../learn/pynxtools/licensing.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Licensing
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../../learn/pynxtools/dataconverter-and-readers.html" class="md-nav__link">
         
   
@@ -1847,22 +1903,22 @@
 <div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="c1"># Import h5py, to write an hdf5 file</span>
 <a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a><span class="kn">import</span><span class="w"> </span><span class="nn">h5py</span>
 <a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a>
-<a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a><span class="c1"># create a h5py file in writing mode with given name &quot;NXopt_minimal_example&quot;, file extension &quot;nxs&quot;</span>
-<a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a><span class="n">f</span> <span class="o">=</span> <span class="n">h5py</span><span class="o">.</span><span class="n">File</span><span class="p">(</span><span class="s2">&quot;NXopt_minimal_example.nxs&quot;</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">)</span>
+<a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a><span class="c1"># create a h5py file in writing mode with given name "NXopt_minimal_example", file extension "nxs"</span>
+<a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a><span class="n">f</span> <span class="o">=</span> <span class="n">h5py</span><span class="o">.</span><span class="n">File</span><span class="p">(</span><span class="s2">"NXopt_minimal_example.nxs"</span><span class="p">,</span> <span class="s2">"w"</span><span class="p">)</span>
 <a id="__codelineno-1-6" name="__codelineno-1-6" href="#__codelineno-1-6"></a>
 <a id="__codelineno-1-7" name="__codelineno-1-7" href="#__codelineno-1-7"></a><span class="c1"># there are only 3 fundamental objects: &gt;group&lt;, &gt;attribute&lt; and &gt;field&lt;.</span>
 <a id="__codelineno-1-8" name="__codelineno-1-8" href="#__codelineno-1-8"></a>
 <a id="__codelineno-1-9" name="__codelineno-1-9" href="#__codelineno-1-9"></a>
-<a id="__codelineno-1-10" name="__codelineno-1-10" href="#__codelineno-1-10"></a><span class="c1"># create a &gt;group&lt; called &quot;entry&quot;</span>
-<a id="__codelineno-1-11" name="__codelineno-1-11" href="#__codelineno-1-11"></a><span class="n">f</span><span class="o">.</span><span class="n">create_group</span><span class="p">(</span><span class="s1">&#39;/entry&#39;</span><span class="p">)</span>
+<a id="__codelineno-1-10" name="__codelineno-1-10" href="#__codelineno-1-10"></a><span class="c1"># create a &gt;group&lt; called "entry"</span>
+<a id="__codelineno-1-11" name="__codelineno-1-11" href="#__codelineno-1-11"></a><span class="n">f</span><span class="o">.</span><span class="n">create_group</span><span class="p">(</span><span class="s1">'/entry'</span><span class="p">)</span>
 <a id="__codelineno-1-12" name="__codelineno-1-12" href="#__codelineno-1-12"></a>
-<a id="__codelineno-1-13" name="__codelineno-1-13" href="#__codelineno-1-13"></a><span class="c1"># assign the &gt;group&lt; called &quot;entry&quot; an &gt;attribute&lt;</span>
-<a id="__codelineno-1-14" name="__codelineno-1-14" href="#__codelineno-1-14"></a><span class="c1"># The attribute is &quot;NX_class&quot;(a NeXus class) with the value of this class is &quot;NXentry&quot;</span>
-<a id="__codelineno-1-15" name="__codelineno-1-15" href="#__codelineno-1-15"></a><span class="n">f</span><span class="p">[</span><span class="s1">&#39;/entry&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">attrs</span><span class="p">[</span><span class="s1">&#39;NX_class&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;NXentry&#39;</span>
+<a id="__codelineno-1-13" name="__codelineno-1-13" href="#__codelineno-1-13"></a><span class="c1"># assign the &gt;group&lt; called "entry" an &gt;attribute&lt;</span>
+<a id="__codelineno-1-14" name="__codelineno-1-14" href="#__codelineno-1-14"></a><span class="c1"># The attribute is "NX_class"(a NeXus class) with the value of this class is "NXentry"</span>
+<a id="__codelineno-1-15" name="__codelineno-1-15" href="#__codelineno-1-15"></a><span class="n">f</span><span class="p">[</span><span class="s1">'/entry'</span><span class="p">]</span><span class="o">.</span><span class="n">attrs</span><span class="p">[</span><span class="s1">'NX_class'</span><span class="p">]</span> <span class="o">=</span> <span class="s1">'NXentry'</span>
 <a id="__codelineno-1-16" name="__codelineno-1-16" href="#__codelineno-1-16"></a>
-<a id="__codelineno-1-17" name="__codelineno-1-17" href="#__codelineno-1-17"></a><span class="c1"># create &gt;field&lt; called &quot;definition&quot; inside the entry, and assign it the value &quot;NXoptical_spectroscopy&quot;</span>
+<a id="__codelineno-1-17" name="__codelineno-1-17" href="#__codelineno-1-17"></a><span class="c1"># create &gt;field&lt; called "definition" inside the entry, and assign it the value "NXoptical_spectroscopy"</span>
 <a id="__codelineno-1-18" name="__codelineno-1-18" href="#__codelineno-1-18"></a><span class="c1"># This field is important, as it is used in validation process to identify the NeXus definition.</span>
-<a id="__codelineno-1-19" name="__codelineno-1-19" href="#__codelineno-1-19"></a><span class="n">f</span><span class="p">[</span><span class="s1">&#39;/entry/definition&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;NXoptical_spectroscopy&#39;</span>
+<a id="__codelineno-1-19" name="__codelineno-1-19" href="#__codelineno-1-19"></a><span class="n">f</span><span class="p">[</span><span class="s1">'/entry/definition'</span><span class="p">]</span> <span class="o">=</span> <span class="s1">'NXoptical_spectroscopy'</span>
 </code></pre></div>
 <p>This structure is the starting point for our NeXus file. We will go through these functions in the following.</p>
 <h2 id="add-nexus-concepts">Add NeXus concepts<a class="headerlink" href="#add-nexus-concepts" title="Permanent link">&para;</a></h2>
@@ -1903,10 +1959,10 @@
 </ol>
 <p><img alt="image.png" src="../media/51dc82f9f0f5ec2f-image.png" /></p>
 <p>We add an instance of this concept by adding an HDF5 attribute:</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="n">f</span><span class="p">[</span><span class="s1">&#39;/entry/definition&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">attrs</span><span class="p">[</span><span class="s1">&#39;version&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;v2024.02&#39;</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="n">f</span><span class="p">[</span><span class="s1">'/entry/definition'</span><span class="p">]</span><span class="o">.</span><span class="n">attrs</span><span class="p">[</span><span class="s1">'version'</span><span class="p">]</span> <span class="o">=</span> <span class="s1">'v2024.02'</span>
 </code></pre></div>
 <p>This h5py command adds the attribute named "version" with the value "v2024.02" to the HDF5 dataset called "/entry/definition". The same is done for the URL attribute:</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="n">f</span><span class="p">[</span><span class="s1">&#39;/entry/definition&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">attrs</span><span class="p">[</span><span class="s1">&#39;URL&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;https://github.com/FAIRmat-NFDI/nexus_definitions/blob/f75a29836431f35d68df6174e3868a0418523397/contributed_definitions/NXoptical_spectroscopy.nxdl.xml&#39;</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="n">f</span><span class="p">[</span><span class="s1">'/entry/definition'</span><span class="p">]</span><span class="o">.</span><span class="n">attrs</span><span class="p">[</span><span class="s1">'URL'</span><span class="p">]</span> <span class="o">=</span> <span class="s1">'https://github.com/FAIRmat-NFDI/nexus_definitions/blob/f75a29836431f35d68df6174e3868a0418523397/contributed_definitions/NXoptical_spectroscopy.nxdl.xml'</span>
 </code></pre></div>
 <p>For your use case, you may want to use a different version of the NeXus definitions, since these are changed over time. In the following, it is shown where to obtain the correct version and URL.</p>
 <p><strong>Get the values: <em>version</em> and <em>URL</em></strong></p>
@@ -1939,7 +1995,7 @@ When specifying this version tag, it would be better to include the GitHub commi
 <p>If you have pynxtools installed, you can get the tag by:</p>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a><span class="kn">from</span><span class="w"> </span><span class="nn">pynxtools</span><span class="w"> </span><span class="kn">import</span> <span class="n">get_nexus_version</span>
 <a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a><span class="n">get_nexus_version</span><span class="p">()</span>
-<a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a><span class="o">&gt;&gt;&gt;</span> <span class="s1">&#39;v2022.07.post1.dev1284+gf75a2983&#39;</span>
+<a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a><span class="o">&gt;&gt;&gt;</span> <span class="s1">'v2022.07.post1.dev1284+gf75a2983'</span>
 </code></pre></div>
 <h3 id="adding-a-field">Adding a field<a class="headerlink" href="#adding-a-field" title="Permanent link">&para;</a></h3>
 <p>The next required concept of <a href="https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXoptical_spectroscopy.html">NXoptical_spectroscopy</a> is "<strong>experiment_type"</strong>.</p>
@@ -1968,7 +2024,7 @@ When specifying this version tag, it would be better to include the GitHub commi
 <p><img alt="image.png" src="../media/5cbd8c6a1ca227df-image.png" /></p>
 <p>There, the value of the field has to be one of the shown list, since it is an enumeration (e.g. "transmission spectroscopy"). Note that this is requires an exact match to one of the enumerated items (case and whitespace sensitive).</p>
 <p>Therefore, the Python script has to be extended by:</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a><span class="n">f</span><span class="p">[</span><span class="s1">&#39;/entry/experiment_type&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;transmission spectroscopy&#39;</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a><span class="n">f</span><span class="p">[</span><span class="s1">'/entry/experiment_type'</span><span class="p">]</span> <span class="o">=</span> <span class="s1">'transmission spectroscopy'</span>
 </code></pre></div>
 <h3 id="adding-a-group">Adding a group<a class="headerlink" href="#adding-a-group" title="Permanent link">&para;</a></h3>
 <p>The first required group in NXoptical_spectroscopy on the <code>ENTRY/</code> level is "<strong>INSTRUMENT</strong>: (required) <a href="https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXinstrument.html#nxinstrument">NXinstrument</a> <a href="https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXentry.html#nxentry-instrument-group">⤆"</a></p>
@@ -2001,8 +2057,8 @@ When specifying this version tag, it would be better to include the GitHub commi
 </li>
 </ol>
 <p>The Python code to implement the <code>NXinstrument</code> group as an HDF5 group named with the name "experiment_setup_1"  is:</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a><span class="n">f</span><span class="o">.</span><span class="n">create_group</span><span class="p">(</span><span class="s1">&#39;/entry/experiment_setup_1&#39;</span><span class="p">)</span>
-<a id="__codelineno-6-2" name="__codelineno-6-2" href="#__codelineno-6-2"></a><span class="n">f</span><span class="p">[</span><span class="s1">&#39;/entry/experiment_setup_1&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">attrs</span><span class="p">[</span><span class="s1">&#39;NX_class&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;NXinstrument&#39;</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a><span class="n">f</span><span class="o">.</span><span class="n">create_group</span><span class="p">(</span><span class="s1">'/entry/experiment_setup_1'</span><span class="p">)</span>
+<a id="__codelineno-6-2" name="__codelineno-6-2" href="#__codelineno-6-2"></a><span class="n">f</span><span class="p">[</span><span class="s1">'/entry/experiment_setup_1'</span><span class="p">]</span><span class="o">.</span><span class="n">attrs</span><span class="p">[</span><span class="s1">'NX_class'</span><span class="p">]</span> <span class="o">=</span> <span class="s1">'NXinstrument'</span>
 </code></pre></div>
 <p>The first line creates the group with the name "experiment_setup_1".</p>
 <p>The second line assigns this group the attribute with the name "NX_class" and its value "NXinstrument".</p>

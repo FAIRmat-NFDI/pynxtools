@@ -728,6 +728,34 @@
   
   
     <li class="md-nav__item">
+      <a href="../how-tos/pynxtools/restructure-data-inside-hdf5-nexus-files.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Restructure data inside HDF5/NeXus files
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../how-tos/pynxtools/implement-a-visitor.html" class="md-nav__link">
         
   
@@ -1152,6 +1180,34 @@
     
   
     NeXus definitions in pynxtools
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../learn/pynxtools/licensing.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Licensing
   
 
     
@@ -1753,6 +1809,51 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#nomad-integration" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        NOMAD integration
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="NOMAD integration">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#pynx-nomad" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        pynx nomad
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="pynx nomad">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#pynx-nomad-generate-metainfo" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        generate-metainfo
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -2057,6 +2158,51 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#nomad-integration" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        NOMAD integration
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="NOMAD integration">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#pynx-nomad" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        pynx nomad
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="pynx nomad">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#pynx-nomad-generate-metainfo" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        generate-metainfo
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -2165,7 +2311,7 @@
 <td><code>--help</code></td>
 <td>boolean</td>
 <td>Show this message and exit.</td>
-<td><code>False</code></td>
+<td><code>Sentinel.UNSET</code></td>
 </tr>
 </tbody>
 </table>
@@ -2190,7 +2336,7 @@
 <td><code>--help</code></td>
 <td>boolean</td>
 <td>Show this message and exit.</td>
-<td><code>False</code></td>
+<td><code>Sentinel.UNSET</code></td>
 </tr>
 </tbody>
 </table>
@@ -2222,13 +2368,13 @@
 <td><code>--required</code></td>
 <td>boolean</td>
 <td>Include only required fields.</td>
-<td><code>False</code></td>
+<td><code>Sentinel.UNSET</code></td>
 </tr>
 <tr>
 <td><code>--pythonic</code></td>
 <td>boolean</td>
 <td>Print a Python dict instead of JSON.</td>
-<td><code>False</code></td>
+<td><code>Sentinel.UNSET</code></td>
 </tr>
 <tr>
 <td><code>--output</code></td>
@@ -2240,7 +2386,7 @@
 <td><code>--help</code></td>
 <td>boolean</td>
 <td>Show this message and exit.</td>
-<td><code>False</code></td>
+<td><code>Sentinel.UNSET</code></td>
 </tr>
 </tbody>
 </table>
@@ -2264,7 +2410,7 @@
 <td><code>--help</code></td>
 <td>boolean</td>
 <td>Show this message and exit.</td>
-<td><code>False</code></td>
+<td><code>Sentinel.UNSET</code></td>
 </tr>
 </tbody>
 </table>
@@ -2289,7 +2435,7 @@
 <td><code>--help</code></td>
 <td>boolean</td>
 <td>Show this message and exit.</td>
-<td><code>False</code></td>
+<td><code>Sentinel.UNSET</code></td>
 </tr>
 </tbody>
 </table>
@@ -2379,7 +2525,7 @@
 <td><code>--help</code></td>
 <td>boolean</td>
 <td>Show this message and exit.</td>
-<td><code>False</code></td>
+<td><code>Sentinel.UNSET</code></td>
 </tr>
 </tbody>
 </table>
@@ -2416,7 +2562,7 @@
 <td><code>--help</code></td>
 <td>boolean</td>
 <td>Show this message and exit.</td>
-<td><code>False</code></td>
+<td><code>Sentinel.UNSET</code></td>
 </tr>
 </tbody>
 </table>
@@ -2481,7 +2627,7 @@ instances in the file that correspond to a given NXDL concept path.</p>
 <td><code>--help</code></td>
 <td>boolean</td>
 <td>Show this message and exit.</td>
-<td><code>False</code></td>
+<td><code>Sentinel.UNSET</code></td>
 </tr>
 </tbody>
 </table>
@@ -2538,7 +2684,7 @@ instances in the file that correspond to a given NXDL concept path.</p>
 <td><code>--help</code></td>
 <td>boolean</td>
 <td>Show this message and exit.</td>
-<td><code>False</code></td>
+<td><code>Sentinel.UNSET</code></td>
 </tr>
 </tbody>
 </table>
@@ -2576,7 +2722,113 @@ the field names rather than a fillable JSON skeleton.</p>
 <td><code>--help</code></td>
 <td>boolean</td>
 <td>Show this message and exit.</td>
+<td><code>Sentinel.UNSET</code></td>
+</tr>
+</tbody>
+</table>
+<h2 id="nomad-integration">NOMAD integration<a class="headerlink" href="#nomad-integration" title="Permanent link">&para;</a></h2>
+<p>Generates the NOMAD metainfo schemas as Python classes.</p>
+<h3 id="pynx-nomad">pynx nomad<a class="headerlink" href="#pynx-nomad" title="Permanent link">&para;</a></h3>
+<p>NOMAD integration tools.</p>
+<p>Use <code>pynx nomad COMMAND --help</code> for details on each sub-command.</p>
+<p><strong>Usage:</strong></p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-10-1" name="__codelineno-10-1" href="#__codelineno-10-1"></a>pynx nomad [OPTIONS] COMMAND [ARGS]...
+</code></pre></div>
+<p><strong>Options:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Name</th>
+<th>Type</th>
+<th>Description</th>
+<th>Default</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>--help</code></td>
+<td>boolean</td>
+<td>Show this message and exit.</td>
+<td><code>Sentinel.UNSET</code></td>
+</tr>
+</tbody>
+</table>
+<p><strong>Subcommands</strong></p>
+<ul>
+<li><em><a href="#pynx-nomad-generate-metainfo">generate-metainfo</a></em>: Generate Python NOMAD metainfo classes from NXDL definitions.</li>
+</ul>
+<h4 id="pynx-nomad-generate-metainfo">pynx nomad generate-metainfo<a class="headerlink" href="#pynx-nomad-generate-metainfo" title="Permanent link">&para;</a></h4>
+<p>Generate Python NOMAD metainfo classes from NXDL definitions.</p>
+<p>Exactly one of --nxdl, --all, --all-base, or --all-applications must be given.</p>
+<p>Examples:
+  pynx nomad generate-metainfo --nxdl NXdetector
+  pynx nomad generate-metainfo --all-base
+  pynx nomad generate-metainfo --all-applications
+  pynx nomad generate-metainfo --all           # apps first, then base (additive-only unless --force)
+  pynx nomad generate-metainfo --all --dry-run  # CI check
+  pynx nomad generate-metainfo --all \
+      --output-dir ../nomad-measurements/src/nomad_measurements/nexus/metainfo</p>
+<p><strong>Usage:</strong></p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-11-1" name="__codelineno-11-1" href="#__codelineno-11-1"></a>pynx nomad generate-metainfo [OPTIONS]
+</code></pre></div>
+<p><strong>Options:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Name</th>
+<th>Type</th>
+<th>Description</th>
+<th>Default</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>--nxdl</code></td>
+<td>text</td>
+<td>Generate one NXDL class (e.g. NXdetector).</td>
+<td>None</td>
+</tr>
+<tr>
+<td><code>--all</code></td>
+<td>boolean</td>
+<td>Generate all categories (applications first, then base classes; additive-only unless --force).</td>
 <td><code>False</code></td>
+</tr>
+<tr>
+<td><code>--all-base</code></td>
+<td>boolean</td>
+<td>Generate all base-category classes only.</td>
+<td><code>False</code></td>
+</tr>
+<tr>
+<td><code>--all-applications</code></td>
+<td>boolean</td>
+<td>Generate all application-category classes only.</td>
+<td><code>False</code></td>
+</tr>
+<tr>
+<td><code>--dry-run</code></td>
+<td>boolean</td>
+<td>Report what would change without writing any files. Exits non-zero if files differ.</td>
+<td><code>False</code></td>
+</tr>
+<tr>
+<td><code>--force</code></td>
+<td>boolean</td>
+<td>Overwrite existing files even if no new members were added.</td>
+<td><code>False</code></td>
+</tr>
+<tr>
+<td><code>--output-dir</code></td>
+<td>directory</td>
+<td>Parent directory for generated .py files; base_classes/ or applications/ is appended automatically. Omit to write into the pynxtools-internal nomad/metainfo/ directory. Pass an explicit path when generating into a different package (e.g. nomad-measurements/src/schema_packages/...).</td>
+<td>None</td>
+</tr>
+<tr>
+<td><code>--help</code></td>
+<td>boolean</td>
+<td>Show this message and exit.</td>
+<td><code>Sentinel.UNSET</code></td>
 </tr>
 </tbody>
 </table>

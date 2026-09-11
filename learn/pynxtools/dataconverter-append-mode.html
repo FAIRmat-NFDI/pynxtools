@@ -728,6 +728,34 @@
   
   
     <li class="md-nav__item">
+      <a href="../../how-tos/pynxtools/restructure-data-inside-hdf5-nexus-files.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Restructure data inside HDF5/NeXus files
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../../how-tos/pynxtools/implement-a-visitor.html" class="md-nav__link">
         
   
@@ -1156,6 +1184,34 @@
     
   
     NeXus definitions in pynxtools
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="licensing.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Licensing
   
 
     
@@ -1758,18 +1814,18 @@ passing the <code>--append</code> flag during command line invocation (see <a hr
 <p>Users who wish to call the dataconverter as a step in a workflow may find the following variation and code a useful snippet to include in their batch pipeline:</p>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>from pynxtools.dataconverter.convert import convert
 <a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>
-<a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a># file &quot;Au_25_mbar_O2_no_align.nxs&quot; exists already, e.g., when it
-<a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a># was instantiated with &quot;EX439_S718_Au.sle&quot; as mentioned above
+<a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a># file "Au_25_mbar_O2_no_align.nxs" exists already, e.g., when it
+<a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a># was instantiated with "EX439_S718_Au.sle" as mentioned above
 <a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a>
 <a id="__codelineno-2-6" name="__codelineno-2-6" href="#__codelineno-2-6"></a>_ = convert(
-<a id="__codelineno-2-7" name="__codelineno-2-7" href="#__codelineno-2-7"></a>    input_file=(&quot;eln_data_sle.yaml&quot;),
-<a id="__codelineno-2-8" name="__codelineno-2-8" href="#__codelineno-2-8"></a>    reader=&quot;xps&quot;,
-<a id="__codelineno-2-9" name="__codelineno-2-9" href="#__codelineno-2-9"></a>    nxdl=&quot;NXxps&quot;,
+<a id="__codelineno-2-7" name="__codelineno-2-7" href="#__codelineno-2-7"></a>    input_file=("eln_data_sle.yaml"),
+<a id="__codelineno-2-8" name="__codelineno-2-8" href="#__codelineno-2-8"></a>    reader="xps",
+<a id="__codelineno-2-9" name="__codelineno-2-9" href="#__codelineno-2-9"></a>    nxdl="NXxps",
 <a id="__codelineno-2-10" name="__codelineno-2-10" href="#__codelineno-2-10"></a>    append=True,
-<a id="__codelineno-2-11" name="__codelineno-2-11" href="#__codelineno-2-11"></a>    output=&quot;Au_25_mbar_O2_no_align.nxs&quot;,
+<a id="__codelineno-2-11" name="__codelineno-2-11" href="#__codelineno-2-11"></a>    output="Au_25_mbar_O2_no_align.nxs",
 <a id="__codelineno-2-12" name="__codelineno-2-12" href="#__codelineno-2-12"></a>)
 <a id="__codelineno-2-13" name="__codelineno-2-13" href="#__codelineno-2-13"></a>
-<a id="__codelineno-2-14" name="__codelineno-2-14" href="#__codelineno-2-14"></a># &quot;Au_25_mbar_O2_no_align.nxs&quot; is the file content from eln_data_sle.yaml is appended to
+<a id="__codelineno-2-14" name="__codelineno-2-14" href="#__codelineno-2-14"></a># "Au_25_mbar_O2_no_align.nxs" is the file content from eln_data_sle.yaml is appended to
 <a id="__codelineno-2-15" name="__codelineno-2-15" href="#__codelineno-2-15"></a>
 <a id="__codelineno-2-16" name="__codelineno-2-16" href="#__codelineno-2-16"></a># modify tuple[str] input_file to include the actual files you wish to append to Au_25_mbar_O2_no_align.nxs
 <a id="__codelineno-2-17" name="__codelineno-2-17" href="#__codelineno-2-17"></a># modify output: str to customize output file path and name

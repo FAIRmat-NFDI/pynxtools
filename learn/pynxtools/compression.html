@@ -728,6 +728,34 @@
   
   
     <li class="md-nav__item">
+      <a href="../../how-tos/pynxtools/restructure-data-inside-hdf5-nexus-files.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Restructure data inside HDF5/NeXus files
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../../how-tos/pynxtools/implement-a-visitor.html" class="md-nav__link">
         
   
@@ -1156,6 +1184,34 @@
     
   
     NeXus definitions in pynxtools
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="licensing.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Licensing
   
 
     
@@ -1849,13 +1905,13 @@
 <div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>array = np.zeros((1000,), np.float64)
 </code></pre></div>
 <p>to specific places in the <a href="https://fairmat-nfdi.github.io/pynxtools/how-tos/pynxtools/build-a-plugin.html#the-reader-template-dictionary"><code>template</code></a> object that the <code>dataconverter</code> provides:</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>template[&quot;/ENTRY[entry1]/numpy_array&quot;] = array
+<div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>template["/ENTRY[entry1]/numpy_array"] = array
 </code></pre></div>
 <p>Given such a template entry, the <code>dataconverter</code> creates an HDF5 dataset instance that uses the so-called contiguous data storage layout. That means that the dataset is stored uncompressed.</p>
 <p>As an alternative, compression can be instructed via a slight modification of the previous example:</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>template[&quot;/ENTRY[entry1]/array&quot;] = {
-<a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>  &quot;compress&quot;: array,
-<a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a>  &quot;strength&quot;: 9,
+<div class="highlight"><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>template["/ENTRY[entry1]/array"] = {
+<a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>  "compress": array,
+<a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a>  "strength": 9,
 <a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a>}
 </code></pre></div>
 <p>Wrapping the <code>array</code> here into a dictionary instructs the <code>dataconverter</code> to store a lossless compressed version of the same dataset.
