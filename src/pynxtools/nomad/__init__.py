@@ -59,6 +59,27 @@ NX_TYPES = {  # Primitive Types,  'ISO8601' is the only type not defined here
     "NX_CHAR_OR_NUMBER": m_float64,  # TODO: fix this mapping
 }
 
+NEXUS_ONTOLOGY_RELEASE_VERSION = "v2026.01"
+NEXUS_ONTOLOGY_RELEASE_URL = (
+    "https://github.com/FAIRmat-NFDI/NeXusOntology/releases/download/"
+    "{version}/NeXusOntology_full.owl"
+)
+
+
+def _download_nexus_ontology_release(version: str, dest_path: Path) -> None:
+    """Download the base (NeXus-only) ontology for a given NeXusOntology release tag."""
+    import requests
+
+    url = NEXUS_ONTOLOGY_RELEASE_URL.format(version=version)
+    dest_path.parent.mkdir(parents=True, exist_ok=True)
+    tmp_path = dest_path.with_suffix(dest_path.suffix + ".part")
+    with requests.get(url, stream=True, timeout=60) as response:
+        response.raise_for_status()
+        with open(tmp_path, "wb") as f:
+            for chunk in response.iter_content(chunk_size=1024 * 1024):
+                f.write(chunk)
+    tmp_path.replace(dest_path)
+
 
 FIELD_STATISTICS: dict[str, dict] = {
     "__mean": {"function": np.mean, "type": np.float64, "mask": True},
@@ -199,19 +220,14 @@ def get_package_filepath() -> Path:
 def ensure_ontology_initialization(ontology_imports: list[str] | None = None) -> None:
     """
     Ensure the NeXus ontology file exists at the expected location for nomad-ontology-service.
-    Generates ontology files based on the latest NeXus definitions commit hash,
-    runs the reasoner, and saves the inferred version.
+    Downloads the pinned NeXusOntology release, merges in the given imports, runs the
+    reasoner, and saves the inferred version.
     Uses a lock file to prevent concurrent generation in multi-process environments.
     """
     import logging
     import time
 
-    import pygit2
     from owlready2 import get_ontology, sync_reasoner
-
-    from pynxtools.NeXusOntology.script.generate_ontology import (
-        main as generate_ontology,
-    )
 
     logger = logging.getLogger("pynxtools")
 
@@ -219,33 +235,30 @@ def ensure_ontology_initialization(ontology_imports: list[str] | None = None) ->
         cache_dir_abs = CACHE_DIR.resolve()
         cache_dir_abs.mkdir(parents=True, exist_ok=True)
 
-        # Get latest commit hash from definitions submodule
-        nexus_def_path = str(PACKAGE_DIR.parent / "definitions")
-        repo = pygit2.Repository(nexus_def_path)
-        latest_commit_hash = str(repo.head.target)[:7]
+        version = NEXUS_ONTOLOGY_RELEASE_VERSION
+        # A maintainer/CI build step may pre-place a fetched copy of the release
+        # owl file here before packaging a wheel, so offline NOMAD Oasis
+        # deployments without network access don't need to reach github.com
+        # at runtime.
+        ontology_dir = PACKAGE_DIR / "ontology"
 
-        # Construct ontology file paths with commit hash
-        ontology_dir = PACKAGE_DIR.parent / "NeXusOntology" / "ontology"
         full_owl_file_path = resolve_artifact_path(
-            filename=f"NeXusOntology_full_{latest_commit_hash}.owl",
+            filename=f"NeXusOntology_full_{version}.owl",
             package_dir=ontology_dir,
             cache_dir=cache_dir_abs,
         )
         inferred_owl_file_path = resolve_artifact_path(
-            filename=f"NeXusOntology_full_{latest_commit_hash}_inferred.owl",
+            filename=f"NeXusOntology_full_{version}_inferred.owl",
             package_dir=ontology_dir,
             cache_dir=cache_dir_abs,
         )
 
-        # Ensure parent directory exists for cache files
         if inferred_owl_file_path.parent.is_relative_to(CACHE_DIR):
             inferred_owl_file_path.parent.mkdir(parents=True, exist_ok=True)
 
-        # Check if inferred ontology exists; if not, generate it
         if not inferred_owl_file_path.is_file():
             lock_file = cache_dir_abs / ".ontology_generation.lock"
 
-            # Wait if another process is generating
             for attempt in range(120):
                 if not lock_file.exists():
                     break
@@ -253,7 +266,6 @@ def ensure_ontology_initialization(ontology_imports: list[str] | None = None) ->
             else:
                 logger.warning("Timeout waiting for ontology generation")
 
-            # Acquire lock
             try:
                 lock_file.touch(exist_ok=False)
             except FileExistsError:
@@ -263,36 +275,24 @@ def ensure_ontology_initialization(ontology_imports: list[str] | None = None) ->
                 raise
 
             try:
-                # Generate ontology with proper parameters
-                generate_ontology(
-                    full=True,
-                    testdata=False,
-                    nexus_def_path=nexus_def_path,
-                    def_commit=latest_commit_hash,
-                    store_commit_filename=True,
-                    imports=ontology_imports or [],
-                    output_dir=str(full_owl_file_path.parent),
-                )
+                if not full_owl_file_path.is_file():
+                    logger.info(f"Downloading NeXusOntology {version} base ontology...")
+                    _download_nexus_ontology_release(version, full_owl_file_path)
 
-                # Run reasoner and save inferred version
-                if full_owl_file_path.is_file():
-                    ontology = get_ontology(str(full_owl_file_path)).load()
-                    sync_reasoner(ontology)
-                    ontology.save(file=str(inferred_owl_file_path), format="rdfxml")
-                    full_owl_file_path.unlink()  # Remove non-inferred version
+                ontology = get_ontology(str(full_owl_file_path)).load()
+                if ontology_imports:
+                    for import_iri in ontology_imports:
+                        ontology.imported_ontologies.append(get_ontology(import_iri))
+                sync_reasoner(ontology)
+                ontology.save(file=str(inferred_owl_file_path), format="rdfxml")
             finally:
                 lock_file.unlink(missing_ok=True)
 
         logger.debug(f"Ontology file ready at {inferred_owl_file_path}")
 
-        # After successful generation, create a symlink for the service
         static_link_path = cache_dir_abs / "NeXusOntology_inferred.owl"
-
-        # Remove old link if it exists
         if static_link_path.exists() or static_link_path.is_symlink():
             static_link_path.unlink()
-
-        # Create new symlink pointing to the inferred ontology
         static_link_path.symlink_to(inferred_owl_file_path.name)
 
         logger.debug(
