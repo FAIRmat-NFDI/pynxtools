@@ -100,7 +100,7 @@ Lists the concept paths defined in a NeXus application.
 Generates the NOMAD metainfo schemas as Python classes.
 
 ::: mkdocs-click
-    :module: pynxtools.cli
+    :module: pynxtools.nomad.cli
     :command: nomad
     :prog_name: pynx nomad
     :depth: 2

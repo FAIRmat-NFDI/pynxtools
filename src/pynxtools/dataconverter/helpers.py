@@ -700,6 +700,135 @@ def convert_data_dict_path_to_hdf5_path(path) -> str:
     return hdf5path
 
 
+def _format_hdf5_group_name(group_name: str, nx_class: str | None) -> str:
+    """Return a group possibly renamed with its NX class name."""
+    if not nx_class:
+        return group_name
+
+    if nx_class.startswith("NX"):
+        nx_class = nx_class[2:]
+
+    return f"{nx_class.upper()}[{group_name}]"
+
+
+def convert_hdf5_path_to_data_dict_path(h5file: h5py.File, path: str) -> str:
+    """Convert an HDF5 path to the data converter path style.
+
+    Group names that contain an NX_class (or NXclass) attribute are renamed using
+    the class name with the original group name in square brackets:
+    /entry -> /ENTRY[entry]
+    """
+    parts = []
+    current = h5file
+    for part in path.strip("/").split("/"):
+        if part == "":
+            continue
+        current = current[part]
+        if isinstance(current, h5py.Group) and "NX_class" in current.attrs:
+            nx_class = decode_if_bytes(current.attrs.get("NX_class"))
+            parts.append(_format_hdf5_group_name(part, nx_class))
+        else:
+            parts.append(part)
+    return "/" + "/".join(parts) if parts else "/"
+
+
+def list_hdf5_paths(file_path) -> dict[str, str]:
+    """Return a mapping of data-converter-style paths to HDF5 '@data:' paths.
+
+    The returned dict contains a mapping of data-converter config-file-style paths (as used
+    elsewhere in this module) to a normalized HDF5 path string prefixed with
+    `@data:`, which can be used by the JSON map reader. Group class names are removed (so NX-class decorated group names
+    like `ENTRY[entry]` become `entry`), trailing slashes are removed, and
+    attribute paths use an `@` between the dataset/group and the attribute
+    name (e.g. `@data:/entry/sample@attr`). For root attributes the base path
+    portion is omitted (e.g. a root ``description`` attribute becomes
+    ``@data:@description``). ``NX_class``/``NXclass`` attributes and
+    Root attributes (that add_default_root_attributes() anyway always overwrites on
+    write) are intentionally ignored. Root attributes are not included in visititems().
+    """
+    try:
+        with h5py.File(file_path, "r") as h5file:
+            mapping: dict[str, str] = {}
+
+            def recurse(name, obj):
+                data_path = convert_hdf5_path_to_data_dict_path(h5file, name)
+                # compute the hdf5-style base path without NX-class decorations
+                hdf5_base = convert_data_dict_path_to_hdf5_path(data_path).rstrip("/")
+                # strip leading slash from the hdf5 path
+                hdf5_base = hdf5_base.lstrip("/")
+
+                # only include dataset entries, not groups
+                if isinstance(obj, h5py.Dataset):
+                    mapping[data_path] = f"@data:{hdf5_base}"
+
+                # attributes live on the object; produce values with '@' before attr
+                for attr_name in obj.attrs:
+                    # ignore NX_class attributes, as they are part of the key
+                    attr_name = decode_if_bytes(attr_name)
+
+                    if attr_name.startswith(("NX_", "nx_")):
+                        continue
+
+                    attr_key = f"{data_path}/@{attr_name}"
+                    mapping[attr_key] = f"@data:{hdf5_base}@{attr_name}"
+
+            # include root-level attributes, but skip the writer-managed NXroot metadata
+            for attr_name in h5file.attrs:
+                attr_name = decode_if_bytes(attr_name)
+                if attr_name.startswith(("NX_", "nx_")):
+                    continue
+                if attr_name in {
+                    "file_name",
+                    "file_time",
+                    "file_update_time",
+                    "NeXus_repository",
+                    "NeXus_release",
+                    "HDF5_Version",
+                    "h5py_version",
+                    "creator",
+                    "creator_version",
+                    "append_mode",
+                }:
+                    continue
+                mapping[f"/@{attr_name}"] = f"@data:@{attr_name}"
+
+            h5file.visititems(recurse)
+        return mapping
+    except OSError as exc:
+        raise ValueError(f"{file_path} is not a valid HDF5 file.") from exc
+
+
+def save_hdf5_paths_to_json(
+    source_file_path: str,
+    output_file_path: str | None = None,
+    *,
+    indent: int = 2,
+) -> str:
+    """Write the dict from ``list_hdf5_paths`` to a JSON file.
+
+    Args:
+        source_file_path: Path to the input NeXus/HDF5 file.
+        output_file_path: Optional output JSON filename. If omitted, the file is
+            written next to ``source_file_path`` with name
+            ``<basename>.config.json``.
+        indent: JSON indentation level.
+
+    Returns:
+        The path to the written JSON file.
+    """
+    paths_dict = list_hdf5_paths(source_file_path)
+    if output_file_path is None:
+        basename = os.path.splitext(os.path.basename(source_file_path))[0]
+        output_file_path = os.path.join(
+            os.path.dirname(source_file_path), f"{basename}.config.json"
+        )
+
+    with open(output_file_path, "w", encoding="utf-8") as json_file:
+        json.dump(paths_dict, json_file, indent=indent, ensure_ascii=False)
+
+    return output_file_path
+
+
 def is_value_valid_element_of_enum(value, elem_list) -> tuple[bool, list]:
     """Checks whether a value has to be specific from the NXDL enumeration and returns options.
 

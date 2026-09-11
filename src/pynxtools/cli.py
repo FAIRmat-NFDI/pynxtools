@@ -25,7 +25,7 @@ Legacy entry points (``read_nexus``, ``dataconverter``, ``generate_eln``,
 import click
 
 from pynxtools.annotator.cli import read
-from pynxtools.dataconverter.cli import convert, validate
+from pynxtools.dataconverter.cli import convert, list_keys, validate
 from pynxtools.eln_mapper.cli import generate_eln
 from pynxtools.nexus.cli import inspect_appdef
 
@@ -71,4 +71,5 @@ pynx.add_command(convert, name="convert")
 pynx.add_command(validate, name="validate")
 pynx.add_command(generate_eln, name="generate-eln")
 pynx.add_command(inspect_appdef, name="inspect-appdef")
+pynx.add_command(list_keys, name="list-keys")
 pynx.add_command(_LazyNomadGroup(), name="nomad")

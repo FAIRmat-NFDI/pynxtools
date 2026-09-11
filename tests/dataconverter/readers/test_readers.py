@@ -7,6 +7,7 @@
 """Test cases for readers used for the DataConverter"""
 
 import glob
+import json
 import logging
 import os
 import shutil
@@ -219,3 +220,83 @@ def test_json_map_reader_hdf5_unpacker_decodes_text_bytes_only(tmp_path):
     # Float array unchanged
     assert isinstance(float_array, np.ndarray)
     assert np.issubdtype(float_array.dtype, np.floating)
+
+
+def test_json_map_reader_restructures_hdf5_paths_from_saved_config(tmp_path):
+    """Test the "copy mode" of the json map reader.
+    Save a generated config, remap a concept, and replace a value with a constant."""
+    from pynxtools.dataconverter.helpers import save_hdf5_paths_to_json
+    from pynxtools.dataconverter.readers.json_map.reader import JsonMapReader
+
+    source_path = tmp_path / "source.nxs"
+    with h5py.File(source_path, "w") as h5f:
+        entry = h5f.create_group("entry")
+        entry.attrs["NX_class"] = "NXentry"
+        data = entry.create_dataset("measurement", data=np.array([1.0, 2.0, 3.0]))
+        data.attrs["units"] = "eV"
+
+    config_path = save_hdf5_paths_to_json(source_path, tmp_path / "source.config.json")
+
+    with open(config_path, encoding="utf-8") as f:
+        config = json.load(f)
+
+    # Remap the target concept by changing the key path.
+    config["/ENTRY[entry]/SAMPLE[sample]/temperature"] = config.pop(
+        "/ENTRY[entry]/measurement"
+    )
+    config["/ENTRY[entry]/SAMPLE[sample]/temperature/@units"] = config.pop(
+        "/ENTRY[entry]/measurement/@units"
+    )
+
+    # Replace another source value with a literal constant.
+    config["/ENTRY[entry]/INSTRUMENT[instrument]/detector/count_time"] = 42
+
+    with open(config_path, "w", encoding="utf-8") as f:
+        json.dump(config, f, indent=2)
+
+    reader = JsonMapReader()
+    reader.set_config_file(str(config_path))
+    reader.read(
+        template=_make_nxdl_template("NXtest"),
+        file_paths=(str(source_path),),
+    )
+
+    np.testing.assert_array_equal(
+        reader.get_data("", config["/ENTRY[entry]/SAMPLE[sample]/temperature"][6:]),
+        np.array([1.0, 2.0, 3.0]),
+    )
+    assert (
+        reader.get_data(
+            "", config["/ENTRY[entry]/SAMPLE[sample]/temperature/@units"][6:]
+        )
+        == "eV"
+    )
+
+
+def test_json_map_reader_hdf5_file_loads_attributes(tmp_path):
+    """_handle_hdf5_file exposes group/dataset attributes as '<name>@<attr>' entries.
+
+    Also covers root-level file attributes, stored as '@<attr>' at the top of
+    self.data, and confirms attribute keys are resolvable via the same
+    '@data:' path syntax used for regular data (see get_val_nested_keystring_from_dict).
+    """
+    from pynxtools.dataconverter.readers.json_map.reader import JsonMapReader
+
+    filename = tmp_path / "test.nxs"
+    with h5py.File(filename, "w") as f:
+        f.attrs["file_description"] = "a root attribute"
+        entry = f.create_group("entry")
+        entry.attrs["NX_class"] = "NXentry"
+        dataset = entry.create_dataset("collection_time", data=42)
+        dataset.attrs["units"] = "s"
+        child = entry.create_group("sample")
+        child.attrs["NX_class"] = "NXsample"
+        child.attrs["name"] = "my sample"
+
+    reader = JsonMapReader()
+    reader._handle_hdf5_file(str(filename))
+
+    assert reader.data["@file_description"] == "a root attribute"
+    assert reader.data["entry"]["collection_time@units"] == "s"
+    assert reader.data["entry"]["sample@name"] == "my sample"
+    assert reader.data["entry"]["sample@NX_class"] == "NXsample"

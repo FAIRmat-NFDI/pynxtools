@@ -6,15 +6,19 @@
 
 """Test cases for the helper functions used by the DataConverter."""
 
+import json
 import logging
 import os
 import re
 import shutil
 import xml.etree.ElementTree as ET
 
+import h5py
 import numpy as np
 import pytest
+from click.testing import CliRunner
 
+from pynxtools.cli import pynx
 from pynxtools.dataconverter import helpers
 from pynxtools.dataconverter.template import Template
 
@@ -133,6 +137,94 @@ def test_transform_to_intended_dt(input_data, expected_output):
 def test_path_in_data_dict(nxdl_path, expected, template):
     """Unit test for helper function to check if an NXDL path exists in the reader dictionary."""
     assert helpers.path_in_data_dict(nxdl_path, tuple(template.keys())) == expected
+
+
+def test_list_hdf5_paths(tmp_path):
+    """Test the listing of hdf5 datasets.
+
+    Empty groups are ignored, while paths for real datasets such as entries and
+    child groups are included in the mapping produced by list_hdf5_paths.
+    """
+    filename = tmp_path / "test.nxs"
+    with h5py.File(filename, "w") as f:
+        f.attrs["file_description"] = "root attribute"
+        f.attrs["file_name"] = "should be skipped"
+        entry = f.create_group("entry")
+        entry.attrs["NX_class"] = "NXentry"
+        entry.attrs["description"] = "an entry"
+        entry.create_dataset("data", data=[1, 2, 3])
+        entry["data"].attrs["units"] = "eV"
+        child = entry.create_group("child")
+        child.attrs["NX_class"] = "NXgroup"
+        child.attrs["description"] = "child group"
+        child.create_dataset("value", data=42)
+        child["value"].attrs["units"] = "counts"
+        empty_child = entry.create_group("empty_child")
+        empty_child.attrs["NX_class"] = "NXgroup"
+
+    paths = helpers.list_hdf5_paths(filename)
+
+    # only datasets and attributes are mapped, not bare groups
+    assert "/ENTRY[entry]" not in paths
+    assert "/ENTRY[entry]/GROUP[child]" not in paths
+
+    assert paths["/ENTRY[entry]/data"] == "@data:entry/data"
+    assert paths["/ENTRY[entry]/GROUP[child]/value"] == "@data:entry/child/value"
+
+    # NX_class attributes are skipped, other attributes are kept
+    assert "/ENTRY[entry]/@NX_class" not in paths
+    assert paths["/ENTRY[entry]/@description"] == "@data:entry@description"
+
+    # root-level attributes use the '@data:@attr' shorthand
+    assert paths["/@file_description"] == "@data:@file_description"
+
+    # writer-managed root attributes (see add_default_root_attributes) are skipped
+    assert "/@file_name" not in paths
+
+    assert "/ENTRY[entry]/data" in paths.keys()
+    assert paths["/ENTRY[entry]/data"] == "@data:entry/data"
+    assert "/ENTRY[entry]/data/@units" in paths.keys()
+    assert paths["/ENTRY[entry]/data/@units"] == "@data:entry/data@units"
+    assert "/ENTRY[entry]/GROUP[child]/value" in paths.keys()
+    assert paths["/ENTRY[entry]/GROUP[child]/value"] == "@data:entry/child/value"
+    assert "/ENTRY[entry]/GROUP[child]/@description" in paths.keys()
+    assert (
+        paths["/ENTRY[entry]/GROUP[child]/@description"]
+        == "@data:entry/child@description"
+    )
+    assert "/ENTRY[entry]/GROUP[child]/value/@units" in paths.keys()
+    assert (
+        paths["/ENTRY[entry]/GROUP[child]/value/@units"]
+        == "@data:entry/child/value@units"
+    )
+    assert "/ENTRY[entry]/GROUP[empty_child]" not in paths.keys()
+
+
+def test_list_keys_cli(tmp_path):
+    """List generated HDF5 keys via the top-level pynx CLI."""
+    filename = tmp_path / "test.nxs"
+    with h5py.File(filename, "w") as f:
+        entry = f.create_group("entry")
+        entry.attrs["NX_class"] = "NXentry"
+        entry.create_dataset("data", data=[1, 2, 3])
+        entry["data"].attrs["units"] = "eV"
+
+    runner = CliRunner()
+    result = runner.invoke(pynx, ["list-keys", str(filename)])
+
+    assert result.exit_code == 0, result.output
+    payload = json.loads(result.output)
+    assert payload["/ENTRY[entry]/data"] == "@data:entry/data"
+    assert payload["/ENTRY[entry]/data/@units"] == "@data:entry/data@units"
+
+
+def test_list_hdf5_paths_rejects_invalid_hdf5(tmp_path):
+    """Non-HDF5 files should raise a clear validation error."""
+    invalid_file = tmp_path / "not_a_hdf5.txt"
+    invalid_file.write_text("not a valid hdf5 file", encoding="utf-8")
+
+    with pytest.raises(ValueError, match="valid HDF5"):
+        helpers.list_hdf5_paths(invalid_file)
 
 
 def test_atom_type_extractor_and_hill_conversion():
