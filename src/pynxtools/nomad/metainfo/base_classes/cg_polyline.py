@@ -24,6 +24,7 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 
 import numpy as np
+from nomad.datamodel.hdf5 import HDF5Reference
 from nomad.datamodel.metainfo.annotations import (
     ELNAnnotation,
     ELNComponentEnum,
@@ -138,13 +139,10 @@ class CgPolyline(CgPrimitive):
         a_display={"unit": "dimensionless"},
     )
     number_of_vertices = Quantity(
-        type=np.int64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXcg_polyline.html#nxcg_polyline-number-of-vertices-field"
         ],
-        dimensionality="dimensionless",
-        unit="dimensionless",
-        shape=["*"],
         description=(
             "The total number of vertices of each polyline, irrespectively "
             "whether vertices are shared by vertices or not."
@@ -158,12 +156,10 @@ class CgPolyline(CgPrimitive):
         ),
     )
     vertices = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXcg_polyline.html#nxcg_polyline-vertices-field"
         ],
-        flexible_unit=True,
-        shape=["*", "*"],
         description=(
             "Positions of the vertices which support the members of the polyline "
             "set. Users are encouraged to reduce the vertices to unique "
@@ -204,13 +200,10 @@ class CgPolyline(CgPrimitive):
         ),
     )
     polylines = Quantity(
-        type=np.int64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXcg_polyline.html#nxcg_polyline-polylines-field"
         ],
-        dimensionality="dimensionless",
-        unit="dimensionless",
-        shape=["*"],
         description=(
             "Sequence of identifier for vertices how they build each polyline. A "
             "trivial example is a set with two polylines with three vertices "

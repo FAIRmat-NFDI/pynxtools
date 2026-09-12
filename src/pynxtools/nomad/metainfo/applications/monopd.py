@@ -24,6 +24,7 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 
 import numpy as np
+from nomad.datamodel.hdf5 import HDF5Reference
 from nomad.datamodel.metainfo.annotations import (
     ELNAnnotation,
     ELNComponentEnum,
@@ -304,13 +305,10 @@ class MonopdInstrumentCrystal(Crystal):
     )
 
     wavelength = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXmonopd.html#nxmonopd-entry-instrument-crystal-wavelength-field"
         ],
-        dimensionality="[length]",
-        unit="angstrom",
-        shape=["*"],
         description=("Optimum diffracted wavelength"),
         a_nexus_field=NeXusField(
             name="wavelength",
@@ -340,13 +338,10 @@ class MonopdInstrumentDetector(Detector):
     )
 
     polar_angle = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXmonopd.html#nxmonopd-entry-instrument-detector-polar-angle-field"
         ],
-        dimensionality="[angle]",
-        unit="radian",
-        shape=["*"],
         a_nexus_field=NeXusField(
             name="polar_angle",
             type="NX_FLOAT",
@@ -356,12 +351,10 @@ class MonopdInstrumentDetector(Detector):
         ),
     )
     data_quantity = Quantity(
-        type=np.int64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXmonopd.html#nxmonopd-entry-instrument-detector-data-field"
         ],
-        flexible_unit=True,
-        shape=["*"],
         description=(
             "detector signal (usually counts) are already corrected for detector "
             "efficiency"
@@ -528,13 +521,10 @@ class MonopdData(Data):
     )
 
     polar_angle = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXmonopd.html#nxmonopd-entry-data-polar-angle-link"
         ],
-        dimensionality="[angle]",
-        unit="radian",
-        shape=["*"],
         description=("Link to polar angle in /NXentry/NXinstrument/NXdetector"),
         a_nexus_link=NeXusLink(
             name="polar_angle",
@@ -543,12 +533,10 @@ class MonopdData(Data):
         ),
     )
     data_quantity = Quantity(
-        type=np.int64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXmonopd.html#nxmonopd-entry-data-data-link"
         ],
-        shape=["*"],
-        flexible_unit=True,
         description=("Link to data in /NXentry/NXinstrument/NXdetector"),
         a_nexus_link=NeXusLink(
             name="data",

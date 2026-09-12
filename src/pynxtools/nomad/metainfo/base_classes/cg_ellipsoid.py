@@ -24,6 +24,7 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 
 import numpy as np
+from nomad.datamodel.hdf5 import HDF5Reference
 from nomad.datamodel.metainfo.annotations import (
     ELNAnnotation,
     ELNComponentEnum,
@@ -69,13 +70,10 @@ class CgEllipsoid(CgPrimitive):
     )
 
     semi_axes_value = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXcg_ellipsoid.html#nxcg_ellipsoid-semi-axes-value-field"
         ],
-        dimensionality="[length]",
-        unit="m",
-        shape=["*"],
         description=(
             "Length of the semi-axes (e.g. semi-major and semi-minor "
             "respectively for an ellipse). Use if all ellipsoids in the set have "
@@ -90,13 +88,10 @@ class CgEllipsoid(CgPrimitive):
         ),
     )
     semi_axes_values = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXcg_ellipsoid.html#nxcg_ellipsoid-semi-axes-values-field"
         ],
-        dimensionality="[length]",
-        unit="m",
-        shape=["*", "*"],
         description=(
             "Length of the semi-axes if ellipsoids have individually different lengths."
         ),
@@ -129,13 +124,10 @@ class CgEllipsoid(CgPrimitive):
         a_display={"unit": "m"},
     )
     radii = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXcg_ellipsoid.html#nxcg_ellipsoid-radii-field"
         ],
-        dimensionality="[length]",
-        unit="m",
-        shape=["*"],
         description=(
             "In the case that all ellipsoids are spheres whose radii differ. For "
             "a mixture of spheres use semi_axes_values."

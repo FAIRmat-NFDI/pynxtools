@@ -28,6 +28,7 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 
 import numpy as np
+from nomad.datamodel.hdf5 import HDF5Reference
 from nomad.datamodel.metainfo.annotations import (
     ELNAnnotation,
     ELNComponentEnum,
@@ -365,13 +366,10 @@ class MicrostructureOdfKthExtrema(Process):
         a_display={"unit": "radian"},
     )
     location = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXmicrostructure_odf.html#nxmicrostructure_odf-kth-extrema-location-field"
         ],
-        dimensionality="[angle]",
-        unit="radian",
-        shape=["*", 3],
         description=(
             "Euler angle representation :math:`\\varphi_1`, :math:`\\Phi`, "
             ":math:`\\varphi_2` of the kth-most maxima in decreasing order of "
@@ -386,12 +384,10 @@ class MicrostructureOdfKthExtrema(Process):
         ),
     )
     volume_fraction = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXmicrostructure_odf.html#nxmicrostructure_odf-kth-extrema-volume-fraction-field"
         ],
-        flexible_unit=True,
-        shape=["*"],
         description=(
             "Integrated ODF intensity within a theta angular region of the "
             "orientation space :math:`SO3` about each location (obeying "
@@ -448,13 +444,10 @@ class MicrostructureOdfSampling(Process):
         a_display={"unit": "radian"},
     )
     euler = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXmicrostructure_odf.html#nxmicrostructure_odf-sampling-euler-field"
         ],
-        dimensionality="[angle]",
-        unit="radian",
-        shape=["*", 3],
         description=(
             "Bunge-Euler (i.e. ZXZ convention) locations of each position in "
             "orientation space for which a weight was sampled."
@@ -468,13 +461,10 @@ class MicrostructureOdfSampling(Process):
         ),
     )
     weight = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXmicrostructure_odf.html#nxmicrostructure_odf-sampling-weight-field"
         ],
-        dimensionality="dimensionless",
-        unit="dimensionless",
-        shape=["*"],
         description=("Weight at each sampled position following the order in euler."),
         a_nexus_field=NeXusField(
             name="weight",
@@ -515,13 +505,10 @@ class MicrostructureOdfPhiTwoPlot(Data):
     )
 
     intensity = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXmicrostructure_odf.html#nxmicrostructure_odf-phi-two-plot-intensity-field"
         ],
-        dimensionality="dimensionless",
-        unit="dimensionless",
-        shape=["*", "*", "*"],
         description=(
             "ODF intensity at probed locations relative to the intensity of the "
             "null model of a random texture."
@@ -534,14 +521,27 @@ class MicrostructureOdfPhiTwoPlot(Data):
             units="NX_DIMENSIONLESS",
         ),
     )
-    varphi_one = Quantity(
+    intensity__min = Quantity(
         type=np.float64,
+        description="Minimum of intensity, computed over the full array at parse time.",
+    )
+    intensity__max = Quantity(
+        type=np.float64,
+        description="Maximum of intensity, computed over the full array at parse time.",
+    )
+    intensity__size = Quantity(
+        type=np.int64,
+        description="Number of elements of intensity in the HDF5 file.",
+    )
+    intensity__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of intensity in the HDF5 file.",
+    )
+    varphi_one = Quantity(
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXmicrostructure_odf.html#nxmicrostructure_odf-phi-two-plot-varphi-one-field"
         ],
-        dimensionality="[angle]",
-        unit="radian",
-        shape=["*"],
         description=(
             "Pixel center angular position along the :math:`\\varphi_1` direction."
         ),
@@ -553,14 +553,27 @@ class MicrostructureOdfPhiTwoPlot(Data):
             units="NX_ANGLE",
         ),
     )
-    capital_phi = Quantity(
+    varphi_one__min = Quantity(
         type=np.float64,
+        description="Minimum of varphi_one, computed over the full array at parse time.",
+    )
+    varphi_one__max = Quantity(
+        type=np.float64,
+        description="Maximum of varphi_one, computed over the full array at parse time.",
+    )
+    varphi_one__size = Quantity(
+        type=np.int64,
+        description="Number of elements of varphi_one in the HDF5 file.",
+    )
+    varphi_one__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of varphi_one in the HDF5 file.",
+    )
+    capital_phi = Quantity(
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXmicrostructure_odf.html#nxmicrostructure_odf-phi-two-plot-capital-phi-field"
         ],
-        dimensionality="[angle]",
-        unit="radian",
-        shape=["*"],
         description=(
             "Pixel center angular position along the :math:`\\Phi` direction."
         ),
@@ -572,14 +585,27 @@ class MicrostructureOdfPhiTwoPlot(Data):
             units="NX_ANGLE",
         ),
     )
-    varphi_two = Quantity(
+    capital_phi__min = Quantity(
         type=np.float64,
+        description="Minimum of capital_phi, computed over the full array at parse time.",
+    )
+    capital_phi__max = Quantity(
+        type=np.float64,
+        description="Maximum of capital_phi, computed over the full array at parse time.",
+    )
+    capital_phi__size = Quantity(
+        type=np.int64,
+        description="Number of elements of capital_phi in the HDF5 file.",
+    )
+    capital_phi__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of capital_phi in the HDF5 file.",
+    )
+    varphi_two = Quantity(
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXmicrostructure_odf.html#nxmicrostructure_odf-phi-two-plot-varphi-two-field"
         ],
-        dimensionality="[angle]",
-        unit="radian",
-        shape=["*"],
         description=(
             "Pixel center angular position along the :math:`\\varphi_2` direction."
         ),
@@ -590,6 +616,22 @@ class MicrostructureOdfPhiTwoPlot(Data):
             optionality="optional",
             units="NX_ANGLE",
         ),
+    )
+    varphi_two__min = Quantity(
+        type=np.float64,
+        description="Minimum of varphi_two, computed over the full array at parse time.",
+    )
+    varphi_two__max = Quantity(
+        type=np.float64,
+        description="Maximum of varphi_two, computed over the full array at parse time.",
+    )
+    varphi_two__size = Quantity(
+        type=np.int64,
+        description="Number of elements of varphi_two in the HDF5 file.",
+    )
+    varphi_two__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of varphi_two in the HDF5 file.",
     )
 
     def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:

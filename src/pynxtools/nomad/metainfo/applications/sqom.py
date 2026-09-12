@@ -24,6 +24,7 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 
 import numpy as np
+from nomad.datamodel.hdf5 import HDF5Reference
 from nomad.datamodel.metainfo.annotations import (
     ELNAnnotation,
     ELNComponentEnum,
@@ -426,11 +427,10 @@ class SqomData(Data):
     )
 
     data_quantity = Quantity(
-        type=np.int64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXsqom.html#nxsqom-entry-data-data-field"
         ],
-        shape=["*"],
         description=("This is the intensity for each point in QE"),
         a_nexus_field=NeXusField(
             name="data",
@@ -439,14 +439,27 @@ class SqomData(Data):
             optionality="required",
         ),
     )
+    data_quantity__min = Quantity(
+        type=np.int64,
+        description="Minimum of data_quantity, computed over the full array at parse time.",
+    )
+    data_quantity__max = Quantity(
+        type=np.int64,
+        description="Maximum of data_quantity, computed over the full array at parse time.",
+    )
+    data_quantity__size = Quantity(
+        type=np.int64,
+        description="Number of elements of data_quantity in the HDF5 file.",
+    )
+    data_quantity__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of data_quantity in the HDF5 file.",
+    )
     qx = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXsqom.html#nxsqom-entry-data-qx-field"
         ],
-        dimensionality="1 / [length]",
-        unit="1 / angstrom",
-        shape=["*"],
         description=("Positions for the first dimension of Q"),
         a_nexus_field=NeXusField(
             name="qx",
@@ -456,14 +469,27 @@ class SqomData(Data):
             units="NX_WAVENUMBER",
         ),
     )
-    qy = Quantity(
+    qx__min = Quantity(
         type=np.float64,
+        description="Minimum of qx, computed over the full array at parse time.",
+    )
+    qx__max = Quantity(
+        type=np.float64,
+        description="Maximum of qx, computed over the full array at parse time.",
+    )
+    qx__size = Quantity(
+        type=np.int64,
+        description="Number of elements of qx in the HDF5 file.",
+    )
+    qx__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of qx in the HDF5 file.",
+    )
+    qy = Quantity(
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXsqom.html#nxsqom-entry-data-qy-field"
         ],
-        dimensionality="1 / [length]",
-        unit="1 / angstrom",
-        shape=["*"],
         description=("Positions for the the second dimension of Q"),
         a_nexus_field=NeXusField(
             name="qy",
@@ -473,14 +499,27 @@ class SqomData(Data):
             units="NX_WAVENUMBER",
         ),
     )
-    qz = Quantity(
+    qy__min = Quantity(
         type=np.float64,
+        description="Minimum of qy, computed over the full array at parse time.",
+    )
+    qy__max = Quantity(
+        type=np.float64,
+        description="Maximum of qy, computed over the full array at parse time.",
+    )
+    qy__size = Quantity(
+        type=np.int64,
+        description="Number of elements of qy in the HDF5 file.",
+    )
+    qy__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of qy in the HDF5 file.",
+    )
+    qz = Quantity(
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXsqom.html#nxsqom-entry-data-qz-field"
         ],
-        dimensionality="1 / [length]",
-        unit="1 / angstrom",
-        shape=["*"],
         description=("Positions for the the third dimension of Q"),
         a_nexus_field=NeXusField(
             name="qz",
@@ -490,14 +529,27 @@ class SqomData(Data):
             units="NX_WAVENUMBER",
         ),
     )
-    en = Quantity(
+    qz__min = Quantity(
         type=np.float64,
+        description="Minimum of qz, computed over the full array at parse time.",
+    )
+    qz__max = Quantity(
+        type=np.float64,
+        description="Maximum of qz, computed over the full array at parse time.",
+    )
+    qz__size = Quantity(
+        type=np.int64,
+        description="Number of elements of qz in the HDF5 file.",
+    )
+    qz__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of qz in the HDF5 file.",
+    )
+    en = Quantity(
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXsqom.html#nxsqom-entry-data-en-field"
         ],
-        dimensionality="[mass] * [length] ** 2 / [time] ** 2",
-        unit="eV",
-        shape=["*"],
         description=("Values for the energy transfer for each point"),
         a_nexus_field=NeXusField(
             name="en",
@@ -506,6 +558,22 @@ class SqomData(Data):
             optionality="required",
             units="NX_ENERGY",
         ),
+    )
+    en__min = Quantity(
+        type=np.float64,
+        description="Minimum of en, computed over the full array at parse time.",
+    )
+    en__max = Quantity(
+        type=np.float64,
+        description="Maximum of en, computed over the full array at parse time.",
+    )
+    en__size = Quantity(
+        type=np.int64,
+        description="Number of elements of en in the HDF5 file.",
+    )
+    en__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of en in the HDF5 file.",
     )
 
     def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:

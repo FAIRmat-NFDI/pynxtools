@@ -24,6 +24,7 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 
 import numpy as np
+from nomad.datamodel.hdf5 import HDF5Reference
 from nomad.datamodel.metainfo.annotations import (
     ELNAnnotation,
     ELNComponentEnum,
@@ -1561,12 +1562,10 @@ class MpesArpesData(MpesData):
         ),
     )
     energy = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXmpes_arpes.html#nxmpes_arpes-entry-data-energy-field"
         ],
-        dimensionality="[mass] * [length] ** 2 / [time] ** 2",
-        unit="eV",
         description=("Values on the energy axis."),
         a_nexus_field=NeXusField(
             name="energy",
@@ -1575,10 +1574,22 @@ class MpesArpesData(MpesData):
             optionality="required",
             units="NX_ENERGY",
         ),
-        a_eln=ELNAnnotation(
-            component=ELNComponentEnum.NumberEditQuantity,
-        ),
-        a_display={"unit": "eV"},
+    )
+    energy__min = Quantity(
+        type=np.float64,
+        description="Minimum of energy, computed over the full array at parse time.",
+    )
+    energy__max = Quantity(
+        type=np.float64,
+        description="Maximum of energy, computed over the full array at parse time.",
+    )
+    energy__size = Quantity(
+        type=np.int64,
+        description="Number of elements of energy in the HDF5 file.",
+    )
+    energy__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of energy in the HDF5 file.",
     )
     energy__type = Quantity(
         type=MEnum(["kinetic", "binding"]),
@@ -1601,12 +1612,10 @@ class MpesArpesData(MpesData):
         ),
     )
     angular0 = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXmpes_arpes.html#nxmpes_arpes-entry-data-angular0-field"
         ],
-        dimensionality="[angle]",
-        unit="radian",
         description=("Trace of the first angular axis."),
         a_nexus_field=NeXusField(
             name="angular0",
@@ -1615,18 +1624,28 @@ class MpesArpesData(MpesData):
             optionality="required",
             units="NX_ANGLE",
         ),
-        a_eln=ELNAnnotation(
-            component=ELNComponentEnum.NumberEditQuantity,
-        ),
-        a_display={"unit": "radian"},
+    )
+    angular0__min = Quantity(
+        type=np.float64,
+        description="Minimum of angular0, computed over the full array at parse time.",
+    )
+    angular0__max = Quantity(
+        type=np.float64,
+        description="Maximum of angular0, computed over the full array at parse time.",
+    )
+    angular0__size = Quantity(
+        type=np.int64,
+        description="Number of elements of angular0 in the HDF5 file.",
+    )
+    angular0__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of angular0 in the HDF5 file.",
     )
     angular1 = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXmpes_arpes.html#nxmpes_arpes-entry-data-angular1-field"
         ],
-        dimensionality="[angle]",
-        unit="radian",
         description=(
             "Trace of the second axis. Could be linked from the respective "
             "``@reference`` field."
@@ -1638,17 +1657,28 @@ class MpesArpesData(MpesData):
             optionality="required",
             units="NX_ANGLE",
         ),
-        a_eln=ELNAnnotation(
-            component=ELNComponentEnum.NumberEditQuantity,
-        ),
-        a_display={"unit": "radian"},
+    )
+    angular1__min = Quantity(
+        type=np.float64,
+        description="Minimum of angular1, computed over the full array at parse time.",
+    )
+    angular1__max = Quantity(
+        type=np.float64,
+        description="Maximum of angular1, computed over the full array at parse time.",
+    )
+    angular1__size = Quantity(
+        type=np.int64,
+        description="Number of elements of angular1 in the HDF5 file.",
+    )
+    angular1__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of angular1 in the HDF5 file.",
     )
     data_quantity = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXmpes_arpes.html#nxmpes_arpes-entry-data-data-field"
         ],
-        flexible_unit=True,
         description=(
             "Represents a measurement of photoemission counts over a "
             "three-dimensional space where the varied axes are energy, and one "
@@ -1663,9 +1693,22 @@ class MpesArpesData(MpesData):
             optionality="required",
             units="NX_ANY",
         ),
-        a_eln=ELNAnnotation(
-            component=ELNComponentEnum.NumberEditQuantity,
-        ),
+    )
+    data_quantity__min = Quantity(
+        type=np.float64,
+        description="Minimum of data_quantity, computed over the full array at parse time.",
+    )
+    data_quantity__max = Quantity(
+        type=np.float64,
+        description="Maximum of data_quantity, computed over the full array at parse time.",
+    )
+    data_quantity__size = Quantity(
+        type=np.int64,
+        description="Number of elements of data_quantity in the HDF5 file.",
+    )
+    data_quantity__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of data_quantity in the HDF5 file.",
     )
 
     def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:

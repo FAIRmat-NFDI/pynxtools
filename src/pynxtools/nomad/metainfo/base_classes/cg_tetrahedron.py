@@ -24,6 +24,7 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 
 import numpy as np
+from nomad.datamodel.hdf5 import HDF5Reference
 from nomad.datamodel.metainfo.annotations import (
     ELNAnnotation,
     ELNComponentEnum,
@@ -106,13 +107,10 @@ class CgTetrahedron(CgPrimitive):
     )
 
     face_area = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXcg_tetrahedron.html#nxcg_tetrahedron-face-area-field"
         ],
-        dimensionality="[length] ** 2",
-        unit="m ** 2",
-        shape=["*", 4],
         description=("Area of each of the four triangular faces of each tetrahedron."),
         a_nexus_field=NeXusField(
             name="face_area",
@@ -123,13 +121,10 @@ class CgTetrahedron(CgPrimitive):
         ),
     )
     edge_length = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXcg_tetrahedron.html#nxcg_tetrahedron-edge-length-field"
         ],
-        dimensionality="[length]",
-        unit="m",
-        shape=["*", 6],
         description=("Length of each edge of each tetrahedron."),
         a_nexus_field=NeXusField(
             name="edge_length",

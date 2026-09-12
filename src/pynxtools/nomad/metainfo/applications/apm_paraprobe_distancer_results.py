@@ -28,6 +28,7 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 
 import numpy as np
+from nomad.datamodel.hdf5 import HDF5Reference
 from nomad.datamodel.metainfo.annotations import (
     ELNAnnotation,
     ELNComponentEnum,
@@ -172,13 +173,10 @@ class ApmParaprobeDistancerResultsPointToTriangleID(
     )
 
     distance = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_distancer_results.html#nxapm_paraprobe_distancer_results-entry-point-to-triangleid-distance-field"
         ],
-        dimensionality="[length]",
-        unit="m",
-        shape=["*"],
         description=(
             "The shortest analytical distance of each point to their "
             "respectively closest triangle from the joint triangle set."
@@ -192,13 +190,10 @@ class ApmParaprobeDistancerResultsPointToTriangleID(
         ),
     )
     indices_triangle = Quantity(
-        type=np.int64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_distancer_results.html#nxapm_paraprobe_distancer_results-entry-point-to-triangleid-indices-triangle-field"
         ],
-        dimensionality="dimensionless",
-        unit="dimensionless",
-        shape=["*"],
         description=(
             "For each point the identifier of the triangle for which the "
             "shortest distance was found."
@@ -212,13 +207,10 @@ class ApmParaprobeDistancerResultsPointToTriangleID(
         ),
     )
     indices_point = Quantity(
-        type=np.int64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_distancer_results.html#nxapm_paraprobe_distancer_results-entry-point-to-triangleid-indices-point-field"
         ],
-        dimensionality="dimensionless",
-        unit="dimensionless",
-        shape=["*"],
         description=(
             "A support field to enable the visualization of each point by an "
             "explicit identifier on the interval [0, n_ions - 1]. The field can "
@@ -304,13 +296,10 @@ class ApmParaprobeDistancerResultsPointToTriangleIDSignValid(CsFilterBooleanMask
         a_display={"unit": "dimensionless"},
     )
     mask = Quantity(
-        type=np.int64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_distancer_results.html#nxapm_paraprobe_distancer_results-entry-point-to-triangleid-sign-valid-mask-field"
         ],
-        dimensionality="dimensionless",
-        unit="dimensionless",
-        shape=["*"],
         description=(
             "The content of the mask. Like for all masks used in the tools of "
             "the paraprobe-toolbox, padding is used when number_of_objects is "
@@ -387,13 +376,10 @@ class ApmParaprobeDistancerResultsPointToTriangleIDWindowTriangles(CsFilterBoole
         a_display={"unit": "dimensionless"},
     )
     mask = Quantity(
-        type=np.int64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_distancer_results.html#nxapm_paraprobe_distancer_results-entry-point-to-triangleid-window-triangles-mask-field"
         ],
-        dimensionality="dimensionless",
-        unit="dimensionless",
-        shape=["*"],
         a_nexus_field=NeXusField(
             name="mask",
             type="NX_UINT",

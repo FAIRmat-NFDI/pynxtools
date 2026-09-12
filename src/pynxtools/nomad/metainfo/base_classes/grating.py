@@ -24,6 +24,7 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 
 import numpy as np
+from nomad.datamodel.hdf5 import HDF5Reference
 from nomad.datamodel.metainfo.annotations import (
     ELNAnnotation,
     ELNComponentEnum,
@@ -117,13 +118,10 @@ class Grating(Component):
     )
 
     angles = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXgrating.html#nxgrating-angles-field"
         ],
-        dimensionality="[angle]",
-        unit="radian",
-        shape=[2],
         description=(
             "Blaze or trapezoidal angles, with the angle of the upstream facing "
             "edge listed first. Blazed gratings can be identified by the low "
@@ -138,13 +136,10 @@ class Grating(Component):
         ),
     )
     period = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXgrating.html#nxgrating-period-field"
         ],
-        dimensionality="[length]",
-        unit="m",
-        shape=["*"],
         description=(
             "List of polynomial coefficients describing the spatial separation "
             "of lines/grooves as a function of position along the grating, in "

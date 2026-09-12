@@ -24,6 +24,7 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 
 import numpy as np
+from nomad.datamodel.hdf5 import HDF5Reference
 from nomad.datamodel.metainfo.annotations import (
     ELNAnnotation,
     ELNComponentEnum,
@@ -83,13 +84,10 @@ class Orientation(Object):
     )
 
     value = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXorientation.html#nxorientation-value-field"
         ],
-        dimensionality="dimensionless",
-        unit="dimensionless",
-        shape=["*", 6],
         description=(
             "The orientation information is stored as direction cosines. The "
             "direction cosines will be between the local coordinate directions "

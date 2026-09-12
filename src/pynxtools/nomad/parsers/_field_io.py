@@ -91,7 +91,9 @@ def get_field_stats_iuf_chunked(
         stats["__max"] = np.float64(stats["__max"])
 
     stats["__size"] = np.int64(np.size(hdf_node))
-    stats["__ndim"] = np.uint8(np.ndim(hdf_node))
+    # int8, not uint8: NOMAD has no unsigned-integer type and silently
+    # downcasts np.uint8 to signed m_int8.
+    stats["__ndim"] = np.int8(np.ndim(hdf_node))
     return stats
 
 
@@ -124,7 +126,9 @@ def get_field_stats_iuf_contiguous(hdf_node: h5py.Dataset) -> dict:
         stats["__max"] = np.float64(stats["__max"])
 
     stats["__size"] = np.int64(np.size(hdf_node))
-    stats["__ndim"] = np.uint8(np.ndim(hdf_node))
+    # int8, not uint8: NOMAD has no unsigned-integer type and silently
+    # downcasts np.uint8 to signed m_int8.
+    stats["__ndim"] = np.int8(np.ndim(hdf_node))
     return stats
 
 

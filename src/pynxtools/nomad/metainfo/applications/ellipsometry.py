@@ -24,6 +24,7 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 
 import numpy as np
+from nomad.datamodel.hdf5 import HDF5Reference
 from nomad.datamodel.metainfo.annotations import (
     ELNAnnotation,
     ELNComponentEnum,
@@ -710,7 +711,7 @@ class EllipsometryDataCollection(OpticalSpectroscopyData):
     )
 
     data_identifier = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXellipsometry.html#nxellipsometry-entry-data-collection-data-identifier-field"
         ],
@@ -724,24 +725,25 @@ class EllipsometryDataCollection(OpticalSpectroscopyData):
             name_type="specified",
             optionality="recommended",
         ),
-        a_eln=ELNAnnotation(
-            component=ELNComponentEnum.NumberEditQuantity,
-        ),
+    )
+    data_identifier__min = Quantity(
+        type=np.float64,
+        description="Minimum of data_identifier, computed over the full array at parse time.",
+    )
+    data_identifier__max = Quantity(
+        type=np.float64,
+        description="Maximum of data_identifier, computed over the full array at parse time.",
+    )
+    data_identifier__size = Quantity(
+        type=np.int64,
+        description="Number of elements of data_identifier in the HDF5 file.",
+    )
+    data_identifier__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of data_identifier in the HDF5 file.",
     )
     data_type = Quantity(
-        type=MEnum(
-            [
-                "intensity",
-                "reflectivity",
-                "transmittance",
-                "Psi/Delta",
-                "tan(Psi)/cos(Delta)",
-                "Mueller matrix",
-                "Jones matrix",
-                "N/C/S",
-                "raw data",
-            ]
-        ),
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXellipsometry.html#nxellipsometry-entry-data-collection-data-type-field"
         ],
@@ -768,18 +770,13 @@ class EllipsometryDataCollection(OpticalSpectroscopyData):
                 "raw data",
             ],
         ),
-        a_eln=ELNAnnotation(
-            component=ELNComponentEnum.EnumEditQuantity,
-        ),
     )
     NAME_spectrum = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXellipsometry.html#nxellipsometry-entry-data-collection-name-spectrum-field"
         ],
         variable=True,
-        flexible_unit=True,
-        shape=["*"],
         description=(
             "Spectral values (e.g. wavelength or energy) used for the "
             "measurement. An array of 1 or more elements. Length defines "
@@ -793,6 +790,26 @@ class EllipsometryDataCollection(OpticalSpectroscopyData):
             optionality="optional",
             units="NX_ANY",
         ),
+    )
+    NAME_spectrum__min = Quantity(
+        type=np.float64,
+        variable=True,
+        description="Minimum of NAME_spectrum, computed over the full array at parse time.",
+    )
+    NAME_spectrum__max = Quantity(
+        type=np.float64,
+        variable=True,
+        description="Maximum of NAME_spectrum, computed over the full array at parse time.",
+    )
+    NAME_spectrum__size = Quantity(
+        type=np.int64,
+        variable=True,
+        description="Number of elements of NAME_spectrum in the HDF5 file.",
+    )
+    NAME_spectrum__ndim = Quantity(
+        type=np.int8,
+        variable=True,
+        description="Number of dimensions of NAME_spectrum in the HDF5 file.",
     )
     NAME_spectrum__units = Quantity(
         type=str,
@@ -816,12 +833,10 @@ class EllipsometryDataCollection(OpticalSpectroscopyData):
         ),
     )
     measured_data = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXellipsometry.html#nxellipsometry-entry-data-collection-measured-data-field"
         ],
-        flexible_unit=True,
-        shape=["*", "*", "*"],
         description=(
             "Resulting data from the measurement, described by 'data_type'. The "
             "first dimension is defined by the number of measurements taken, "
@@ -841,6 +856,22 @@ class EllipsometryDataCollection(OpticalSpectroscopyData):
             optionality="required",
             units="NX_ANY",
         ),
+    )
+    measured_data__min = Quantity(
+        type=np.float64,
+        description="Minimum of measured_data, computed over the full array at parse time.",
+    )
+    measured_data__max = Quantity(
+        type=np.float64,
+        description="Maximum of measured_data, computed over the full array at parse time.",
+    )
+    measured_data__size = Quantity(
+        type=np.int64,
+        description="Number of elements of measured_data in the HDF5 file.",
+    )
+    measured_data__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of measured_data in the HDF5 file.",
     )
     measured_data__units = Quantity(
         type=str,
@@ -864,12 +895,10 @@ class EllipsometryDataCollection(OpticalSpectroscopyData):
         ),
     )
     measured_data_errors = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXellipsometry.html#nxellipsometry-entry-data-collection-measured-data-errors-field"
         ],
-        flexible_unit=True,
-        shape=["*", "*", "*"],
         description=(
             "Specified uncertainties (errors) of the data described by "
             "'data_type' and provided in 'measured_data'."
@@ -881,6 +910,22 @@ class EllipsometryDataCollection(OpticalSpectroscopyData):
             optionality="optional",
             units="NX_ANY",
         ),
+    )
+    measured_data_errors__min = Quantity(
+        type=np.float64,
+        description="Minimum of measured_data_errors, computed over the full array at parse time.",
+    )
+    measured_data_errors__max = Quantity(
+        type=np.float64,
+        description="Maximum of measured_data_errors, computed over the full array at parse time.",
+    )
+    measured_data_errors__size = Quantity(
+        type=np.int64,
+        description="Number of elements of measured_data_errors in the HDF5 file.",
+    )
+    measured_data_errors__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of measured_data_errors in the HDF5 file.",
     )
     measured_data_errors__units = Quantity(
         type=str,
@@ -904,11 +949,10 @@ class EllipsometryDataCollection(OpticalSpectroscopyData):
         ),
     )
     varied_parameter_link = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXellipsometry.html#nxellipsometry-entry-data-collection-varied-parameter-link-field"
         ],
-        shape=["*"],
         description=(
             "List of links to the values of the sensors. Add a link for each "
             "varied parameter (i.e. for each sensor)."
@@ -920,8 +964,24 @@ class EllipsometryDataCollection(OpticalSpectroscopyData):
             optionality="optional",
         ),
     )
-    reference_data_link = Quantity(
+    varied_parameter_link__min = Quantity(
         type=np.float64,
+        description="Minimum of varied_parameter_link, computed over the full array at parse time.",
+    )
+    varied_parameter_link__max = Quantity(
+        type=np.float64,
+        description="Maximum of varied_parameter_link, computed over the full array at parse time.",
+    )
+    varied_parameter_link__size = Quantity(
+        type=np.int64,
+        description="Number of elements of varied_parameter_link in the HDF5 file.",
+    )
+    varied_parameter_link__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of varied_parameter_link in the HDF5 file.",
+    )
+    reference_data_link = Quantity(
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXellipsometry.html#nxellipsometry-entry-data-collection-reference-data-link-field"
         ],
@@ -940,9 +1000,22 @@ class EllipsometryDataCollection(OpticalSpectroscopyData):
             name_type="specified",
             optionality="optional",
         ),
-        a_eln=ELNAnnotation(
-            component=ELNComponentEnum.NumberEditQuantity,
-        ),
+    )
+    reference_data_link__min = Quantity(
+        type=np.float64,
+        description="Minimum of reference_data_link, computed over the full array at parse time.",
+    )
+    reference_data_link__max = Quantity(
+        type=np.float64,
+        description="Maximum of reference_data_link, computed over the full array at parse time.",
+    )
+    reference_data_link__size = Quantity(
+        type=np.int64,
+        description="Number of elements of reference_data_link in the HDF5 file.",
+    )
+    reference_data_link__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of reference_data_link in the HDF5 file.",
     )
 
     def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:

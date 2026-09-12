@@ -24,6 +24,7 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 
 import numpy as np
+from nomad.datamodel.hdf5 import HDF5Reference
 from nomad.datamodel.metainfo import basesections
 from nomad.datamodel.metainfo.annotations import (
     ELNAnnotation,
@@ -149,13 +150,10 @@ class SampleComponent(Component, basesections.Component):
         ),
     )
     unit_cell_abc = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXsample_component.html#nxsample_component-unit-cell-abc-field"
         ],
-        dimensionality="[length]",
-        unit="m",
-        shape=[3],
         description=("Crystallography unit cell parameters a, b, and c"),
         a_nexus_field=NeXusField(
             name="unit_cell_abc",
@@ -166,13 +164,10 @@ class SampleComponent(Component, basesections.Component):
         ),
     )
     unit_cell_alphabetagamma = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXsample_component.html#nxsample_component-unit-cell-alphabetagamma-field"
         ],
-        dimensionality="[angle]",
-        unit="radian",
-        shape=[3],
         description=("Crystallography unit cell parameters alpha, beta, and gamma"),
         a_nexus_field=NeXusField(
             name="unit_cell_alphabetagamma",
@@ -203,13 +198,10 @@ class SampleComponent(Component, basesections.Component):
         a_display={"unit": "m ** 3"},
     )
     sample_orientation = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXsample_component.html#nxsample_component-sample-orientation-field"
         ],
-        dimensionality="[angle]",
-        unit="radian",
-        shape=[3],
         description=(
             "This will follow the Busing and Levy convention from Acta.Crysta "
             "v22, p457 (1967)"
@@ -223,11 +215,10 @@ class SampleComponent(Component, basesections.Component):
         ),
     )
     orientation_matrix = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXsample_component.html#nxsample_component-orientation-matrix-field"
         ],
-        shape=[3, 3],
         description=(
             "Orientation matrix of single crystal sample component. This will "
             "follow the Busing and Levy convention from Acta.Crysta v22, p457 "

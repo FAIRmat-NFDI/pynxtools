@@ -24,6 +24,7 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 
 import numpy as np
+from nomad.datamodel.hdf5 import HDF5Reference
 from nomad.datamodel.metainfo.annotations import (
     ELNAnnotation,
     ELNComponentEnum,
@@ -929,7 +930,7 @@ class SourceBunchPattern(Data):
     )
 
     title = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXsource.html#nxsource-bunch-pattern-title-field"
         ],
@@ -940,9 +941,22 @@ class SourceBunchPattern(Data):
             name_type="specified",
             optionality="optional",
         ),
-        a_eln=ELNAnnotation(
-            component=ELNComponentEnum.NumberEditQuantity,
-        ),
+    )
+    title__min = Quantity(
+        type=np.float64,
+        description="Minimum of title, computed over the full array at parse time.",
+    )
+    title__max = Quantity(
+        type=np.float64,
+        description="Maximum of title, computed over the full array at parse time.",
+    )
+    title__size = Quantity(
+        type=np.int64,
+        description="Number of elements of title in the HDF5 file.",
+    )
+    title__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of title in the HDF5 file.",
     )
 
     def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:

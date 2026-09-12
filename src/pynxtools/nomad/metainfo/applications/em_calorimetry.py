@@ -28,6 +28,7 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 
 import numpy as np
+from nomad.datamodel.hdf5 import HDF5Reference
 from nomad.datamodel.metainfo.annotations import (
     ELNAnnotation,
     ELNComponentEnum,
@@ -743,13 +744,10 @@ class EmCalorimetrySynchronization(Process):
         ),
     )
     indices_pattern = Quantity(
-        type=np.int64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXem_calorimetry.html#nxem_calorimetry-entry-synchronization-indices-pattern-field"
         ],
-        dimensionality="dimensionless",
-        unit="dimensionless",
-        shape=["*"],
         a_nexus_field=NeXusField(
             name="indices_pattern",
             type="NX_INT",
@@ -759,13 +757,10 @@ class EmCalorimetrySynchronization(Process):
         ),
     )
     delta_time = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXem_calorimetry.html#nxem_calorimetry-entry-synchronization-delta-time-field"
         ],
-        dimensionality="[time]",
-        unit="second",
-        shape=["*"],
         description=(
             "Time difference to start_time. Collecting diffraction pattern also "
             "takes some time. It is assumed that the acquisition time for each "
@@ -819,13 +814,10 @@ class EmCalorimetryPatternCenter(Process):
         ),
     )
     position = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXem_calorimetry.html#nxem_calorimetry-entry-pattern-center-position-field"
         ],
-        dimensionality="[length]",
-        unit="m",
-        shape=["*", 2],
         description=("Computed center for each pattern."),
         a_nexus_field=NeXusField(
             name="position",
@@ -874,13 +866,10 @@ class EmCalorimetryDistortionCorrection(Process):
         ),
     )
     center = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXem_calorimetry.html#nxem_calorimetry-entry-distortion-correction-center-field"
         ],
-        dimensionality="[length]",
-        unit="m",
-        shape=["*", 2],
         description=("Computed center for each pattern."),
         a_nexus_field=NeXusField(
             name="center",
@@ -1003,7 +992,7 @@ class EmCalorimetryIntegrationResultBACKGROUND(Data):
         ),
     )
     title = Quantity(
-        type=str,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXem_calorimetry.html#nxem_calorimetry-entry-integration-resultbackground-title-field"
         ],
@@ -1013,18 +1002,12 @@ class EmCalorimetryIntegrationResultBACKGROUND(Data):
             name_type="specified",
             optionality="required",
         ),
-        a_eln=ELNAnnotation(
-            component=ELNComponentEnum.StringEditQuantity,
-        ),
     )
     intensity = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXem_calorimetry.html#nxem_calorimetry-entry-integration-resultbackground-intensity-field"
         ],
-        dimensionality="dimensionless",
-        unit="dimensionless",
-        shape=["*", "*"],
         description=(
             "Integrated intensity as a function of time and the radial distance "
             "from the pattern center."
@@ -1036,6 +1019,22 @@ class EmCalorimetryIntegrationResultBACKGROUND(Data):
             optionality="required",
             units="NX_UNITLESS",
         ),
+    )
+    intensity__min = Quantity(
+        type=np.float64,
+        description="Minimum of intensity, computed over the full array at parse time.",
+    )
+    intensity__max = Quantity(
+        type=np.float64,
+        description="Maximum of intensity, computed over the full array at parse time.",
+    )
+    intensity__size = Quantity(
+        type=np.int64,
+        description="Number of elements of intensity in the HDF5 file.",
+    )
+    intensity__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of intensity in the HDF5 file.",
     )
     intensity__long_name = Quantity(
         type=str,
@@ -1054,13 +1053,10 @@ class EmCalorimetryIntegrationResultBACKGROUND(Data):
         ),
     )
     indices_pattern = Quantity(
-        type=np.int64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXem_calorimetry.html#nxem_calorimetry-entry-integration-resultbackground-indices-pattern-field"
         ],
-        dimensionality="dimensionless",
-        unit="dimensionless",
-        shape=["*"],
         description=("Identifier for each pattern."),
         a_nexus_field=NeXusField(
             name="indices_pattern",
@@ -1069,6 +1065,22 @@ class EmCalorimetryIntegrationResultBACKGROUND(Data):
             optionality="optional",
             units="NX_UNITLESS",
         ),
+    )
+    indices_pattern__min = Quantity(
+        type=np.int64,
+        description="Minimum of indices_pattern, computed over the full array at parse time.",
+    )
+    indices_pattern__max = Quantity(
+        type=np.int64,
+        description="Maximum of indices_pattern, computed over the full array at parse time.",
+    )
+    indices_pattern__size = Quantity(
+        type=np.int64,
+        description="Number of elements of indices_pattern in the HDF5 file.",
+    )
+    indices_pattern__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of indices_pattern in the HDF5 file.",
     )
     indices_pattern__long_name = Quantity(
         type=str,
@@ -1087,12 +1099,10 @@ class EmCalorimetryIntegrationResultBACKGROUND(Data):
         ),
     )
     s = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXem_calorimetry.html#nxem_calorimetry-entry-integration-resultbackground-s-field"
         ],
-        flexible_unit=True,
-        shape=["*"],
         description=("Positions in reciprocal space."),
         a_nexus_field=NeXusField(
             name="s",
@@ -1101,6 +1111,22 @@ class EmCalorimetryIntegrationResultBACKGROUND(Data):
             optionality="required",
             units="NX_ANY",
         ),
+    )
+    s__min = Quantity(
+        type=np.float64,
+        description="Minimum of s, computed over the full array at parse time.",
+    )
+    s__max = Quantity(
+        type=np.float64,
+        description="Maximum of s, computed over the full array at parse time.",
+    )
+    s__size = Quantity(
+        type=np.int64,
+        description="Number of elements of s in the HDF5 file.",
+    )
+    s__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of s in the HDF5 file.",
     )
     s__long_name = Quantity(
         type=str,
@@ -1119,13 +1145,10 @@ class EmCalorimetryIntegrationResultBACKGROUND(Data):
         ),
     )
     time = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXem_calorimetry.html#nxem_calorimetry-entry-integration-resultbackground-time-field"
         ],
-        dimensionality="[time]",
-        unit="second",
-        shape=["*"],
         description=("Time since start of the in-situ experiment"),
         a_nexus_field=NeXusField(
             name="time",
@@ -1134,6 +1157,22 @@ class EmCalorimetryIntegrationResultBACKGROUND(Data):
             optionality="required",
             units="NX_TIME",
         ),
+    )
+    time__min = Quantity(
+        type=np.float64,
+        description="Minimum of time, computed over the full array at parse time.",
+    )
+    time__max = Quantity(
+        type=np.float64,
+        description="Maximum of time, computed over the full array at parse time.",
+    )
+    time__size = Quantity(
+        type=np.int64,
+        description="Number of elements of time in the HDF5 file.",
+    )
+    time__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of time in the HDF5 file.",
     )
 
     def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:

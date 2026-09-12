@@ -24,6 +24,7 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 
 import numpy as np
+from nomad.datamodel.hdf5 import HDF5Reference
 from nomad.datamodel.metainfo.annotations import (
     ELNAnnotation,
     ELNComponentEnum,
@@ -74,13 +75,10 @@ class OffGeometry(Object):
     )
 
     vertices = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXoff_geometry.html#nxoff_geometry-vertices-field"
         ],
-        dimensionality="[length]",
-        unit="m",
-        shape=["*", 3],
         description=(
             "List of x,y,z coordinates for vertices. The origin of the "
             "coordinates is the position of the parent component, for example "
@@ -98,11 +96,10 @@ class OffGeometry(Object):
         ),
     )
     winding_order = Quantity(
-        type=np.int64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXoff_geometry.html#nxoff_geometry-winding-order-field"
         ],
-        shape=["*"],
         description=(
             "List of indices of vertices in the ``vertices`` dataset to form "
             "each face, right-hand rule for face normal."
@@ -115,11 +112,10 @@ class OffGeometry(Object):
         ),
     )
     faces = Quantity(
-        type=np.int64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXoff_geometry.html#nxoff_geometry-faces-field"
         ],
-        shape=["*"],
         description=("The start index in ``winding_order`` for each face."),
         a_nexus_field=NeXusField(
             name="faces",
@@ -129,11 +125,10 @@ class OffGeometry(Object):
         ),
     )
     detector_faces = Quantity(
-        type=np.int64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXoff_geometry.html#nxoff_geometry-detector-faces-field"
         ],
-        shape=["*", 2],
         description=(
             'List of pairs of index in the "faces" dataset and detector id. '
             "Face IDs in the first column, and corresponding detector IDs in the "

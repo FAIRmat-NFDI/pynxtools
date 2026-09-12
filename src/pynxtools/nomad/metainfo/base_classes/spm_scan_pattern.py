@@ -28,6 +28,7 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 
 import numpy as np
+from nomad.datamodel.hdf5 import HDF5Reference
 from nomad.datamodel.metainfo.annotations import (
     ELNAnnotation,
     ELNComponentEnum,
@@ -323,11 +324,10 @@ class SpmScanPattern(Object):
         ),
     )
     trajectory_points = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXspm_scan_pattern.html#nxspm_scan_pattern-trajectory-points-field"
         ],
-        shape=["*", "*"],
         description=(
             "The trajectory points (nTraj) are the N-dimensional vectors (nD), "
             "each vector refers to a point in N-dimensional phase space."
@@ -394,12 +394,11 @@ class SpmScanPatternData(Data):
     )
 
     DATA = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXspm_scan_pattern.html#nxspm_scan_pattern-data-data-field"
         ],
         variable=True,
-        flexible_unit=True,
         description=(
             "The data (e.g. current, voltage, temperature) field that can be "
             "plotted against the axes."
@@ -412,13 +411,32 @@ class SpmScanPatternData(Data):
             units="NX_ANY",
         ),
     )
-    AXISNAME = Quantity(
+    DATA__min = Quantity(
         type=np.float64,
+        variable=True,
+        description="Minimum of DATA, computed over the full array at parse time.",
+    )
+    DATA__max = Quantity(
+        type=np.float64,
+        variable=True,
+        description="Maximum of DATA, computed over the full array at parse time.",
+    )
+    DATA__size = Quantity(
+        type=np.int64,
+        variable=True,
+        description="Number of elements of DATA in the HDF5 file.",
+    )
+    DATA__ndim = Quantity(
+        type=np.int8,
+        variable=True,
+        description="Number of dimensions of DATA in the HDF5 file.",
+    )
+    AXISNAME = Quantity(
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXspm_scan_pattern.html#nxspm_scan_pattern-data-axisname-field"
         ],
         variable=True,
-        flexible_unit=True,
         description=("The name of the axis that corresponds to the data field."),
         a_nexus_field=NeXusField(
             name="AXISNAME",
@@ -427,6 +445,26 @@ class SpmScanPatternData(Data):
             optionality="optional",
             units="NX_ANY",
         ),
+    )
+    AXISNAME__min = Quantity(
+        type=np.float64,
+        variable=True,
+        description="Minimum of AXISNAME, computed over the full array at parse time.",
+    )
+    AXISNAME__max = Quantity(
+        type=np.float64,
+        variable=True,
+        description="Maximum of AXISNAME, computed over the full array at parse time.",
+    )
+    AXISNAME__size = Quantity(
+        type=np.int64,
+        variable=True,
+        description="Number of elements of AXISNAME in the HDF5 file.",
+    )
+    AXISNAME__ndim = Quantity(
+        type=np.int8,
+        variable=True,
+        description="Number of dimensions of AXISNAME in the HDF5 file.",
     )
 
     def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:

@@ -28,6 +28,7 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 
 import numpy as np
+from nomad.datamodel.hdf5 import HDF5Reference
 from nomad.datamodel.metainfo.annotations import (
     ELNAnnotation,
     ELNComponentEnum,
@@ -108,13 +109,10 @@ class MicrostructureSlipSystem(Object):
         ),
     )
     miller_plane = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXmicrostructure_slip_system.html#nxmicrostructure_slip_system-miller-plane-field"
         ],
-        dimensionality="dimensionless",
-        unit="dimensionless",
-        shape=["*", "*"],
         description=(
             "Array of Miller indices which describe the crystallographic planes."
         ),
@@ -127,13 +125,10 @@ class MicrostructureSlipSystem(Object):
         ),
     )
     miller_direction = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXmicrostructure_slip_system.html#nxmicrostructure_slip_system-miller-direction-field"
         ],
-        dimensionality="dimensionless",
-        unit="dimensionless",
-        shape=["*", "*"],
         description=(
             "Array of Miller or Miller-Bravais indices that describe the "
             "crystallographic direction."
@@ -147,13 +142,10 @@ class MicrostructureSlipSystem(Object):
         ),
     )
     is_specific = Quantity(
-        type=bool,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXmicrostructure_slip_system.html#nxmicrostructure_slip_system-is-specific-field"
         ],
-        dimensionality="dimensionless",
-        unit="dimensionless",
-        shape=["*"],
         description=(
             "For each slip system a marker whether the Miller indices refer to a "
             "specific slip system or to a set of equivalent crystallographic "

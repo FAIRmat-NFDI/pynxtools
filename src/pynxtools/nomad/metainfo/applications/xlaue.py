@@ -24,6 +24,7 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 
 import numpy as np
+from nomad.datamodel.hdf5 import HDF5Reference
 from nomad.datamodel.metainfo.annotations import (
     ELNAnnotation,
     ELNComponentEnum,
@@ -201,11 +202,10 @@ class XlaueInstrumentSourceDistribution(Data):
     )
 
     data_quantity = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXxlaue.html#nxxlaue-entry-instrument-source-distribution-data-field"
         ],
-        shape=["*"],
         description=('expect ``signal=1 axes="energy"``'),
         a_nexus_field=NeXusField(
             name="data",
@@ -214,14 +214,27 @@ class XlaueInstrumentSourceDistribution(Data):
             optionality="required",
         ),
     )
-    wavelength = Quantity(
+    data_quantity__min = Quantity(
         type=np.float64,
+        description="Minimum of data_quantity, computed over the full array at parse time.",
+    )
+    data_quantity__max = Quantity(
+        type=np.float64,
+        description="Maximum of data_quantity, computed over the full array at parse time.",
+    )
+    data_quantity__size = Quantity(
+        type=np.int64,
+        description="Number of elements of data_quantity in the HDF5 file.",
+    )
+    data_quantity__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of data_quantity in the HDF5 file.",
+    )
+    wavelength = Quantity(
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXxlaue.html#nxxlaue-entry-instrument-source-distribution-wavelength-field"
         ],
-        dimensionality="[length]",
-        unit="angstrom",
-        shape=["*"],
         a_nexus_field=NeXusField(
             name="wavelength",
             type="NX_CHAR_OR_NUMBER",
@@ -229,6 +242,22 @@ class XlaueInstrumentSourceDistribution(Data):
             optionality="required",
             units="NX_WAVELENGTH",
         ),
+    )
+    wavelength__min = Quantity(
+        type=np.float64,
+        description="Minimum of wavelength, computed over the full array at parse time.",
+    )
+    wavelength__max = Quantity(
+        type=np.float64,
+        description="Maximum of wavelength, computed over the full array at parse time.",
+    )
+    wavelength__size = Quantity(
+        type=np.int64,
+        description="Number of elements of wavelength in the HDF5 file.",
+    )
+    wavelength__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of wavelength in the HDF5 file.",
     )
 
     def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:

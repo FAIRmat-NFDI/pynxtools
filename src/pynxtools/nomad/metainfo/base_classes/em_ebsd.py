@@ -24,6 +24,7 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 
 import numpy as np
+from nomad.datamodel.hdf5 import HDF5Reference
 from nomad.datamodel.metainfo.annotations import (
     ELNAnnotation,
     ELNComponentEnum,
@@ -849,13 +850,10 @@ class EmEbsdIndexing(Process):
         ),
     )
     status = Quantity(
-        type=np.int64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXem_ebsd.html#nxem_ebsd-indexing-status-field"
         ],
-        dimensionality="dimensionless",
-        unit="dimensionless",
-        shape=["*"],
         description=(
             "Which return value did the indexing algorithm yield for each scan "
             "point. * 0 - Not analyzed * 1 - Too high angular deviation * 2 - No "
@@ -870,13 +868,10 @@ class EmEbsdIndexing(Process):
         ),
     )
     phases_per_scan_point = Quantity(
-        type=np.int64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXem_ebsd.html#nxem_ebsd-indexing-phases-per-scan-point-field"
         ],
-        dimensionality="dimensionless",
-        unit="dimensionless",
-        shape=["*"],
         description=(
             "How many phases i.e. crystal structure models were used to index "
             "each scan point if any? Let's assume an example to explain how this "
@@ -900,13 +895,10 @@ class EmEbsdIndexing(Process):
         ),
     )
     phase_id = Quantity(
-        type=np.int64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXem_ebsd.html#nxem_ebsd-indexing-phase-id-field"
         ],
-        dimensionality="dimensionless",
-        unit="dimensionless",
-        shape=["*"],
         description=(
             "The array phases_per_scan_point details how the phase_id and the "
             "matching_phase arrays have to be interpreted. For the example of a "
@@ -936,13 +928,10 @@ class EmEbsdIndexing(Process):
         ),
     )
     matching_phase = Quantity(
-        type=np.int64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXem_ebsd.html#nxem_ebsd-indexing-matching-phase-field"
         ],
-        dimensionality="dimensionless",
-        unit="dimensionless",
-        shape=["*"],
         description=(
             "One-dimensional array, pattern-by-pattern labelling the solutions "
             "found. The array phases_per_scan_point has to be specified because "
@@ -979,13 +968,10 @@ class EmEbsdIndexing(Process):
         ),
     )
     scan_point_positions = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXem_ebsd.html#nxem_ebsd-indexing-scan-point-positions-field"
         ],
-        dimensionality="[length]",
-        unit="m",
-        shape=["*", 2],
         description=(
             "Calibrated center positions of each scan point in the sample "
             "surface reference system."
@@ -1090,13 +1076,10 @@ class EmEbsdIndexingPhaseID(Phase):
     )
 
     dspacing = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXem_ebsd.html#nxem_ebsd-indexing-phaseid-dspacing-field"
         ],
-        dimensionality="[length]",
-        unit="m",
-        shape=["*"],
         description=(
             "Spacing between the crystallographic planes that are defined via "
             "``miller``."
@@ -1110,13 +1093,10 @@ class EmEbsdIndexingPhaseID(Phase):
         ),
     )
     relative_intensity = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXem_ebsd.html#nxem_ebsd-indexing-phaseid-relative-intensity-field"
         ],
-        dimensionality="dimensionless",
-        unit="dimensionless",
-        shape=["*"],
         description=(
             "Relative intensity for the computed diffraction intensity (signal) "
             "for the plane."
@@ -1176,13 +1156,10 @@ class EmEbsdIndexingPhaseID(Phase):
         a_display={"unit": "dimensionless"},
     )
     miller = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXem_ebsd.html#nxem_ebsd-indexing-phaseid-miller-field"
         ],
-        dimensionality="dimensionless",
-        unit="dimensionless",
-        shape=["*", 6],
         description=(
             "Miller indices :math:`(hkl)[uvw]` of the planes. The first triplet "
             "specifies :math:`(hkl)`. The second triplet specifies "
@@ -1220,7 +1197,7 @@ class EmEbsdIndexingRoi(Data):
     )
 
     descriptor = Quantity(
-        type=MEnum(["band_contrast", "confidence_index", "mean_angular_deviation"]),
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXem_ebsd.html#nxem_ebsd-indexing-roi-descriptor-field"
         ],
@@ -1232,12 +1209,9 @@ class EmEbsdIndexingRoi(Data):
             optionality="optional",
             enumeration=["band_contrast", "confidence_index", "mean_angular_deviation"],
         ),
-        a_eln=ELNAnnotation(
-            component=ELNComponentEnum.EnumEditQuantity,
-        ),
     )
     title = Quantity(
-        type=str,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXem_ebsd.html#nxem_ebsd-indexing-roi-title-field"
         ],
@@ -1248,18 +1222,12 @@ class EmEbsdIndexingRoi(Data):
             name_type="specified",
             optionality="optional",
         ),
-        a_eln=ELNAnnotation(
-            component=ELNComponentEnum.StringEditQuantity,
-        ),
     )
     data_quantity = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXem_ebsd.html#nxem_ebsd-indexing-roi-data-field"
         ],
-        dimensionality="dimensionless",
-        unit="dimensionless",
-        shape=["*", "*"],
         description=("Descriptor values displaying the ROI."),
         a_nexus_field=NeXusField(
             name="data",
@@ -1268,6 +1236,22 @@ class EmEbsdIndexingRoi(Data):
             optionality="optional",
             units="NX_UNITLESS",
         ),
+    )
+    data_quantity__min = Quantity(
+        type=np.float64,
+        description="Minimum of data_quantity, computed over the full array at parse time.",
+    )
+    data_quantity__max = Quantity(
+        type=np.float64,
+        description="Maximum of data_quantity, computed over the full array at parse time.",
+    )
+    data_quantity__size = Quantity(
+        type=np.int64,
+        description="Number of elements of data_quantity in the HDF5 file.",
+    )
+    data_quantity__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of data_quantity in the HDF5 file.",
     )
     data_quantity__long_name = Quantity(
         type=str,
@@ -1287,13 +1271,10 @@ class EmEbsdIndexingRoi(Data):
         ),
     )
     axis_y = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXem_ebsd.html#nxem_ebsd-indexing-roi-axis-y-field"
         ],
-        dimensionality="[length]",
-        unit="m",
-        shape=["*"],
         description=("Calibrated coordinate along the y-axis."),
         a_nexus_field=NeXusField(
             name="axis_y",
@@ -1302,6 +1283,22 @@ class EmEbsdIndexingRoi(Data):
             optionality="optional",
             units="NX_LENGTH",
         ),
+    )
+    axis_y__min = Quantity(
+        type=np.float64,
+        description="Minimum of axis_y, computed over the full array at parse time.",
+    )
+    axis_y__max = Quantity(
+        type=np.float64,
+        description="Maximum of axis_y, computed over the full array at parse time.",
+    )
+    axis_y__size = Quantity(
+        type=np.int64,
+        description="Number of elements of axis_y in the HDF5 file.",
+    )
+    axis_y__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of axis_y in the HDF5 file.",
     )
     axis_y__long_name = Quantity(
         type=str,
@@ -1321,13 +1318,10 @@ class EmEbsdIndexingRoi(Data):
         ),
     )
     axis_x = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXem_ebsd.html#nxem_ebsd-indexing-roi-axis-x-field"
         ],
-        dimensionality="[length]",
-        unit="m",
-        shape=["*"],
         description=("Calibrated coordinate along the x-axis."),
         a_nexus_field=NeXusField(
             name="axis_x",
@@ -1336,6 +1330,22 @@ class EmEbsdIndexingRoi(Data):
             optionality="optional",
             units="NX_LENGTH",
         ),
+    )
+    axis_x__min = Quantity(
+        type=np.float64,
+        description="Minimum of axis_x, computed over the full array at parse time.",
+    )
+    axis_x__max = Quantity(
+        type=np.float64,
+        description="Maximum of axis_x, computed over the full array at parse time.",
+    )
+    axis_x__size = Quantity(
+        type=np.int64,
+        description="Number of elements of axis_x in the HDF5 file.",
+    )
+    axis_x__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of axis_x in the HDF5 file.",
     )
     axis_x__long_name = Quantity(
         type=str,

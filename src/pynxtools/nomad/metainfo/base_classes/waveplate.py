@@ -24,6 +24,7 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 
 import numpy as np
+from nomad.datamodel.hdf5 import HDF5Reference
 from nomad.datamodel.metainfo.annotations import (
     ELNAnnotation,
     ELNComponentEnum,
@@ -133,11 +134,10 @@ class Waveplate(Component):
         ),
     )
     wavelengths = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXwaveplate.html#nxwaveplate-wavelengths-field"
         ],
-        shape=["*"],
         description=(
             "Discrete wavelengths for which the waveplate is designed. If the "
             "waveplate operates over an entire range of wavelengths, enter the "
@@ -287,13 +287,10 @@ class WaveplateSubstrate(Sample):
         a_display={"unit": "m"},
     )
     index_of_refraction_substrate = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXwaveplate.html#nxwaveplate-substrate-index-of-refraction-substrate-field"
         ],
-        dimensionality="dimensionless",
-        unit="dimensionless",
-        shape=[2, "*"],
         description=(
             "Complex index of refraction of the waveplate substrate. Specify at "
             "given wavelength (or energy, wavenumber etc.) values."
@@ -386,11 +383,10 @@ class WaveplateCoating(Sample):
         a_display={"unit": "m"},
     )
     wavelength_range_coating = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXwaveplate.html#nxwaveplate-coating-wavelength-range-coating-field"
         ],
-        shape=[2],
         description=(
             "Wavelength range for which the coating is designed. Enter the "
             "minimum and maximum values of the wavelength range."
@@ -403,13 +399,10 @@ class WaveplateCoating(Sample):
         ),
     )
     index_of_refraction_coating = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXwaveplate.html#nxwaveplate-coating-index-of-refraction-coating-field"
         ],
-        dimensionality="dimensionless",
-        unit="dimensionless",
-        shape=[2, "*"],
         description=(
             "Complex index of refraction of the coating. Specify at given "
             "spectral values (wavelength, energy, wavenumber etc.)."

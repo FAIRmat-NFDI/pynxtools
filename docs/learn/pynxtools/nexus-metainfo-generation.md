@@ -489,20 +489,36 @@ treated as unbounded.
 
 ## Shape representation
 
-NXDL `<dimensions>` elements map to `shape` on the generated `Quantity`. Concrete
-integer sizes are preserved as-is. Unbounded or symbolically-named dimensions (e.g.
-`nP`, `nz`) become the wildcard `"*"`. NOMAD does not interpret NeXus symbol names.
-Symbol definitions from the NXDL `<symbols>` block are preserved in
-`NeXusDefinition.symbols` on the class `m_def`.
+NXDL `<dimensions>` elements map to `shape` on the generated `Quantity` —
+for **attributes** only. An attribute is not an addressable HDF5 object, so
+it keeps its array value directly:
 
 ```python
-# NXDL: <dimensions rank="2"><dim index="1" value="nP"/><dim index="2" value="3"/></dimensions>
-data = Quantity(
+# NXDL <attribute> with <dimensions rank="1"><dim index="1" value="n"/></dimensions>
+some_attr = Quantity(
     type=np.float64,
-    shape=["*", 3],
+    shape=["*"],
     ...
 )
 ```
+
+**Fields** become `HDF5Reference`-typed instead, whenever they are array-valued —
+either because the NXDL declares `<dimensions>`, or, inside an `NXdata`-derived class, because rank is only known at parse time (e.g. `NXdata`'s own `DATA`/`AXISNAME` fields, which declare no `<dimensions>` at all). The array is never copied into the archive. The `Quantity` instead stores a reference string to the dataset in the source HDF5/NeXus file (`<file>#/<hdf5_path>`), resolved at parse time in `pynxtools/nomad/parsers/parser_v2.py`. `shape`, `unit`, `dimensionality`, and `flexible_unit` don't apply to a reference and are omitted. No ELN component is attached — there is nothing to edit.
+
+```python
+# NXDL: <field name="data" type="NX_FLOAT" units="NX_ANY"> inside an NXdata group
+data = Quantity(
+    type=HDF5Reference,
+    links=[...],
+    ...
+)
+```
+
+Concrete integer dimension sizes are preserved as-is on attributes; unbounded
+or symbolically-named dimensions (e.g. `nP`, `nz`) become the wildcard `"*"`.
+NOMAD does not interpret NeXus symbol names. Symbol definitions from the NXDL
+`<symbols>` block are preserved in `NeXusDefinition.symbols` on the class
+`m_def`.
 
 ---
 
@@ -544,6 +560,37 @@ No special ELN handling is needed beyond the usual `NumberEditQuantity`: its
 GUI implementation already supports typing a value together with any unit
 (and a unit-selection dropdown) when the field has no fixed dimensionality —
 exactly the `NX_ANY` case.
+
+---
+
+## Field statistics
+
+Numeric array quantities inside an `NXdata`-derived class get four parallel
+scalar quantities generated automatically, so the array's summary statistics are searchable even though the array itself is not:
+
+```python
+# NXDL: <field name="energy" type="NX_FLOAT" units="NX_ENERGY"> inside an NXdata group
+energy = Quantity(type=np.float64, ...)
+energy__min = Quantity(
+    type=np.float64,
+    description="Minimum of energy, computed over the full array at parse time.",
+)
+energy__max = Quantity(
+    type=np.float64,
+    description="Maximum of energy, computed over the full array at parse time.",
+)
+energy__size = Quantity(
+    type=np.int64,
+    description="Number of elements of energy in the HDF5 file.",
+)
+energy__ndim = Quantity(
+    type=np.int8,
+    description="Number of dimensions of energy in the HDF5 file.",
+)
+```
+Note that this applies only to fields in an ``NXdata`` group. Statistics are
+generated exclusively for data arrays, not for arbitrary quantities elsewhere
+in the schema.  Restricting statistics to data arrays keeps the generated schema manageable while covering the primary data intended for searching.
 
 ---
 

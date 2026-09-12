@@ -24,6 +24,7 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 
 import numpy as np
+from nomad.datamodel.hdf5 import HDF5Reference
 from nomad.datamodel.metainfo.annotations import (
     ELNAnnotation,
     ELNComponentEnum,
@@ -190,13 +191,10 @@ class XkappaInstrumentDetector(XbaseInstrumentDetector):
     )
 
     polar_angle = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXxkappa.html#nxxkappa-entry-instrument-detector-polar-angle-field"
         ],
-        dimensionality="[angle]",
-        unit="radian",
-        shape=["*"],
         description=("The polar_angle (two theta) at each scan point"),
         a_nexus_field=NeXusField(
             name="polar_angle",
@@ -225,13 +223,10 @@ class XkappaSample(XbaseSample):
     )
 
     rotation_angle = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXxkappa.html#nxxkappa-entry-sample-rotation-angle-field"
         ],
-        dimensionality="[angle]",
-        unit="radian",
-        shape=["*"],
         description=(
             "This is an array holding the sample rotation angle at each scan point"
         ),
@@ -244,13 +239,10 @@ class XkappaSample(XbaseSample):
         ),
     )
     kappa = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXxkappa.html#nxxkappa-entry-sample-kappa-field"
         ],
-        dimensionality="[angle]",
-        unit="radian",
-        shape=["*"],
         description=("This is an array holding the kappa angle at each scan point"),
         a_nexus_field=NeXusField(
             name="kappa",
@@ -261,13 +253,10 @@ class XkappaSample(XbaseSample):
         ),
     )
     phi = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXxkappa.html#nxxkappa-entry-sample-phi-field"
         ],
-        dimensionality="[angle]",
-        unit="radian",
-        shape=["*"],
         description=("This is an array holding the phi angle at each scan point"),
         a_nexus_field=NeXusField(
             name="phi",
@@ -316,13 +305,10 @@ class XkappaName(XbaseData):
     )
 
     polar_angle = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXxkappa.html#nxxkappa-entry-name-polar-angle-link"
         ],
-        dimensionality="[angle]",
-        unit="radian",
-        shape=["*"],
         a_nexus_link=NeXusLink(
             name="polar_angle",
             target="/NXentry/NXinstrument/NXdetector/polar_angle",
@@ -330,13 +316,10 @@ class XkappaName(XbaseData):
         ),
     )
     rotation_angle = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXxkappa.html#nxxkappa-entry-name-rotation-angle-link"
         ],
-        dimensionality="[angle]",
-        unit="radian",
-        shape=["*"],
         a_nexus_link=NeXusLink(
             name="rotation_angle",
             target="/NXentry/NXsample/rotation_angle",
@@ -344,13 +327,10 @@ class XkappaName(XbaseData):
         ),
     )
     kappa = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXxkappa.html#nxxkappa-entry-name-kappa-link"
         ],
-        dimensionality="[angle]",
-        unit="radian",
-        shape=["*"],
         a_nexus_link=NeXusLink(
             name="kappa",
             target="/NXentry/NXsample/kappa",
@@ -358,13 +338,10 @@ class XkappaName(XbaseData):
         ),
     )
     phi = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXxkappa.html#nxxkappa-entry-name-phi-link"
         ],
-        dimensionality="[angle]",
-        unit="radian",
-        shape=["*"],
         a_nexus_link=NeXusLink(
             name="phi",
             target="/NXentry/NXsample/phi",

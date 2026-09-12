@@ -28,6 +28,7 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 
 import numpy as np
+from nomad.datamodel.hdf5 import HDF5Reference
 from nomad.datamodel.metainfo.annotations import (
     ELNAnnotation,
     ELNComponentEnum,
@@ -103,13 +104,10 @@ class DispersionTable(Object):
         ),
     )
     wavelength = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXdispersion_table.html#nxdispersion_table-wavelength-field"
         ],
-        dimensionality="[length]",
-        unit="m",
-        shape=["*"],
         description=(
             "The wavelength array of the tabulated dataset. This is essentially "
             "a duplicate of the energy field. There should be one or both of "
@@ -124,13 +122,10 @@ class DispersionTable(Object):
         ),
     )
     energy = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXdispersion_table.html#nxdispersion_table-energy-field"
         ],
-        dimensionality="[mass] * [length] ** 2 / [time] ** 2",
-        unit="eV",
-        shape=["*"],
         description=(
             "The energy array of the tabulated dataset. This is essentially a "
             "duplicate of the wavelength field. There should be one or both of "
@@ -145,13 +140,10 @@ class DispersionTable(Object):
         ),
     )
     refractive_index = Quantity(
-        type=np.complex128,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXdispersion_table.html#nxdispersion_table-refractive-index-field"
         ],
-        dimensionality="dimensionless",
-        unit="dimensionless",
-        shape=["*"],
         description=("The refractive index array of the tabulated dataset."),
         a_nexus_field=NeXusField(
             name="refractive_index",
@@ -162,13 +154,10 @@ class DispersionTable(Object):
         ),
     )
     dielectric_function = Quantity(
-        type=np.complex128,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXdispersion_table.html#nxdispersion_table-dielectric-function-field"
         ],
-        dimensionality="dimensionless",
-        unit="dimensionless",
-        shape=["*"],
         description=("The dielectric function of the tabulated dataset."),
         a_nexus_field=NeXusField(
             name="dielectric_function",

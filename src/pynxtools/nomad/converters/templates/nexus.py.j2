@@ -33,7 +33,8 @@ import numpy as np
 
 {% for mod, cls in nomad_extra_bases %}{% if mod != "nomad.datamodel.metainfo.basesections" %}from {{ mod }} import {{ cls }}
 {% endif %}{% endfor %}{% if needs_basesections %}from nomad.datamodel.metainfo import basesections
-{% endif %}from nomad.datamodel.metainfo.annotations import ELNAnnotation, ELNComponentEnum, SchemaAnnotation
+{% endif %}from nomad.datamodel.hdf5 import HDF5Reference
+from nomad.datamodel.metainfo.annotations import ELNAnnotation, ELNComponentEnum, SchemaAnnotation
 from nomad.metainfo import (
     MEnum,
     Quantity,
@@ -134,21 +135,29 @@ class {{ class_name }}({{ base_class }}{% if base_is_generated %}{% for mod, cls
 
     {% for qty in quantities %}
     {{ qty.python_name }} = Quantity(
+        {% if qty.is_hdf5_reference %}
+        type=HDF5Reference,
+        {% else %}
         type={{ qty.python_type }},
+        {% endif %}
         links=["{{ qty.node.get_link() }}"],
-        {% if qty.node.name_type in ("any", "partial") %}
+        {% if qty.node.variadic %}
         variable=True,
         {% endif %}
-        {% if qty.dimensionality %}
+        {# HDF5Reference doesn't validate against the referenced dataset yet, so
+           dimensionality=/unit=/flexible_unit=/shape= are suppressed for it below.
+           Re-enable (drop the "and not qty.is_hdf5_reference" guards) once it
+           supports type/unit/dimensionality/shape validation. #}
+        {% if qty.dimensionality and not qty.is_hdf5_reference %}
         dimensionality="{{ qty.dimensionality }}",
         {% endif %}
-        {% if qty.default_unit %}
+        {% if qty.default_unit and not qty.is_hdf5_reference %}
         unit="{{ qty.default_unit }}",
         {% endif %}
-        {% if qty.flexible_unit %}
+        {% if qty.flexible_unit and not qty.is_hdf5_reference %}
         flexible_unit=True,
         {% endif %}
-        {% if qty.shape %}
+        {% if qty.shape and not qty.is_hdf5_reference %}
         shape={{ qty.shape }},
         {% endif %}
         {% if qty.description %}
@@ -213,22 +222,60 @@ class {{ class_name }}({{ base_class }}{% if base_is_generated %}{% for mod, cls
         {% endif %}
         {% endif %}
     )
+    {% if qty.has_statistics %}
+    {{ qty.python_name }}__min = Quantity(
+        type={{ qty.python_type }},
+        {% if qty.node.variadic %}
+        variable=True,
+        {% endif %}
+        description="Minimum of {{ qty.python_name }}, computed over the full array at parse time.",
+    )
+    {{ qty.python_name }}__max = Quantity(
+        type={{ qty.python_type }},
+        {% if qty.node.variadic %}
+        variable=True,
+        {% endif %}
+        description="Maximum of {{ qty.python_name }}, computed over the full array at parse time.",
+    )
+    {{ qty.python_name }}__size = Quantity(
+        type=np.int64,
+        {% if qty.node.variadic %}
+        variable=True,
+        {% endif %}
+        description="Number of elements of {{ qty.python_name }} in the HDF5 file.",
+    )
+    {{ qty.python_name }}__ndim = Quantity(
+        type=np.int8,
+        {% if qty.node.variadic %}
+        variable=True,
+        {% endif %}
+        description="Number of dimensions of {{ qty.python_name }} in the HDF5 file.",
+    )
+    {% endif %}
     {% endfor %}
 
     {% for lnk in links %}
     {{ lnk.python_name }} = Quantity(
+        {% if lnk.target_quantity and lnk.target_quantity.is_hdf5_reference %}
+        type=HDF5Reference,
+        {% else %}
         type={{ lnk.target_quantity.python_type if lnk.target_quantity else "str" }},
+        {% endif %}
         links=["{{ lnk.node.get_link() }}"],
-        {% if lnk.target_quantity and lnk.target_quantity.dimensionality %}
+        {# HDF5Reference doesn't validate against the referenced dataset yet, so
+           dimensionality=/unit=/flexible_unit=/shape= are suppressed for it below.
+           Re-enable (drop the "and not ...is_hdf5_reference" guards) once it
+           supports type/unit/dimensionality/shape validation. #}
+        {% if lnk.target_quantity and lnk.target_quantity.dimensionality and not lnk.target_quantity.is_hdf5_reference %}
         dimensionality="{{ lnk.target_quantity.dimensionality }}",
         {% endif %}
-        {% if lnk.target_quantity and lnk.target_quantity.default_unit %}
+        {% if lnk.target_quantity and lnk.target_quantity.default_unit and not lnk.target_quantity.is_hdf5_reference %}
         unit="{{ lnk.target_quantity.default_unit }}",
         {% endif %}
-        {% if lnk.target_quantity and lnk.target_quantity.flexible_unit %}
+        {% if lnk.target_quantity and lnk.target_quantity.flexible_unit and not lnk.target_quantity.is_hdf5_reference %}
         flexible_unit=True,
         {% endif %}
-        {% if lnk.target_quantity and lnk.target_quantity.shape %}
+        {% if lnk.target_quantity and lnk.target_quantity.shape and not lnk.target_quantity.is_hdf5_reference %}
         shape={{ lnk.target_quantity.shape }},
         {% endif %}
         {% if lnk.description %}
@@ -340,21 +387,29 @@ class {{ concept.class_name }}({{ concept.base_class_name }}):
 
     {% for qty in concept.quantities %}
     {{ qty.python_name }} = Quantity(
+        {% if qty.is_hdf5_reference %}
+        type=HDF5Reference,
+        {% else %}
         type={{ qty.python_type }},
+        {% endif %}
         links=["{{ qty.node.get_link() }}"],
-        {% if qty.node.name_type in ("any", "partial") %}
+        {% if qty.node.variadic %}
         variable=True,
         {% endif %}
-        {% if qty.dimensionality %}
+        {# HDF5Reference doesn't validate against the referenced dataset yet, so
+           dimensionality=/unit=/flexible_unit=/shape= are suppressed for it below.
+           Re-enable (drop the "and not qty.is_hdf5_reference" guards) once it
+           supports type/unit/dimensionality/shape validation. #}
+        {% if qty.dimensionality and not qty.is_hdf5_reference %}
         dimensionality="{{ qty.dimensionality }}",
         {% endif %}
-        {% if qty.default_unit %}
+        {% if qty.default_unit and not qty.is_hdf5_reference %}
         unit="{{ qty.default_unit }}",
         {% endif %}
-        {% if qty.flexible_unit %}
+        {% if qty.flexible_unit and not qty.is_hdf5_reference %}
         flexible_unit=True,
         {% endif %}
-        {% if qty.shape %}
+        {% if qty.shape and not qty.is_hdf5_reference %}
         shape={{ qty.shape }},
         {% endif %}
         {% if qty.description %}
@@ -419,22 +474,60 @@ class {{ concept.class_name }}({{ concept.base_class_name }}):
         {% endif %}
         {% endif %}
     )
+    {% if qty.has_statistics %}
+    {{ qty.python_name }}__min = Quantity(
+        type={{ qty.python_type }},
+        {% if qty.node.variadic %}
+        variable=True,
+        {% endif %}
+        description="Minimum of {{ qty.python_name }}, computed over the full array at parse time.",
+    )
+    {{ qty.python_name }}__max = Quantity(
+        type={{ qty.python_type }},
+        {% if qty.node.variadic %}
+        variable=True,
+        {% endif %}
+        description="Maximum of {{ qty.python_name }}, computed over the full array at parse time.",
+    )
+    {{ qty.python_name }}__size = Quantity(
+        type=np.int64,
+        {% if qty.node.variadic %}
+        variable=True,
+        {% endif %}
+        description="Number of elements of {{ qty.python_name }} in the HDF5 file.",
+    )
+    {{ qty.python_name }}__ndim = Quantity(
+        type=np.int8,
+        {% if qty.node.variadic %}
+        variable=True,
+        {% endif %}
+        description="Number of dimensions of {{ qty.python_name }} in the HDF5 file.",
+    )
+    {% endif %}
     {% endfor %}
 
     {% for lnk in concept.links %}
     {{ lnk.python_name }} = Quantity(
+        {% if lnk.target_quantity and lnk.target_quantity.is_hdf5_reference %}
+        type=HDF5Reference,
+        {% else %}
         type={{ lnk.target_quantity.python_type if lnk.target_quantity else "str" }},
+        {% endif %}
         links=["{{ lnk.node.get_link() }}"],
-        {% if lnk.target_quantity and lnk.target_quantity.dimensionality %}
+        {# HDF5Reference doesn't validate against the referenced dataset yet, so
+           dimensionality=/unit=/flexible_unit=/shape= are suppressed for it below.
+           Re-enable (drop the "and not ...is_hdf5_reference" guards) once it
+           supports type/unit/dimensionality/shape validation. #}
+        {% if lnk.target_quantity and lnk.target_quantity.dimensionality and not lnk.target_quantity.is_hdf5_reference %}
         dimensionality="{{ lnk.target_quantity.dimensionality }}",
         {% endif %}
-        {% if lnk.target_quantity and lnk.target_quantity.default_unit %}
+        {% if lnk.target_quantity and lnk.target_quantity.default_unit and not lnk.target_quantity.is_hdf5_reference %}
         unit="{{ lnk.target_quantity.default_unit }}",
         {% endif %}
-        {% if lnk.target_quantity and lnk.target_quantity.shape %}
+        {% if lnk.target_quantity and lnk.target_quantity.shape and not lnk.target_quantity.is_hdf5_reference %}
         shape={{ lnk.target_quantity.shape }},
         {% endif %}
-        {% if lnk.target_quantity and lnk.target_quantity.flexible_unit %}
+        {% if lnk.target_quantity and lnk.target_quantity.flexible_unit and not lnk.target_quantity.is_hdf5_reference %}
         flexible_unit=True,
         {% endif %}
         {% if lnk.description %}

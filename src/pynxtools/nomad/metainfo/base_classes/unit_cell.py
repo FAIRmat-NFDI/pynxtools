@@ -24,6 +24,7 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 
 import numpy as np
+from nomad.datamodel.hdf5 import HDF5Reference
 from nomad.datamodel.metainfo.annotations import (
     ELNAnnotation,
     ELNComponentEnum,
@@ -120,13 +121,10 @@ class UnitCell(Object):
         ),
     )
     a_b_c = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXunit_cell.html#nxunit_cell-a-b-c-field"
         ],
-        dimensionality="[length]",
-        unit="m",
-        shape=["*"],
         description=(
             "Geometry of the unit cell quantified via parameters a, b, and c."
         ),
@@ -205,13 +203,10 @@ class UnitCell(Object):
         a_display={"unit": "m"},
     )
     alpha_beta_gamma = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXunit_cell.html#nxunit_cell-alpha-beta-gamma-field"
         ],
-        dimensionality="[angle]",
-        unit="radian",
-        shape=["*"],
         description=(
             "Geometry of the unit cell quantified via parameters alpha, beta, "
             "and gamma."

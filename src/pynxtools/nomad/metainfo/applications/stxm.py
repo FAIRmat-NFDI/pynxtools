@@ -24,6 +24,7 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 
 import numpy as np
+from nomad.datamodel.hdf5 import HDF5Reference
 from nomad.datamodel.metainfo.annotations import (
     ELNAnnotation,
     ELNComponentEnum,
@@ -366,13 +367,10 @@ class StxmInstrumentMonochromator(Monochromator):
     )
 
     energy = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXstxm.html#nxstxm-entry-instrument-monochromator-energy-field"
         ],
-        dimensionality="[mass] * [length] ** 2 / [time] ** 2",
-        unit="eV",
-        shape=["*"],
         a_nexus_field=NeXusField(
             name="energy",
             type="NX_FLOAT",
@@ -440,12 +438,10 @@ class StxmInstrumentSampleX(Detector):
     )
 
     data_quantity = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXstxm.html#nxstxm-entry-instrument-sample-x-data-field"
         ],
-        flexible_unit=True,
-        shape=["*"],
         a_nexus_field=NeXusField(
             name="data",
             type="NX_FLOAT",
@@ -479,12 +475,10 @@ class StxmInstrumentSampleY(Detector):
     )
 
     data_quantity = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXstxm.html#nxstxm-entry-instrument-sample-y-data-field"
         ],
-        flexible_unit=True,
-        shape=["*"],
         a_nexus_field=NeXusField(
             name="data",
             type="NX_FLOAT",
@@ -518,12 +512,10 @@ class StxmInstrumentSampleZ(Detector):
     )
 
     data_quantity = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXstxm.html#nxstxm-entry-instrument-sample-z-data-field"
         ],
-        flexible_unit=True,
-        shape=["*"],
         a_nexus_field=NeXusField(
             name="data",
             type="NX_FLOAT",
@@ -590,19 +582,7 @@ class StxmData(Data):
     )
 
     stxm_scan_type = Quantity(
-        type=MEnum(
-            [
-                "sample point spectrum",
-                "sample line spectrum",
-                "sample image",
-                "sample image stack",
-                "sample focus",
-                "osa image",
-                "osa focus",
-                "detector image",
-                "generic scan",
-            ]
-        ),
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXstxm.html#nxstxm-entry-data-stxm-scan-type-field"
         ],
@@ -635,12 +615,9 @@ class StxmData(Data):
                 "generic scan",
             ],
         ),
-        a_eln=ELNAnnotation(
-            component=ELNComponentEnum.EnumEditQuantity,
-        ),
     )
     data_quantity = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXstxm.html#nxstxm-entry-data-data-field"
         ],
@@ -661,16 +638,28 @@ class StxmData(Data):
             name_type="specified",
             optionality="required",
         ),
-        a_eln=ELNAnnotation(
-            component=ELNComponentEnum.NumberEditQuantity,
-        ),
+    )
+    data_quantity__min = Quantity(
+        type=np.float64,
+        description="Minimum of data_quantity, computed over the full array at parse time.",
+    )
+    data_quantity__max = Quantity(
+        type=np.float64,
+        description="Maximum of data_quantity, computed over the full array at parse time.",
+    )
+    data_quantity__size = Quantity(
+        type=np.int64,
+        description="Number of elements of data_quantity in the HDF5 file.",
+    )
+    data_quantity__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of data_quantity in the HDF5 file.",
     )
     energy = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXstxm.html#nxstxm-entry-data-energy-field"
         ],
-        shape=["*"],
         description=(
             "List of photon energies of the X-ray beam. If scanned through "
             "multiple values, then an 'axis' attribute will be required to link "
@@ -683,12 +672,27 @@ class StxmData(Data):
             optionality="required",
         ),
     )
-    sample_y = Quantity(
+    energy__min = Quantity(
         type=np.float64,
+        description="Minimum of energy, computed over the full array at parse time.",
+    )
+    energy__max = Quantity(
+        type=np.float64,
+        description="Maximum of energy, computed over the full array at parse time.",
+    )
+    energy__size = Quantity(
+        type=np.int64,
+        description="Number of elements of energy in the HDF5 file.",
+    )
+    energy__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of energy in the HDF5 file.",
+    )
+    sample_y = Quantity(
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXstxm.html#nxstxm-entry-data-sample-y-field"
         ],
-        shape=["*"],
         description=(
             "List of Y positions on the sample. If scanned through multiple "
             "values, then an 'axis' attribute will be required to link the field "
@@ -701,12 +705,27 @@ class StxmData(Data):
             optionality="required",
         ),
     )
-    sample_x = Quantity(
+    sample_y__min = Quantity(
         type=np.float64,
+        description="Minimum of sample_y, computed over the full array at parse time.",
+    )
+    sample_y__max = Quantity(
+        type=np.float64,
+        description="Maximum of sample_y, computed over the full array at parse time.",
+    )
+    sample_y__size = Quantity(
+        type=np.int64,
+        description="Number of elements of sample_y in the HDF5 file.",
+    )
+    sample_y__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of sample_y in the HDF5 file.",
+    )
+    sample_x = Quantity(
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXstxm.html#nxstxm-entry-data-sample-x-field"
         ],
-        shape=["*"],
         description=(
             "List of X positions on the sample. If scanned through multiple "
             "values, then an 'axis' attribute will be required to link the field "
@@ -718,6 +737,22 @@ class StxmData(Data):
             name_type="specified",
             optionality="required",
         ),
+    )
+    sample_x__min = Quantity(
+        type=np.float64,
+        description="Minimum of sample_x, computed over the full array at parse time.",
+    )
+    sample_x__max = Quantity(
+        type=np.float64,
+        description="Maximum of sample_x, computed over the full array at parse time.",
+    )
+    sample_x__size = Quantity(
+        type=np.int64,
+        description="Number of elements of sample_x in the HDF5 file.",
+    )
+    sample_x__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of sample_x in the HDF5 file.",
     )
 
     def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:

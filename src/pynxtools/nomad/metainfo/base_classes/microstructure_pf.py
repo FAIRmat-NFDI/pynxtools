@@ -28,6 +28,7 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 
 import numpy as np
+from nomad.datamodel.hdf5 import HDF5Reference
 from nomad.datamodel.metainfo.annotations import (
     ELNAnnotation,
     ELNComponentEnum,
@@ -237,13 +238,10 @@ class MicrostructurePfPf(Data):
     )
 
     intensity = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXmicrostructure_pf.html#nxmicrostructure_pf-pf-intensity-field"
         ],
-        dimensionality="dimensionless",
-        unit="dimensionless",
-        shape=["*", "*"],
         description=("Pole figure intensity."),
         a_nexus_field=NeXusField(
             name="intensity",
@@ -253,13 +251,27 @@ class MicrostructurePfPf(Data):
             units="NX_UNITLESS",
         ),
     )
-    axis_y = Quantity(
+    intensity__min = Quantity(
         type=np.float64,
+        description="Minimum of intensity, computed over the full array at parse time.",
+    )
+    intensity__max = Quantity(
+        type=np.float64,
+        description="Maximum of intensity, computed over the full array at parse time.",
+    )
+    intensity__size = Quantity(
+        type=np.int64,
+        description="Number of elements of intensity in the HDF5 file.",
+    )
+    intensity__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of intensity in the HDF5 file.",
+    )
+    axis_y = Quantity(
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXmicrostructure_pf.html#nxmicrostructure_pf-pf-axis-y-field"
         ],
-        flexible_unit=True,
-        shape=["*"],
         description=(
             "Pixel center along y direction in the equatorial plane of a "
             "stereographic projection of the unit sphere."
@@ -272,13 +284,27 @@ class MicrostructurePfPf(Data):
             units="NX_ANY",
         ),
     )
-    axis_x = Quantity(
+    axis_y__min = Quantity(
         type=np.float64,
+        description="Minimum of axis_y, computed over the full array at parse time.",
+    )
+    axis_y__max = Quantity(
+        type=np.float64,
+        description="Maximum of axis_y, computed over the full array at parse time.",
+    )
+    axis_y__size = Quantity(
+        type=np.int64,
+        description="Number of elements of axis_y in the HDF5 file.",
+    )
+    axis_y__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of axis_y in the HDF5 file.",
+    )
+    axis_x = Quantity(
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXmicrostructure_pf.html#nxmicrostructure_pf-pf-axis-x-field"
         ],
-        flexible_unit=True,
-        shape=["*"],
         description=(
             "Pixel center along x direction in the equatorial plane of a "
             "stereographic projection of the unit sphere."
@@ -290,6 +316,22 @@ class MicrostructurePfPf(Data):
             optionality="optional",
             units="NX_ANY",
         ),
+    )
+    axis_x__min = Quantity(
+        type=np.float64,
+        description="Minimum of axis_x, computed over the full array at parse time.",
+    )
+    axis_x__max = Quantity(
+        type=np.float64,
+        description="Maximum of axis_x, computed over the full array at parse time.",
+    )
+    axis_x__size = Quantity(
+        type=np.int64,
+        description="Number of elements of axis_x in the HDF5 file.",
+    )
+    axis_x__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of axis_x in the HDF5 file.",
     )
 
     def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:

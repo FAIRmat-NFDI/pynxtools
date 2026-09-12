@@ -24,6 +24,7 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 
 import numpy as np
+from nomad.datamodel.hdf5 import HDF5Reference
 from nomad.datamodel.metainfo.annotations import (
     ELNAnnotation,
     ELNComponentEnum,
@@ -164,13 +165,10 @@ class Detector(Component):
     )
 
     time_of_flight = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXdetector.html#nxdetector-time-of-flight-field"
         ],
-        dimensionality="[time]",
-        unit="second",
-        shape=["*"],
         description=("Total time of flight"),
         a_nexus_field=NeXusField(
             name="time_of_flight",
@@ -236,13 +234,10 @@ class Detector(Component):
         ),
     )
     raw_time_of_flight = Quantity(
-        type=np.int64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXdetector.html#nxdetector-raw-time-of-flight-field"
         ],
-        dimensionality="dimensionless",
-        unit="dimensionless",
-        shape=["*"],
         description=("In DAQ clock pulses"),
         a_nexus_field=NeXusField(
             name="raw_time_of_flight",
@@ -288,12 +283,10 @@ class Detector(Component):
         ),
     )
     data_quantity = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXdetector.html#nxdetector-data-field"
         ],
-        flexible_unit=True,
-        shape=["*", "*", "*", "*"],
         description=(
             "Data values from the detector. The rank and dimension ordering "
             "should follow a principle of slowest to fastest measurement axes "
@@ -367,12 +360,10 @@ class Detector(Component):
         ),
     )
     data_errors = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXdetector.html#nxdetector-data-errors-field"
         ],
-        flexible_unit=True,
-        shape=["*", "*", "*", "*"],
         description=(
             "The best estimate of the uncertainty in the data value (array size "
             "should match the data field). Where possible, this should be the "
@@ -388,13 +379,10 @@ class Detector(Component):
         ),
     )
     x_pixel_offset = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXdetector.html#nxdetector-x-pixel-offset-field"
         ],
-        dimensionality="[length]",
-        unit="m",
-        shape=["*", "*"],
         description=(
             "Offset from the detector center in x-direction. Can be "
             "multidimensional when needed."
@@ -463,13 +451,10 @@ class Detector(Component):
         ),
     )
     y_pixel_offset = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXdetector.html#nxdetector-y-pixel-offset-field"
         ],
-        dimensionality="[length]",
-        unit="m",
-        shape=["*", "*"],
         description=(
             "Offset from the detector center in the y-direction. Can be "
             "multidimensional when different values are required for each pixel."
@@ -538,13 +523,10 @@ class Detector(Component):
         ),
     )
     z_pixel_offset = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXdetector.html#nxdetector-z-pixel-offset-field"
         ],
-        dimensionality="[length]",
-        unit="m",
-        shape=["*", "*"],
         description=(
             "Offset from the detector center in the z-direction. Can be "
             "multidimensional when different values are required for each pixel."
@@ -613,13 +595,10 @@ class Detector(Component):
         ),
     )
     distance = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXdetector.html#nxdetector-distance-field"
         ],
-        dimensionality="[length]",
-        unit="m",
-        shape=["*", "*", "*"],
         description=(
             "This is the distance to the previous component in the instrument; "
             "most often the sample. The usage depends on the nature of the "
@@ -637,13 +616,10 @@ class Detector(Component):
         ),
     )
     polar_angle = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXdetector.html#nxdetector-polar-angle-field"
         ],
-        dimensionality="[angle]",
-        unit="radian",
-        shape=["*", "*", "*"],
         description=(
             "This is the polar angle of the detector towards the previous "
             "component in the instrument; most often the sample. The usage "
@@ -662,13 +638,10 @@ class Detector(Component):
         ),
     )
     azimuthal_angle = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXdetector.html#nxdetector-azimuthal-angle-field"
         ],
-        dimensionality="[angle]",
-        unit="radian",
-        shape=["*", "*", "*"],
         description=(
             "This is the azimuthal angle angle of the detector towards the "
             "previous component in the instrument; most often the sample. The "
@@ -735,13 +708,10 @@ class Detector(Component):
         ),
     )
     solid_angle = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXdetector.html#nxdetector-solid-angle-field"
         ],
-        dimensionality="[angle] ** 2",
-        unit="steradian",
-        shape=["*", "*"],
         description=("Solid angle subtended by the detector at the sample"),
         a_nexus_field=NeXusField(
             name="solid_angle",
@@ -752,13 +722,10 @@ class Detector(Component):
         ),
     )
     x_pixel_size = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXdetector.html#nxdetector-x-pixel-size-field"
         ],
-        dimensionality="[length]",
-        unit="m",
-        shape=["*", "*"],
         description=(
             "Size of each detector pixel. If it is scalar all pixels are the same size."
         ),
@@ -771,13 +738,10 @@ class Detector(Component):
         ),
     )
     y_pixel_size = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXdetector.html#nxdetector-y-pixel-size-field"
         ],
-        dimensionality="[length]",
-        unit="m",
-        shape=["*", "*"],
         description=(
             "Size of each detector pixel. If it is scalar all pixels are the same size"
         ),
@@ -790,13 +754,10 @@ class Detector(Component):
         ),
     )
     dead_time = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXdetector.html#nxdetector-dead-time-field"
         ],
-        dimensionality="[time]",
-        unit="second",
-        shape=["*", "*", "*"],
         description=("Detector dead time"),
         a_nexus_field=NeXusField(
             name="dead_time",
@@ -807,13 +768,10 @@ class Detector(Component):
         ),
     )
     gas_pressure = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXdetector.html#nxdetector-gas-pressure-field"
         ],
-        dimensionality="[mass] / [length] / [time] ** 2",
-        unit="mbar",
-        shape=["*", "*"],
         description=("Detector gas pressure"),
         a_nexus_field=NeXusField(
             name="gas_pressure",
@@ -844,11 +802,10 @@ class Detector(Component):
         a_display={"unit": "m"},
     )
     crate = Quantity(
-        type=np.int64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXdetector.html#nxdetector-crate-field"
         ],
-        shape=["*", "*"],
         description=("Crate number of detector"),
         a_nexus_field=NeXusField(
             name="crate",
@@ -875,11 +832,10 @@ class Detector(Component):
         ),
     )
     slot = Quantity(
-        type=np.int64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXdetector.html#nxdetector-slot-field"
         ],
-        shape=["*", "*"],
         description=("Slot number of detector"),
         a_nexus_field=NeXusField(
             name="slot",
@@ -906,11 +862,10 @@ class Detector(Component):
         ),
     )
     input = Quantity(
-        type=np.int64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXdetector.html#nxdetector-input-field"
         ],
-        shape=["*", "*"],
         description=("Input number of detector"),
         a_nexus_field=NeXusField(
             name="input",
@@ -957,13 +912,10 @@ class Detector(Component):
         ),
     )
     real_time = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXdetector.html#nxdetector-real-time-field"
         ],
-        dimensionality="[time]",
-        unit="second",
-        shape=["*", "*", "*"],
         description=(
             "Real-time of the exposure (use this if exposure time varies for "
             "each array element, otherwise use ``count_time`` field). Most often "
@@ -982,13 +934,10 @@ class Detector(Component):
         ),
     )
     start_time = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXdetector.html#nxdetector-start-time-field"
         ],
-        dimensionality="[time]",
-        unit="second",
-        shape=["*"],
         description=(
             "start time for each frame, with the ``start`` attribute as absolute "
             "reference"
@@ -1018,13 +967,10 @@ class Detector(Component):
         ),
     )
     stop_time = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXdetector.html#nxdetector-stop-time-field"
         ],
-        dimensionality="[time]",
-        unit="second",
-        shape=["*"],
         description=(
             "stop time for each frame, with the ``start`` attribute as absolute "
             "reference"
@@ -1089,13 +1035,10 @@ class Detector(Component):
         ),
     )
     count_time = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXdetector.html#nxdetector-count-time-field"
         ],
-        dimensionality="[time]",
-        unit="second",
-        shape=["*"],
         description=("Elapsed actual counting time"),
         a_nexus_field=NeXusField(
             name="count_time",
@@ -1106,11 +1049,10 @@ class Detector(Component):
         ),
     )
     sequence_number = Quantity(
-        type=np.int64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXdetector.html#nxdetector-sequence-number-field"
         ],
-        shape=["*"],
         description=(
             "In order to properly sort the order of the images taken in (for "
             "example) a tomography experiment, a sequence number is stored with "
@@ -1270,11 +1212,10 @@ class Detector(Component):
         ),
     )
     angular_calibration = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXdetector.html#nxdetector-angular-calibration-field"
         ],
-        shape=["*", "*"],
         description=("Angular calibration data."),
         a_nexus_field=NeXusField(
             name="angular_calibration",
@@ -1303,11 +1244,10 @@ class Detector(Component):
         ),
     )
     flatfield = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXdetector.html#nxdetector-flatfield-field"
         ],
-        shape=["*", "*"],
         description=("Flat field correction data."),
         a_nexus_field=NeXusField(
             name="flatfield",
@@ -1317,11 +1257,10 @@ class Detector(Component):
         ),
     )
     flatfield_errors = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXdetector.html#nxdetector-flatfield-errors-field"
         ],
-        shape=["*", "*"],
         description=(
             "Errors of the flat field correction data. The form flatfield_error "
             "is deprecated."
@@ -1353,11 +1292,10 @@ class Detector(Component):
         ),
     )
     pixel_mask = Quantity(
-        type=np.int64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXdetector.html#nxdetector-pixel-mask-field"
         ],
-        shape=["*", "*"],
         description=(
             "The 32-bit pixel mask for the detector. Can be either one mask for "
             "the whole dataset (i.e. an array with indices i, j) or each frame "
@@ -1393,11 +1331,10 @@ class Detector(Component):
         ),
     )
     image_key = Quantity(
-        type=np.int64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXdetector.html#nxdetector-image-key-field"
         ],
-        shape=["*"],
         description=(
             "This field allow to distinguish different types of exposure to the "
             'same detector "data" field. Some techniques require frequent '
@@ -1440,11 +1377,10 @@ class Detector(Component):
         ),
     )
     countrate_correction_lookup_table = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXdetector.html#nxdetector-countrate-correction-lookup-table-field"
         ],
-        shape=["*"],
         description=(
             "The countrate_correction_lookup_table defines the LUT used for "
             "count-rate correction. It maps a measured count :math:`c` to its "
@@ -1621,13 +1557,10 @@ class Detector(Component):
         a_display={"unit": "second"},
     )
     frame_time = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXdetector.html#nxdetector-frame-time-field"
         ],
-        dimensionality="[time]",
-        unit="second",
-        shape=["*"],
         description=(
             "This is time for each frame. This is exposure_time + readout time."
         ),
@@ -1952,13 +1885,10 @@ class DetectorEfficiency(Data):
         ),
     )
     efficiency = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXdetector.html#nxdetector-efficiency-efficiency-field"
         ],
-        dimensionality="dimensionless",
-        unit="dimensionless",
-        shape=["*", "*", "*"],
         description=("efficiency of the detector"),
         a_nexus_field=NeXusField(
             name="efficiency",
@@ -1968,14 +1898,27 @@ class DetectorEfficiency(Data):
             units="NX_DIMENSIONLESS",
         ),
     )
-    wavelength = Quantity(
+    efficiency__min = Quantity(
         type=np.float64,
+        description="Minimum of efficiency, computed over the full array at parse time.",
+    )
+    efficiency__max = Quantity(
+        type=np.float64,
+        description="Maximum of efficiency, computed over the full array at parse time.",
+    )
+    efficiency__size = Quantity(
+        type=np.int64,
+        description="Number of elements of efficiency in the HDF5 file.",
+    )
+    efficiency__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of efficiency in the HDF5 file.",
+    )
+    wavelength = Quantity(
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXdetector.html#nxdetector-efficiency-wavelength-field"
         ],
-        dimensionality="[length]",
-        unit="angstrom",
-        shape=["*", "*", "*"],
         description=(
             "This field can be two things: #. For a pixel detector it provides "
             "the nominal wavelength for which the detector has been calibrated. "
@@ -1992,6 +1935,22 @@ class DetectorEfficiency(Data):
             optionality="optional",
             units="NX_WAVELENGTH",
         ),
+    )
+    wavelength__min = Quantity(
+        type=np.float64,
+        description="Minimum of wavelength, computed over the full array at parse time.",
+    )
+    wavelength__max = Quantity(
+        type=np.float64,
+        description="Maximum of wavelength, computed over the full array at parse time.",
+    )
+    wavelength__size = Quantity(
+        type=np.int64,
+        description="Number of elements of wavelength in the HDF5 file.",
+    )
+    wavelength__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of wavelength in the HDF5 file.",
     )
 
     pixel_shape_off_geometry = SubSection(

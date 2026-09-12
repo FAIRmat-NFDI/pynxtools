@@ -28,6 +28,7 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 
 import numpy as np
+from nomad.datamodel.hdf5 import HDF5Reference
 from nomad.datamodel.metainfo.annotations import (
     ELNAnnotation,
     ELNComponentEnum,
@@ -603,13 +604,10 @@ class ApmCompositionspaceResultsVoxelization(Process):
         ),
     )
     weight = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_compositionspace_results.html#nxapm_compositionspace_results-entry-voxelization-weight-field"
         ],
-        dimensionality="dimensionless",
-        unit="dimensionless",
-        shape=["*"],
         description=(
             "Total number of weight (counts for discretization with a "
             "rectangular transfer function) for the occupancy of each voxel with "
@@ -681,12 +679,10 @@ class ApmCompositionspaceResultsVoxelizationGrid(CgGrid):
         a_display={"unit": "dimensionless"},
     )
     origin = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_compositionspace_results.html#nxapm_compositionspace_results-entry-voxelization-grid-origin-field"
         ],
-        flexible_unit=True,
-        shape=["*"],
         a_nexus_field=NeXusField(
             name="origin",
             type="NX_NUMBER",
@@ -713,13 +709,10 @@ class ApmCompositionspaceResultsVoxelizationGrid(CgGrid):
         ),
     )
     cell_dimensions = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_compositionspace_results.html#nxapm_compositionspace_results-entry-voxelization-grid-cell-dimensions-field"
         ],
-        dimensionality="[length]",
-        unit="m",
-        shape=["*"],
         a_nexus_field=NeXusField(
             name="cell_dimensions",
             type="NX_NUMBER",
@@ -729,13 +722,10 @@ class ApmCompositionspaceResultsVoxelizationGrid(CgGrid):
         ),
     )
     extent = Quantity(
-        type=np.int64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_compositionspace_results.html#nxapm_compositionspace_results-entry-voxelization-grid-extent-field"
         ],
-        dimensionality="dimensionless",
-        unit="dimensionless",
-        shape=["*"],
         a_nexus_field=NeXusField(
             name="extent",
             type="NX_POSINT",
@@ -764,13 +754,10 @@ class ApmCompositionspaceResultsVoxelizationGrid(CgGrid):
         a_display={"unit": "dimensionless"},
     )
     position = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_compositionspace_results.html#nxapm_compositionspace_results-entry-voxelization-grid-position-field"
         ],
-        dimensionality="[length]",
-        unit="m",
-        shape=["*", "*"],
         description=("Position of each cell in Euclidean space."),
         a_nexus_field=NeXusField(
             name="position",
@@ -781,13 +768,10 @@ class ApmCompositionspaceResultsVoxelizationGrid(CgGrid):
         ),
     )
     coordinate = Quantity(
-        type=np.int64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_compositionspace_results.html#nxapm_compositionspace_results-entry-voxelization-grid-coordinate-field"
         ],
-        dimensionality="dimensionless",
-        unit="dimensionless",
-        shape=["*", "*"],
         description=("Discrete coordinate of each voxel."),
         a_nexus_field=NeXusField(
             name="coordinate",
@@ -798,13 +782,10 @@ class ApmCompositionspaceResultsVoxelizationGrid(CgGrid):
         ),
     )
     indices_voxel = Quantity(
-        type=np.int64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_compositionspace_results.html#nxapm_compositionspace_results-entry-voxelization-grid-indices-voxel-field"
         ],
-        dimensionality="dimensionless",
-        unit="dimensionless",
-        shape=["*"],
         description=(
             "For each ion, the identifier of the voxel into which the ion binned."
         ),
@@ -853,13 +834,10 @@ class ApmCompositionspaceResultsVoxelizationIonID(Atom):
         ),
     )
     weight = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_compositionspace_results.html#nxapm_compositionspace_results-entry-voxelization-ionid-weight-field"
         ],
-        dimensionality="dimensionless",
-        unit="dimensionless",
-        shape=["*"],
         description=(
             "Element-specific weight (counts for discretization with a "
             "rectangular transfer function) for the occupancy of each voxel with "
@@ -980,7 +958,7 @@ class ApmCompositionspaceResultsAutophaseResult(Data):
         ),
     )
     title = Quantity(
-        type=str,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_compositionspace_results.html#nxapm_compositionspace_results-entry-autophase-result-title-field"
         ],
@@ -990,18 +968,12 @@ class ApmCompositionspaceResultsAutophaseResult(Data):
             name_type="specified",
             optionality="recommended",
         ),
-        a_eln=ELNAnnotation(
-            component=ELNComponentEnum.StringEditQuantity,
-        ),
     )
     axis_feature_indices = Quantity(
-        type=np.int64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_compositionspace_results.html#nxapm_compositionspace_results-entry-autophase-result-axis-feature-indices-field"
         ],
-        dimensionality="dimensionless",
-        unit="dimensionless",
-        shape=["*"],
         description=(
             "Element identifier stored sorted in descending order of feature "
             "importance."
@@ -1013,6 +985,22 @@ class ApmCompositionspaceResultsAutophaseResult(Data):
             optionality="required",
             units="NX_DIMENSIONLESS",
         ),
+    )
+    axis_feature_indices__min = Quantity(
+        type=np.int64,
+        description="Minimum of axis_feature_indices, computed over the full array at parse time.",
+    )
+    axis_feature_indices__max = Quantity(
+        type=np.int64,
+        description="Maximum of axis_feature_indices, computed over the full array at parse time.",
+    )
+    axis_feature_indices__size = Quantity(
+        type=np.int64,
+        description="Number of elements of axis_feature_indices in the HDF5 file.",
+    )
+    axis_feature_indices__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of axis_feature_indices in the HDF5 file.",
     )
     axis_feature_indices__long_name = Quantity(
         type=str,
@@ -1032,13 +1020,10 @@ class ApmCompositionspaceResultsAutophaseResult(Data):
         ),
     )
     axis_feature_importance = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_compositionspace_results.html#nxapm_compositionspace_results-entry-autophase-result-axis-feature-importance-field"
         ],
-        dimensionality="dimensionless",
-        unit="dimensionless",
-        shape=["*"],
         description=(
             "Element relative feature importance stored sorted in descending "
             "order of feature importance."
@@ -1050,6 +1035,22 @@ class ApmCompositionspaceResultsAutophaseResult(Data):
             optionality="required",
             units="NX_DIMENSIONLESS",
         ),
+    )
+    axis_feature_importance__min = Quantity(
+        type=np.float64,
+        description="Minimum of axis_feature_importance, computed over the full array at parse time.",
+    )
+    axis_feature_importance__max = Quantity(
+        type=np.float64,
+        description="Maximum of axis_feature_importance, computed over the full array at parse time.",
+    )
+    axis_feature_importance__size = Quantity(
+        type=np.int64,
+        description="Number of elements of axis_feature_importance in the HDF5 file.",
+    )
+    axis_feature_importance__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of axis_feature_importance in the HDF5 file.",
     )
     axis_feature_importance__long_name = Quantity(
         type=str,
@@ -1206,7 +1207,7 @@ class ApmCompositionspaceResultsSegmentationPcaResult(Data):
         ),
     )
     title = Quantity(
-        type=str,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_compositionspace_results.html#nxapm_compositionspace_results-entry-segmentation-pca-result-title-field"
         ],
@@ -1216,18 +1217,12 @@ class ApmCompositionspaceResultsSegmentationPcaResult(Data):
             name_type="specified",
             optionality="recommended",
         ),
-        a_eln=ELNAnnotation(
-            component=ELNComponentEnum.StringEditQuantity,
-        ),
     )
     axis_explained_variance = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_compositionspace_results.html#nxapm_compositionspace_results-entry-segmentation-pca-result-axis-explained-variance-field"
         ],
-        dimensionality="dimensionless",
-        unit="dimensionless",
-        shape=["*"],
         description=("Explained variance values"),
         a_nexus_field=NeXusField(
             name="axis_explained_variance",
@@ -1237,14 +1232,27 @@ class ApmCompositionspaceResultsSegmentationPcaResult(Data):
             units="NX_DIMENSIONLESS",
         ),
     )
-    axis_pca_dimension = Quantity(
+    axis_explained_variance__min = Quantity(
+        type=np.float64,
+        description="Minimum of axis_explained_variance, computed over the full array at parse time.",
+    )
+    axis_explained_variance__max = Quantity(
+        type=np.float64,
+        description="Maximum of axis_explained_variance, computed over the full array at parse time.",
+    )
+    axis_explained_variance__size = Quantity(
         type=np.int64,
+        description="Number of elements of axis_explained_variance in the HDF5 file.",
+    )
+    axis_explained_variance__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of axis_explained_variance in the HDF5 file.",
+    )
+    axis_pca_dimension = Quantity(
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_compositionspace_results.html#nxapm_compositionspace_results-entry-segmentation-pca-result-axis-pca-dimension-field"
         ],
-        dimensionality="dimensionless",
-        unit="dimensionless",
-        shape=["*"],
         description=(
             "Elements identifier matching those from ENTRY/voxelization/ionID "
             "used during the principal component analysis."
@@ -1256,6 +1264,22 @@ class ApmCompositionspaceResultsSegmentationPcaResult(Data):
             optionality="required",
             units="NX_UNITLESS",
         ),
+    )
+    axis_pca_dimension__min = Quantity(
+        type=np.int64,
+        description="Minimum of axis_pca_dimension, computed over the full array at parse time.",
+    )
+    axis_pca_dimension__max = Quantity(
+        type=np.int64,
+        description="Maximum of axis_pca_dimension, computed over the full array at parse time.",
+    )
+    axis_pca_dimension__size = Quantity(
+        type=np.int64,
+        description="Number of elements of axis_pca_dimension in the HDF5 file.",
+    )
+    axis_pca_dimension__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of axis_pca_dimension in the HDF5 file.",
     )
 
     def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
@@ -1350,13 +1374,10 @@ class ApmCompositionspaceResultsSegmentationIcOptClusterAnalysisID(Process):
         a_display={"unit": "dimensionless"},
     )
     y_pred = Quantity(
-        type=np.int64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_compositionspace_results.html#nxapm_compositionspace_results-entry-segmentation-ic-opt-cluster-analysisid-y-pred-field"
         ],
-        dimensionality="dimensionless",
-        unit="dimensionless",
-        shape=["*"],
         description=("y_pred return values of the computation."),
         a_nexus_field=NeXusField(
             name="y_pred",
@@ -1431,7 +1452,7 @@ class ApmCompositionspaceResultsSegmentationIcOptResult(Data):
         ),
     )
     title = Quantity(
-        type=str,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_compositionspace_results.html#nxapm_compositionspace_results-entry-segmentation-ic-opt-result-title-field"
         ],
@@ -1441,17 +1462,12 @@ class ApmCompositionspaceResultsSegmentationIcOptResult(Data):
             name_type="specified",
             optionality="recommended",
         ),
-        a_eln=ELNAnnotation(
-            component=ELNComponentEnum.StringEditQuantity,
-        ),
     )
     axis_aic = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_compositionspace_results.html#nxapm_compositionspace_results-entry-segmentation-ic-opt-result-axis-aic-field"
         ],
-        flexible_unit=True,
-        shape=["*"],
         description=("Akaike information criterion values"),
         a_nexus_field=NeXusField(
             name="axis_aic",
@@ -1461,14 +1477,27 @@ class ApmCompositionspaceResultsSegmentationIcOptResult(Data):
             units="NX_ANY",
         ),
     )
-    axis_bic = Quantity(
+    axis_aic__min = Quantity(
         type=np.float64,
+        description="Minimum of axis_aic, computed over the full array at parse time.",
+    )
+    axis_aic__max = Quantity(
+        type=np.float64,
+        description="Maximum of axis_aic, computed over the full array at parse time.",
+    )
+    axis_aic__size = Quantity(
+        type=np.int64,
+        description="Number of elements of axis_aic in the HDF5 file.",
+    )
+    axis_aic__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of axis_aic in the HDF5 file.",
+    )
+    axis_bic = Quantity(
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_compositionspace_results.html#nxapm_compositionspace_results-entry-segmentation-ic-opt-result-axis-bic-field"
         ],
-        dimensionality="dimensionless",
-        unit="dimensionless",
-        shape=["*"],
         description=("Bayes information criterion values"),
         a_nexus_field=NeXusField(
             name="axis_bic",
@@ -1478,14 +1507,27 @@ class ApmCompositionspaceResultsSegmentationIcOptResult(Data):
             units="NX_UNITLESS",
         ),
     )
-    axis_dimension = Quantity(
+    axis_bic__min = Quantity(
+        type=np.float64,
+        description="Minimum of axis_bic, computed over the full array at parse time.",
+    )
+    axis_bic__max = Quantity(
+        type=np.float64,
+        description="Maximum of axis_bic, computed over the full array at parse time.",
+    )
+    axis_bic__size = Quantity(
         type=np.int64,
+        description="Number of elements of axis_bic in the HDF5 file.",
+    )
+    axis_bic__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of axis_bic in the HDF5 file.",
+    )
+    axis_dimension = Quantity(
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_compositionspace_results.html#nxapm_compositionspace_results-entry-segmentation-ic-opt-result-axis-dimension-field"
         ],
-        dimensionality="dimensionless",
-        unit="dimensionless",
-        shape=["*"],
         description=("Actual n_ic_cluster values used"),
         a_nexus_field=NeXusField(
             name="axis_dimension",
@@ -1494,6 +1536,22 @@ class ApmCompositionspaceResultsSegmentationIcOptResult(Data):
             optionality="required",
             units="NX_UNITLESS",
         ),
+    )
+    axis_dimension__min = Quantity(
+        type=np.int64,
+        description="Minimum of axis_dimension, computed over the full array at parse time.",
+    )
+    axis_dimension__max = Quantity(
+        type=np.int64,
+        description="Maximum of axis_dimension, computed over the full array at parse time.",
+    )
+    axis_dimension__size = Quantity(
+        type=np.int64,
+        description="Number of elements of axis_dimension in the HDF5 file.",
+    )
+    axis_dimension__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of axis_dimension in the HDF5 file.",
     )
 
     def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
@@ -1663,13 +1721,10 @@ class ApmCompositionspaceResultsClusteringIcOptClusterAnalysisIDDbscanID(Process
         a_display={"unit": "dimensionless"},
     )
     label = Quantity(
-        type=np.int64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_compositionspace_results.html#nxapm_compositionspace_results-entry-clustering-ic-opt-cluster-analysisid-dbscanid-label-field"
         ],
-        dimensionality="dimensionless",
-        unit="dimensionless",
-        shape=["*"],
         description=("Raw label return values"),
         a_nexus_field=NeXusField(
             name="label",
@@ -1680,13 +1735,10 @@ class ApmCompositionspaceResultsClusteringIcOptClusterAnalysisIDDbscanID(Process
         ),
     )
     voxel = Quantity(
-        type=np.int64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_compositionspace_results.html#nxapm_compositionspace_results-entry-clustering-ic-opt-cluster-analysisid-dbscanid-voxel-field"
         ],
-        dimensionality="dimensionless",
-        unit="dimensionless",
-        shape=["*"],
         description=(
             "Voxel identifier Using these identifiers correlated element-wise "
             "with the values in the label array specifies for which voxel in the "

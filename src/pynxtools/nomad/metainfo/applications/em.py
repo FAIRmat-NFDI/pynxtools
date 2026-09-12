@@ -24,6 +24,7 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 
 import numpy as np
+from nomad.datamodel.hdf5 import HDF5Reference
 from nomad.datamodel.metainfo.annotations import (
     ELNAnnotation,
     ELNComponentEnum,
@@ -1519,13 +1520,10 @@ class EmNAMED_reference_frameID(CoordinateSystem):
         ),
     )
     x = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXem.html#nxem-entry-named-reference-frameid-x-field"
         ],
-        dimensionality="[length]",
-        unit="m",
-        shape=[3],
         a_nexus_field=NeXusField(
             name="x",
             type="NX_NUMBER",
@@ -1550,13 +1548,10 @@ class EmNAMED_reference_frameID(CoordinateSystem):
         ),
     )
     y = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXem.html#nxem-entry-named-reference-frameid-y-field"
         ],
-        dimensionality="[length]",
-        unit="m",
-        shape=[3],
         a_nexus_field=NeXusField(
             name="y",
             type="NX_NUMBER",
@@ -1581,13 +1576,10 @@ class EmNAMED_reference_frameID(CoordinateSystem):
         ),
     )
     z = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXem.html#nxem-entry-named-reference-frameid-z-field"
         ],
-        dimensionality="[length]",
-        unit="m",
-        shape=[3],
         a_nexus_field=NeXusField(
             name="z",
             type="NX_NUMBER",
@@ -1697,13 +1689,10 @@ class EmProcessingReferenceFrame(CoordinateSystem):
         ),
     )
     x = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXem.html#nxem-entry-processing-reference-frame-x-field"
         ],
-        dimensionality="[length]",
-        unit="m",
-        shape=[3],
         a_nexus_field=NeXusField(
             name="x",
             type="NX_NUMBER",
@@ -1734,13 +1723,10 @@ class EmProcessingReferenceFrame(CoordinateSystem):
         ),
     )
     y = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXem.html#nxem-entry-processing-reference-frame-y-field"
         ],
-        dimensionality="[length]",
-        unit="m",
-        shape=[3],
         a_nexus_field=NeXusField(
             name="y",
             type="NX_NUMBER",
@@ -1771,13 +1757,10 @@ class EmProcessingReferenceFrame(CoordinateSystem):
         ),
     )
     z = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXem.html#nxem-entry-processing-reference-frame-z-field"
         ],
-        dimensionality="[length]",
-        unit="m",
-        shape=[3],
         a_nexus_field=NeXusField(
             name="z",
             type="NX_NUMBER",
@@ -1912,13 +1895,10 @@ class EmSampleReferenceFrame(CoordinateSystem):
         ),
     )
     x = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXem.html#nxem-entry-sample-reference-frame-x-field"
         ],
-        dimensionality="[length]",
-        unit="m",
-        shape=[3],
         a_nexus_field=NeXusField(
             name="x",
             type="NX_NUMBER",
@@ -1949,13 +1929,10 @@ class EmSampleReferenceFrame(CoordinateSystem):
         ),
     )
     y = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXem.html#nxem-entry-sample-reference-frame-y-field"
         ],
-        dimensionality="[length]",
-        unit="m",
-        shape=[3],
         a_nexus_field=NeXusField(
             name="y",
             type="NX_NUMBER",
@@ -1986,13 +1963,10 @@ class EmSampleReferenceFrame(CoordinateSystem):
         ),
     )
     z = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXem.html#nxem-entry-sample-reference-frame-z-field"
         ],
-        dimensionality="[length]",
-        unit="m",
-        shape=[3],
         a_nexus_field=NeXusField(
             name="z",
             type="NX_NUMBER",
@@ -2133,13 +2107,10 @@ class EmDetectorReferenceFrameID(CoordinateSystem):
         ),
     )
     x = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXem.html#nxem-entry-detector-reference-frameid-x-field"
         ],
-        dimensionality="[length]",
-        unit="m",
-        shape=[3],
         a_nexus_field=NeXusField(
             name="x",
             type="NX_NUMBER",
@@ -2170,13 +2141,10 @@ class EmDetectorReferenceFrameID(CoordinateSystem):
         ),
     )
     y = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXem.html#nxem-entry-detector-reference-frameid-y-field"
         ],
-        dimensionality="[length]",
-        unit="m",
-        shape=[3],
         a_nexus_field=NeXusField(
             name="y",
             type="NX_NUMBER",
@@ -2207,13 +2175,10 @@ class EmDetectorReferenceFrameID(CoordinateSystem):
         ),
     )
     z = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXem.html#nxem-entry-detector-reference-frameid-z-field"
         ],
-        dimensionality="[length]",
-        unit="m",
-        shape=[3],
         a_nexus_field=NeXusField(
             name="z",
             type="NX_NUMBER",
@@ -5464,7 +5429,7 @@ class EmMeasurementEventIDImageIDImage1d(Data):
         ),
     )
     title = Quantity(
-        type=str,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXem.html#nxem-entry-measurement-eventid-imageid-image-1d-title-field"
         ],
@@ -5474,18 +5439,12 @@ class EmMeasurementEventIDImageIDImage1d(Data):
             name_type="specified",
             optionality="recommended",
         ),
-        a_eln=ELNAnnotation(
-            component=ELNComponentEnum.StringEditQuantity,
-        ),
     )
     real = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXem.html#nxem-entry-measurement-eventid-imageid-image-1d-real-field"
         ],
-        dimensionality="dimensionless",
-        unit="dimensionless",
-        shape=["*"],
         a_nexus_field=NeXusField(
             name="real",
             type="NX_NUMBER",
@@ -5493,6 +5452,22 @@ class EmMeasurementEventIDImageIDImage1d(Data):
             optionality="required",
             units="NX_UNITLESS",
         ),
+    )
+    real__min = Quantity(
+        type=np.float64,
+        description="Minimum of real, computed over the full array at parse time.",
+    )
+    real__max = Quantity(
+        type=np.float64,
+        description="Maximum of real, computed over the full array at parse time.",
+    )
+    real__size = Quantity(
+        type=np.int64,
+        description="Number of elements of real in the HDF5 file.",
+    )
+    real__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of real in the HDF5 file.",
     )
     real__long_name = Quantity(
         type=str,
@@ -5511,13 +5486,10 @@ class EmMeasurementEventIDImageIDImage1d(Data):
         ),
     )
     imag = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXem.html#nxem-entry-measurement-eventid-imageid-image-1d-imag-field"
         ],
-        dimensionality="dimensionless",
-        unit="dimensionless",
-        shape=["*"],
         a_nexus_field=NeXusField(
             name="imag",
             type="NX_NUMBER",
@@ -5525,6 +5497,22 @@ class EmMeasurementEventIDImageIDImage1d(Data):
             optionality="optional",
             units="NX_UNITLESS",
         ),
+    )
+    imag__min = Quantity(
+        type=np.float64,
+        description="Minimum of imag, computed over the full array at parse time.",
+    )
+    imag__max = Quantity(
+        type=np.float64,
+        description="Maximum of imag, computed over the full array at parse time.",
+    )
+    imag__size = Quantity(
+        type=np.int64,
+        description="Number of elements of imag in the HDF5 file.",
+    )
+    imag__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of imag in the HDF5 file.",
     )
     imag__long_name = Quantity(
         type=str,
@@ -5543,13 +5531,10 @@ class EmMeasurementEventIDImageIDImage1d(Data):
         ),
     )
     intensity = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXem.html#nxem-entry-measurement-eventid-imageid-image-1d-intensity-field"
         ],
-        dimensionality="dimensionless",
-        unit="dimensionless",
-        shape=["*"],
         a_nexus_field=NeXusField(
             name="intensity",
             type="NX_NUMBER",
@@ -5557,6 +5542,22 @@ class EmMeasurementEventIDImageIDImage1d(Data):
             optionality="optional",
             units="NX_UNITLESS",
         ),
+    )
+    intensity__min = Quantity(
+        type=np.float64,
+        description="Minimum of intensity, computed over the full array at parse time.",
+    )
+    intensity__max = Quantity(
+        type=np.float64,
+        description="Maximum of intensity, computed over the full array at parse time.",
+    )
+    intensity__size = Quantity(
+        type=np.int64,
+        description="Number of elements of intensity in the HDF5 file.",
+    )
+    intensity__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of intensity in the HDF5 file.",
     )
     intensity__long_name = Quantity(
         type=str,
@@ -5575,13 +5576,10 @@ class EmMeasurementEventIDImageIDImage1d(Data):
         ),
     )
     complex = Quantity(
-        type=np.complex128,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXem.html#nxem-entry-measurement-eventid-imageid-image-1d-complex-field"
         ],
-        dimensionality="dimensionless",
-        unit="dimensionless",
-        shape=["*"],
         a_nexus_field=NeXusField(
             name="complex",
             type="NX_COMPLEX",
@@ -5589,6 +5587,22 @@ class EmMeasurementEventIDImageIDImage1d(Data):
             optionality="optional",
             units="NX_UNITLESS",
         ),
+    )
+    complex__min = Quantity(
+        type=np.complex128,
+        description="Minimum of complex, computed over the full array at parse time.",
+    )
+    complex__max = Quantity(
+        type=np.complex128,
+        description="Maximum of complex, computed over the full array at parse time.",
+    )
+    complex__size = Quantity(
+        type=np.int64,
+        description="Number of elements of complex in the HDF5 file.",
+    )
+    complex__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of complex in the HDF5 file.",
     )
     complex__long_name = Quantity(
         type=str,
@@ -5607,12 +5621,10 @@ class EmMeasurementEventIDImageIDImage1d(Data):
         ),
     )
     axis_i = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXem.html#nxem-entry-measurement-eventid-imageid-image-1d-axis-i-field"
         ],
-        flexible_unit=True,
-        shape=["*"],
         a_nexus_field=NeXusField(
             name="axis_i",
             type="NX_NUMBER",
@@ -5620,6 +5632,22 @@ class EmMeasurementEventIDImageIDImage1d(Data):
             optionality="required",
             units="NX_ANY",
         ),
+    )
+    axis_i__min = Quantity(
+        type=np.float64,
+        description="Minimum of axis_i, computed over the full array at parse time.",
+    )
+    axis_i__max = Quantity(
+        type=np.float64,
+        description="Maximum of axis_i, computed over the full array at parse time.",
+    )
+    axis_i__size = Quantity(
+        type=np.int64,
+        description="Number of elements of axis_i in the HDF5 file.",
+    )
+    axis_i__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of axis_i in the HDF5 file.",
     )
     axis_i__long_name = Quantity(
         type=str,
@@ -5697,7 +5725,7 @@ class EmMeasurementEventIDImageIDImage2d(Data):
         ),
     )
     title = Quantity(
-        type=str,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXem.html#nxem-entry-measurement-eventid-imageid-image-2d-title-field"
         ],
@@ -5707,18 +5735,12 @@ class EmMeasurementEventIDImageIDImage2d(Data):
             name_type="specified",
             optionality="recommended",
         ),
-        a_eln=ELNAnnotation(
-            component=ELNComponentEnum.StringEditQuantity,
-        ),
     )
     real = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXem.html#nxem-entry-measurement-eventid-imageid-image-2d-real-field"
         ],
-        dimensionality="dimensionless",
-        unit="dimensionless",
-        shape=["*", "*"],
         a_nexus_field=NeXusField(
             name="real",
             type="NX_NUMBER",
@@ -5726,6 +5748,22 @@ class EmMeasurementEventIDImageIDImage2d(Data):
             optionality="required",
             units="NX_UNITLESS",
         ),
+    )
+    real__min = Quantity(
+        type=np.float64,
+        description="Minimum of real, computed over the full array at parse time.",
+    )
+    real__max = Quantity(
+        type=np.float64,
+        description="Maximum of real, computed over the full array at parse time.",
+    )
+    real__size = Quantity(
+        type=np.int64,
+        description="Number of elements of real in the HDF5 file.",
+    )
+    real__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of real in the HDF5 file.",
     )
     real__long_name = Quantity(
         type=str,
@@ -5744,13 +5782,10 @@ class EmMeasurementEventIDImageIDImage2d(Data):
         ),
     )
     imag = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXem.html#nxem-entry-measurement-eventid-imageid-image-2d-imag-field"
         ],
-        dimensionality="dimensionless",
-        unit="dimensionless",
-        shape=["*", "*"],
         a_nexus_field=NeXusField(
             name="imag",
             type="NX_NUMBER",
@@ -5758,6 +5793,22 @@ class EmMeasurementEventIDImageIDImage2d(Data):
             optionality="optional",
             units="NX_UNITLESS",
         ),
+    )
+    imag__min = Quantity(
+        type=np.float64,
+        description="Minimum of imag, computed over the full array at parse time.",
+    )
+    imag__max = Quantity(
+        type=np.float64,
+        description="Maximum of imag, computed over the full array at parse time.",
+    )
+    imag__size = Quantity(
+        type=np.int64,
+        description="Number of elements of imag in the HDF5 file.",
+    )
+    imag__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of imag in the HDF5 file.",
     )
     imag__long_name = Quantity(
         type=str,
@@ -5776,13 +5827,10 @@ class EmMeasurementEventIDImageIDImage2d(Data):
         ),
     )
     intensity = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXem.html#nxem-entry-measurement-eventid-imageid-image-2d-intensity-field"
         ],
-        dimensionality="dimensionless",
-        unit="dimensionless",
-        shape=["*", "*"],
         a_nexus_field=NeXusField(
             name="intensity",
             type="NX_NUMBER",
@@ -5790,6 +5838,22 @@ class EmMeasurementEventIDImageIDImage2d(Data):
             optionality="optional",
             units="NX_UNITLESS",
         ),
+    )
+    intensity__min = Quantity(
+        type=np.float64,
+        description="Minimum of intensity, computed over the full array at parse time.",
+    )
+    intensity__max = Quantity(
+        type=np.float64,
+        description="Maximum of intensity, computed over the full array at parse time.",
+    )
+    intensity__size = Quantity(
+        type=np.int64,
+        description="Number of elements of intensity in the HDF5 file.",
+    )
+    intensity__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of intensity in the HDF5 file.",
     )
     intensity__long_name = Quantity(
         type=str,
@@ -5808,7 +5872,7 @@ class EmMeasurementEventIDImageIDImage2d(Data):
         ),
     )
     magnitude = Quantity(
-        type=np.complex128,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXem.html#nxem-entry-measurement-eventid-imageid-image-2d-magnitude-field"
         ],
@@ -5818,9 +5882,22 @@ class EmMeasurementEventIDImageIDImage2d(Data):
             name_type="specified",
             optionality="optional",
         ),
-        a_eln=ELNAnnotation(
-            component=ELNComponentEnum.NumberEditQuantity,
-        ),
+    )
+    magnitude__min = Quantity(
+        type=np.complex128,
+        description="Minimum of magnitude, computed over the full array at parse time.",
+    )
+    magnitude__max = Quantity(
+        type=np.complex128,
+        description="Maximum of magnitude, computed over the full array at parse time.",
+    )
+    magnitude__size = Quantity(
+        type=np.int64,
+        description="Number of elements of magnitude in the HDF5 file.",
+    )
+    magnitude__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of magnitude in the HDF5 file.",
     )
     magnitude__long_name = Quantity(
         type=str,
@@ -5839,12 +5916,10 @@ class EmMeasurementEventIDImageIDImage2d(Data):
         ),
     )
     axis_j = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXem.html#nxem-entry-measurement-eventid-imageid-image-2d-axis-j-field"
         ],
-        flexible_unit=True,
-        shape=["*"],
         a_nexus_field=NeXusField(
             name="axis_j",
             type="NX_NUMBER",
@@ -5852,6 +5927,22 @@ class EmMeasurementEventIDImageIDImage2d(Data):
             optionality="required",
             units="NX_ANY",
         ),
+    )
+    axis_j__min = Quantity(
+        type=np.float64,
+        description="Minimum of axis_j, computed over the full array at parse time.",
+    )
+    axis_j__max = Quantity(
+        type=np.float64,
+        description="Maximum of axis_j, computed over the full array at parse time.",
+    )
+    axis_j__size = Quantity(
+        type=np.int64,
+        description="Number of elements of axis_j in the HDF5 file.",
+    )
+    axis_j__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of axis_j in the HDF5 file.",
     )
     axis_j__long_name = Quantity(
         type=str,
@@ -5870,12 +5961,10 @@ class EmMeasurementEventIDImageIDImage2d(Data):
         ),
     )
     axis_i = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXem.html#nxem-entry-measurement-eventid-imageid-image-2d-axis-i-field"
         ],
-        flexible_unit=True,
-        shape=["*"],
         a_nexus_field=NeXusField(
             name="axis_i",
             type="NX_NUMBER",
@@ -5883,6 +5972,22 @@ class EmMeasurementEventIDImageIDImage2d(Data):
             optionality="required",
             units="NX_ANY",
         ),
+    )
+    axis_i__min = Quantity(
+        type=np.float64,
+        description="Minimum of axis_i, computed over the full array at parse time.",
+    )
+    axis_i__max = Quantity(
+        type=np.float64,
+        description="Maximum of axis_i, computed over the full array at parse time.",
+    )
+    axis_i__size = Quantity(
+        type=np.int64,
+        description="Number of elements of axis_i in the HDF5 file.",
+    )
+    axis_i__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of axis_i in the HDF5 file.",
     )
     axis_i__long_name = Quantity(
         type=str,
@@ -5960,7 +6065,7 @@ class EmMeasurementEventIDImageIDImage3d(Data):
         ),
     )
     title = Quantity(
-        type=str,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXem.html#nxem-entry-measurement-eventid-imageid-image-3d-title-field"
         ],
@@ -5970,18 +6075,12 @@ class EmMeasurementEventIDImageIDImage3d(Data):
             name_type="specified",
             optionality="recommended",
         ),
-        a_eln=ELNAnnotation(
-            component=ELNComponentEnum.StringEditQuantity,
-        ),
     )
     real = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXem.html#nxem-entry-measurement-eventid-imageid-image-3d-real-field"
         ],
-        dimensionality="dimensionless",
-        unit="dimensionless",
-        shape=["*", "*", "*"],
         a_nexus_field=NeXusField(
             name="real",
             type="NX_NUMBER",
@@ -5989,6 +6088,22 @@ class EmMeasurementEventIDImageIDImage3d(Data):
             optionality="required",
             units="NX_UNITLESS",
         ),
+    )
+    real__min = Quantity(
+        type=np.float64,
+        description="Minimum of real, computed over the full array at parse time.",
+    )
+    real__max = Quantity(
+        type=np.float64,
+        description="Maximum of real, computed over the full array at parse time.",
+    )
+    real__size = Quantity(
+        type=np.int64,
+        description="Number of elements of real in the HDF5 file.",
+    )
+    real__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of real in the HDF5 file.",
     )
     real__long_name = Quantity(
         type=str,
@@ -6007,13 +6122,10 @@ class EmMeasurementEventIDImageIDImage3d(Data):
         ),
     )
     imag = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXem.html#nxem-entry-measurement-eventid-imageid-image-3d-imag-field"
         ],
-        dimensionality="dimensionless",
-        unit="dimensionless",
-        shape=["*", "*", "*"],
         a_nexus_field=NeXusField(
             name="imag",
             type="NX_NUMBER",
@@ -6021,6 +6133,22 @@ class EmMeasurementEventIDImageIDImage3d(Data):
             optionality="optional",
             units="NX_UNITLESS",
         ),
+    )
+    imag__min = Quantity(
+        type=np.float64,
+        description="Minimum of imag, computed over the full array at parse time.",
+    )
+    imag__max = Quantity(
+        type=np.float64,
+        description="Maximum of imag, computed over the full array at parse time.",
+    )
+    imag__size = Quantity(
+        type=np.int64,
+        description="Number of elements of imag in the HDF5 file.",
+    )
+    imag__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of imag in the HDF5 file.",
     )
     imag__long_name = Quantity(
         type=str,
@@ -6039,13 +6167,10 @@ class EmMeasurementEventIDImageIDImage3d(Data):
         ),
     )
     intensity = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXem.html#nxem-entry-measurement-eventid-imageid-image-3d-intensity-field"
         ],
-        dimensionality="dimensionless",
-        unit="dimensionless",
-        shape=["*", "*", "*"],
         a_nexus_field=NeXusField(
             name="intensity",
             type="NX_NUMBER",
@@ -6053,6 +6178,22 @@ class EmMeasurementEventIDImageIDImage3d(Data):
             optionality="optional",
             units="NX_UNITLESS",
         ),
+    )
+    intensity__min = Quantity(
+        type=np.float64,
+        description="Minimum of intensity, computed over the full array at parse time.",
+    )
+    intensity__max = Quantity(
+        type=np.float64,
+        description="Maximum of intensity, computed over the full array at parse time.",
+    )
+    intensity__size = Quantity(
+        type=np.int64,
+        description="Number of elements of intensity in the HDF5 file.",
+    )
+    intensity__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of intensity in the HDF5 file.",
     )
     intensity__long_name = Quantity(
         type=str,
@@ -6071,13 +6212,10 @@ class EmMeasurementEventIDImageIDImage3d(Data):
         ),
     )
     complex = Quantity(
-        type=np.complex128,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXem.html#nxem-entry-measurement-eventid-imageid-image-3d-complex-field"
         ],
-        dimensionality="dimensionless",
-        unit="dimensionless",
-        shape=["*", "*", "*"],
         a_nexus_field=NeXusField(
             name="complex",
             type="NX_COMPLEX",
@@ -6085,6 +6223,22 @@ class EmMeasurementEventIDImageIDImage3d(Data):
             optionality="optional",
             units="NX_UNITLESS",
         ),
+    )
+    complex__min = Quantity(
+        type=np.complex128,
+        description="Minimum of complex, computed over the full array at parse time.",
+    )
+    complex__max = Quantity(
+        type=np.complex128,
+        description="Maximum of complex, computed over the full array at parse time.",
+    )
+    complex__size = Quantity(
+        type=np.int64,
+        description="Number of elements of complex in the HDF5 file.",
+    )
+    complex__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of complex in the HDF5 file.",
     )
     complex__long_name = Quantity(
         type=str,
@@ -6103,12 +6257,10 @@ class EmMeasurementEventIDImageIDImage3d(Data):
         ),
     )
     axis_k = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXem.html#nxem-entry-measurement-eventid-imageid-image-3d-axis-k-field"
         ],
-        flexible_unit=True,
-        shape=["*"],
         a_nexus_field=NeXusField(
             name="axis_k",
             type="NX_NUMBER",
@@ -6116,6 +6268,22 @@ class EmMeasurementEventIDImageIDImage3d(Data):
             optionality="required",
             units="NX_ANY",
         ),
+    )
+    axis_k__min = Quantity(
+        type=np.float64,
+        description="Minimum of axis_k, computed over the full array at parse time.",
+    )
+    axis_k__max = Quantity(
+        type=np.float64,
+        description="Maximum of axis_k, computed over the full array at parse time.",
+    )
+    axis_k__size = Quantity(
+        type=np.int64,
+        description="Number of elements of axis_k in the HDF5 file.",
+    )
+    axis_k__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of axis_k in the HDF5 file.",
     )
     axis_k__long_name = Quantity(
         type=str,
@@ -6134,12 +6302,10 @@ class EmMeasurementEventIDImageIDImage3d(Data):
         ),
     )
     axis_j = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXem.html#nxem-entry-measurement-eventid-imageid-image-3d-axis-j-field"
         ],
-        flexible_unit=True,
-        shape=["*"],
         a_nexus_field=NeXusField(
             name="axis_j",
             type="NX_NUMBER",
@@ -6147,6 +6313,22 @@ class EmMeasurementEventIDImageIDImage3d(Data):
             optionality="required",
             units="NX_ANY",
         ),
+    )
+    axis_j__min = Quantity(
+        type=np.float64,
+        description="Minimum of axis_j, computed over the full array at parse time.",
+    )
+    axis_j__max = Quantity(
+        type=np.float64,
+        description="Maximum of axis_j, computed over the full array at parse time.",
+    )
+    axis_j__size = Quantity(
+        type=np.int64,
+        description="Number of elements of axis_j in the HDF5 file.",
+    )
+    axis_j__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of axis_j in the HDF5 file.",
     )
     axis_j__long_name = Quantity(
         type=str,
@@ -6165,12 +6347,10 @@ class EmMeasurementEventIDImageIDImage3d(Data):
         ),
     )
     axis_i = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXem.html#nxem-entry-measurement-eventid-imageid-image-3d-axis-i-field"
         ],
-        flexible_unit=True,
-        shape=["*"],
         a_nexus_field=NeXusField(
             name="axis_i",
             type="NX_NUMBER",
@@ -6178,6 +6358,22 @@ class EmMeasurementEventIDImageIDImage3d(Data):
             optionality="required",
             units="NX_ANY",
         ),
+    )
+    axis_i__min = Quantity(
+        type=np.float64,
+        description="Minimum of axis_i, computed over the full array at parse time.",
+    )
+    axis_i__max = Quantity(
+        type=np.float64,
+        description="Maximum of axis_i, computed over the full array at parse time.",
+    )
+    axis_i__size = Quantity(
+        type=np.int64,
+        description="Number of elements of axis_i in the HDF5 file.",
+    )
+    axis_i__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of axis_i in the HDF5 file.",
     )
     axis_i__long_name = Quantity(
         type=str,
@@ -6255,7 +6451,7 @@ class EmMeasurementEventIDImageIDImage4d(Data):
         ),
     )
     title = Quantity(
-        type=str,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXem.html#nxem-entry-measurement-eventid-imageid-image-4d-title-field"
         ],
@@ -6265,18 +6461,12 @@ class EmMeasurementEventIDImageIDImage4d(Data):
             name_type="specified",
             optionality="recommended",
         ),
-        a_eln=ELNAnnotation(
-            component=ELNComponentEnum.StringEditQuantity,
-        ),
     )
     real = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXem.html#nxem-entry-measurement-eventid-imageid-image-4d-real-field"
         ],
-        dimensionality="dimensionless",
-        unit="dimensionless",
-        shape=["*", "*", "*", "*"],
         a_nexus_field=NeXusField(
             name="real",
             type="NX_NUMBER",
@@ -6284,6 +6474,22 @@ class EmMeasurementEventIDImageIDImage4d(Data):
             optionality="required",
             units="NX_UNITLESS",
         ),
+    )
+    real__min = Quantity(
+        type=np.float64,
+        description="Minimum of real, computed over the full array at parse time.",
+    )
+    real__max = Quantity(
+        type=np.float64,
+        description="Maximum of real, computed over the full array at parse time.",
+    )
+    real__size = Quantity(
+        type=np.int64,
+        description="Number of elements of real in the HDF5 file.",
+    )
+    real__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of real in the HDF5 file.",
     )
     real__long_name = Quantity(
         type=str,
@@ -6302,13 +6508,10 @@ class EmMeasurementEventIDImageIDImage4d(Data):
         ),
     )
     imag = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXem.html#nxem-entry-measurement-eventid-imageid-image-4d-imag-field"
         ],
-        dimensionality="dimensionless",
-        unit="dimensionless",
-        shape=["*", "*", "*", "*"],
         a_nexus_field=NeXusField(
             name="imag",
             type="NX_NUMBER",
@@ -6316,6 +6519,22 @@ class EmMeasurementEventIDImageIDImage4d(Data):
             optionality="optional",
             units="NX_UNITLESS",
         ),
+    )
+    imag__min = Quantity(
+        type=np.float64,
+        description="Minimum of imag, computed over the full array at parse time.",
+    )
+    imag__max = Quantity(
+        type=np.float64,
+        description="Maximum of imag, computed over the full array at parse time.",
+    )
+    imag__size = Quantity(
+        type=np.int64,
+        description="Number of elements of imag in the HDF5 file.",
+    )
+    imag__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of imag in the HDF5 file.",
     )
     imag__long_name = Quantity(
         type=str,
@@ -6334,13 +6553,10 @@ class EmMeasurementEventIDImageIDImage4d(Data):
         ),
     )
     intensity = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXem.html#nxem-entry-measurement-eventid-imageid-image-4d-intensity-field"
         ],
-        dimensionality="dimensionless",
-        unit="dimensionless",
-        shape=["*", "*", "*", "*"],
         a_nexus_field=NeXusField(
             name="intensity",
             type="NX_NUMBER",
@@ -6348,6 +6564,22 @@ class EmMeasurementEventIDImageIDImage4d(Data):
             optionality="optional",
             units="NX_UNITLESS",
         ),
+    )
+    intensity__min = Quantity(
+        type=np.float64,
+        description="Minimum of intensity, computed over the full array at parse time.",
+    )
+    intensity__max = Quantity(
+        type=np.float64,
+        description="Maximum of intensity, computed over the full array at parse time.",
+    )
+    intensity__size = Quantity(
+        type=np.int64,
+        description="Number of elements of intensity in the HDF5 file.",
+    )
+    intensity__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of intensity in the HDF5 file.",
     )
     intensity__long_name = Quantity(
         type=str,
@@ -6366,13 +6598,10 @@ class EmMeasurementEventIDImageIDImage4d(Data):
         ),
     )
     complex = Quantity(
-        type=np.complex128,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXem.html#nxem-entry-measurement-eventid-imageid-image-4d-complex-field"
         ],
-        dimensionality="dimensionless",
-        unit="dimensionless",
-        shape=["*", "*", "*", "*"],
         a_nexus_field=NeXusField(
             name="complex",
             type="NX_COMPLEX",
@@ -6380,6 +6609,22 @@ class EmMeasurementEventIDImageIDImage4d(Data):
             optionality="optional",
             units="NX_UNITLESS",
         ),
+    )
+    complex__min = Quantity(
+        type=np.complex128,
+        description="Minimum of complex, computed over the full array at parse time.",
+    )
+    complex__max = Quantity(
+        type=np.complex128,
+        description="Maximum of complex, computed over the full array at parse time.",
+    )
+    complex__size = Quantity(
+        type=np.int64,
+        description="Number of elements of complex in the HDF5 file.",
+    )
+    complex__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of complex in the HDF5 file.",
     )
     complex__long_name = Quantity(
         type=str,
@@ -6398,12 +6643,10 @@ class EmMeasurementEventIDImageIDImage4d(Data):
         ),
     )
     axis_m = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXem.html#nxem-entry-measurement-eventid-imageid-image-4d-axis-m-field"
         ],
-        flexible_unit=True,
-        shape=["*"],
         a_nexus_field=NeXusField(
             name="axis_m",
             type="NX_NUMBER",
@@ -6411,6 +6654,22 @@ class EmMeasurementEventIDImageIDImage4d(Data):
             optionality="required",
             units="NX_ANY",
         ),
+    )
+    axis_m__min = Quantity(
+        type=np.float64,
+        description="Minimum of axis_m, computed over the full array at parse time.",
+    )
+    axis_m__max = Quantity(
+        type=np.float64,
+        description="Maximum of axis_m, computed over the full array at parse time.",
+    )
+    axis_m__size = Quantity(
+        type=np.int64,
+        description="Number of elements of axis_m in the HDF5 file.",
+    )
+    axis_m__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of axis_m in the HDF5 file.",
     )
     axis_m__long_name = Quantity(
         type=str,
@@ -6429,12 +6688,10 @@ class EmMeasurementEventIDImageIDImage4d(Data):
         ),
     )
     axis_k = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXem.html#nxem-entry-measurement-eventid-imageid-image-4d-axis-k-field"
         ],
-        flexible_unit=True,
-        shape=["*"],
         a_nexus_field=NeXusField(
             name="axis_k",
             type="NX_NUMBER",
@@ -6442,6 +6699,22 @@ class EmMeasurementEventIDImageIDImage4d(Data):
             optionality="required",
             units="NX_ANY",
         ),
+    )
+    axis_k__min = Quantity(
+        type=np.float64,
+        description="Minimum of axis_k, computed over the full array at parse time.",
+    )
+    axis_k__max = Quantity(
+        type=np.float64,
+        description="Maximum of axis_k, computed over the full array at parse time.",
+    )
+    axis_k__size = Quantity(
+        type=np.int64,
+        description="Number of elements of axis_k in the HDF5 file.",
+    )
+    axis_k__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of axis_k in the HDF5 file.",
     )
     axis_k__long_name = Quantity(
         type=str,
@@ -6460,12 +6733,10 @@ class EmMeasurementEventIDImageIDImage4d(Data):
         ),
     )
     axis_j = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXem.html#nxem-entry-measurement-eventid-imageid-image-4d-axis-j-field"
         ],
-        flexible_unit=True,
-        shape=["*"],
         a_nexus_field=NeXusField(
             name="axis_j",
             type="NX_NUMBER",
@@ -6473,6 +6744,22 @@ class EmMeasurementEventIDImageIDImage4d(Data):
             optionality="required",
             units="NX_ANY",
         ),
+    )
+    axis_j__min = Quantity(
+        type=np.float64,
+        description="Minimum of axis_j, computed over the full array at parse time.",
+    )
+    axis_j__max = Quantity(
+        type=np.float64,
+        description="Maximum of axis_j, computed over the full array at parse time.",
+    )
+    axis_j__size = Quantity(
+        type=np.int64,
+        description="Number of elements of axis_j in the HDF5 file.",
+    )
+    axis_j__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of axis_j in the HDF5 file.",
     )
     axis_j__long_name = Quantity(
         type=str,
@@ -6491,12 +6778,10 @@ class EmMeasurementEventIDImageIDImage4d(Data):
         ),
     )
     axis_i = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXem.html#nxem-entry-measurement-eventid-imageid-image-4d-axis-i-field"
         ],
-        flexible_unit=True,
-        shape=["*"],
         a_nexus_field=NeXusField(
             name="axis_i",
             type="NX_NUMBER",
@@ -6504,6 +6789,22 @@ class EmMeasurementEventIDImageIDImage4d(Data):
             optionality="required",
             units="NX_ANY",
         ),
+    )
+    axis_i__min = Quantity(
+        type=np.float64,
+        description="Minimum of axis_i, computed over the full array at parse time.",
+    )
+    axis_i__max = Quantity(
+        type=np.float64,
+        description="Maximum of axis_i, computed over the full array at parse time.",
+    )
+    axis_i__size = Quantity(
+        type=np.int64,
+        description="Number of elements of axis_i in the HDF5 file.",
+    )
+    axis_i__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of axis_i in the HDF5 file.",
     )
     axis_i__long_name = Quantity(
         type=str,
@@ -6581,7 +6882,7 @@ class EmMeasurementEventIDImageIDStack1d(Data):
         ),
     )
     title = Quantity(
-        type=str,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXem.html#nxem-entry-measurement-eventid-imageid-stack-1d-title-field"
         ],
@@ -6591,18 +6892,12 @@ class EmMeasurementEventIDImageIDStack1d(Data):
             name_type="specified",
             optionality="recommended",
         ),
-        a_eln=ELNAnnotation(
-            component=ELNComponentEnum.StringEditQuantity,
-        ),
     )
     real = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXem.html#nxem-entry-measurement-eventid-imageid-stack-1d-real-field"
         ],
-        dimensionality="dimensionless",
-        unit="dimensionless",
-        shape=["*", "*"],
         a_nexus_field=NeXusField(
             name="real",
             type="NX_NUMBER",
@@ -6610,6 +6905,22 @@ class EmMeasurementEventIDImageIDStack1d(Data):
             optionality="required",
             units="NX_UNITLESS",
         ),
+    )
+    real__min = Quantity(
+        type=np.float64,
+        description="Minimum of real, computed over the full array at parse time.",
+    )
+    real__max = Quantity(
+        type=np.float64,
+        description="Maximum of real, computed over the full array at parse time.",
+    )
+    real__size = Quantity(
+        type=np.int64,
+        description="Number of elements of real in the HDF5 file.",
+    )
+    real__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of real in the HDF5 file.",
     )
     real__long_name = Quantity(
         type=str,
@@ -6628,13 +6939,10 @@ class EmMeasurementEventIDImageIDStack1d(Data):
         ),
     )
     imag = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXem.html#nxem-entry-measurement-eventid-imageid-stack-1d-imag-field"
         ],
-        dimensionality="dimensionless",
-        unit="dimensionless",
-        shape=["*", "*"],
         a_nexus_field=NeXusField(
             name="imag",
             type="NX_NUMBER",
@@ -6642,6 +6950,22 @@ class EmMeasurementEventIDImageIDStack1d(Data):
             optionality="optional",
             units="NX_UNITLESS",
         ),
+    )
+    imag__min = Quantity(
+        type=np.float64,
+        description="Minimum of imag, computed over the full array at parse time.",
+    )
+    imag__max = Quantity(
+        type=np.float64,
+        description="Maximum of imag, computed over the full array at parse time.",
+    )
+    imag__size = Quantity(
+        type=np.int64,
+        description="Number of elements of imag in the HDF5 file.",
+    )
+    imag__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of imag in the HDF5 file.",
     )
     imag__long_name = Quantity(
         type=str,
@@ -6660,13 +6984,10 @@ class EmMeasurementEventIDImageIDStack1d(Data):
         ),
     )
     intensity = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXem.html#nxem-entry-measurement-eventid-imageid-stack-1d-intensity-field"
         ],
-        dimensionality="dimensionless",
-        unit="dimensionless",
-        shape=["*", "*"],
         a_nexus_field=NeXusField(
             name="intensity",
             type="NX_NUMBER",
@@ -6674,6 +6995,22 @@ class EmMeasurementEventIDImageIDStack1d(Data):
             optionality="optional",
             units="NX_UNITLESS",
         ),
+    )
+    intensity__min = Quantity(
+        type=np.float64,
+        description="Minimum of intensity, computed over the full array at parse time.",
+    )
+    intensity__max = Quantity(
+        type=np.float64,
+        description="Maximum of intensity, computed over the full array at parse time.",
+    )
+    intensity__size = Quantity(
+        type=np.int64,
+        description="Number of elements of intensity in the HDF5 file.",
+    )
+    intensity__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of intensity in the HDF5 file.",
     )
     intensity__long_name = Quantity(
         type=str,
@@ -6692,13 +7029,10 @@ class EmMeasurementEventIDImageIDStack1d(Data):
         ),
     )
     complex = Quantity(
-        type=np.complex128,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXem.html#nxem-entry-measurement-eventid-imageid-stack-1d-complex-field"
         ],
-        dimensionality="dimensionless",
-        unit="dimensionless",
-        shape=["*", "*"],
         a_nexus_field=NeXusField(
             name="complex",
             type="NX_COMPLEX",
@@ -6706,6 +7040,22 @@ class EmMeasurementEventIDImageIDStack1d(Data):
             optionality="optional",
             units="NX_UNITLESS",
         ),
+    )
+    complex__min = Quantity(
+        type=np.complex128,
+        description="Minimum of complex, computed over the full array at parse time.",
+    )
+    complex__max = Quantity(
+        type=np.complex128,
+        description="Maximum of complex, computed over the full array at parse time.",
+    )
+    complex__size = Quantity(
+        type=np.int64,
+        description="Number of elements of complex in the HDF5 file.",
+    )
+    complex__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of complex in the HDF5 file.",
     )
     complex__long_name = Quantity(
         type=str,
@@ -6724,13 +7074,10 @@ class EmMeasurementEventIDImageIDStack1d(Data):
         ),
     )
     indices_group = Quantity(
-        type=np.int64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXem.html#nxem-entry-measurement-eventid-imageid-stack-1d-indices-group-field"
         ],
-        dimensionality="dimensionless",
-        unit="dimensionless",
-        shape=["*"],
         a_nexus_field=NeXusField(
             name="indices_group",
             type="NX_INT",
@@ -6738,6 +7085,22 @@ class EmMeasurementEventIDImageIDStack1d(Data):
             optionality="optional",
             units="NX_UNITLESS",
         ),
+    )
+    indices_group__min = Quantity(
+        type=np.int64,
+        description="Minimum of indices_group, computed over the full array at parse time.",
+    )
+    indices_group__max = Quantity(
+        type=np.int64,
+        description="Maximum of indices_group, computed over the full array at parse time.",
+    )
+    indices_group__size = Quantity(
+        type=np.int64,
+        description="Number of elements of indices_group in the HDF5 file.",
+    )
+    indices_group__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of indices_group in the HDF5 file.",
     )
     indices_group__long_name = Quantity(
         type=str,
@@ -6756,13 +7119,10 @@ class EmMeasurementEventIDImageIDStack1d(Data):
         ),
     )
     indices_image = Quantity(
-        type=np.int64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXem.html#nxem-entry-measurement-eventid-imageid-stack-1d-indices-image-field"
         ],
-        dimensionality="dimensionless",
-        unit="dimensionless",
-        shape=["*"],
         a_nexus_field=NeXusField(
             name="indices_image",
             type="NX_INT",
@@ -6770,6 +7130,22 @@ class EmMeasurementEventIDImageIDStack1d(Data):
             optionality="required",
             units="NX_UNITLESS",
         ),
+    )
+    indices_image__min = Quantity(
+        type=np.int64,
+        description="Minimum of indices_image, computed over the full array at parse time.",
+    )
+    indices_image__max = Quantity(
+        type=np.int64,
+        description="Maximum of indices_image, computed over the full array at parse time.",
+    )
+    indices_image__size = Quantity(
+        type=np.int64,
+        description="Number of elements of indices_image in the HDF5 file.",
+    )
+    indices_image__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of indices_image in the HDF5 file.",
     )
     indices_image__long_name = Quantity(
         type=str,
@@ -6788,12 +7164,10 @@ class EmMeasurementEventIDImageIDStack1d(Data):
         ),
     )
     axis_i = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXem.html#nxem-entry-measurement-eventid-imageid-stack-1d-axis-i-field"
         ],
-        flexible_unit=True,
-        shape=["*"],
         a_nexus_field=NeXusField(
             name="axis_i",
             type="NX_NUMBER",
@@ -6801,6 +7175,22 @@ class EmMeasurementEventIDImageIDStack1d(Data):
             optionality="required",
             units="NX_ANY",
         ),
+    )
+    axis_i__min = Quantity(
+        type=np.float64,
+        description="Minimum of axis_i, computed over the full array at parse time.",
+    )
+    axis_i__max = Quantity(
+        type=np.float64,
+        description="Maximum of axis_i, computed over the full array at parse time.",
+    )
+    axis_i__size = Quantity(
+        type=np.int64,
+        description="Number of elements of axis_i in the HDF5 file.",
+    )
+    axis_i__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of axis_i in the HDF5 file.",
     )
     axis_i__long_name = Quantity(
         type=str,
@@ -6878,7 +7268,7 @@ class EmMeasurementEventIDImageIDStack2d(Data):
         ),
     )
     title = Quantity(
-        type=str,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXem.html#nxem-entry-measurement-eventid-imageid-stack-2d-title-field"
         ],
@@ -6888,18 +7278,12 @@ class EmMeasurementEventIDImageIDStack2d(Data):
             name_type="specified",
             optionality="recommended",
         ),
-        a_eln=ELNAnnotation(
-            component=ELNComponentEnum.StringEditQuantity,
-        ),
     )
     real = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXem.html#nxem-entry-measurement-eventid-imageid-stack-2d-real-field"
         ],
-        dimensionality="dimensionless",
-        unit="dimensionless",
-        shape=["*", "*", "*"],
         a_nexus_field=NeXusField(
             name="real",
             type="NX_NUMBER",
@@ -6907,6 +7291,22 @@ class EmMeasurementEventIDImageIDStack2d(Data):
             optionality="required",
             units="NX_UNITLESS",
         ),
+    )
+    real__min = Quantity(
+        type=np.float64,
+        description="Minimum of real, computed over the full array at parse time.",
+    )
+    real__max = Quantity(
+        type=np.float64,
+        description="Maximum of real, computed over the full array at parse time.",
+    )
+    real__size = Quantity(
+        type=np.int64,
+        description="Number of elements of real in the HDF5 file.",
+    )
+    real__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of real in the HDF5 file.",
     )
     real__long_name = Quantity(
         type=str,
@@ -6925,13 +7325,10 @@ class EmMeasurementEventIDImageIDStack2d(Data):
         ),
     )
     imag = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXem.html#nxem-entry-measurement-eventid-imageid-stack-2d-imag-field"
         ],
-        dimensionality="dimensionless",
-        unit="dimensionless",
-        shape=["*", "*", "*"],
         a_nexus_field=NeXusField(
             name="imag",
             type="NX_NUMBER",
@@ -6939,6 +7336,22 @@ class EmMeasurementEventIDImageIDStack2d(Data):
             optionality="optional",
             units="NX_UNITLESS",
         ),
+    )
+    imag__min = Quantity(
+        type=np.float64,
+        description="Minimum of imag, computed over the full array at parse time.",
+    )
+    imag__max = Quantity(
+        type=np.float64,
+        description="Maximum of imag, computed over the full array at parse time.",
+    )
+    imag__size = Quantity(
+        type=np.int64,
+        description="Number of elements of imag in the HDF5 file.",
+    )
+    imag__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of imag in the HDF5 file.",
     )
     imag__long_name = Quantity(
         type=str,
@@ -6957,13 +7370,10 @@ class EmMeasurementEventIDImageIDStack2d(Data):
         ),
     )
     intensity = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXem.html#nxem-entry-measurement-eventid-imageid-stack-2d-intensity-field"
         ],
-        dimensionality="dimensionless",
-        unit="dimensionless",
-        shape=["*", "*", "*"],
         a_nexus_field=NeXusField(
             name="intensity",
             type="NX_NUMBER",
@@ -6971,6 +7381,22 @@ class EmMeasurementEventIDImageIDStack2d(Data):
             optionality="optional",
             units="NX_UNITLESS",
         ),
+    )
+    intensity__min = Quantity(
+        type=np.float64,
+        description="Minimum of intensity, computed over the full array at parse time.",
+    )
+    intensity__max = Quantity(
+        type=np.float64,
+        description="Maximum of intensity, computed over the full array at parse time.",
+    )
+    intensity__size = Quantity(
+        type=np.int64,
+        description="Number of elements of intensity in the HDF5 file.",
+    )
+    intensity__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of intensity in the HDF5 file.",
     )
     intensity__long_name = Quantity(
         type=str,
@@ -6989,13 +7415,10 @@ class EmMeasurementEventIDImageIDStack2d(Data):
         ),
     )
     complex = Quantity(
-        type=np.complex128,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXem.html#nxem-entry-measurement-eventid-imageid-stack-2d-complex-field"
         ],
-        dimensionality="dimensionless",
-        unit="dimensionless",
-        shape=["*", "*", "*"],
         a_nexus_field=NeXusField(
             name="complex",
             type="NX_COMPLEX",
@@ -7003,6 +7426,22 @@ class EmMeasurementEventIDImageIDStack2d(Data):
             optionality="optional",
             units="NX_UNITLESS",
         ),
+    )
+    complex__min = Quantity(
+        type=np.complex128,
+        description="Minimum of complex, computed over the full array at parse time.",
+    )
+    complex__max = Quantity(
+        type=np.complex128,
+        description="Maximum of complex, computed over the full array at parse time.",
+    )
+    complex__size = Quantity(
+        type=np.int64,
+        description="Number of elements of complex in the HDF5 file.",
+    )
+    complex__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of complex in the HDF5 file.",
     )
     complex__long_name = Quantity(
         type=str,
@@ -7021,13 +7460,10 @@ class EmMeasurementEventIDImageIDStack2d(Data):
         ),
     )
     indices_group = Quantity(
-        type=np.int64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXem.html#nxem-entry-measurement-eventid-imageid-stack-2d-indices-group-field"
         ],
-        dimensionality="dimensionless",
-        unit="dimensionless",
-        shape=["*"],
         a_nexus_field=NeXusField(
             name="indices_group",
             type="NX_INT",
@@ -7035,6 +7471,22 @@ class EmMeasurementEventIDImageIDStack2d(Data):
             optionality="optional",
             units="NX_UNITLESS",
         ),
+    )
+    indices_group__min = Quantity(
+        type=np.int64,
+        description="Minimum of indices_group, computed over the full array at parse time.",
+    )
+    indices_group__max = Quantity(
+        type=np.int64,
+        description="Maximum of indices_group, computed over the full array at parse time.",
+    )
+    indices_group__size = Quantity(
+        type=np.int64,
+        description="Number of elements of indices_group in the HDF5 file.",
+    )
+    indices_group__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of indices_group in the HDF5 file.",
     )
     indices_group__long_name = Quantity(
         type=str,
@@ -7053,13 +7505,10 @@ class EmMeasurementEventIDImageIDStack2d(Data):
         ),
     )
     indices_image = Quantity(
-        type=np.int64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXem.html#nxem-entry-measurement-eventid-imageid-stack-2d-indices-image-field"
         ],
-        dimensionality="dimensionless",
-        unit="dimensionless",
-        shape=["*"],
         a_nexus_field=NeXusField(
             name="indices_image",
             type="NX_INT",
@@ -7067,6 +7516,22 @@ class EmMeasurementEventIDImageIDStack2d(Data):
             optionality="required",
             units="NX_UNITLESS",
         ),
+    )
+    indices_image__min = Quantity(
+        type=np.int64,
+        description="Minimum of indices_image, computed over the full array at parse time.",
+    )
+    indices_image__max = Quantity(
+        type=np.int64,
+        description="Maximum of indices_image, computed over the full array at parse time.",
+    )
+    indices_image__size = Quantity(
+        type=np.int64,
+        description="Number of elements of indices_image in the HDF5 file.",
+    )
+    indices_image__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of indices_image in the HDF5 file.",
     )
     indices_image__long_name = Quantity(
         type=str,
@@ -7085,12 +7550,10 @@ class EmMeasurementEventIDImageIDStack2d(Data):
         ),
     )
     axis_j = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXem.html#nxem-entry-measurement-eventid-imageid-stack-2d-axis-j-field"
         ],
-        flexible_unit=True,
-        shape=["*"],
         a_nexus_field=NeXusField(
             name="axis_j",
             type="NX_NUMBER",
@@ -7098,6 +7561,22 @@ class EmMeasurementEventIDImageIDStack2d(Data):
             optionality="required",
             units="NX_ANY",
         ),
+    )
+    axis_j__min = Quantity(
+        type=np.float64,
+        description="Minimum of axis_j, computed over the full array at parse time.",
+    )
+    axis_j__max = Quantity(
+        type=np.float64,
+        description="Maximum of axis_j, computed over the full array at parse time.",
+    )
+    axis_j__size = Quantity(
+        type=np.int64,
+        description="Number of elements of axis_j in the HDF5 file.",
+    )
+    axis_j__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of axis_j in the HDF5 file.",
     )
     axis_j__long_name = Quantity(
         type=str,
@@ -7116,12 +7595,10 @@ class EmMeasurementEventIDImageIDStack2d(Data):
         ),
     )
     axis_i = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXem.html#nxem-entry-measurement-eventid-imageid-stack-2d-axis-i-field"
         ],
-        flexible_unit=True,
-        shape=["*"],
         a_nexus_field=NeXusField(
             name="axis_i",
             type="NX_NUMBER",
@@ -7129,6 +7606,22 @@ class EmMeasurementEventIDImageIDStack2d(Data):
             optionality="required",
             units="NX_ANY",
         ),
+    )
+    axis_i__min = Quantity(
+        type=np.float64,
+        description="Minimum of axis_i, computed over the full array at parse time.",
+    )
+    axis_i__max = Quantity(
+        type=np.float64,
+        description="Maximum of axis_i, computed over the full array at parse time.",
+    )
+    axis_i__size = Quantity(
+        type=np.int64,
+        description="Number of elements of axis_i in the HDF5 file.",
+    )
+    axis_i__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of axis_i in the HDF5 file.",
     )
     axis_i__long_name = Quantity(
         type=str,
@@ -7206,7 +7699,7 @@ class EmMeasurementEventIDImageIDStack3d(Data):
         ),
     )
     title = Quantity(
-        type=str,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXem.html#nxem-entry-measurement-eventid-imageid-stack-3d-title-field"
         ],
@@ -7216,18 +7709,12 @@ class EmMeasurementEventIDImageIDStack3d(Data):
             name_type="specified",
             optionality="recommended",
         ),
-        a_eln=ELNAnnotation(
-            component=ELNComponentEnum.StringEditQuantity,
-        ),
     )
     real = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXem.html#nxem-entry-measurement-eventid-imageid-stack-3d-real-field"
         ],
-        dimensionality="dimensionless",
-        unit="dimensionless",
-        shape=["*", "*", "*", "*"],
         a_nexus_field=NeXusField(
             name="real",
             type="NX_NUMBER",
@@ -7235,6 +7722,22 @@ class EmMeasurementEventIDImageIDStack3d(Data):
             optionality="required",
             units="NX_UNITLESS",
         ),
+    )
+    real__min = Quantity(
+        type=np.float64,
+        description="Minimum of real, computed over the full array at parse time.",
+    )
+    real__max = Quantity(
+        type=np.float64,
+        description="Maximum of real, computed over the full array at parse time.",
+    )
+    real__size = Quantity(
+        type=np.int64,
+        description="Number of elements of real in the HDF5 file.",
+    )
+    real__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of real in the HDF5 file.",
     )
     real__long_name = Quantity(
         type=str,
@@ -7253,13 +7756,10 @@ class EmMeasurementEventIDImageIDStack3d(Data):
         ),
     )
     imag = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXem.html#nxem-entry-measurement-eventid-imageid-stack-3d-imag-field"
         ],
-        dimensionality="dimensionless",
-        unit="dimensionless",
-        shape=["*", "*", "*", "*"],
         a_nexus_field=NeXusField(
             name="imag",
             type="NX_NUMBER",
@@ -7267,6 +7767,22 @@ class EmMeasurementEventIDImageIDStack3d(Data):
             optionality="optional",
             units="NX_UNITLESS",
         ),
+    )
+    imag__min = Quantity(
+        type=np.float64,
+        description="Minimum of imag, computed over the full array at parse time.",
+    )
+    imag__max = Quantity(
+        type=np.float64,
+        description="Maximum of imag, computed over the full array at parse time.",
+    )
+    imag__size = Quantity(
+        type=np.int64,
+        description="Number of elements of imag in the HDF5 file.",
+    )
+    imag__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of imag in the HDF5 file.",
     )
     imag__long_name = Quantity(
         type=str,
@@ -7285,13 +7801,10 @@ class EmMeasurementEventIDImageIDStack3d(Data):
         ),
     )
     intensity = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXem.html#nxem-entry-measurement-eventid-imageid-stack-3d-intensity-field"
         ],
-        dimensionality="dimensionless",
-        unit="dimensionless",
-        shape=["*", "*", "*", "*"],
         a_nexus_field=NeXusField(
             name="intensity",
             type="NX_NUMBER",
@@ -7299,6 +7812,22 @@ class EmMeasurementEventIDImageIDStack3d(Data):
             optionality="optional",
             units="NX_UNITLESS",
         ),
+    )
+    intensity__min = Quantity(
+        type=np.float64,
+        description="Minimum of intensity, computed over the full array at parse time.",
+    )
+    intensity__max = Quantity(
+        type=np.float64,
+        description="Maximum of intensity, computed over the full array at parse time.",
+    )
+    intensity__size = Quantity(
+        type=np.int64,
+        description="Number of elements of intensity in the HDF5 file.",
+    )
+    intensity__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of intensity in the HDF5 file.",
     )
     intensity__long_name = Quantity(
         type=str,
@@ -7317,13 +7846,10 @@ class EmMeasurementEventIDImageIDStack3d(Data):
         ),
     )
     complex = Quantity(
-        type=np.complex128,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXem.html#nxem-entry-measurement-eventid-imageid-stack-3d-complex-field"
         ],
-        dimensionality="dimensionless",
-        unit="dimensionless",
-        shape=["*", "*", "*", "*"],
         a_nexus_field=NeXusField(
             name="complex",
             type="NX_COMPLEX",
@@ -7331,6 +7857,22 @@ class EmMeasurementEventIDImageIDStack3d(Data):
             optionality="optional",
             units="NX_UNITLESS",
         ),
+    )
+    complex__min = Quantity(
+        type=np.complex128,
+        description="Minimum of complex, computed over the full array at parse time.",
+    )
+    complex__max = Quantity(
+        type=np.complex128,
+        description="Maximum of complex, computed over the full array at parse time.",
+    )
+    complex__size = Quantity(
+        type=np.int64,
+        description="Number of elements of complex in the HDF5 file.",
+    )
+    complex__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of complex in the HDF5 file.",
     )
     complex__long_name = Quantity(
         type=str,
@@ -7349,13 +7891,10 @@ class EmMeasurementEventIDImageIDStack3d(Data):
         ),
     )
     indices_group = Quantity(
-        type=np.int64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXem.html#nxem-entry-measurement-eventid-imageid-stack-3d-indices-group-field"
         ],
-        dimensionality="dimensionless",
-        unit="dimensionless",
-        shape=["*"],
         a_nexus_field=NeXusField(
             name="indices_group",
             type="NX_INT",
@@ -7363,6 +7902,22 @@ class EmMeasurementEventIDImageIDStack3d(Data):
             optionality="optional",
             units="NX_UNITLESS",
         ),
+    )
+    indices_group__min = Quantity(
+        type=np.int64,
+        description="Minimum of indices_group, computed over the full array at parse time.",
+    )
+    indices_group__max = Quantity(
+        type=np.int64,
+        description="Maximum of indices_group, computed over the full array at parse time.",
+    )
+    indices_group__size = Quantity(
+        type=np.int64,
+        description="Number of elements of indices_group in the HDF5 file.",
+    )
+    indices_group__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of indices_group in the HDF5 file.",
     )
     indices_group__long_name = Quantity(
         type=str,
@@ -7381,13 +7936,10 @@ class EmMeasurementEventIDImageIDStack3d(Data):
         ),
     )
     indices_image = Quantity(
-        type=np.int64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXem.html#nxem-entry-measurement-eventid-imageid-stack-3d-indices-image-field"
         ],
-        dimensionality="dimensionless",
-        unit="dimensionless",
-        shape=["*"],
         a_nexus_field=NeXusField(
             name="indices_image",
             type="NX_INT",
@@ -7395,6 +7947,22 @@ class EmMeasurementEventIDImageIDStack3d(Data):
             optionality="required",
             units="NX_UNITLESS",
         ),
+    )
+    indices_image__min = Quantity(
+        type=np.int64,
+        description="Minimum of indices_image, computed over the full array at parse time.",
+    )
+    indices_image__max = Quantity(
+        type=np.int64,
+        description="Maximum of indices_image, computed over the full array at parse time.",
+    )
+    indices_image__size = Quantity(
+        type=np.int64,
+        description="Number of elements of indices_image in the HDF5 file.",
+    )
+    indices_image__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of indices_image in the HDF5 file.",
     )
     indices_image__long_name = Quantity(
         type=str,
@@ -7413,12 +7981,10 @@ class EmMeasurementEventIDImageIDStack3d(Data):
         ),
     )
     axis_k = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXem.html#nxem-entry-measurement-eventid-imageid-stack-3d-axis-k-field"
         ],
-        flexible_unit=True,
-        shape=["*"],
         a_nexus_field=NeXusField(
             name="axis_k",
             type="NX_NUMBER",
@@ -7426,6 +7992,22 @@ class EmMeasurementEventIDImageIDStack3d(Data):
             optionality="required",
             units="NX_ANY",
         ),
+    )
+    axis_k__min = Quantity(
+        type=np.float64,
+        description="Minimum of axis_k, computed over the full array at parse time.",
+    )
+    axis_k__max = Quantity(
+        type=np.float64,
+        description="Maximum of axis_k, computed over the full array at parse time.",
+    )
+    axis_k__size = Quantity(
+        type=np.int64,
+        description="Number of elements of axis_k in the HDF5 file.",
+    )
+    axis_k__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of axis_k in the HDF5 file.",
     )
     axis_k__long_name = Quantity(
         type=str,
@@ -7444,12 +8026,10 @@ class EmMeasurementEventIDImageIDStack3d(Data):
         ),
     )
     axis_j = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXem.html#nxem-entry-measurement-eventid-imageid-stack-3d-axis-j-field"
         ],
-        flexible_unit=True,
-        shape=["*"],
         a_nexus_field=NeXusField(
             name="axis_j",
             type="NX_NUMBER",
@@ -7457,6 +8037,22 @@ class EmMeasurementEventIDImageIDStack3d(Data):
             optionality="required",
             units="NX_ANY",
         ),
+    )
+    axis_j__min = Quantity(
+        type=np.float64,
+        description="Minimum of axis_j, computed over the full array at parse time.",
+    )
+    axis_j__max = Quantity(
+        type=np.float64,
+        description="Maximum of axis_j, computed over the full array at parse time.",
+    )
+    axis_j__size = Quantity(
+        type=np.int64,
+        description="Number of elements of axis_j in the HDF5 file.",
+    )
+    axis_j__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of axis_j in the HDF5 file.",
     )
     axis_j__long_name = Quantity(
         type=str,
@@ -7475,12 +8071,10 @@ class EmMeasurementEventIDImageIDStack3d(Data):
         ),
     )
     axis_i = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXem.html#nxem-entry-measurement-eventid-imageid-stack-3d-axis-i-field"
         ],
-        flexible_unit=True,
-        shape=["*"],
         a_nexus_field=NeXusField(
             name="axis_i",
             type="NX_NUMBER",
@@ -7488,6 +8082,22 @@ class EmMeasurementEventIDImageIDStack3d(Data):
             optionality="required",
             units="NX_ANY",
         ),
+    )
+    axis_i__min = Quantity(
+        type=np.float64,
+        description="Minimum of axis_i, computed over the full array at parse time.",
+    )
+    axis_i__max = Quantity(
+        type=np.float64,
+        description="Maximum of axis_i, computed over the full array at parse time.",
+    )
+    axis_i__size = Quantity(
+        type=np.int64,
+        description="Number of elements of axis_i in the HDF5 file.",
+    )
+    axis_i__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of axis_i in the HDF5 file.",
     )
     axis_i__long_name = Quantity(
         type=str,
@@ -7754,7 +8364,7 @@ class EmMeasurementEventIDSpectrumIDSpectrum0d(Data):
         ),
     )
     title = Quantity(
-        type=str,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXem.html#nxem-entry-measurement-eventid-spectrumid-spectrum-0d-title-field"
         ],
@@ -7764,18 +8374,12 @@ class EmMeasurementEventIDSpectrumIDSpectrum0d(Data):
             name_type="specified",
             optionality="recommended",
         ),
-        a_eln=ELNAnnotation(
-            component=ELNComponentEnum.StringEditQuantity,
-        ),
     )
     intensity = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXem.html#nxem-entry-measurement-eventid-spectrumid-spectrum-0d-intensity-field"
         ],
-        dimensionality="dimensionless",
-        unit="dimensionless",
-        shape=["*"],
         a_nexus_field=NeXusField(
             name="intensity",
             type="NX_NUMBER",
@@ -7783,6 +8387,22 @@ class EmMeasurementEventIDSpectrumIDSpectrum0d(Data):
             optionality="required",
             units="NX_UNITLESS",
         ),
+    )
+    intensity__min = Quantity(
+        type=np.float64,
+        description="Minimum of intensity, computed over the full array at parse time.",
+    )
+    intensity__max = Quantity(
+        type=np.float64,
+        description="Maximum of intensity, computed over the full array at parse time.",
+    )
+    intensity__size = Quantity(
+        type=np.int64,
+        description="Number of elements of intensity in the HDF5 file.",
+    )
+    intensity__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of intensity in the HDF5 file.",
     )
     intensity__long_name = Quantity(
         type=str,
@@ -7801,13 +8421,10 @@ class EmMeasurementEventIDSpectrumIDSpectrum0d(Data):
         ),
     )
     axis_energy = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXem.html#nxem-entry-measurement-eventid-spectrumid-spectrum-0d-axis-energy-field"
         ],
-        dimensionality="[mass] * [length] ** 2 / [time] ** 2",
-        unit="eV",
-        shape=["*"],
         a_nexus_field=NeXusField(
             name="axis_energy",
             type="NX_NUMBER",
@@ -7815,6 +8432,22 @@ class EmMeasurementEventIDSpectrumIDSpectrum0d(Data):
             optionality="required",
             units="NX_ENERGY",
         ),
+    )
+    axis_energy__min = Quantity(
+        type=np.float64,
+        description="Minimum of axis_energy, computed over the full array at parse time.",
+    )
+    axis_energy__max = Quantity(
+        type=np.float64,
+        description="Maximum of axis_energy, computed over the full array at parse time.",
+    )
+    axis_energy__size = Quantity(
+        type=np.int64,
+        description="Number of elements of axis_energy in the HDF5 file.",
+    )
+    axis_energy__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of axis_energy in the HDF5 file.",
     )
     axis_energy__long_name = Quantity(
         type=str,
@@ -7892,7 +8525,7 @@ class EmMeasurementEventIDSpectrumIDSpectrum1d(Data):
         ),
     )
     title = Quantity(
-        type=str,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXem.html#nxem-entry-measurement-eventid-spectrumid-spectrum-1d-title-field"
         ],
@@ -7902,18 +8535,12 @@ class EmMeasurementEventIDSpectrumIDSpectrum1d(Data):
             name_type="specified",
             optionality="recommended",
         ),
-        a_eln=ELNAnnotation(
-            component=ELNComponentEnum.StringEditQuantity,
-        ),
     )
     intensity = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXem.html#nxem-entry-measurement-eventid-spectrumid-spectrum-1d-intensity-field"
         ],
-        dimensionality="dimensionless",
-        unit="dimensionless",
-        shape=["*", "*"],
         a_nexus_field=NeXusField(
             name="intensity",
             type="NX_NUMBER",
@@ -7921,6 +8548,22 @@ class EmMeasurementEventIDSpectrumIDSpectrum1d(Data):
             optionality="required",
             units="NX_UNITLESS",
         ),
+    )
+    intensity__min = Quantity(
+        type=np.float64,
+        description="Minimum of intensity, computed over the full array at parse time.",
+    )
+    intensity__max = Quantity(
+        type=np.float64,
+        description="Maximum of intensity, computed over the full array at parse time.",
+    )
+    intensity__size = Quantity(
+        type=np.int64,
+        description="Number of elements of intensity in the HDF5 file.",
+    )
+    intensity__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of intensity in the HDF5 file.",
     )
     intensity__long_name = Quantity(
         type=str,
@@ -7939,13 +8582,10 @@ class EmMeasurementEventIDSpectrumIDSpectrum1d(Data):
         ),
     )
     axis_i = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXem.html#nxem-entry-measurement-eventid-spectrumid-spectrum-1d-axis-i-field"
         ],
-        dimensionality="[length]",
-        unit="m",
-        shape=["*"],
         a_nexus_field=NeXusField(
             name="axis_i",
             type="NX_NUMBER",
@@ -7953,6 +8593,22 @@ class EmMeasurementEventIDSpectrumIDSpectrum1d(Data):
             optionality="required",
             units="NX_LENGTH",
         ),
+    )
+    axis_i__min = Quantity(
+        type=np.float64,
+        description="Minimum of axis_i, computed over the full array at parse time.",
+    )
+    axis_i__max = Quantity(
+        type=np.float64,
+        description="Maximum of axis_i, computed over the full array at parse time.",
+    )
+    axis_i__size = Quantity(
+        type=np.int64,
+        description="Number of elements of axis_i in the HDF5 file.",
+    )
+    axis_i__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of axis_i in the HDF5 file.",
     )
     axis_i__long_name = Quantity(
         type=str,
@@ -7971,13 +8627,10 @@ class EmMeasurementEventIDSpectrumIDSpectrum1d(Data):
         ),
     )
     axis_energy = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXem.html#nxem-entry-measurement-eventid-spectrumid-spectrum-1d-axis-energy-field"
         ],
-        dimensionality="[mass] * [length] ** 2 / [time] ** 2",
-        unit="eV",
-        shape=["*"],
         a_nexus_field=NeXusField(
             name="axis_energy",
             type="NX_NUMBER",
@@ -7985,6 +8638,22 @@ class EmMeasurementEventIDSpectrumIDSpectrum1d(Data):
             optionality="required",
             units="NX_ENERGY",
         ),
+    )
+    axis_energy__min = Quantity(
+        type=np.float64,
+        description="Minimum of axis_energy, computed over the full array at parse time.",
+    )
+    axis_energy__max = Quantity(
+        type=np.float64,
+        description="Maximum of axis_energy, computed over the full array at parse time.",
+    )
+    axis_energy__size = Quantity(
+        type=np.int64,
+        description="Number of elements of axis_energy in the HDF5 file.",
+    )
+    axis_energy__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of axis_energy in the HDF5 file.",
     )
     axis_energy__long_name = Quantity(
         type=str,
@@ -8062,7 +8731,7 @@ class EmMeasurementEventIDSpectrumIDSpectrum2d(Data):
         ),
     )
     title = Quantity(
-        type=str,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXem.html#nxem-entry-measurement-eventid-spectrumid-spectrum-2d-title-field"
         ],
@@ -8072,18 +8741,12 @@ class EmMeasurementEventIDSpectrumIDSpectrum2d(Data):
             name_type="specified",
             optionality="recommended",
         ),
-        a_eln=ELNAnnotation(
-            component=ELNComponentEnum.StringEditQuantity,
-        ),
     )
     intensity = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXem.html#nxem-entry-measurement-eventid-spectrumid-spectrum-2d-intensity-field"
         ],
-        dimensionality="dimensionless",
-        unit="dimensionless",
-        shape=["*", "*", "*"],
         a_nexus_field=NeXusField(
             name="intensity",
             type="NX_NUMBER",
@@ -8091,6 +8754,22 @@ class EmMeasurementEventIDSpectrumIDSpectrum2d(Data):
             optionality="required",
             units="NX_UNITLESS",
         ),
+    )
+    intensity__min = Quantity(
+        type=np.float64,
+        description="Minimum of intensity, computed over the full array at parse time.",
+    )
+    intensity__max = Quantity(
+        type=np.float64,
+        description="Maximum of intensity, computed over the full array at parse time.",
+    )
+    intensity__size = Quantity(
+        type=np.int64,
+        description="Number of elements of intensity in the HDF5 file.",
+    )
+    intensity__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of intensity in the HDF5 file.",
     )
     intensity__long_name = Quantity(
         type=str,
@@ -8109,13 +8788,10 @@ class EmMeasurementEventIDSpectrumIDSpectrum2d(Data):
         ),
     )
     axis_j = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXem.html#nxem-entry-measurement-eventid-spectrumid-spectrum-2d-axis-j-field"
         ],
-        dimensionality="[length]",
-        unit="m",
-        shape=["*"],
         a_nexus_field=NeXusField(
             name="axis_j",
             type="NX_NUMBER",
@@ -8123,6 +8799,22 @@ class EmMeasurementEventIDSpectrumIDSpectrum2d(Data):
             optionality="required",
             units="NX_LENGTH",
         ),
+    )
+    axis_j__min = Quantity(
+        type=np.float64,
+        description="Minimum of axis_j, computed over the full array at parse time.",
+    )
+    axis_j__max = Quantity(
+        type=np.float64,
+        description="Maximum of axis_j, computed over the full array at parse time.",
+    )
+    axis_j__size = Quantity(
+        type=np.int64,
+        description="Number of elements of axis_j in the HDF5 file.",
+    )
+    axis_j__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of axis_j in the HDF5 file.",
     )
     axis_j__long_name = Quantity(
         type=str,
@@ -8141,13 +8833,10 @@ class EmMeasurementEventIDSpectrumIDSpectrum2d(Data):
         ),
     )
     axis_i = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXem.html#nxem-entry-measurement-eventid-spectrumid-spectrum-2d-axis-i-field"
         ],
-        dimensionality="[length]",
-        unit="m",
-        shape=["*"],
         a_nexus_field=NeXusField(
             name="axis_i",
             type="NX_NUMBER",
@@ -8155,6 +8844,22 @@ class EmMeasurementEventIDSpectrumIDSpectrum2d(Data):
             optionality="required",
             units="NX_LENGTH",
         ),
+    )
+    axis_i__min = Quantity(
+        type=np.float64,
+        description="Minimum of axis_i, computed over the full array at parse time.",
+    )
+    axis_i__max = Quantity(
+        type=np.float64,
+        description="Maximum of axis_i, computed over the full array at parse time.",
+    )
+    axis_i__size = Quantity(
+        type=np.int64,
+        description="Number of elements of axis_i in the HDF5 file.",
+    )
+    axis_i__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of axis_i in the HDF5 file.",
     )
     axis_i__long_name = Quantity(
         type=str,
@@ -8173,13 +8878,10 @@ class EmMeasurementEventIDSpectrumIDSpectrum2d(Data):
         ),
     )
     axis_energy = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXem.html#nxem-entry-measurement-eventid-spectrumid-spectrum-2d-axis-energy-field"
         ],
-        dimensionality="[mass] * [length] ** 2 / [time] ** 2",
-        unit="eV",
-        shape=["*"],
         a_nexus_field=NeXusField(
             name="axis_energy",
             type="NX_NUMBER",
@@ -8187,6 +8889,22 @@ class EmMeasurementEventIDSpectrumIDSpectrum2d(Data):
             optionality="required",
             units="NX_ENERGY",
         ),
+    )
+    axis_energy__min = Quantity(
+        type=np.float64,
+        description="Minimum of axis_energy, computed over the full array at parse time.",
+    )
+    axis_energy__max = Quantity(
+        type=np.float64,
+        description="Maximum of axis_energy, computed over the full array at parse time.",
+    )
+    axis_energy__size = Quantity(
+        type=np.int64,
+        description="Number of elements of axis_energy in the HDF5 file.",
+    )
+    axis_energy__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of axis_energy in the HDF5 file.",
     )
     axis_energy__long_name = Quantity(
         type=str,
@@ -8264,7 +8982,7 @@ class EmMeasurementEventIDSpectrumIDSpectrum3d(Data):
         ),
     )
     title = Quantity(
-        type=str,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXem.html#nxem-entry-measurement-eventid-spectrumid-spectrum-3d-title-field"
         ],
@@ -8274,18 +8992,12 @@ class EmMeasurementEventIDSpectrumIDSpectrum3d(Data):
             name_type="specified",
             optionality="recommended",
         ),
-        a_eln=ELNAnnotation(
-            component=ELNComponentEnum.StringEditQuantity,
-        ),
     )
     intensity = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXem.html#nxem-entry-measurement-eventid-spectrumid-spectrum-3d-intensity-field"
         ],
-        dimensionality="dimensionless",
-        unit="dimensionless",
-        shape=["*", "*", "*", "*"],
         a_nexus_field=NeXusField(
             name="intensity",
             type="NX_NUMBER",
@@ -8293,6 +9005,22 @@ class EmMeasurementEventIDSpectrumIDSpectrum3d(Data):
             optionality="required",
             units="NX_UNITLESS",
         ),
+    )
+    intensity__min = Quantity(
+        type=np.float64,
+        description="Minimum of intensity, computed over the full array at parse time.",
+    )
+    intensity__max = Quantity(
+        type=np.float64,
+        description="Maximum of intensity, computed over the full array at parse time.",
+    )
+    intensity__size = Quantity(
+        type=np.int64,
+        description="Number of elements of intensity in the HDF5 file.",
+    )
+    intensity__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of intensity in the HDF5 file.",
     )
     intensity__long_name = Quantity(
         type=str,
@@ -8311,13 +9039,10 @@ class EmMeasurementEventIDSpectrumIDSpectrum3d(Data):
         ),
     )
     axis_k = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXem.html#nxem-entry-measurement-eventid-spectrumid-spectrum-3d-axis-k-field"
         ],
-        dimensionality="[length]",
-        unit="m",
-        shape=["*"],
         a_nexus_field=NeXusField(
             name="axis_k",
             type="NX_NUMBER",
@@ -8325,6 +9050,22 @@ class EmMeasurementEventIDSpectrumIDSpectrum3d(Data):
             optionality="required",
             units="NX_LENGTH",
         ),
+    )
+    axis_k__min = Quantity(
+        type=np.float64,
+        description="Minimum of axis_k, computed over the full array at parse time.",
+    )
+    axis_k__max = Quantity(
+        type=np.float64,
+        description="Maximum of axis_k, computed over the full array at parse time.",
+    )
+    axis_k__size = Quantity(
+        type=np.int64,
+        description="Number of elements of axis_k in the HDF5 file.",
+    )
+    axis_k__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of axis_k in the HDF5 file.",
     )
     axis_k__long_name = Quantity(
         type=str,
@@ -8343,13 +9084,10 @@ class EmMeasurementEventIDSpectrumIDSpectrum3d(Data):
         ),
     )
     axis_j = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXem.html#nxem-entry-measurement-eventid-spectrumid-spectrum-3d-axis-j-field"
         ],
-        dimensionality="[length]",
-        unit="m",
-        shape=["*"],
         a_nexus_field=NeXusField(
             name="axis_j",
             type="NX_NUMBER",
@@ -8357,6 +9095,22 @@ class EmMeasurementEventIDSpectrumIDSpectrum3d(Data):
             optionality="required",
             units="NX_LENGTH",
         ),
+    )
+    axis_j__min = Quantity(
+        type=np.float64,
+        description="Minimum of axis_j, computed over the full array at parse time.",
+    )
+    axis_j__max = Quantity(
+        type=np.float64,
+        description="Maximum of axis_j, computed over the full array at parse time.",
+    )
+    axis_j__size = Quantity(
+        type=np.int64,
+        description="Number of elements of axis_j in the HDF5 file.",
+    )
+    axis_j__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of axis_j in the HDF5 file.",
     )
     axis_j__long_name = Quantity(
         type=str,
@@ -8375,13 +9129,10 @@ class EmMeasurementEventIDSpectrumIDSpectrum3d(Data):
         ),
     )
     axis_i = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXem.html#nxem-entry-measurement-eventid-spectrumid-spectrum-3d-axis-i-field"
         ],
-        dimensionality="[length]",
-        unit="m",
-        shape=["*"],
         a_nexus_field=NeXusField(
             name="axis_i",
             type="NX_NUMBER",
@@ -8389,6 +9140,22 @@ class EmMeasurementEventIDSpectrumIDSpectrum3d(Data):
             optionality="required",
             units="NX_LENGTH",
         ),
+    )
+    axis_i__min = Quantity(
+        type=np.float64,
+        description="Minimum of axis_i, computed over the full array at parse time.",
+    )
+    axis_i__max = Quantity(
+        type=np.float64,
+        description="Maximum of axis_i, computed over the full array at parse time.",
+    )
+    axis_i__size = Quantity(
+        type=np.int64,
+        description="Number of elements of axis_i in the HDF5 file.",
+    )
+    axis_i__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of axis_i in the HDF5 file.",
     )
     axis_i__long_name = Quantity(
         type=str,
@@ -8407,13 +9174,10 @@ class EmMeasurementEventIDSpectrumIDSpectrum3d(Data):
         ),
     )
     axis_energy = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXem.html#nxem-entry-measurement-eventid-spectrumid-spectrum-3d-axis-energy-field"
         ],
-        dimensionality="[mass] * [length] ** 2 / [time] ** 2",
-        unit="eV",
-        shape=["*"],
         a_nexus_field=NeXusField(
             name="axis_energy",
             type="NX_NUMBER",
@@ -8421,6 +9185,22 @@ class EmMeasurementEventIDSpectrumIDSpectrum3d(Data):
             optionality="required",
             units="NX_ENERGY",
         ),
+    )
+    axis_energy__min = Quantity(
+        type=np.float64,
+        description="Minimum of axis_energy, computed over the full array at parse time.",
+    )
+    axis_energy__max = Quantity(
+        type=np.float64,
+        description="Maximum of axis_energy, computed over the full array at parse time.",
+    )
+    axis_energy__size = Quantity(
+        type=np.int64,
+        description="Number of elements of axis_energy in the HDF5 file.",
+    )
+    axis_energy__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of axis_energy in the HDF5 file.",
     )
     axis_energy__long_name = Quantity(
         type=str,
@@ -8498,7 +9278,7 @@ class EmMeasurementEventIDSpectrumIDStack0d(Data):
         ),
     )
     title = Quantity(
-        type=str,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXem.html#nxem-entry-measurement-eventid-spectrumid-stack-0d-title-field"
         ],
@@ -8508,18 +9288,12 @@ class EmMeasurementEventIDSpectrumIDStack0d(Data):
             name_type="specified",
             optionality="recommended",
         ),
-        a_eln=ELNAnnotation(
-            component=ELNComponentEnum.StringEditQuantity,
-        ),
     )
     intensity = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXem.html#nxem-entry-measurement-eventid-spectrumid-stack-0d-intensity-field"
         ],
-        dimensionality="dimensionless",
-        unit="dimensionless",
-        shape=["*", "*"],
         a_nexus_field=NeXusField(
             name="intensity",
             type="NX_NUMBER",
@@ -8527,6 +9301,22 @@ class EmMeasurementEventIDSpectrumIDStack0d(Data):
             optionality="required",
             units="NX_UNITLESS",
         ),
+    )
+    intensity__min = Quantity(
+        type=np.float64,
+        description="Minimum of intensity, computed over the full array at parse time.",
+    )
+    intensity__max = Quantity(
+        type=np.float64,
+        description="Maximum of intensity, computed over the full array at parse time.",
+    )
+    intensity__size = Quantity(
+        type=np.int64,
+        description="Number of elements of intensity in the HDF5 file.",
+    )
+    intensity__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of intensity in the HDF5 file.",
     )
     intensity__long_name = Quantity(
         type=str,
@@ -8545,13 +9335,10 @@ class EmMeasurementEventIDSpectrumIDStack0d(Data):
         ),
     )
     indices_spectrum = Quantity(
-        type=np.int64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXem.html#nxem-entry-measurement-eventid-spectrumid-stack-0d-indices-spectrum-field"
         ],
-        dimensionality="dimensionless",
-        unit="dimensionless",
-        shape=["*"],
         a_nexus_field=NeXusField(
             name="indices_spectrum",
             type="NX_INT",
@@ -8559,6 +9346,22 @@ class EmMeasurementEventIDSpectrumIDStack0d(Data):
             optionality="required",
             units="NX_UNITLESS",
         ),
+    )
+    indices_spectrum__min = Quantity(
+        type=np.int64,
+        description="Minimum of indices_spectrum, computed over the full array at parse time.",
+    )
+    indices_spectrum__max = Quantity(
+        type=np.int64,
+        description="Maximum of indices_spectrum, computed over the full array at parse time.",
+    )
+    indices_spectrum__size = Quantity(
+        type=np.int64,
+        description="Number of elements of indices_spectrum in the HDF5 file.",
+    )
+    indices_spectrum__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of indices_spectrum in the HDF5 file.",
     )
     indices_spectrum__long_name = Quantity(
         type=str,
@@ -8577,13 +9380,10 @@ class EmMeasurementEventIDSpectrumIDStack0d(Data):
         ),
     )
     axis_energy = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXem.html#nxem-entry-measurement-eventid-spectrumid-stack-0d-axis-energy-field"
         ],
-        dimensionality="[mass] * [length] ** 2 / [time] ** 2",
-        unit="eV",
-        shape=["*"],
         a_nexus_field=NeXusField(
             name="axis_energy",
             type="NX_NUMBER",
@@ -8591,6 +9391,22 @@ class EmMeasurementEventIDSpectrumIDStack0d(Data):
             optionality="required",
             units="NX_ENERGY",
         ),
+    )
+    axis_energy__min = Quantity(
+        type=np.float64,
+        description="Minimum of axis_energy, computed over the full array at parse time.",
+    )
+    axis_energy__max = Quantity(
+        type=np.float64,
+        description="Maximum of axis_energy, computed over the full array at parse time.",
+    )
+    axis_energy__size = Quantity(
+        type=np.int64,
+        description="Number of elements of axis_energy in the HDF5 file.",
+    )
+    axis_energy__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of axis_energy in the HDF5 file.",
     )
     axis_energy__long_name = Quantity(
         type=str,
@@ -8668,7 +9484,7 @@ class EmMeasurementEventIDSpectrumIDStack1d(Data):
         ),
     )
     title = Quantity(
-        type=str,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXem.html#nxem-entry-measurement-eventid-spectrumid-stack-1d-title-field"
         ],
@@ -8678,12 +9494,9 @@ class EmMeasurementEventIDSpectrumIDStack1d(Data):
             name_type="specified",
             optionality="recommended",
         ),
-        a_eln=ELNAnnotation(
-            component=ELNComponentEnum.StringEditQuantity,
-        ),
     )
     intensity = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXem.html#nxem-entry-measurement-eventid-spectrumid-stack-1d-intensity-field"
         ],
@@ -8693,9 +9506,22 @@ class EmMeasurementEventIDSpectrumIDStack1d(Data):
             name_type="specified",
             optionality="required",
         ),
-        a_eln=ELNAnnotation(
-            component=ELNComponentEnum.NumberEditQuantity,
-        ),
+    )
+    intensity__min = Quantity(
+        type=np.float64,
+        description="Minimum of intensity, computed over the full array at parse time.",
+    )
+    intensity__max = Quantity(
+        type=np.float64,
+        description="Maximum of intensity, computed over the full array at parse time.",
+    )
+    intensity__size = Quantity(
+        type=np.int64,
+        description="Number of elements of intensity in the HDF5 file.",
+    )
+    intensity__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of intensity in the HDF5 file.",
     )
     intensity__long_name = Quantity(
         type=str,
@@ -8714,7 +9540,7 @@ class EmMeasurementEventIDSpectrumIDStack1d(Data):
         ),
     )
     indices_spectrum = Quantity(
-        type=np.int64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXem.html#nxem-entry-measurement-eventid-spectrumid-stack-1d-indices-spectrum-field"
         ],
@@ -8724,9 +9550,22 @@ class EmMeasurementEventIDSpectrumIDStack1d(Data):
             name_type="specified",
             optionality="required",
         ),
-        a_eln=ELNAnnotation(
-            component=ELNComponentEnum.NumberEditQuantity,
-        ),
+    )
+    indices_spectrum__min = Quantity(
+        type=np.int64,
+        description="Minimum of indices_spectrum, computed over the full array at parse time.",
+    )
+    indices_spectrum__max = Quantity(
+        type=np.int64,
+        description="Maximum of indices_spectrum, computed over the full array at parse time.",
+    )
+    indices_spectrum__size = Quantity(
+        type=np.int64,
+        description="Number of elements of indices_spectrum in the HDF5 file.",
+    )
+    indices_spectrum__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of indices_spectrum in the HDF5 file.",
     )
     indices_spectrum__long_name = Quantity(
         type=str,
@@ -8745,7 +9584,7 @@ class EmMeasurementEventIDSpectrumIDStack1d(Data):
         ),
     )
     axis_i = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXem.html#nxem-entry-measurement-eventid-spectrumid-stack-1d-axis-i-field"
         ],
@@ -8755,9 +9594,22 @@ class EmMeasurementEventIDSpectrumIDStack1d(Data):
             name_type="specified",
             optionality="required",
         ),
-        a_eln=ELNAnnotation(
-            component=ELNComponentEnum.NumberEditQuantity,
-        ),
+    )
+    axis_i__min = Quantity(
+        type=np.float64,
+        description="Minimum of axis_i, computed over the full array at parse time.",
+    )
+    axis_i__max = Quantity(
+        type=np.float64,
+        description="Maximum of axis_i, computed over the full array at parse time.",
+    )
+    axis_i__size = Quantity(
+        type=np.int64,
+        description="Number of elements of axis_i in the HDF5 file.",
+    )
+    axis_i__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of axis_i in the HDF5 file.",
     )
     axis_i__long_name = Quantity(
         type=str,
@@ -8776,7 +9628,7 @@ class EmMeasurementEventIDSpectrumIDStack1d(Data):
         ),
     )
     axis_energy = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXem.html#nxem-entry-measurement-eventid-spectrumid-stack-1d-axis-energy-field"
         ],
@@ -8786,9 +9638,22 @@ class EmMeasurementEventIDSpectrumIDStack1d(Data):
             name_type="specified",
             optionality="required",
         ),
-        a_eln=ELNAnnotation(
-            component=ELNComponentEnum.NumberEditQuantity,
-        ),
+    )
+    axis_energy__min = Quantity(
+        type=np.float64,
+        description="Minimum of axis_energy, computed over the full array at parse time.",
+    )
+    axis_energy__max = Quantity(
+        type=np.float64,
+        description="Maximum of axis_energy, computed over the full array at parse time.",
+    )
+    axis_energy__size = Quantity(
+        type=np.int64,
+        description="Number of elements of axis_energy in the HDF5 file.",
+    )
+    axis_energy__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of axis_energy in the HDF5 file.",
     )
     axis_energy__long_name = Quantity(
         type=str,
@@ -8866,7 +9731,7 @@ class EmMeasurementEventIDSpectrumIDStack2d(Data):
         ),
     )
     title = Quantity(
-        type=str,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXem.html#nxem-entry-measurement-eventid-spectrumid-stack-2d-title-field"
         ],
@@ -8876,18 +9741,12 @@ class EmMeasurementEventIDSpectrumIDStack2d(Data):
             name_type="specified",
             optionality="recommended",
         ),
-        a_eln=ELNAnnotation(
-            component=ELNComponentEnum.StringEditQuantity,
-        ),
     )
     intensity = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXem.html#nxem-entry-measurement-eventid-spectrumid-stack-2d-intensity-field"
         ],
-        dimensionality="dimensionless",
-        unit="dimensionless",
-        shape=["*", "*", "*", "*"],
         a_nexus_field=NeXusField(
             name="intensity",
             type="NX_NUMBER",
@@ -8895,6 +9754,22 @@ class EmMeasurementEventIDSpectrumIDStack2d(Data):
             optionality="required",
             units="NX_UNITLESS",
         ),
+    )
+    intensity__min = Quantity(
+        type=np.float64,
+        description="Minimum of intensity, computed over the full array at parse time.",
+    )
+    intensity__max = Quantity(
+        type=np.float64,
+        description="Maximum of intensity, computed over the full array at parse time.",
+    )
+    intensity__size = Quantity(
+        type=np.int64,
+        description="Number of elements of intensity in the HDF5 file.",
+    )
+    intensity__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of intensity in the HDF5 file.",
     )
     intensity__long_name = Quantity(
         type=str,
@@ -8913,13 +9788,10 @@ class EmMeasurementEventIDSpectrumIDStack2d(Data):
         ),
     )
     indices_spectrum = Quantity(
-        type=np.int64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXem.html#nxem-entry-measurement-eventid-spectrumid-stack-2d-indices-spectrum-field"
         ],
-        dimensionality="dimensionless",
-        unit="dimensionless",
-        shape=["*"],
         a_nexus_field=NeXusField(
             name="indices_spectrum",
             type="NX_INT",
@@ -8927,6 +9799,22 @@ class EmMeasurementEventIDSpectrumIDStack2d(Data):
             optionality="required",
             units="NX_UNITLESS",
         ),
+    )
+    indices_spectrum__min = Quantity(
+        type=np.int64,
+        description="Minimum of indices_spectrum, computed over the full array at parse time.",
+    )
+    indices_spectrum__max = Quantity(
+        type=np.int64,
+        description="Maximum of indices_spectrum, computed over the full array at parse time.",
+    )
+    indices_spectrum__size = Quantity(
+        type=np.int64,
+        description="Number of elements of indices_spectrum in the HDF5 file.",
+    )
+    indices_spectrum__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of indices_spectrum in the HDF5 file.",
     )
     indices_spectrum__long_name = Quantity(
         type=str,
@@ -8945,13 +9833,10 @@ class EmMeasurementEventIDSpectrumIDStack2d(Data):
         ),
     )
     axis_j = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXem.html#nxem-entry-measurement-eventid-spectrumid-stack-2d-axis-j-field"
         ],
-        dimensionality="[length]",
-        unit="m",
-        shape=["*"],
         a_nexus_field=NeXusField(
             name="axis_j",
             type="NX_NUMBER",
@@ -8959,6 +9844,22 @@ class EmMeasurementEventIDSpectrumIDStack2d(Data):
             optionality="required",
             units="NX_LENGTH",
         ),
+    )
+    axis_j__min = Quantity(
+        type=np.float64,
+        description="Minimum of axis_j, computed over the full array at parse time.",
+    )
+    axis_j__max = Quantity(
+        type=np.float64,
+        description="Maximum of axis_j, computed over the full array at parse time.",
+    )
+    axis_j__size = Quantity(
+        type=np.int64,
+        description="Number of elements of axis_j in the HDF5 file.",
+    )
+    axis_j__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of axis_j in the HDF5 file.",
     )
     axis_j__long_name = Quantity(
         type=str,
@@ -8977,13 +9878,10 @@ class EmMeasurementEventIDSpectrumIDStack2d(Data):
         ),
     )
     axis_i = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXem.html#nxem-entry-measurement-eventid-spectrumid-stack-2d-axis-i-field"
         ],
-        dimensionality="[length]",
-        unit="m",
-        shape=["*"],
         a_nexus_field=NeXusField(
             name="axis_i",
             type="NX_NUMBER",
@@ -8991,6 +9889,22 @@ class EmMeasurementEventIDSpectrumIDStack2d(Data):
             optionality="required",
             units="NX_LENGTH",
         ),
+    )
+    axis_i__min = Quantity(
+        type=np.float64,
+        description="Minimum of axis_i, computed over the full array at parse time.",
+    )
+    axis_i__max = Quantity(
+        type=np.float64,
+        description="Maximum of axis_i, computed over the full array at parse time.",
+    )
+    axis_i__size = Quantity(
+        type=np.int64,
+        description="Number of elements of axis_i in the HDF5 file.",
+    )
+    axis_i__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of axis_i in the HDF5 file.",
     )
     axis_i__long_name = Quantity(
         type=str,
@@ -9009,13 +9923,10 @@ class EmMeasurementEventIDSpectrumIDStack2d(Data):
         ),
     )
     axis_energy = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXem.html#nxem-entry-measurement-eventid-spectrumid-stack-2d-axis-energy-field"
         ],
-        dimensionality="[mass] * [length] ** 2 / [time] ** 2",
-        unit="eV",
-        shape=["*"],
         a_nexus_field=NeXusField(
             name="axis_energy",
             type="NX_NUMBER",
@@ -9023,6 +9934,22 @@ class EmMeasurementEventIDSpectrumIDStack2d(Data):
             optionality="required",
             units="NX_ENERGY",
         ),
+    )
+    axis_energy__min = Quantity(
+        type=np.float64,
+        description="Minimum of axis_energy, computed over the full array at parse time.",
+    )
+    axis_energy__max = Quantity(
+        type=np.float64,
+        description="Maximum of axis_energy, computed over the full array at parse time.",
+    )
+    axis_energy__size = Quantity(
+        type=np.int64,
+        description="Number of elements of axis_energy in the HDF5 file.",
+    )
+    axis_energy__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of axis_energy in the HDF5 file.",
     )
     axis_energy__long_name = Quantity(
         type=str,
@@ -9100,7 +10027,7 @@ class EmMeasurementEventIDSpectrumIDStack3d(Data):
         ),
     )
     title = Quantity(
-        type=str,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXem.html#nxem-entry-measurement-eventid-spectrumid-stack-3d-title-field"
         ],
@@ -9110,18 +10037,12 @@ class EmMeasurementEventIDSpectrumIDStack3d(Data):
             name_type="specified",
             optionality="recommended",
         ),
-        a_eln=ELNAnnotation(
-            component=ELNComponentEnum.StringEditQuantity,
-        ),
     )
     intensity = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXem.html#nxem-entry-measurement-eventid-spectrumid-stack-3d-intensity-field"
         ],
-        dimensionality="dimensionless",
-        unit="dimensionless",
-        shape=["*", "*", "*", "*", "*"],
         a_nexus_field=NeXusField(
             name="intensity",
             type="NX_NUMBER",
@@ -9129,6 +10050,22 @@ class EmMeasurementEventIDSpectrumIDStack3d(Data):
             optionality="required",
             units="NX_UNITLESS",
         ),
+    )
+    intensity__min = Quantity(
+        type=np.float64,
+        description="Minimum of intensity, computed over the full array at parse time.",
+    )
+    intensity__max = Quantity(
+        type=np.float64,
+        description="Maximum of intensity, computed over the full array at parse time.",
+    )
+    intensity__size = Quantity(
+        type=np.int64,
+        description="Number of elements of intensity in the HDF5 file.",
+    )
+    intensity__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of intensity in the HDF5 file.",
     )
     intensity__long_name = Quantity(
         type=str,
@@ -9147,13 +10084,10 @@ class EmMeasurementEventIDSpectrumIDStack3d(Data):
         ),
     )
     indices_spectrum = Quantity(
-        type=np.int64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXem.html#nxem-entry-measurement-eventid-spectrumid-stack-3d-indices-spectrum-field"
         ],
-        dimensionality="dimensionless",
-        unit="dimensionless",
-        shape=["*"],
         a_nexus_field=NeXusField(
             name="indices_spectrum",
             type="NX_INT",
@@ -9161,6 +10095,22 @@ class EmMeasurementEventIDSpectrumIDStack3d(Data):
             optionality="required",
             units="NX_UNITLESS",
         ),
+    )
+    indices_spectrum__min = Quantity(
+        type=np.int64,
+        description="Minimum of indices_spectrum, computed over the full array at parse time.",
+    )
+    indices_spectrum__max = Quantity(
+        type=np.int64,
+        description="Maximum of indices_spectrum, computed over the full array at parse time.",
+    )
+    indices_spectrum__size = Quantity(
+        type=np.int64,
+        description="Number of elements of indices_spectrum in the HDF5 file.",
+    )
+    indices_spectrum__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of indices_spectrum in the HDF5 file.",
     )
     indices_spectrum__long_name = Quantity(
         type=str,
@@ -9179,13 +10129,10 @@ class EmMeasurementEventIDSpectrumIDStack3d(Data):
         ),
     )
     axis_k = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXem.html#nxem-entry-measurement-eventid-spectrumid-stack-3d-axis-k-field"
         ],
-        dimensionality="[length]",
-        unit="m",
-        shape=["*"],
         a_nexus_field=NeXusField(
             name="axis_k",
             type="NX_NUMBER",
@@ -9193,6 +10140,22 @@ class EmMeasurementEventIDSpectrumIDStack3d(Data):
             optionality="required",
             units="NX_LENGTH",
         ),
+    )
+    axis_k__min = Quantity(
+        type=np.float64,
+        description="Minimum of axis_k, computed over the full array at parse time.",
+    )
+    axis_k__max = Quantity(
+        type=np.float64,
+        description="Maximum of axis_k, computed over the full array at parse time.",
+    )
+    axis_k__size = Quantity(
+        type=np.int64,
+        description="Number of elements of axis_k in the HDF5 file.",
+    )
+    axis_k__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of axis_k in the HDF5 file.",
     )
     axis_k__long_name = Quantity(
         type=str,
@@ -9211,13 +10174,10 @@ class EmMeasurementEventIDSpectrumIDStack3d(Data):
         ),
     )
     axis_j = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXem.html#nxem-entry-measurement-eventid-spectrumid-stack-3d-axis-j-field"
         ],
-        dimensionality="[length]",
-        unit="m",
-        shape=["*"],
         a_nexus_field=NeXusField(
             name="axis_j",
             type="NX_NUMBER",
@@ -9225,6 +10185,22 @@ class EmMeasurementEventIDSpectrumIDStack3d(Data):
             optionality="required",
             units="NX_LENGTH",
         ),
+    )
+    axis_j__min = Quantity(
+        type=np.float64,
+        description="Minimum of axis_j, computed over the full array at parse time.",
+    )
+    axis_j__max = Quantity(
+        type=np.float64,
+        description="Maximum of axis_j, computed over the full array at parse time.",
+    )
+    axis_j__size = Quantity(
+        type=np.int64,
+        description="Number of elements of axis_j in the HDF5 file.",
+    )
+    axis_j__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of axis_j in the HDF5 file.",
     )
     axis_j__long_name = Quantity(
         type=str,
@@ -9243,13 +10219,10 @@ class EmMeasurementEventIDSpectrumIDStack3d(Data):
         ),
     )
     axis_i = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXem.html#nxem-entry-measurement-eventid-spectrumid-stack-3d-axis-i-field"
         ],
-        dimensionality="[length]",
-        unit="m",
-        shape=["*"],
         a_nexus_field=NeXusField(
             name="axis_i",
             type="NX_NUMBER",
@@ -9257,6 +10230,22 @@ class EmMeasurementEventIDSpectrumIDStack3d(Data):
             optionality="required",
             units="NX_LENGTH",
         ),
+    )
+    axis_i__min = Quantity(
+        type=np.float64,
+        description="Minimum of axis_i, computed over the full array at parse time.",
+    )
+    axis_i__max = Quantity(
+        type=np.float64,
+        description="Maximum of axis_i, computed over the full array at parse time.",
+    )
+    axis_i__size = Quantity(
+        type=np.int64,
+        description="Number of elements of axis_i in the HDF5 file.",
+    )
+    axis_i__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of axis_i in the HDF5 file.",
     )
     axis_i__long_name = Quantity(
         type=str,
@@ -9275,13 +10264,10 @@ class EmMeasurementEventIDSpectrumIDStack3d(Data):
         ),
     )
     axis_energy = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXem.html#nxem-entry-measurement-eventid-spectrumid-stack-3d-axis-energy-field"
         ],
-        dimensionality="[mass] * [length] ** 2 / [time] ** 2",
-        unit="eV",
-        shape=["*"],
         a_nexus_field=NeXusField(
             name="axis_energy",
             type="NX_NUMBER",
@@ -9289,6 +10275,22 @@ class EmMeasurementEventIDSpectrumIDStack3d(Data):
             optionality="required",
             units="NX_ENERGY",
         ),
+    )
+    axis_energy__min = Quantity(
+        type=np.float64,
+        description="Minimum of axis_energy, computed over the full array at parse time.",
+    )
+    axis_energy__max = Quantity(
+        type=np.float64,
+        description="Maximum of axis_energy, computed over the full array at parse time.",
+    )
+    axis_energy__size = Quantity(
+        type=np.int64,
+        description="Number of elements of axis_energy in the HDF5 file.",
+    )
+    axis_energy__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of axis_energy in the HDF5 file.",
     )
     axis_energy__long_name = Quantity(
         type=str,
@@ -11985,13 +12987,10 @@ class EmMeasurementEventIDInstrumentStageID(Manipulator):
         a_display={"unit": "radian"},
     )
     position = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXem.html#nxem-entry-measurement-eventid-instrument-stageid-position-field"
         ],
-        dimensionality="[length]",
-        unit="m",
-        shape=[3],
         a_nexus_field=NeXusField(
             name="position",
             type="NX_NUMBER",
@@ -12611,13 +13610,10 @@ class EmRoiIDEbsdGnomonicReferenceFrame(CoordinateSystem):
         ),
     )
     x = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXem.html#nxem-entry-roiid-ebsd-gnomonic-reference-frame-x-field"
         ],
-        dimensionality="[length]",
-        unit="m",
-        shape=[3],
         a_nexus_field=NeXusField(
             name="x",
             type="NX_NUMBER",
@@ -12643,13 +13639,10 @@ class EmRoiIDEbsdGnomonicReferenceFrame(CoordinateSystem):
         ),
     )
     y = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXem.html#nxem-entry-roiid-ebsd-gnomonic-reference-frame-y-field"
         ],
-        dimensionality="[length]",
-        unit="m",
-        shape=[3],
         a_nexus_field=NeXusField(
             name="y",
             type="NX_NUMBER",
@@ -12675,13 +13668,10 @@ class EmRoiIDEbsdGnomonicReferenceFrame(CoordinateSystem):
         ),
     )
     z = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXem.html#nxem-entry-roiid-ebsd-gnomonic-reference-frame-z-field"
         ],
-        dimensionality="[length]",
-        unit="m",
-        shape=[3],
         a_nexus_field=NeXusField(
             name="z",
             type="NX_NUMBER",
@@ -13982,13 +14972,10 @@ class EmRoiIDEbsdIndexingPhaseIDIpfID(MicrostructureIpf):
         ),
     )
     projection_direction = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXem.html#nxem-entry-roiid-ebsd-indexing-phaseid-ipfid-projection-direction-field"
         ],
-        dimensionality="dimensionless",
-        unit="dimensionless",
-        shape=[3],
         a_nexus_field=NeXusField(
             name="projection_direction",
             type="NX_NUMBER",
@@ -14057,7 +15044,7 @@ class EmRoiIDEbsdIndexingPhaseIDIpfIDMap(Data):
         ),
     )
     title = Quantity(
-        type=str,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXem.html#nxem-entry-roiid-ebsd-indexing-phaseid-ipfid-map-title-field"
         ],
@@ -14067,17 +15054,12 @@ class EmRoiIDEbsdIndexingPhaseIDIpfIDMap(Data):
             name_type="specified",
             optionality="recommended",
         ),
-        a_eln=ELNAnnotation(
-            component=ELNComponentEnum.StringEditQuantity,
-        ),
     )
     data_quantity = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXem.html#nxem-entry-roiid-ebsd-indexing-phaseid-ipfid-map-data-field"
         ],
-        dimensionality="dimensionless",
-        unit="dimensionless",
         a_nexus_field=NeXusField(
             name="data",
             type="NX_NUMBER",
@@ -14085,10 +15067,22 @@ class EmRoiIDEbsdIndexingPhaseIDIpfIDMap(Data):
             optionality="required",
             units="NX_UNITLESS",
         ),
-        a_eln=ELNAnnotation(
-            component=ELNComponentEnum.NumberEditQuantity,
-        ),
-        a_display={"unit": "dimensionless"},
+    )
+    data_quantity__min = Quantity(
+        type=np.float64,
+        description="Minimum of data_quantity, computed over the full array at parse time.",
+    )
+    data_quantity__max = Quantity(
+        type=np.float64,
+        description="Maximum of data_quantity, computed over the full array at parse time.",
+    )
+    data_quantity__size = Quantity(
+        type=np.int64,
+        description="Number of elements of data_quantity in the HDF5 file.",
+    )
+    data_quantity__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of data_quantity in the HDF5 file.",
     )
     data_quantity__long_name = Quantity(
         type=str,
@@ -14107,13 +15101,10 @@ class EmRoiIDEbsdIndexingPhaseIDIpfIDMap(Data):
         ),
     )
     axis_x = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXem.html#nxem-entry-roiid-ebsd-indexing-phaseid-ipfid-map-axis-x-field"
         ],
-        dimensionality="[length]",
-        unit="m",
-        shape=["*"],
         a_nexus_field=NeXusField(
             name="axis_x",
             type="NX_NUMBER",
@@ -14121,6 +15112,22 @@ class EmRoiIDEbsdIndexingPhaseIDIpfIDMap(Data):
             optionality="required",
             units="NX_LENGTH",
         ),
+    )
+    axis_x__min = Quantity(
+        type=np.float64,
+        description="Minimum of axis_x, computed over the full array at parse time.",
+    )
+    axis_x__max = Quantity(
+        type=np.float64,
+        description="Maximum of axis_x, computed over the full array at parse time.",
+    )
+    axis_x__size = Quantity(
+        type=np.int64,
+        description="Number of elements of axis_x in the HDF5 file.",
+    )
+    axis_x__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of axis_x in the HDF5 file.",
     )
     axis_x__long_name = Quantity(
         type=str,
@@ -14139,13 +15146,10 @@ class EmRoiIDEbsdIndexingPhaseIDIpfIDMap(Data):
         ),
     )
     axis_y = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXem.html#nxem-entry-roiid-ebsd-indexing-phaseid-ipfid-map-axis-y-field"
         ],
-        dimensionality="[length]",
-        unit="m",
-        shape=["*"],
         a_nexus_field=NeXusField(
             name="axis_y",
             type="NX_NUMBER",
@@ -14153,6 +15157,22 @@ class EmRoiIDEbsdIndexingPhaseIDIpfIDMap(Data):
             optionality="optional",
             units="NX_LENGTH",
         ),
+    )
+    axis_y__min = Quantity(
+        type=np.float64,
+        description="Minimum of axis_y, computed over the full array at parse time.",
+    )
+    axis_y__max = Quantity(
+        type=np.float64,
+        description="Maximum of axis_y, computed over the full array at parse time.",
+    )
+    axis_y__size = Quantity(
+        type=np.int64,
+        description="Number of elements of axis_y in the HDF5 file.",
+    )
+    axis_y__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of axis_y in the HDF5 file.",
     )
     axis_y__long_name = Quantity(
         type=str,
@@ -14171,13 +15191,10 @@ class EmRoiIDEbsdIndexingPhaseIDIpfIDMap(Data):
         ),
     )
     axis_z = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXem.html#nxem-entry-roiid-ebsd-indexing-phaseid-ipfid-map-axis-z-field"
         ],
-        dimensionality="[length]",
-        unit="m",
-        shape=["*"],
         a_nexus_field=NeXusField(
             name="axis_z",
             type="NX_NUMBER",
@@ -14185,6 +15202,22 @@ class EmRoiIDEbsdIndexingPhaseIDIpfIDMap(Data):
             optionality="optional",
             units="NX_LENGTH",
         ),
+    )
+    axis_z__min = Quantity(
+        type=np.float64,
+        description="Minimum of axis_z, computed over the full array at parse time.",
+    )
+    axis_z__max = Quantity(
+        type=np.float64,
+        description="Maximum of axis_z, computed over the full array at parse time.",
+    )
+    axis_z__size = Quantity(
+        type=np.int64,
+        description="Number of elements of axis_z in the HDF5 file.",
+    )
+    axis_z__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of axis_z in the HDF5 file.",
     )
     axis_z__long_name = Quantity(
         type=str,
@@ -14262,7 +15295,7 @@ class EmRoiIDEbsdIndexingPhaseIDIpfIDLegend(Data):
         ),
     )
     title = Quantity(
-        type=str,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXem.html#nxem-entry-roiid-ebsd-indexing-phaseid-ipfid-legend-title-field"
         ],
@@ -14272,17 +15305,12 @@ class EmRoiIDEbsdIndexingPhaseIDIpfIDLegend(Data):
             name_type="specified",
             optionality="recommended",
         ),
-        a_eln=ELNAnnotation(
-            component=ELNComponentEnum.StringEditQuantity,
-        ),
     )
     data_quantity = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXem.html#nxem-entry-roiid-ebsd-indexing-phaseid-ipfid-legend-data-field"
         ],
-        flexible_unit=True,
-        shape=["*", "*", 3],
         a_nexus_field=NeXusField(
             name="data",
             type="NX_NUMBER",
@@ -14290,6 +15318,22 @@ class EmRoiIDEbsdIndexingPhaseIDIpfIDLegend(Data):
             optionality="required",
             units="NX_ANY",
         ),
+    )
+    data_quantity__min = Quantity(
+        type=np.float64,
+        description="Minimum of data_quantity, computed over the full array at parse time.",
+    )
+    data_quantity__max = Quantity(
+        type=np.float64,
+        description="Maximum of data_quantity, computed over the full array at parse time.",
+    )
+    data_quantity__size = Quantity(
+        type=np.int64,
+        description="Number of elements of data_quantity in the HDF5 file.",
+    )
+    data_quantity__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of data_quantity in the HDF5 file.",
     )
     data_quantity__long_name = Quantity(
         type=str,
@@ -14308,13 +15352,10 @@ class EmRoiIDEbsdIndexingPhaseIDIpfIDLegend(Data):
         ),
     )
     axis_x = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXem.html#nxem-entry-roiid-ebsd-indexing-phaseid-ipfid-legend-axis-x-field"
         ],
-        dimensionality="dimensionless",
-        unit="dimensionless",
-        shape=["*"],
         a_nexus_field=NeXusField(
             name="axis_x",
             type="NX_NUMBER",
@@ -14322,6 +15363,22 @@ class EmRoiIDEbsdIndexingPhaseIDIpfIDLegend(Data):
             optionality="required",
             units="NX_UNITLESS",
         ),
+    )
+    axis_x__min = Quantity(
+        type=np.float64,
+        description="Minimum of axis_x, computed over the full array at parse time.",
+    )
+    axis_x__max = Quantity(
+        type=np.float64,
+        description="Maximum of axis_x, computed over the full array at parse time.",
+    )
+    axis_x__size = Quantity(
+        type=np.int64,
+        description="Number of elements of axis_x in the HDF5 file.",
+    )
+    axis_x__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of axis_x in the HDF5 file.",
     )
     axis_x__long_name = Quantity(
         type=str,
@@ -14340,13 +15397,10 @@ class EmRoiIDEbsdIndexingPhaseIDIpfIDLegend(Data):
         ),
     )
     axis_y = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXem.html#nxem-entry-roiid-ebsd-indexing-phaseid-ipfid-legend-axis-y-field"
         ],
-        dimensionality="dimensionless",
-        unit="dimensionless",
-        shape=["*"],
         a_nexus_field=NeXusField(
             name="axis_y",
             type="NX_NUMBER",
@@ -14354,6 +15408,22 @@ class EmRoiIDEbsdIndexingPhaseIDIpfIDLegend(Data):
             optionality="required",
             units="NX_UNITLESS",
         ),
+    )
+    axis_y__min = Quantity(
+        type=np.float64,
+        description="Minimum of axis_y, computed over the full array at parse time.",
+    )
+    axis_y__max = Quantity(
+        type=np.float64,
+        description="Maximum of axis_y, computed over the full array at parse time.",
+    )
+    axis_y__size = Quantity(
+        type=np.int64,
+        description="Number of elements of axis_y in the HDF5 file.",
+    )
+    axis_y__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of axis_y in the HDF5 file.",
     )
     axis_y__long_name = Quantity(
         type=str,
@@ -14601,7 +15671,7 @@ class EmRoiIDEbsdIndexingPhaseIDOdfIDPhiTwoPlot(Data):
         ),
     )
     title = Quantity(
-        type=str,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXem.html#nxem-entry-roiid-ebsd-indexing-phaseid-odfid-phi-two-plot-title-field"
         ],
@@ -14611,18 +15681,12 @@ class EmRoiIDEbsdIndexingPhaseIDOdfIDPhiTwoPlot(Data):
             name_type="specified",
             optionality="recommended",
         ),
-        a_eln=ELNAnnotation(
-            component=ELNComponentEnum.StringEditQuantity,
-        ),
     )
     intensity = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXem.html#nxem-entry-roiid-ebsd-indexing-phaseid-odfid-phi-two-plot-intensity-field"
         ],
-        dimensionality="dimensionless",
-        unit="dimensionless",
-        shape=["*", "*", "*"],
         a_nexus_field=NeXusField(
             name="intensity",
             type="NX_NUMBER",
@@ -14630,6 +15694,22 @@ class EmRoiIDEbsdIndexingPhaseIDOdfIDPhiTwoPlot(Data):
             optionality="required",
             units="NX_DIMENSIONLESS",
         ),
+    )
+    intensity__min = Quantity(
+        type=np.float64,
+        description="Minimum of intensity, computed over the full array at parse time.",
+    )
+    intensity__max = Quantity(
+        type=np.float64,
+        description="Maximum of intensity, computed over the full array at parse time.",
+    )
+    intensity__size = Quantity(
+        type=np.int64,
+        description="Number of elements of intensity in the HDF5 file.",
+    )
+    intensity__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of intensity in the HDF5 file.",
     )
     intensity__long_name = Quantity(
         type=str,
@@ -14648,13 +15728,10 @@ class EmRoiIDEbsdIndexingPhaseIDOdfIDPhiTwoPlot(Data):
         ),
     )
     varphi_one = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXem.html#nxem-entry-roiid-ebsd-indexing-phaseid-odfid-phi-two-plot-varphi-one-field"
         ],
-        dimensionality="[angle]",
-        unit="radian",
-        shape=["*"],
         a_nexus_field=NeXusField(
             name="varphi_one",
             type="NX_NUMBER",
@@ -14662,6 +15739,22 @@ class EmRoiIDEbsdIndexingPhaseIDOdfIDPhiTwoPlot(Data):
             optionality="required",
             units="NX_ANGLE",
         ),
+    )
+    varphi_one__min = Quantity(
+        type=np.float64,
+        description="Minimum of varphi_one, computed over the full array at parse time.",
+    )
+    varphi_one__max = Quantity(
+        type=np.float64,
+        description="Maximum of varphi_one, computed over the full array at parse time.",
+    )
+    varphi_one__size = Quantity(
+        type=np.int64,
+        description="Number of elements of varphi_one in the HDF5 file.",
+    )
+    varphi_one__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of varphi_one in the HDF5 file.",
     )
     varphi_one__long_name = Quantity(
         type=str,
@@ -14680,13 +15773,10 @@ class EmRoiIDEbsdIndexingPhaseIDOdfIDPhiTwoPlot(Data):
         ),
     )
     capital_phi = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXem.html#nxem-entry-roiid-ebsd-indexing-phaseid-odfid-phi-two-plot-capital-phi-field"
         ],
-        dimensionality="[angle]",
-        unit="radian",
-        shape=["*"],
         a_nexus_field=NeXusField(
             name="capital_phi",
             type="NX_NUMBER",
@@ -14694,6 +15784,22 @@ class EmRoiIDEbsdIndexingPhaseIDOdfIDPhiTwoPlot(Data):
             optionality="required",
             units="NX_ANGLE",
         ),
+    )
+    capital_phi__min = Quantity(
+        type=np.float64,
+        description="Minimum of capital_phi, computed over the full array at parse time.",
+    )
+    capital_phi__max = Quantity(
+        type=np.float64,
+        description="Maximum of capital_phi, computed over the full array at parse time.",
+    )
+    capital_phi__size = Quantity(
+        type=np.int64,
+        description="Number of elements of capital_phi in the HDF5 file.",
+    )
+    capital_phi__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of capital_phi in the HDF5 file.",
     )
     capital_phi__long_name = Quantity(
         type=str,
@@ -14712,13 +15818,10 @@ class EmRoiIDEbsdIndexingPhaseIDOdfIDPhiTwoPlot(Data):
         ),
     )
     varphi_two = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXem.html#nxem-entry-roiid-ebsd-indexing-phaseid-odfid-phi-two-plot-varphi-two-field"
         ],
-        dimensionality="[angle]",
-        unit="radian",
-        shape=["*"],
         a_nexus_field=NeXusField(
             name="varphi_two",
             type="NX_NUMBER",
@@ -14726,6 +15829,22 @@ class EmRoiIDEbsdIndexingPhaseIDOdfIDPhiTwoPlot(Data):
             optionality="required",
             units="NX_ANGLE",
         ),
+    )
+    varphi_two__min = Quantity(
+        type=np.float64,
+        description="Minimum of varphi_two, computed over the full array at parse time.",
+    )
+    varphi_two__max = Quantity(
+        type=np.float64,
+        description="Maximum of varphi_two, computed over the full array at parse time.",
+    )
+    varphi_two__size = Quantity(
+        type=np.int64,
+        description="Number of elements of varphi_two in the HDF5 file.",
+    )
+    varphi_two__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of varphi_two in the HDF5 file.",
     )
     varphi_two__long_name = Quantity(
         type=str,
@@ -14803,7 +15922,7 @@ class EmRoiIDEbsdIndexingRoi(Data):
         ),
     )
     title = Quantity(
-        type=str,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXem.html#nxem-entry-roiid-ebsd-indexing-roi-title-field"
         ],
@@ -14813,12 +15932,9 @@ class EmRoiIDEbsdIndexingRoi(Data):
             name_type="specified",
             optionality="recommended",
         ),
-        a_eln=ELNAnnotation(
-            component=ELNComponentEnum.StringEditQuantity,
-        ),
     )
     descriptor = Quantity(
-        type=MEnum(["band_contrast", "confidence_index", "mean_angular_deviation"]),
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXem.html#nxem-entry-roiid-ebsd-indexing-roi-descriptor-field"
         ],
@@ -14829,18 +15945,12 @@ class EmRoiIDEbsdIndexingRoi(Data):
             optionality="recommended",
             enumeration=["band_contrast", "confidence_index", "mean_angular_deviation"],
         ),
-        a_eln=ELNAnnotation(
-            component=ELNComponentEnum.EnumEditQuantity,
-        ),
     )
     data_quantity = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXem.html#nxem-entry-roiid-ebsd-indexing-roi-data-field"
         ],
-        dimensionality="dimensionless",
-        unit="dimensionless",
-        shape=["*", "*"],
         a_nexus_field=NeXusField(
             name="data",
             type="NX_NUMBER",
@@ -14849,8 +15959,24 @@ class EmRoiIDEbsdIndexingRoi(Data):
             units="NX_UNITLESS",
         ),
     )
-    axis_z = Quantity(
+    data_quantity__min = Quantity(
         type=np.float64,
+        description="Minimum of data_quantity, computed over the full array at parse time.",
+    )
+    data_quantity__max = Quantity(
+        type=np.float64,
+        description="Maximum of data_quantity, computed over the full array at parse time.",
+    )
+    data_quantity__size = Quantity(
+        type=np.int64,
+        description="Number of elements of data_quantity in the HDF5 file.",
+    )
+    data_quantity__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of data_quantity in the HDF5 file.",
+    )
+    axis_z = Quantity(
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXem.html#nxem-entry-roiid-ebsd-indexing-roi-axis-z-field"
         ],
@@ -14860,9 +15986,22 @@ class EmRoiIDEbsdIndexingRoi(Data):
             name_type="specified",
             optionality="optional",
         ),
-        a_eln=ELNAnnotation(
-            component=ELNComponentEnum.NumberEditQuantity,
-        ),
+    )
+    axis_z__min = Quantity(
+        type=np.float64,
+        description="Minimum of axis_z, computed over the full array at parse time.",
+    )
+    axis_z__max = Quantity(
+        type=np.float64,
+        description="Maximum of axis_z, computed over the full array at parse time.",
+    )
+    axis_z__size = Quantity(
+        type=np.int64,
+        description="Number of elements of axis_z in the HDF5 file.",
+    )
+    axis_z__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of axis_z in the HDF5 file.",
     )
     axis_z__long_name = Quantity(
         type=str,
@@ -14881,13 +16020,10 @@ class EmRoiIDEbsdIndexingRoi(Data):
         ),
     )
     axis_y = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXem.html#nxem-entry-roiid-ebsd-indexing-roi-axis-y-field"
         ],
-        dimensionality="[length]",
-        unit="m",
-        shape=["*"],
         a_nexus_field=NeXusField(
             name="axis_y",
             type="NX_NUMBER",
@@ -14895,6 +16031,22 @@ class EmRoiIDEbsdIndexingRoi(Data):
             optionality="required",
             units="NX_LENGTH",
         ),
+    )
+    axis_y__min = Quantity(
+        type=np.float64,
+        description="Minimum of axis_y, computed over the full array at parse time.",
+    )
+    axis_y__max = Quantity(
+        type=np.float64,
+        description="Maximum of axis_y, computed over the full array at parse time.",
+    )
+    axis_y__size = Quantity(
+        type=np.int64,
+        description="Number of elements of axis_y in the HDF5 file.",
+    )
+    axis_y__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of axis_y in the HDF5 file.",
     )
     axis_y__long_name = Quantity(
         type=str,
@@ -14913,13 +16065,10 @@ class EmRoiIDEbsdIndexingRoi(Data):
         ),
     )
     axis_x = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXem.html#nxem-entry-roiid-ebsd-indexing-roi-axis-x-field"
         ],
-        dimensionality="[length]",
-        unit="m",
-        shape=["*"],
         a_nexus_field=NeXusField(
             name="axis_x",
             type="NX_NUMBER",
@@ -14927,6 +16076,22 @@ class EmRoiIDEbsdIndexingRoi(Data):
             optionality="required",
             units="NX_LENGTH",
         ),
+    )
+    axis_x__min = Quantity(
+        type=np.float64,
+        description="Minimum of axis_x, computed over the full array at parse time.",
+    )
+    axis_x__max = Quantity(
+        type=np.float64,
+        description="Maximum of axis_x, computed over the full array at parse time.",
+    )
+    axis_x__size = Quantity(
+        type=np.int64,
+        description="Number of elements of axis_x in the HDF5 file.",
+    )
+    axis_x__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of axis_x in the HDF5 file.",
     )
     axis_x__long_name = Quantity(
         type=str,
@@ -15069,7 +16234,7 @@ class EmRoiIDEdsIndexingSummary(Data):
         ),
     )
     title = Quantity(
-        type=str,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXem.html#nxem-entry-roiid-eds-indexing-summary-title-field"
         ],
@@ -15079,18 +16244,12 @@ class EmRoiIDEdsIndexingSummary(Data):
             name_type="specified",
             optionality="recommended",
         ),
-        a_eln=ELNAnnotation(
-            component=ELNComponentEnum.StringEditQuantity,
-        ),
     )
     intensity = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXem.html#nxem-entry-roiid-eds-indexing-summary-intensity-field"
         ],
-        dimensionality="dimensionless",
-        unit="dimensionless",
-        shape=["*"],
         a_nexus_field=NeXusField(
             name="intensity",
             type="NX_NUMBER",
@@ -15099,8 +16258,24 @@ class EmRoiIDEdsIndexingSummary(Data):
             units="NX_UNITLESS",
         ),
     )
+    intensity__min = Quantity(
+        type=np.float64,
+        description="Minimum of intensity, computed over the full array at parse time.",
+    )
+    intensity__max = Quantity(
+        type=np.float64,
+        description="Maximum of intensity, computed over the full array at parse time.",
+    )
+    intensity__size = Quantity(
+        type=np.int64,
+        description="Number of elements of intensity in the HDF5 file.",
+    )
+    intensity__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of intensity in the HDF5 file.",
+    )
     axis_energy = Quantity(
-        type=str,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXem.html#nxem-entry-roiid-eds-indexing-summary-axis-energy-field"
         ],
@@ -15109,9 +16284,6 @@ class EmRoiIDEdsIndexingSummary(Data):
             type="NX_CHAR",
             name_type="specified",
             optionality="required",
-        ),
-        a_eln=ELNAnnotation(
-            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
     axis_energy__long_name = Quantity(
@@ -15172,13 +16344,10 @@ class EmRoiIDEdsIndexingElementSpecificMap(Image):
         ),
     )
     energy_range = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXem.html#nxem-entry-roiid-eds-indexing-element-specific-map-energy-range-field"
         ],
-        dimensionality="[mass] * [length] ** 2 / [time] ** 2",
-        unit="eV",
-        shape=[2],
         a_nexus_field=NeXusField(
             name="energy_range",
             type="NX_NUMBER",
@@ -15247,7 +16416,7 @@ class EmRoiIDEdsIndexingElementSpecificMapImage2d(Data):
         ),
     )
     title = Quantity(
-        type=str,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXem.html#nxem-entry-roiid-eds-indexing-element-specific-map-image-2d-title-field"
         ],
@@ -15257,18 +16426,12 @@ class EmRoiIDEdsIndexingElementSpecificMapImage2d(Data):
             name_type="specified",
             optionality="recommended",
         ),
-        a_eln=ELNAnnotation(
-            component=ELNComponentEnum.StringEditQuantity,
-        ),
     )
     intensity = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXem.html#nxem-entry-roiid-eds-indexing-element-specific-map-image-2d-intensity-field"
         ],
-        dimensionality="dimensionless",
-        unit="dimensionless",
-        shape=["*", "*"],
         a_nexus_field=NeXusField(
             name="intensity",
             type="NX_NUMBER",
@@ -15276,6 +16439,22 @@ class EmRoiIDEdsIndexingElementSpecificMapImage2d(Data):
             optionality="required",
             units="NX_UNITLESS",
         ),
+    )
+    intensity__min = Quantity(
+        type=np.float64,
+        description="Minimum of intensity, computed over the full array at parse time.",
+    )
+    intensity__max = Quantity(
+        type=np.float64,
+        description="Maximum of intensity, computed over the full array at parse time.",
+    )
+    intensity__size = Quantity(
+        type=np.int64,
+        description="Number of elements of intensity in the HDF5 file.",
+    )
+    intensity__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of intensity in the HDF5 file.",
     )
     intensity__long_name = Quantity(
         type=str,
@@ -15294,12 +16473,10 @@ class EmRoiIDEdsIndexingElementSpecificMapImage2d(Data):
         ),
     )
     axis_i = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXem.html#nxem-entry-roiid-eds-indexing-element-specific-map-image-2d-axis-i-field"
         ],
-        flexible_unit=True,
-        shape=["*"],
         a_nexus_field=NeXusField(
             name="axis_i",
             type="NX_NUMBER",
@@ -15307,6 +16484,22 @@ class EmRoiIDEdsIndexingElementSpecificMapImage2d(Data):
             optionality="required",
             units="NX_ANY",
         ),
+    )
+    axis_i__min = Quantity(
+        type=np.float64,
+        description="Minimum of axis_i, computed over the full array at parse time.",
+    )
+    axis_i__max = Quantity(
+        type=np.float64,
+        description="Maximum of axis_i, computed over the full array at parse time.",
+    )
+    axis_i__size = Quantity(
+        type=np.int64,
+        description="Number of elements of axis_i in the HDF5 file.",
+    )
+    axis_i__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of axis_i in the HDF5 file.",
     )
     axis_i__long_name = Quantity(
         type=str,
@@ -15325,12 +16518,10 @@ class EmRoiIDEdsIndexingElementSpecificMapImage2d(Data):
         ),
     )
     axis_j = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXem.html#nxem-entry-roiid-eds-indexing-element-specific-map-image-2d-axis-j-field"
         ],
-        flexible_unit=True,
-        shape=["*"],
         a_nexus_field=NeXusField(
             name="axis_j",
             type="NX_NUMBER",
@@ -15338,6 +16529,22 @@ class EmRoiIDEdsIndexingElementSpecificMapImage2d(Data):
             optionality="required",
             units="NX_ANY",
         ),
+    )
+    axis_j__min = Quantity(
+        type=np.float64,
+        description="Minimum of axis_j, computed over the full array at parse time.",
+    )
+    axis_j__max = Quantity(
+        type=np.float64,
+        description="Maximum of axis_j, computed over the full array at parse time.",
+    )
+    axis_j__size = Quantity(
+        type=np.int64,
+        description="Number of elements of axis_j in the HDF5 file.",
+    )
+    axis_j__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of axis_j in the HDF5 file.",
     )
     axis_j__long_name = Quantity(
         type=str,
@@ -15544,7 +16751,7 @@ class EmRoiIDTomoReconstructionIDTomogram(Data):
         ),
     )
     title = Quantity(
-        type=str,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXem.html#nxem-entry-roiid-tomo-reconstructionid-tomogram-title-field"
         ],
@@ -15554,16 +16761,12 @@ class EmRoiIDTomoReconstructionIDTomogram(Data):
             name_type="specified",
             optionality="recommended",
         ),
-        a_eln=ELNAnnotation(
-            component=ELNComponentEnum.StringEditQuantity,
-        ),
     )
     intensity = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXem.html#nxem-entry-roiid-tomo-reconstructionid-tomogram-intensity-field"
         ],
-        shape=["*", "*", "*"],
         a_nexus_field=NeXusField(
             name="intensity",
             type="NX_NUMBER",
@@ -15571,18 +16774,49 @@ class EmRoiIDTomoReconstructionIDTomogram(Data):
             optionality="required",
         ),
     )
-    axis_k = Quantity(
+    intensity__min = Quantity(
         type=np.float64,
+        description="Minimum of intensity, computed over the full array at parse time.",
+    )
+    intensity__max = Quantity(
+        type=np.float64,
+        description="Maximum of intensity, computed over the full array at parse time.",
+    )
+    intensity__size = Quantity(
+        type=np.int64,
+        description="Number of elements of intensity in the HDF5 file.",
+    )
+    intensity__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of intensity in the HDF5 file.",
+    )
+    axis_k = Quantity(
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXem.html#nxem-entry-roiid-tomo-reconstructionid-tomogram-axis-k-field"
         ],
-        shape=["*"],
         a_nexus_field=NeXusField(
             name="axis_k",
             type="NX_FLOAT",
             name_type="specified",
             optionality="required",
         ),
+    )
+    axis_k__min = Quantity(
+        type=np.float64,
+        description="Minimum of axis_k, computed over the full array at parse time.",
+    )
+    axis_k__max = Quantity(
+        type=np.float64,
+        description="Maximum of axis_k, computed over the full array at parse time.",
+    )
+    axis_k__size = Quantity(
+        type=np.int64,
+        description="Number of elements of axis_k in the HDF5 file.",
+    )
+    axis_k__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of axis_k in the HDF5 file.",
     )
     axis_k__long_name = Quantity(
         type=str,
@@ -15601,17 +16835,32 @@ class EmRoiIDTomoReconstructionIDTomogram(Data):
         ),
     )
     axis_j = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXem.html#nxem-entry-roiid-tomo-reconstructionid-tomogram-axis-j-field"
         ],
-        shape=["*"],
         a_nexus_field=NeXusField(
             name="axis_j",
             type="NX_FLOAT",
             name_type="specified",
             optionality="required",
         ),
+    )
+    axis_j__min = Quantity(
+        type=np.float64,
+        description="Minimum of axis_j, computed over the full array at parse time.",
+    )
+    axis_j__max = Quantity(
+        type=np.float64,
+        description="Maximum of axis_j, computed over the full array at parse time.",
+    )
+    axis_j__size = Quantity(
+        type=np.int64,
+        description="Number of elements of axis_j in the HDF5 file.",
+    )
+    axis_j__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of axis_j in the HDF5 file.",
     )
     axis_j__long_name = Quantity(
         type=str,
@@ -15630,17 +16879,32 @@ class EmRoiIDTomoReconstructionIDTomogram(Data):
         ),
     )
     axis_i = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXem.html#nxem-entry-roiid-tomo-reconstructionid-tomogram-axis-i-field"
         ],
-        shape=["*"],
         a_nexus_field=NeXusField(
             name="axis_i",
             type="NX_FLOAT",
             name_type="specified",
             optionality="required",
         ),
+    )
+    axis_i__min = Quantity(
+        type=np.float64,
+        description="Minimum of axis_i, computed over the full array at parse time.",
+    )
+    axis_i__max = Quantity(
+        type=np.float64,
+        description="Maximum of axis_i, computed over the full array at parse time.",
+    )
+    axis_i__size = Quantity(
+        type=np.int64,
+        description="Number of elements of axis_i in the HDF5 file.",
+    )
+    axis_i__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of axis_i in the HDF5 file.",
     )
     axis_i__long_name = Quantity(
         type=str,

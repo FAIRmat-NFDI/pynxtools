@@ -28,6 +28,7 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 
 import numpy as np
+from nomad.datamodel.hdf5 import HDF5Reference
 from nomad.datamodel.metainfo.annotations import (
     ELNAnnotation,
     ELNComponentEnum,
@@ -379,13 +380,10 @@ class ApmParaprobeSurfacerResultsPointSetWrappingIDAlphaComplexIDWindow(
         a_display={"unit": "dimensionless"},
     )
     mask = Quantity(
-        type=np.int64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_surfacer_results.html#nxapm_paraprobe_surfacer_results-entry-point-set-wrappingid-alpha-complexid-window-mask-field"
         ],
-        dimensionality="dimensionless",
-        unit="dimensionless",
-        shape=["*"],
         description=(
             "The bitfield of the mask. See :ref:`NXcs_filter_boolean_mask` for "
             "how this bitfield is to be interpreted."
@@ -487,13 +485,10 @@ class ApmParaprobeSurfacerResultsPointSetWrappingIDAlphaComplexIDTriangleSetTria
         ),
     )
     number_of_vertices = Quantity(
-        type=np.int64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_surfacer_results.html#nxapm_paraprobe_surfacer_results-entry-point-set-wrappingid-alpha-complexid-triangle-set-triangles-number-of-vertices-field"
         ],
-        dimensionality="dimensionless",
-        unit="dimensionless",
-        shape=["*"],
         a_nexus_field=NeXusField(
             name="number_of_vertices",
             type="NX_UINT",
@@ -552,13 +547,10 @@ class ApmParaprobeSurfacerResultsPointSetWrappingIDAlphaComplexIDTriangleSetTria
         ),
     )
     vertices = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_surfacer_results.html#nxapm_paraprobe_surfacer_results-entry-point-set-wrappingid-alpha-complexid-triangle-set-triangles-vertices-field"
         ],
-        dimensionality="[length]",
-        unit="m",
-        shape=["*", 3],
         a_nexus_field=NeXusField(
             name="vertices",
             type="NX_FLOAT",
@@ -568,11 +560,10 @@ class ApmParaprobeSurfacerResultsPointSetWrappingIDAlphaComplexIDTriangleSetTria
         ),
     )
     faces = Quantity(
-        type=np.int64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_surfacer_results.html#nxapm_paraprobe_surfacer_results-entry-point-set-wrappingid-alpha-complexid-triangle-set-triangles-faces-field"
         ],
-        shape=["*", 3],
         a_nexus_field=NeXusField(
             name="faces",
             type="NX_UINT",
@@ -581,13 +572,10 @@ class ApmParaprobeSurfacerResultsPointSetWrappingIDAlphaComplexIDTriangleSetTria
         ),
     )
     xdmf_topology = Quantity(
-        type=np.int64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_surfacer_results.html#nxapm_paraprobe_surfacer_results-entry-point-set-wrappingid-alpha-complexid-triangle-set-triangles-xdmf-topology-field"
         ],
-        dimensionality="dimensionless",
-        unit="dimensionless",
-        shape=["*"],
         description=(
             "A list of as many tuples of XDMF topology key, XDMF number of "
             "vertices and a triple of vertex indices specifying each triangle. "
@@ -620,13 +608,10 @@ class ApmParaprobeSurfacerResultsPointSetWrappingIDAlphaComplexIDTriangleSetTria
         ),
     )
     volume = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_surfacer_results.html#nxapm_paraprobe_surfacer_results-entry-point-set-wrappingid-alpha-complexid-triangle-set-triangles-volume-field"
         ],
-        dimensionality="[length] ** 3",
-        unit="m ** 3",
-        shape=["*"],
         description=(
             "The volume which the triangulated surface mesh encloses if that "
             "mesh is watertight."
@@ -689,13 +674,10 @@ class ApmParaprobeSurfacerResultsPointSetWrappingIDAlphaComplexIDInteriorTetrahe
         a_display={"unit": "dimensionless"},
     )
     volume = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_surfacer_results.html#nxapm_paraprobe_surfacer_results-entry-point-set-wrappingid-alpha-complexid-interior-tetrahedra-volume-field"
         ],
-        dimensionality="[length] ** 3",
-        unit="m ** 3",
-        shape=["*"],
         description=("The accumulated volume of all interior tetrahedra."),
         a_nexus_field=NeXusField(
             name="volume",
@@ -726,13 +708,10 @@ class ApmParaprobeSurfacerResultsPointSetWrappingIDAlphaComplexIDInteriorTetrahe
     )
 
     number_of_vertices = Quantity(
-        type=np.int64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_surfacer_results.html#nxapm_paraprobe_surfacer_results-entry-point-set-wrappingid-alpha-complexid-interior-tetrahedra-tetrahedra-number-of-vertices-field"
         ],
-        dimensionality="dimensionless",
-        unit="dimensionless",
-        shape=["*"],
         a_nexus_field=NeXusField(
             name="number_of_vertices",
             type="NX_UINT",
@@ -791,13 +770,10 @@ class ApmParaprobeSurfacerResultsPointSetWrappingIDAlphaComplexIDInteriorTetrahe
         ),
     )
     vertices = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_surfacer_results.html#nxapm_paraprobe_surfacer_results-entry-point-set-wrappingid-alpha-complexid-interior-tetrahedra-tetrahedra-vertices-field"
         ],
-        dimensionality="[length]",
-        unit="m",
-        shape=["*", 3],
         a_nexus_field=NeXusField(
             name="vertices",
             type="NX_FLOAT",
@@ -807,13 +783,10 @@ class ApmParaprobeSurfacerResultsPointSetWrappingIDAlphaComplexIDInteriorTetrahe
         ),
     )
     xdmf_topology = Quantity(
-        type=np.int64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_surfacer_results.html#nxapm_paraprobe_surfacer_results-entry-point-set-wrappingid-alpha-complexid-interior-tetrahedra-tetrahedra-xdmf-topology-field"
         ],
-        dimensionality="dimensionless",
-        unit="dimensionless",
-        shape=["*"],
         description=(
             "A list of as many tuples of XDMF topology key, XDMF number of "
             "vertices and a triple of vertex indices specifying each triangle. "

@@ -24,6 +24,7 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 
 import numpy as np
+from nomad.datamodel.hdf5 import HDF5Reference
 from nomad.datamodel.metainfo.annotations import (
     ELNAnnotation,
     ELNComponentEnum,
@@ -779,13 +780,10 @@ class ArchiveSample(Sample):
         a_display={"unit": "kelvin"},
     )
     magnetic_field_quantity = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXarchive.html#nxarchive-entry-sample-magnetic-field-field"
         ],
-        dimensionality="[current]",
-        unit="ampere",
-        shape=["*"],
         a_nexus_field=NeXusField(
             name="magnetic_field",
             type="NX_FLOAT",
@@ -795,13 +793,10 @@ class ArchiveSample(Sample):
         ),
     )
     electric_field = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXarchive.html#nxarchive-entry-sample-electric-field-field"
         ],
-        dimensionality="[mass] * [length] ** 2 / [time] ** 3 / [current]",
-        unit="volt",
-        shape=["*"],
         a_nexus_field=NeXusField(
             name="electric_field",
             type="NX_FLOAT",
@@ -811,13 +806,10 @@ class ArchiveSample(Sample):
         ),
     )
     stress_field = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXarchive.html#nxarchive-entry-sample-stress-field-field"
         ],
-        dimensionality="dimensionless",
-        unit="dimensionless",
-        shape=["*"],
         a_nexus_field=NeXusField(
             name="stress_field",
             type="NX_FLOAT",
@@ -827,13 +819,10 @@ class ArchiveSample(Sample):
         ),
     )
     pressure = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXarchive.html#nxarchive-entry-sample-pressure-field"
         ],
-        dimensionality="[mass] / [length] / [time] ** 2",
-        unit="mbar",
-        shape=["*"],
         a_nexus_field=NeXusField(
             name="pressure",
             type="NX_FLOAT",

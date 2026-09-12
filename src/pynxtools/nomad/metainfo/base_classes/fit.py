@@ -24,6 +24,7 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 
 import numpy as np
+from nomad.datamodel.hdf5 import HDF5Reference
 from nomad.datamodel.metainfo.annotations import (
     ELNAnnotation,
     ELNComponentEnum,
@@ -200,11 +201,10 @@ class FitData(Data):
     )
 
     input_independent = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXfit.html#nxfit-data-input-independent-field"
         ],
-        flexible_unit=True,
         description=(
             "Independent variable(s) for this fit procedure, representing the "
             "values to be fitted by the ``global_fit_function``."
@@ -216,16 +216,28 @@ class FitData(Data):
             optionality="optional",
             units="NX_ANY",
         ),
-        a_eln=ELNAnnotation(
-            component=ELNComponentEnum.NumberEditQuantity,
-        ),
+    )
+    input_independent__min = Quantity(
+        type=np.float64,
+        description="Minimum of input_independent, computed over the full array at parse time.",
+    )
+    input_independent__max = Quantity(
+        type=np.float64,
+        description="Maximum of input_independent, computed over the full array at parse time.",
+    )
+    input_independent__size = Quantity(
+        type=np.int64,
+        description="Number of elements of input_independent in the HDF5 file.",
+    )
+    input_independent__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of input_independent in the HDF5 file.",
     )
     input_dependent = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXfit.html#nxfit-data-input-dependent-field"
         ],
-        flexible_unit=True,
         description=(
             "Dependent variable(s) for this fit procedure (i.e., the observed data)."
         ),
@@ -236,16 +248,28 @@ class FitData(Data):
             optionality="optional",
             units="NX_ANY",
         ),
-        a_eln=ELNAnnotation(
-            component=ELNComponentEnum.NumberEditQuantity,
-        ),
+    )
+    input_dependent__min = Quantity(
+        type=np.float64,
+        description="Minimum of input_dependent, computed over the full array at parse time.",
+    )
+    input_dependent__max = Quantity(
+        type=np.float64,
+        description="Maximum of input_dependent, computed over the full array at parse time.",
+    )
+    input_dependent__size = Quantity(
+        type=np.int64,
+        description="Number of elements of input_dependent in the HDF5 file.",
+    )
+    input_dependent__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of input_dependent in the HDF5 file.",
     )
     fit_sum = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXfit.html#nxfit-data-fit-sum-field"
         ],
-        flexible_unit=True,
         description=(
             "Resulting fit obtained by evaluating the ``global_fit_function`` at "
             "the points specified in ``input_independent`` using the optimized "
@@ -259,16 +283,28 @@ class FitData(Data):
             optionality="optional",
             units="NX_ANY",
         ),
-        a_eln=ELNAnnotation(
-            component=ELNComponentEnum.NumberEditQuantity,
-        ),
+    )
+    fit_sum__min = Quantity(
+        type=np.float64,
+        description="Minimum of fit_sum, computed over the full array at parse time.",
+    )
+    fit_sum__max = Quantity(
+        type=np.float64,
+        description="Maximum of fit_sum, computed over the full array at parse time.",
+    )
+    fit_sum__size = Quantity(
+        type=np.int64,
+        description="Number of elements of fit_sum in the HDF5 file.",
+    )
+    fit_sum__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of fit_sum in the HDF5 file.",
     )
     residual = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXfit.html#nxfit-data-residual-field"
         ],
-        flexible_unit=True,
         description=(
             "The difference between the observed data (``input_dependent``) and "
             "the predicted fit values (``fit_sum``). A lower magnitude of "
@@ -281,9 +317,22 @@ class FitData(Data):
             optionality="optional",
             units="NX_ANY",
         ),
-        a_eln=ELNAnnotation(
-            component=ELNComponentEnum.NumberEditQuantity,
-        ),
+    )
+    residual__min = Quantity(
+        type=np.float64,
+        description="Minimum of residual, computed over the full array at parse time.",
+    )
+    residual__max = Quantity(
+        type=np.float64,
+        description="Maximum of residual, computed over the full array at parse time.",
+    )
+    residual__size = Quantity(
+        type=np.int64,
+        description="Number of elements of residual in the HDF5 file.",
+    )
+    residual__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of residual in the HDF5 file.",
     )
 
     def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:

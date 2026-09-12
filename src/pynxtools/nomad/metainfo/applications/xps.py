@@ -24,6 +24,7 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 
 import numpy as np
+from nomad.datamodel.hdf5 import HDF5Reference
 from nomad.datamodel.metainfo.annotations import (
     ELNAnnotation,
     ELNComponentEnum,
@@ -368,13 +369,10 @@ class XpsCoordinateSystem(CoordinateSystem):
         ),
     )
     x = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXxps.html#nxxps-entry-xps-coordinate-system-x-field"
         ],
-        dimensionality="[length]",
-        unit="m",
-        shape=[3],
         a_nexus_field=NeXusField(
             name="x",
             type="NX_NUMBER",
@@ -384,13 +382,10 @@ class XpsCoordinateSystem(CoordinateSystem):
         ),
     )
     y = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXxps.html#nxxps-entry-xps-coordinate-system-y-field"
         ],
-        dimensionality="[length]",
-        unit="m",
-        shape=[3],
         a_nexus_field=NeXusField(
             name="y",
             type="NX_NUMBER",
@@ -400,13 +395,10 @@ class XpsCoordinateSystem(CoordinateSystem):
         ),
     )
     z = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXxps.html#nxxps-entry-xps-coordinate-system-z-field"
         ],
-        dimensionality="[length]",
-        unit="m",
-        shape=[3],
         a_nexus_field=NeXusField(
             name="z",
             type="NX_NUMBER",
@@ -1255,11 +1247,10 @@ class XpsFitData(Data):
     )
 
     input_dependent = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXxps.html#nxxps-entry-fit-data-input-dependent-field"
         ],
-        flexible_unit=True,
         description=(
             "Dependent variable for this fit procedure. This could be a link to "
             "entry/data/data."
@@ -1271,17 +1262,28 @@ class XpsFitData(Data):
             optionality="required",
             units="NX_ANY",
         ),
-        a_eln=ELNAnnotation(
-            component=ELNComponentEnum.NumberEditQuantity,
-        ),
+    )
+    input_dependent__min = Quantity(
+        type=np.float64,
+        description="Minimum of input_dependent, computed over the full array at parse time.",
+    )
+    input_dependent__max = Quantity(
+        type=np.float64,
+        description="Maximum of input_dependent, computed over the full array at parse time.",
+    )
+    input_dependent__size = Quantity(
+        type=np.int64,
+        description="Number of elements of input_dependent in the HDF5 file.",
+    )
+    input_dependent__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of input_dependent in the HDF5 file.",
     )
     input_independent = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXxps.html#nxxps-entry-fit-data-input-independent-field"
         ],
-        dimensionality="[mass] * [length] ** 2 / [time] ** 2",
-        unit="eV",
         description=(
             "Independent variable for this fit procedure. This could be a link "
             "to entry/data/energy."
@@ -1293,17 +1295,28 @@ class XpsFitData(Data):
             optionality="required",
             units="NX_ENERGY",
         ),
-        a_eln=ELNAnnotation(
-            component=ELNComponentEnum.NumberEditQuantity,
-        ),
-        a_display={"unit": "eV"},
+    )
+    input_independent__min = Quantity(
+        type=np.float64,
+        description="Minimum of input_independent, computed over the full array at parse time.",
+    )
+    input_independent__max = Quantity(
+        type=np.float64,
+        description="Maximum of input_independent, computed over the full array at parse time.",
+    )
+    input_independent__size = Quantity(
+        type=np.int64,
+        description="Number of elements of input_independent in the HDF5 file.",
+    )
+    input_independent__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of input_independent in the HDF5 file.",
     )
     fit_sum = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXxps.html#nxxps-entry-fit-data-fit-sum-field"
         ],
-        flexible_unit=True,
         a_nexus_field=NeXusField(
             name="fit_sum",
             type="NX_NUMBER",
@@ -1311,16 +1324,28 @@ class XpsFitData(Data):
             optionality="required",
             units="NX_ANY",
         ),
-        a_eln=ELNAnnotation(
-            component=ELNComponentEnum.NumberEditQuantity,
-        ),
+    )
+    fit_sum__min = Quantity(
+        type=np.float64,
+        description="Minimum of fit_sum, computed over the full array at parse time.",
+    )
+    fit_sum__max = Quantity(
+        type=np.float64,
+        description="Maximum of fit_sum, computed over the full array at parse time.",
+    )
+    fit_sum__size = Quantity(
+        type=np.int64,
+        description="Number of elements of fit_sum in the HDF5 file.",
+    )
+    fit_sum__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of fit_sum in the HDF5 file.",
     )
     residual = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXxps.html#nxxps-entry-fit-data-residual-field"
         ],
-        flexible_unit=True,
         a_nexus_field=NeXusField(
             name="residual",
             type="NX_NUMBER",
@@ -1328,9 +1353,22 @@ class XpsFitData(Data):
             optionality="recommended",
             units="NX_ANY",
         ),
-        a_eln=ELNAnnotation(
-            component=ELNComponentEnum.NumberEditQuantity,
-        ),
+    )
+    residual__min = Quantity(
+        type=np.float64,
+        description="Minimum of residual, computed over the full array at parse time.",
+    )
+    residual__max = Quantity(
+        type=np.float64,
+        description="Maximum of residual, computed over the full array at parse time.",
+    )
+    residual__size = Quantity(
+        type=np.int64,
+        description="Number of elements of residual in the HDF5 file.",
+    )
+    residual__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of residual in the HDF5 file.",
     )
 
     def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
@@ -1437,12 +1475,10 @@ class XpsFitPeakPEAKData(Data):
     )
 
     position = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXxps.html#nxxps-entry-fit-peakpeak-data-position-field"
         ],
-        dimensionality="[mass] * [length] ** 2 / [time] ** 2",
-        unit="eV",
         description=("This could be a link to entry/data/energy."),
         a_nexus_field=NeXusField(
             name="position",
@@ -1451,17 +1487,28 @@ class XpsFitPeakPEAKData(Data):
             optionality="required",
             units="NX_ENERGY",
         ),
-        a_eln=ELNAnnotation(
-            component=ELNComponentEnum.NumberEditQuantity,
-        ),
-        a_display={"unit": "eV"},
+    )
+    position__min = Quantity(
+        type=np.float64,
+        description="Minimum of position, computed over the full array at parse time.",
+    )
+    position__max = Quantity(
+        type=np.float64,
+        description="Maximum of position, computed over the full array at parse time.",
+    )
+    position__size = Quantity(
+        type=np.int64,
+        description="Number of elements of position in the HDF5 file.",
+    )
+    position__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of position in the HDF5 file.",
     )
     intensity = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXxps.html#nxxps-entry-fit-peakpeak-data-intensity-field"
         ],
-        flexible_unit=True,
         description=(
             "Intensity values of the fitted function at each energy in the "
             "position field. This concept is related to term `3.15`_ of the ISO "
@@ -1475,9 +1522,22 @@ class XpsFitPeakPEAKData(Data):
             optionality="required",
             units="NX_ANY",
         ),
-        a_eln=ELNAnnotation(
-            component=ELNComponentEnum.NumberEditQuantity,
-        ),
+    )
+    intensity__min = Quantity(
+        type=np.float64,
+        description="Minimum of intensity, computed over the full array at parse time.",
+    )
+    intensity__max = Quantity(
+        type=np.float64,
+        description="Maximum of intensity, computed over the full array at parse time.",
+    )
+    intensity__size = Quantity(
+        type=np.int64,
+        description="Number of elements of intensity in the HDF5 file.",
+    )
+    intensity__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of intensity in the HDF5 file.",
     )
 
     def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
@@ -1725,12 +1785,10 @@ class XpsFitBackgroundBACKGROUNDData(Data):
     )
 
     position = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXxps.html#nxxps-entry-fit-backgroundbackground-data-position-field"
         ],
-        dimensionality="[mass] * [length] ** 2 / [time] ** 2",
-        unit="eV",
         a_nexus_field=NeXusField(
             name="position",
             type="NX_NUMBER",
@@ -1738,17 +1796,28 @@ class XpsFitBackgroundBACKGROUNDData(Data):
             optionality="required",
             units="NX_ENERGY",
         ),
-        a_eln=ELNAnnotation(
-            component=ELNComponentEnum.NumberEditQuantity,
-        ),
-        a_display={"unit": "eV"},
+    )
+    position__min = Quantity(
+        type=np.float64,
+        description="Minimum of position, computed over the full array at parse time.",
+    )
+    position__max = Quantity(
+        type=np.float64,
+        description="Maximum of position, computed over the full array at parse time.",
+    )
+    position__size = Quantity(
+        type=np.int64,
+        description="Number of elements of position in the HDF5 file.",
+    )
+    position__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of position in the HDF5 file.",
     )
     intensity = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXxps.html#nxxps-entry-fit-backgroundbackground-data-intensity-field"
         ],
-        flexible_unit=True,
         a_nexus_field=NeXusField(
             name="intensity",
             type="NX_NUMBER",
@@ -1756,9 +1825,22 @@ class XpsFitBackgroundBACKGROUNDData(Data):
             optionality="required",
             units="NX_ANY",
         ),
-        a_eln=ELNAnnotation(
-            component=ELNComponentEnum.NumberEditQuantity,
-        ),
+    )
+    intensity__min = Quantity(
+        type=np.float64,
+        description="Minimum of intensity, computed over the full array at parse time.",
+    )
+    intensity__max = Quantity(
+        type=np.float64,
+        description="Maximum of intensity, computed over the full array at parse time.",
+    )
+    intensity__size = Quantity(
+        type=np.int64,
+        description="Number of elements of intensity in the HDF5 file.",
+    )
+    intensity__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of intensity in the HDF5 file.",
     )
 
     def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
@@ -2262,12 +2344,10 @@ class XpsData(MpesData):
     )
 
     energy = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXxps.html#nxxps-entry-data-energy-field"
         ],
-        dimensionality="[mass] * [length] ** 2 / [time] ** 2",
-        unit="eV",
         a_nexus_field=NeXusField(
             name="energy",
             type="NX_NUMBER",
@@ -2275,10 +2355,22 @@ class XpsData(MpesData):
             optionality="required",
             units="NX_ENERGY",
         ),
-        a_eln=ELNAnnotation(
-            component=ELNComponentEnum.NumberEditQuantity,
-        ),
-        a_display={"unit": "eV"},
+    )
+    energy__min = Quantity(
+        type=np.float64,
+        description="Minimum of energy, computed over the full array at parse time.",
+    )
+    energy__max = Quantity(
+        type=np.float64,
+        description="Maximum of energy, computed over the full array at parse time.",
+    )
+    energy__size = Quantity(
+        type=np.int64,
+        description="Number of elements of energy in the HDF5 file.",
+    )
+    energy__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of energy in the HDF5 file.",
     )
     energy__type = Quantity(
         type=MEnum(["kinetic", "binding"]),

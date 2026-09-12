@@ -33,6 +33,7 @@ try:
     from ase.data import chemical_symbols
     from nomad.atomutils import Formula
     from nomad.datamodel import EntryArchive, EntryMetadata
+    from nomad.datamodel.hdf5 import HDF5Reference
     from nomad.datamodel.results import ELN, Material, Results
     from nomad.metainfo import MSection, Package, SubSection
     from nomad.metainfo.util import MQuantity
@@ -45,14 +46,21 @@ except ImportError as exc:
         "Could not import nomad package. Please install the package 'nomad-lab'."
     ) from exc
 
+from pynxtools.dataconverter.helpers import decode_if_bytes, is_valid_data_type_hdf
 from pynxtools.definitions.dev_tools.utils.nxdl_utils import get_nx_namefit
 from pynxtools.nexus.handler import NexusFileHandler, NexusVisitor
 from pynxtools.nexus.nexus_tree import NexusNode
 from pynxtools.nexus.schema_resolver import NexusSchemaResolver
+from pynxtools.nexus.utils import NEXUS_TO_PYTHON_DATA_TYPES
 from pynxtools.nomad.metainfo.base_classes.entry import Entry
 from pynxtools.nomad.metainfo.base_classes.root import Root
-from pynxtools.nomad.parsers._field_io import extract_iuf_scalar, get_field_str
-from pynxtools.units import ureg
+from pynxtools.nomad.parsers._field_io import (
+    extract_iuf_scalar,
+    get_field_stats_iuf_chunked,
+    get_field_stats_iuf_contiguous,
+    get_field_str,
+)
+from pynxtools.units import NXUnitSet, ureg
 
 # ---------------------------------------------------------------------------
 # _SectionIndex: per-Section-class annotation lookup table
@@ -663,6 +671,51 @@ class NomadVisitorV2(NexusVisitor):
 
         return idx.field_map.get(hdf_field_name)
 
+    def _populate_field_statistics(
+        self,
+        qty: Any,
+        hdf_node: h5py.Dataset,
+        current: MSection,
+        concept_name: str,
+        hdf_field_name: str,
+    ) -> None:
+        """Populate the {concept_name}__min/__max/__size/__ndim quantities.
+
+        No {concept_name}__mean quantity is written. __mean is still computed
+        below purely as a finiteness check; it is not exposed as a quantity.
+
+        When the main quantity is variadic (e.g. NXdata's DATA/AXISNAME, where
+        multiple distinctly-named HDF5 datasets map to the same Python slot),
+        the stat quantities are variadic too and each instance's stats are
+        wrapped via MQuantity.wrap(..., hdf_field_name) instead of repeatedly
+        overwriting one shared value across every named instance.
+        """
+        try:
+            if hdf_node.chunks is not None:
+                stats = get_field_stats_iuf_chunked(hdf_node)
+            else:
+                stats = get_field_stats_iuf_contiguous(hdf_node)
+        except Exception as e:
+            self._logger.debug("Error computing stats for %s: %s", hdf_field_name, e)
+            return
+
+        if not np.isfinite(float(stats["__mean"])):
+            return
+
+        for suffix in ("min", "max", "size", "ndim"):
+            stat_qty = current.m_def.all_quantities.get(f"{concept_name}__{suffix}")
+            if stat_qty is None:
+                continue
+            try:
+                value = stats[f"__{suffix}"]
+                if qty.use_full_storage:
+                    value = MQuantity.wrap(value, f"{hdf_field_name}__{suffix}")
+                current.m_set(stat_qty, value)
+            except Exception as e:
+                self._logger.debug(
+                    "Error setting %s__%s: %s", hdf_field_name, suffix, e
+                )
+
     def _populate_field(
         self,
         qty: Any,
@@ -690,7 +743,15 @@ class NomadVisitorV2(NexusVisitor):
         # like a regular field below — h5py transparently dereferences the
         # link, so hdf_node is already the target dataset's real data.
 
-        if hdf_node.dtype.kind in "iufc" and hdf_node.dtype.itemsize > 8:
+        # HDF5Reference is a custom Datatype: qty.type is an instance built per
+        # Quantity, not the class itself, so isinstance is required here.
+        is_reference = isinstance(qty.type, HDF5Reference)
+
+        if (
+            not is_reference
+            and hdf_node.dtype.kind in "iufc"
+            and hdf_node.dtype.itemsize > 8
+        ):
             self._logger.debug(
                 "Precision %d too high for %s, skipping",
                 hdf_node.dtype.itemsize,
@@ -698,57 +759,83 @@ class NomadVisitorV2(NexusVisitor):
             )
             return
 
-        try:
-            if hdf_node.dtype.kind in "iuf":
-                if hdf_node.shape == ():
-                    value = hdf_node[()]
+        if hdf_node.dtype.kind in "iuf" and hdf_node.shape != ():
+            min_qty = current.m_def.all_quantities.get(f"{concept_name}__min")
+            if min_qty is not None:
+                self._populate_field_statistics(
+                    qty, hdf_node, current, concept_name, hdf_field_name
+                )
+                # Only the stats quantities exist to hold a reduced value when
+                # the main quantity has a real declared shape (e.g. a 3D NXdata
+                # signal) — writing a scalar into it would fail. When the main
+                # quantity has no declared shape (e.g. AXISNAME, DATA itself),
+                # it can safely hold the mean too, same as before has_statistics
+                # existed — fall through to populate it normally instead of
+                # skipping it. HDF5Reference quantities are never shaped
+                # themselves (the shape lives in the referenced dataset), so
+                # they always fall through and get a reference below.
+                if not is_reference and qty.shape:
+                    return
+
+        if is_reference:
+            self._check_hdf5_reference(qty, hdf_node, hdf_field_name)
+            value = f"{self._nxs_fname}#/{hdf_path}"
+        else:
+            try:
+                if hdf_node.dtype.kind in "iuf":
+                    if hdf_node.shape == ():
+                        value = hdf_node[()]
+                        if not np.isfinite(value):
+                            return
+                    else:
+                        # No parallel __min/__max/__size/__ndim quantities exist for
+                        # this field — fall back to writing the mean directly into
+                        # the main quantity.
+                        value, _ = extract_iuf_scalar(hdf_node)
+                        if not np.isfinite(float(value)):  # type: ignore[arg-type]
+                            return
+                elif hdf_node.dtype.kind == "c":
+                    value = (
+                        hdf_node[(0,) * hdf_node.ndim]
+                        if hdf_node.shape != ()
+                        else hdf_node[()]
+                    )
                     if not np.isfinite(value):
                         return
+                elif np.issubdtype(hdf_node.dtype, np.bool_):
+                    raw = (
+                        hdf_node[(0,) * hdf_node.ndim]
+                        if hdf_node.shape != ()
+                        else hdf_node[()]
+                    )
+                    value = bool(raw)
                 else:
-                    value, _ = extract_iuf_scalar(hdf_node)
-                    if not np.isfinite(float(value)):  # type: ignore[arg-type]
+                    value = get_field_str(hdf_node)
+                    if value is None:
                         return
-            elif hdf_node.dtype.kind == "c":
-                value = (
-                    hdf_node[(0,) * hdf_node.ndim]
-                    if hdf_node.shape != ()
-                    else hdf_node[()]
-                )
-                if not np.isfinite(value):
-                    return
-            elif np.issubdtype(hdf_node.dtype, np.bool_):
-                raw = (
-                    hdf_node[(0,) * hdf_node.ndim]
-                    if hdf_node.shape != ()
-                    else hdf_node[()]
-                )
-                value = bool(raw)
-            else:
-                value = get_field_str(hdf_node)
-                if value is None:
-                    return
-        except Exception as e:
-            self._logger.debug("Error reading field %s: %s", hdf_field_name, e)
-            return
+            except Exception as e:
+                self._logger.debug("Error reading field %s: %s", hdf_field_name, e)
+                return
 
-        unit = hdf_node.attrs.get("units", None)
-        if unit is not None:
-            try:
-                unit_str = unit.decode() if isinstance(unit, bytes) else str(unit)
-                if unit_str == "counts":
-                    unit_str = "1"
-                pint_unit = ureg.parse_units(unit_str)
-                value = ureg.Quantity(value, pint_unit)
-            except (ValueError, UndefinedUnitError, Exception):
-                pass
+            unit = hdf_node.attrs.get("units", None)
+            if unit is not None:
+                try:
+                    unit_str = unit.decode() if isinstance(unit, bytes) else str(unit)
+                    if unit_str == "counts":
+                        unit_str = "1"
+                    pint_unit = ureg.parse_units(unit_str)
+                    value = ureg.Quantity(value, pint_unit)
+                except (ValueError, UndefinedUnitError, Exception):
+                    pass
 
-        # Wrap scalar values in a 1-element array when the quantity expects an array.
-        # NXDL often allows both scalar and array for fields like incident_energy.
-        if qty.shape and not isinstance(value, (list, np.ndarray)):
-            if isinstance(value, ureg.Quantity):
-                value = ureg.Quantity(np.array([value.magnitude]), value.units)
-            else:
-                value = np.array([value])
+            # Wrap scalar values in a 1-element array when the quantity expects
+            # an array. NXDL often allows both scalar and array for fields like
+            # incident_energy.
+            if qty.shape and not isinstance(value, (list, np.ndarray)):
+                if isinstance(value, ureg.Quantity):
+                    value = ureg.Quantity(np.array([value.magnitude]), value.units)
+                else:
+                    value = np.array([value])
 
         shadow_value = value
 
@@ -799,6 +886,78 @@ class NomadVisitorV2(NexusVisitor):
                     current.m_set(name_qty, name_val)
                 except Exception:
                     pass
+
+    def _check_hdf5_reference(
+        self, qty: Any, hdf_node: h5py.Dataset, hdf_field_name: str
+    ) -> None:
+        """Warn if the referenced dataset disagrees with the NXDL declaration.
+
+        HDF5Reference only checks that the string looks like ``file#path``;
+        it never opens the file, so nothing validates the dataset's real
+        type, unit, or enumeration against the schema. pynxtools does that
+        check here instead, while the dataset is already open for parsing.
+        """
+        field_ann = qty.m_get_annotations("nexus_field")
+        if field_ann is None:
+            return
+
+        accepted_types = NEXUS_TO_PYTHON_DATA_TYPES.get(field_ann.type)
+        if accepted_types is not None and not is_valid_data_type_hdf(
+            hdf_node, accepted_types
+        ):
+            self._logger.warning(
+                "HDF5Reference %s: NXDL declares %s but the dataset dtype is %s",
+                hdf_field_name,
+                field_ann.type,
+                hdf_node.dtype,
+            )
+
+        if field_ann.units:
+            real_unit = hdf_node.attrs.get("units", "")
+            real_unit_str = (
+                real_unit.decode() if isinstance(real_unit, bytes) else str(real_unit)
+            )
+            if real_unit_str == "counts":
+                real_unit_str = "1"
+            if not NXUnitSet.matches(field_ann.units, real_unit_str):
+                self._logger.warning(
+                    "HDF5Reference %s: NXDL expects unit category %s but the "
+                    "dataset units are %r",
+                    hdf_field_name,
+                    field_ann.units,
+                    real_unit_str,
+                )
+
+        if field_ann.enumeration and not field_ann.open_enum:
+            try:
+                value = decode_if_bytes(hdf_node[()])
+                if isinstance(value, np.ndarray) and isinstance(
+                    field_ann.enumeration[0], list
+                ):
+                    # A single fixed-shape value must equal one of several
+                    # allowed vectors (e.g. a default axis direction).
+                    bad_values = (
+                        [] if list(value) in field_ann.enumeration else [list(value)]
+                    )
+                elif isinstance(value, np.ndarray):
+                    # Each element of the array is independently enumerated
+                    # (e.g. NXsample's sample_component: one label per entry).
+                    bad_values = [
+                        v for v in value.flat if v not in field_ann.enumeration
+                    ]
+                else:
+                    bad_values = [] if value in field_ann.enumeration else [value]
+            except Exception as e:
+                self._logger.debug("Error checking enum for %s: %s", hdf_field_name, e)
+                return
+            if bad_values:
+                self._logger.warning(
+                    "HDF5Reference %s: %s not in the NXDL-declared "
+                    "enumeration values %s",
+                    hdf_field_name,
+                    bad_values,
+                    field_ann.enumeration,
+                )
 
     def _populate_attribute(
         self,
@@ -905,7 +1064,7 @@ def _archive_path_for(section: MSection) -> str:
 
 
 class NexusParserV2(MatchingParser):
-    """NOMAD parser for NeXus files using Phase 2 generated Python metainfo.
+    """NOMAD parser for NeXus files using generated Python Metainfo.
 
     Produces one NOMAD archive entry per NXentry group.  Single-NXentry files
     produce one archive (``archive.data = Arpes()``).  Multi-NXentry files use

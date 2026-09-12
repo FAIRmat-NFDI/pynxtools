@@ -24,6 +24,7 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 
 import numpy as np
+from nomad.datamodel.hdf5 import HDF5Reference
 from nomad.datamodel.metainfo.annotations import (
     ELNAnnotation,
     ELNComponentEnum,
@@ -256,7 +257,7 @@ class MxData(Data):
     )
 
     data_quantity = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXmx.html#nxmx-entry-data-data-field"
         ],
@@ -272,12 +273,25 @@ class MxData(Data):
             name_type="specified",
             optionality="recommended",
         ),
-        a_eln=ELNAnnotation(
-            component=ELNComponentEnum.NumberEditQuantity,
-        ),
+    )
+    data_quantity__min = Quantity(
+        type=np.float64,
+        description="Minimum of data_quantity, computed over the full array at parse time.",
+    )
+    data_quantity__max = Quantity(
+        type=np.float64,
+        description="Maximum of data_quantity, computed over the full array at parse time.",
+    )
+    data_quantity__size = Quantity(
+        type=np.int64,
+        description="Number of elements of data_quantity in the HDF5 file.",
+    )
+    data_quantity__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of data_quantity in the HDF5 file.",
     )
     data_scaling_factor = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXmx.html#nxmx-entry-data-data-scaling-factor-field"
         ],
@@ -310,12 +324,25 @@ class MxData(Data):
             name_type="specified",
             optionality="optional",
         ),
-        a_eln=ELNAnnotation(
-            component=ELNComponentEnum.NumberEditQuantity,
-        ),
+    )
+    data_scaling_factor__min = Quantity(
+        type=np.float64,
+        description="Minimum of data_scaling_factor, computed over the full array at parse time.",
+    )
+    data_scaling_factor__max = Quantity(
+        type=np.float64,
+        description="Maximum of data_scaling_factor, computed over the full array at parse time.",
+    )
+    data_scaling_factor__size = Quantity(
+        type=np.int64,
+        description="Number of elements of data_scaling_factor in the HDF5 file.",
+    )
+    data_scaling_factor__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of data_scaling_factor in the HDF5 file.",
     )
     data_offset = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXmx.html#nxmx-entry-data-data-offset-field"
         ],
@@ -330,9 +357,22 @@ class MxData(Data):
             name_type="specified",
             optionality="optional",
         ),
-        a_eln=ELNAnnotation(
-            component=ELNComponentEnum.NumberEditQuantity,
-        ),
+    )
+    data_offset__min = Quantity(
+        type=np.float64,
+        description="Minimum of data_offset, computed over the full array at parse time.",
+    )
+    data_offset__max = Quantity(
+        type=np.float64,
+        description="Maximum of data_offset, computed over the full array at parse time.",
+    )
+    data_offset__size = Quantity(
+        type=np.int64,
+        description="Number of elements of data_offset in the HDF5 file.",
+    )
+    data_offset__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of data_offset in the HDF5 file.",
     )
 
     def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
@@ -632,11 +672,10 @@ class MxInstrumentDetectorGroup(DetectorGroup):
         ),
     )
     group_index = Quantity(
-        type=np.int64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXmx.html#nxmx-entry-instrument-detector-group-group-index-field"
         ],
-        shape=["*"],
         description=(
             "An array of unique identifiers for detectors or groupings of "
             "detectors. Each ID is a unique ID for the corresponding detector or "
@@ -651,11 +690,10 @@ class MxInstrumentDetectorGroup(DetectorGroup):
         ),
     )
     group_parent = Quantity(
-        type=np.int64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXmx.html#nxmx-entry-instrument-detector-group-group-parent-field"
         ],
-        shape=["*"],
         description=(
             "An array of the hierarchical levels of the parents of detectors or "
             "groupings of detectors. A top-level grouping has parent level -1."
@@ -831,13 +869,10 @@ class MxInstrumentDetector(Detector):
         ),
     )
     distance = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXmx.html#nxmx-entry-instrument-detector-distance-field"
         ],
-        dimensionality="[length]",
-        unit="m",
-        shape=["*", "*", "*"],
         description=(
             "Distance from the sample to the beam center. Normally this value is "
             "for guidance only, the proper geometry can be found following the "
@@ -875,13 +910,10 @@ class MxInstrumentDetector(Detector):
         ),
     )
     dead_time = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXmx.html#nxmx-entry-instrument-detector-dead-time-field"
         ],
-        dimensionality="[time]",
-        unit="second",
-        shape=["*", "*", "*"],
         description=("Detector dead time."),
         a_nexus_field=NeXusField(
             name="dead_time",
@@ -892,13 +924,10 @@ class MxInstrumentDetector(Detector):
         ),
     )
     count_time = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXmx.html#nxmx-entry-instrument-detector-count-time-field"
         ],
-        dimensionality="[time]",
-        unit="second",
-        shape=["*"],
         description=("Elapsed actual counting time."),
         a_nexus_field=NeXusField(
             name="count_time",
@@ -1092,11 +1121,10 @@ class MxInstrumentDetector(Detector):
         ),
     )
     pixel_mask = Quantity(
-        type=np.int64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXmx.html#nxmx-entry-instrument-detector-pixel-mask-field"
         ],
-        shape=["*", "*"],
         description=(
             "The 32-bit pixel mask for the detector. Can be either one mask for "
             "the whole dataset (i.e. an array with indices i, j) or each frame "
@@ -1153,11 +1181,10 @@ class MxInstrumentDetector(Detector):
         ),
     )
     countrate_correction_lookup_table = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXmx.html#nxmx-entry-instrument-detector-countrate-correction-lookup-table-field"
         ],
-        shape=["*"],
         description=(
             "The countrate_correction_lookup_table defines the LUT used for "
             "count-rate correction. It maps a measured count :math:`c` to its "
@@ -1234,13 +1261,10 @@ class MxInstrumentDetector(Detector):
         a_display={"unit": "second"},
     )
     frame_time = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXmx.html#nxmx-entry-instrument-detector-frame-time-field"
         ],
-        dimensionality="[time]",
-        unit="second",
-        shape=["*"],
         description=(
             "This is time for each frame. This is exposure_time + readout time."
         ),
@@ -1930,13 +1954,10 @@ class MxInstrumentBeam(Beam):
         ),
     )
     incident_wavelength_spread = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXmx.html#nxmx-entry-instrument-beam-incident-wavelength-spread-field"
         ],
-        dimensionality="[length]",
-        unit="angstrom",
-        shape=["*"],
         description=(
             "The wavelength spread FWHM for the corresponding wavelength(s) in "
             "incident_wavelength. In the case of shot-to-shot variation in the "
@@ -2034,13 +2055,10 @@ class MxInstrumentBeam(Beam):
         a_display={"unit": "dimensionless"},
     )
     incident_beam_size = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXmx.html#nxmx-entry-instrument-beam-incident-beam-size-field"
         ],
-        dimensionality="[length]",
-        unit="m",
-        shape=[2],
         description=(
             "Two-element array of FWHM (if Gaussian or Airy function) or "
             "diameters (if top hat) or widths (if rectangular) of the beam in "
@@ -2076,11 +2094,10 @@ class MxInstrumentBeam(Beam):
         ),
     )
     incident_polarisation_stokes = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXmx.html#nxmx-entry-instrument-beam-incident-polarisation-stokes-field"
         ],
-        shape=["*", 4],
         description=(
             "Polarization vector on entering beamline component using Stokes notation"
         ),
@@ -2093,12 +2110,10 @@ class MxInstrumentBeam(Beam):
         ),
     )
     incident_polarization_stokes = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXmx.html#nxmx-entry-instrument-beam-incident-polarization-stokes-field"
         ],
-        flexible_unit=True,
-        shape=["*", 4],
         description=(
             "Polarization vector on entering beamline component using Stokes "
             "notation. See incident_polarization_stokes in :ref:`NXbeam`"

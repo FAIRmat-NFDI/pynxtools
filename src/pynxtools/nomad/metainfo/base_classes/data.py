@@ -24,6 +24,7 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 
 import numpy as np
+from nomad.datamodel.hdf5 import HDF5Reference
 from nomad.datamodel.metainfo import basesections
 from nomad.datamodel.metainfo.annotations import (
     ELNAnnotation,
@@ -403,7 +404,7 @@ class Data(Object, basesections.ActivityResult):
         ),
     )
     AXISNAME = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXdata.html#nxdata-axisname-field"
         ],
@@ -429,6 +430,26 @@ class Data(Object, basesections.ActivityResult):
             name_type="any",
             optionality="optional",
         ),
+    )
+    AXISNAME__min = Quantity(
+        type=np.float64,
+        variable=True,
+        description="Minimum of AXISNAME, computed over the full array at parse time.",
+    )
+    AXISNAME__max = Quantity(
+        type=np.float64,
+        variable=True,
+        description="Maximum of AXISNAME, computed over the full array at parse time.",
+    )
+    AXISNAME__size = Quantity(
+        type=np.int64,
+        variable=True,
+        description="Number of elements of AXISNAME in the HDF5 file.",
+    )
+    AXISNAME__ndim = Quantity(
+        type=np.int8,
+        variable=True,
+        description="Number of dimensions of AXISNAME in the HDF5 file.",
     )
     AXISNAME__long_name = Quantity(
         type=str,
@@ -575,7 +596,7 @@ class Data(Object, basesections.ActivityResult):
         ),
     )
     DATA = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXdata.html#nxdata-data-field"
         ],
@@ -596,6 +617,26 @@ class Data(Object, basesections.ActivityResult):
             name_type="any",
             optionality="optional",
         ),
+    )
+    DATA__min = Quantity(
+        type=np.float64,
+        variable=True,
+        description="Minimum of DATA, computed over the full array at parse time.",
+    )
+    DATA__max = Quantity(
+        type=np.float64,
+        variable=True,
+        description="Maximum of DATA, computed over the full array at parse time.",
+    )
+    DATA__size = Quantity(
+        type=np.int64,
+        variable=True,
+        description="Number of elements of DATA in the HDF5 file.",
+    )
+    DATA__ndim = Quantity(
+        type=np.int8,
+        variable=True,
+        description="Number of dimensions of DATA in the HDF5 file.",
     )
     DATA__signal = Quantity(
         type=np.int64,
@@ -687,7 +728,7 @@ class Data(Object, basesections.ActivityResult):
         ),
     )
     FIELDNAME_errors = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXdata.html#nxdata-fieldname-errors-field"
         ],
@@ -707,8 +748,28 @@ class Data(Object, basesections.ActivityResult):
             optionality="optional",
         ),
     )
-    errors = Quantity(
+    FIELDNAME_errors__min = Quantity(
         type=np.float64,
+        variable=True,
+        description="Minimum of FIELDNAME_errors, computed over the full array at parse time.",
+    )
+    FIELDNAME_errors__max = Quantity(
+        type=np.float64,
+        variable=True,
+        description="Maximum of FIELDNAME_errors, computed over the full array at parse time.",
+    )
+    FIELDNAME_errors__size = Quantity(
+        type=np.int64,
+        variable=True,
+        description="Number of elements of FIELDNAME_errors in the HDF5 file.",
+    )
+    FIELDNAME_errors__ndim = Quantity(
+        type=np.int8,
+        variable=True,
+        description="Number of dimensions of FIELDNAME_errors in the HDF5 file.",
+    )
+    errors = Quantity(
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXdata.html#nxdata-errors-field"
         ],
@@ -725,12 +786,25 @@ class Data(Object, basesections.ActivityResult):
             optionality="optional",
             deprecated="Use ``DATA_errors`` instead (NIAC2018)",
         ),
-        a_eln=ELNAnnotation(
-            component=ELNComponentEnum.NumberEditQuantity,
-        ),
+    )
+    errors__min = Quantity(
+        type=np.float64,
+        description="Minimum of errors, computed over the full array at parse time.",
+    )
+    errors__max = Quantity(
+        type=np.float64,
+        description="Maximum of errors, computed over the full array at parse time.",
+    )
+    errors__size = Quantity(
+        type=np.int64,
+        description="Number of elements of errors in the HDF5 file.",
+    )
+    errors__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of errors in the HDF5 file.",
     )
     FIELDNAME_scaling_factor = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXdata.html#nxdata-fieldname-scaling-factor-field"
         ],
@@ -758,8 +832,28 @@ class Data(Object, basesections.ActivityResult):
             optionality="optional",
         ),
     )
-    FIELDNAME_offset = Quantity(
+    FIELDNAME_scaling_factor__min = Quantity(
         type=np.float64,
+        variable=True,
+        description="Minimum of FIELDNAME_scaling_factor, computed over the full array at parse time.",
+    )
+    FIELDNAME_scaling_factor__max = Quantity(
+        type=np.float64,
+        variable=True,
+        description="Maximum of FIELDNAME_scaling_factor, computed over the full array at parse time.",
+    )
+    FIELDNAME_scaling_factor__size = Quantity(
+        type=np.int64,
+        variable=True,
+        description="Number of elements of FIELDNAME_scaling_factor in the HDF5 file.",
+    )
+    FIELDNAME_scaling_factor__ndim = Quantity(
+        type=np.int8,
+        variable=True,
+        description="Number of dimensions of FIELDNAME_scaling_factor in the HDF5 file.",
+    )
+    FIELDNAME_offset = Quantity(
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXdata.html#nxdata-fieldname-offset-field"
         ],
@@ -777,8 +871,28 @@ class Data(Object, basesections.ActivityResult):
             optionality="optional",
         ),
     )
-    scaling_factor = Quantity(
+    FIELDNAME_offset__min = Quantity(
         type=np.float64,
+        variable=True,
+        description="Minimum of FIELDNAME_offset, computed over the full array at parse time.",
+    )
+    FIELDNAME_offset__max = Quantity(
+        type=np.float64,
+        variable=True,
+        description="Maximum of FIELDNAME_offset, computed over the full array at parse time.",
+    )
+    FIELDNAME_offset__size = Quantity(
+        type=np.int64,
+        variable=True,
+        description="Number of elements of FIELDNAME_offset in the HDF5 file.",
+    )
+    FIELDNAME_offset__ndim = Quantity(
+        type=np.int8,
+        variable=True,
+        description="Number of dimensions of FIELDNAME_offset in the HDF5 file.",
+    )
+    scaling_factor = Quantity(
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXdata.html#nxdata-scaling-factor-field"
         ],
@@ -796,12 +910,25 @@ class Data(Object, basesections.ActivityResult):
             optionality="optional",
             deprecated="Use FIELDNAME_scaling_factor instead",
         ),
-        a_eln=ELNAnnotation(
-            component=ELNComponentEnum.NumberEditQuantity,
-        ),
+    )
+    scaling_factor__min = Quantity(
+        type=np.float64,
+        description="Minimum of scaling_factor, computed over the full array at parse time.",
+    )
+    scaling_factor__max = Quantity(
+        type=np.float64,
+        description="Maximum of scaling_factor, computed over the full array at parse time.",
+    )
+    scaling_factor__size = Quantity(
+        type=np.int64,
+        description="Number of elements of scaling_factor in the HDF5 file.",
+    )
+    scaling_factor__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of scaling_factor in the HDF5 file.",
     )
     offset = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXdata.html#nxdata-offset-field"
         ],
@@ -818,12 +945,25 @@ class Data(Object, basesections.ActivityResult):
             optionality="optional",
             deprecated="Use FIELDNAME_offset instead",
         ),
-        a_eln=ELNAnnotation(
-            component=ELNComponentEnum.NumberEditQuantity,
-        ),
+    )
+    offset__min = Quantity(
+        type=np.float64,
+        description="Minimum of offset, computed over the full array at parse time.",
+    )
+    offset__max = Quantity(
+        type=np.float64,
+        description="Maximum of offset, computed over the full array at parse time.",
+    )
+    offset__size = Quantity(
+        type=np.int64,
+        description="Number of elements of offset in the HDF5 file.",
+    )
+    offset__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of offset in the HDF5 file.",
     )
     title = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXdata.html#nxdata-title-field"
         ],
@@ -834,17 +974,28 @@ class Data(Object, basesections.ActivityResult):
             name_type="specified",
             optionality="optional",
         ),
-        a_eln=ELNAnnotation(
-            component=ELNComponentEnum.NumberEditQuantity,
-        ),
+    )
+    title__min = Quantity(
+        type=np.float64,
+        description="Minimum of title, computed over the full array at parse time.",
+    )
+    title__max = Quantity(
+        type=np.float64,
+        description="Maximum of title, computed over the full array at parse time.",
+    )
+    title__size = Quantity(
+        type=np.int64,
+        description="Number of elements of title in the HDF5 file.",
+    )
+    title__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of title in the HDF5 file.",
     )
     x = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXdata.html#nxdata-x-field"
         ],
-        flexible_unit=True,
-        shape=["*"],
         description=(
             "This is an array holding the values to use for the x-axis of data. "
             "The units must be appropriate for the measurement. This is a "
@@ -859,13 +1010,27 @@ class Data(Object, basesections.ActivityResult):
             units="NX_ANY",
         ),
     )
-    y = Quantity(
+    x__min = Quantity(
         type=np.float64,
+        description="Minimum of x, computed over the full array at parse time.",
+    )
+    x__max = Quantity(
+        type=np.float64,
+        description="Maximum of x, computed over the full array at parse time.",
+    )
+    x__size = Quantity(
+        type=np.int64,
+        description="Number of elements of x in the HDF5 file.",
+    )
+    x__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of x in the HDF5 file.",
+    )
+    y = Quantity(
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXdata.html#nxdata-y-field"
         ],
-        flexible_unit=True,
-        shape=["*"],
         description=(
             "This is an array holding the values to use for the y-axis of data. "
             "The units must be appropriate for the measurement. This is a "
@@ -880,13 +1045,27 @@ class Data(Object, basesections.ActivityResult):
             units="NX_ANY",
         ),
     )
-    z = Quantity(
+    y__min = Quantity(
         type=np.float64,
+        description="Minimum of y, computed over the full array at parse time.",
+    )
+    y__max = Quantity(
+        type=np.float64,
+        description="Maximum of y, computed over the full array at parse time.",
+    )
+    y__size = Quantity(
+        type=np.int64,
+        description="Number of elements of y in the HDF5 file.",
+    )
+    y__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of y in the HDF5 file.",
+    )
+    z = Quantity(
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXdata.html#nxdata-z-field"
         ],
-        flexible_unit=True,
-        shape=["*"],
         description=(
             "This is an array holding the values to use for the z-axis of data. "
             "The units must be appropriate for the measurement. This is a "
@@ -900,6 +1079,22 @@ class Data(Object, basesections.ActivityResult):
             optionality="optional",
             units="NX_ANY",
         ),
+    )
+    z__min = Quantity(
+        type=np.float64,
+        description="Minimum of z, computed over the full array at parse time.",
+    )
+    z__max = Quantity(
+        type=np.float64,
+        description="Maximum of z, computed over the full array at parse time.",
+    )
+    z__size = Quantity(
+        type=np.int64,
+        description="Number of elements of z in the HDF5 file.",
+    )
+    z__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of z in the HDF5 file.",
     )
 
     def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:

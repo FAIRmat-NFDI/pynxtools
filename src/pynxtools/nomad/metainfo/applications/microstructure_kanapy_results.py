@@ -28,6 +28,7 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 
 import numpy as np
+from nomad.datamodel.hdf5 import HDF5Reference
 from nomad.datamodel.metainfo.annotations import (
     ELNAnnotation,
     ELNComponentEnum,
@@ -482,13 +483,10 @@ class MicrostructureKanapyResultsMicrostructureIDGrid(CgGrid):
         ),
     )
     cell_dimensions = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXmicrostructure_kanapy_results.html#nxmicrostructure_kanapy_results-entry-microstructureid-grid-cell-dimensions-field"
         ],
-        dimensionality="[length]",
-        unit="m",
-        shape=["*"],
         a_nexus_field=NeXusField(
             name="cell_dimensions",
             type="NX_NUMBER",
@@ -498,12 +496,10 @@ class MicrostructureKanapyResultsMicrostructureIDGrid(CgGrid):
         ),
     )
     origin = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXmicrostructure_kanapy_results.html#nxmicrostructure_kanapy_results-entry-microstructureid-grid-origin-field"
         ],
-        flexible_unit=True,
-        shape=["*"],
         a_nexus_field=NeXusField(
             name="origin",
             type="NX_NUMBER",
@@ -593,7 +589,7 @@ class MicrostructureKanapyResultsMicrostructureIDGridStructure(Data):
         ),
     )
     title = Quantity(
-        type=str,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXmicrostructure_kanapy_results.html#nxmicrostructure_kanapy_results-entry-microstructureid-grid-structure-title-field"
         ],
@@ -603,17 +599,12 @@ class MicrostructureKanapyResultsMicrostructureIDGridStructure(Data):
             name_type="specified",
             optionality="required",
         ),
-        a_eln=ELNAnnotation(
-            component=ELNComponentEnum.StringEditQuantity,
-        ),
     )
     indices_crystal = Quantity(
-        type=np.int64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXmicrostructure_kanapy_results.html#nxmicrostructure_kanapy_results-entry-microstructureid-grid-structure-indices-crystal-field"
         ],
-        dimensionality="dimensionless",
-        unit="dimensionless",
         description=("Crystal identifier that was assigned to each material point."),
         a_nexus_field=NeXusField(
             name="indices_crystal",
@@ -622,19 +613,28 @@ class MicrostructureKanapyResultsMicrostructureIDGridStructure(Data):
             optionality="required",
             units="NX_UNITLESS",
         ),
-        a_eln=ELNAnnotation(
-            component=ELNComponentEnum.NumberEditQuantity,
-        ),
-        a_display={"unit": "dimensionless"},
+    )
+    indices_crystal__min = Quantity(
+        type=np.int64,
+        description="Minimum of indices_crystal, computed over the full array at parse time.",
+    )
+    indices_crystal__max = Quantity(
+        type=np.int64,
+        description="Maximum of indices_crystal, computed over the full array at parse time.",
+    )
+    indices_crystal__size = Quantity(
+        type=np.int64,
+        description="Number of elements of indices_crystal in the HDF5 file.",
+    )
+    indices_crystal__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of indices_crystal in the HDF5 file.",
     )
     z = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXmicrostructure_kanapy_results.html#nxmicrostructure_kanapy_results-entry-microstructureid-grid-structure-z-field"
         ],
-        dimensionality="[length]",
-        unit="m",
-        shape=["*"],
         description=("Material point barycenter coordinate along z direction."),
         a_nexus_field=NeXusField(
             name="z",
@@ -643,6 +643,22 @@ class MicrostructureKanapyResultsMicrostructureIDGridStructure(Data):
             optionality="optional",
             units="NX_LENGTH",
         ),
+    )
+    z__min = Quantity(
+        type=np.float64,
+        description="Minimum of z, computed over the full array at parse time.",
+    )
+    z__max = Quantity(
+        type=np.float64,
+        description="Maximum of z, computed over the full array at parse time.",
+    )
+    z__size = Quantity(
+        type=np.int64,
+        description="Number of elements of z in the HDF5 file.",
+    )
+    z__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of z in the HDF5 file.",
     )
     z__long_name = Quantity(
         type=str,
@@ -662,13 +678,10 @@ class MicrostructureKanapyResultsMicrostructureIDGridStructure(Data):
         ),
     )
     y = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXmicrostructure_kanapy_results.html#nxmicrostructure_kanapy_results-entry-microstructureid-grid-structure-y-field"
         ],
-        dimensionality="[length]",
-        unit="m",
-        shape=["*"],
         description=("Material point barycenter coordinate along y direction."),
         a_nexus_field=NeXusField(
             name="y",
@@ -677,6 +690,22 @@ class MicrostructureKanapyResultsMicrostructureIDGridStructure(Data):
             optionality="required",
             units="NX_LENGTH",
         ),
+    )
+    y__min = Quantity(
+        type=np.float64,
+        description="Minimum of y, computed over the full array at parse time.",
+    )
+    y__max = Quantity(
+        type=np.float64,
+        description="Maximum of y, computed over the full array at parse time.",
+    )
+    y__size = Quantity(
+        type=np.int64,
+        description="Number of elements of y in the HDF5 file.",
+    )
+    y__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of y in the HDF5 file.",
     )
     y__long_name = Quantity(
         type=str,
@@ -696,13 +725,10 @@ class MicrostructureKanapyResultsMicrostructureIDGridStructure(Data):
         ),
     )
     x = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXmicrostructure_kanapy_results.html#nxmicrostructure_kanapy_results-entry-microstructureid-grid-structure-x-field"
         ],
-        dimensionality="[length]",
-        unit="m",
-        shape=["*"],
         description=("Material point barycenter coordinate along x direction."),
         a_nexus_field=NeXusField(
             name="x",
@@ -711,6 +737,22 @@ class MicrostructureKanapyResultsMicrostructureIDGridStructure(Data):
             optionality="required",
             units="NX_LENGTH",
         ),
+    )
+    x__min = Quantity(
+        type=np.float64,
+        description="Minimum of x, computed over the full array at parse time.",
+    )
+    x__max = Quantity(
+        type=np.float64,
+        description="Maximum of x, computed over the full array at parse time.",
+    )
+    x__size = Quantity(
+        type=np.int64,
+        description="Number of elements of x in the HDF5 file.",
+    )
+    x__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of x in the HDF5 file.",
     )
     x__long_name = Quantity(
         type=str,
@@ -801,13 +843,10 @@ class MicrostructureKanapyResultsMicrostructureIDCrystals(MicrostructureFeature)
         a_display={"unit": "dimensionless"},
     )
     indices_crystal = Quantity(
-        type=np.int64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXmicrostructure_kanapy_results.html#nxmicrostructure_kanapy_results-entry-microstructureid-crystals-indices-crystal-field"
         ],
-        dimensionality="dimensionless",
-        unit="dimensionless",
-        shape=["*"],
         a_nexus_field=NeXusField(
             name="indices_crystal",
             type="NX_INT",
@@ -817,13 +856,10 @@ class MicrostructureKanapyResultsMicrostructureIDCrystals(MicrostructureFeature)
         ),
     )
     indices_phase = Quantity(
-        type=np.int64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXmicrostructure_kanapy_results.html#nxmicrostructure_kanapy_results-entry-microstructureid-crystals-indices-phase-field"
         ],
-        dimensionality="dimensionless",
-        unit="dimensionless",
-        shape=["*"],
         a_nexus_field=NeXusField(
             name="indices_phase",
             type="NX_INT",
@@ -833,13 +869,10 @@ class MicrostructureKanapyResultsMicrostructureIDCrystals(MicrostructureFeature)
         ),
     )
     area = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXmicrostructure_kanapy_results.html#nxmicrostructure_kanapy_results-entry-microstructureid-crystals-area-field"
         ],
-        dimensionality="[length] ** 2",
-        unit="m ** 2",
-        shape=["*"],
         a_nexus_field=NeXusField(
             name="area",
             type="NX_NUMBER",
@@ -849,13 +882,10 @@ class MicrostructureKanapyResultsMicrostructureIDCrystals(MicrostructureFeature)
         ),
     )
     volume = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXmicrostructure_kanapy_results.html#nxmicrostructure_kanapy_results-entry-microstructureid-crystals-volume-field"
         ],
-        dimensionality="[length] ** 3",
-        unit="m ** 3",
-        shape=["*"],
         a_nexus_field=NeXusField(
             name="volume",
             type="NX_NUMBER",
@@ -865,13 +895,10 @@ class MicrostructureKanapyResultsMicrostructureIDCrystals(MicrostructureFeature)
         ),
     )
     bunge_euler = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXmicrostructure_kanapy_results.html#nxmicrostructure_kanapy_results-entry-microstructureid-crystals-bunge-euler-field"
         ],
-        dimensionality="[angle]",
-        unit="radian",
-        shape=["*", 3],
         description=("Bunge-Euler angle orientation of each crystal."),
         a_nexus_field=NeXusField(
             name="bunge_euler",

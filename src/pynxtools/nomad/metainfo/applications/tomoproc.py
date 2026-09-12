@@ -24,6 +24,7 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 
 import numpy as np
+from nomad.datamodel.hdf5 import HDF5Reference
 from nomad.datamodel.metainfo.annotations import (
     ELNAnnotation,
     ELNComponentEnum,
@@ -412,11 +413,10 @@ class TomoprocData(Data):
     )
 
     data_quantity = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXtomoproc.html#nxtomoproc-entry-data-data-field"
         ],
-        shape=["*", "*", "*"],
         description=(
             "This is the reconstructed volume. This can be different things. "
             "Please indicate in the unit attribute what physical quantity this "
@@ -428,6 +428,22 @@ class TomoprocData(Data):
             name_type="specified",
             optionality="required",
         ),
+    )
+    data_quantity__min = Quantity(
+        type=np.float64,
+        description="Minimum of data_quantity, computed over the full array at parse time.",
+    )
+    data_quantity__max = Quantity(
+        type=np.float64,
+        description="Maximum of data_quantity, computed over the full array at parse time.",
+    )
+    data_quantity__size = Quantity(
+        type=np.int64,
+        description="Number of elements of data_quantity in the HDF5 file.",
+    )
+    data_quantity__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of data_quantity in the HDF5 file.",
     )
     data_quantity__transform = Quantity(
         type=str,
@@ -478,12 +494,10 @@ class TomoprocData(Data):
         ),
     )
     x = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXtomoproc.html#nxtomoproc-entry-data-x-field"
         ],
-        flexible_unit=True,
-        shape=["*"],
         description=(
             "This is an array holding the values to use for the x-axis of data. "
             "The units must be appropriate for the measurement."
@@ -496,13 +510,27 @@ class TomoprocData(Data):
             units="NX_ANY",
         ),
     )
-    y = Quantity(
+    x__min = Quantity(
         type=np.float64,
+        description="Minimum of x, computed over the full array at parse time.",
+    )
+    x__max = Quantity(
+        type=np.float64,
+        description="Maximum of x, computed over the full array at parse time.",
+    )
+    x__size = Quantity(
+        type=np.int64,
+        description="Number of elements of x in the HDF5 file.",
+    )
+    x__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of x in the HDF5 file.",
+    )
+    y = Quantity(
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXtomoproc.html#nxtomoproc-entry-data-y-field"
         ],
-        flexible_unit=True,
-        shape=["*"],
         description=(
             "This is an array holding the values to use for the y-axis of data. "
             "The units must be appropriate for the measurement."
@@ -515,13 +543,27 @@ class TomoprocData(Data):
             units="NX_ANY",
         ),
     )
-    z = Quantity(
+    y__min = Quantity(
         type=np.float64,
+        description="Minimum of y, computed over the full array at parse time.",
+    )
+    y__max = Quantity(
+        type=np.float64,
+        description="Maximum of y, computed over the full array at parse time.",
+    )
+    y__size = Quantity(
+        type=np.int64,
+        description="Number of elements of y in the HDF5 file.",
+    )
+    y__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of y in the HDF5 file.",
+    )
+    z = Quantity(
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXtomoproc.html#nxtomoproc-entry-data-z-field"
         ],
-        flexible_unit=True,
-        shape=["*"],
         description=(
             "This is an array holding the values to use for the z-axis of data. "
             "The units must be appropriate for the measurement."
@@ -533,6 +575,22 @@ class TomoprocData(Data):
             optionality="required",
             units="NX_ANY",
         ),
+    )
+    z__min = Quantity(
+        type=np.float64,
+        description="Minimum of z, computed over the full array at parse time.",
+    )
+    z__max = Quantity(
+        type=np.float64,
+        description="Maximum of z, computed over the full array at parse time.",
+    )
+    z__size = Quantity(
+        type=np.int64,
+        description="Number of elements of z in the HDF5 file.",
+    )
+    z__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of z in the HDF5 file.",
     )
 
     def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:

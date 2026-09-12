@@ -24,6 +24,7 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 
 import numpy as np
+from nomad.datamodel.hdf5 import HDF5Reference
 from nomad.datamodel.metainfo.annotations import (
     ELNAnnotation,
     ELNComponentEnum,
@@ -241,12 +242,10 @@ class SpeData(Data):
     )
 
     azimuthal = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXspe.html#nxspe-entry-data-azimuthal-field"
         ],
-        dimensionality="[angle]",
-        unit="radian",
         a_nexus_field=NeXusField(
             name="azimuthal",
             type="NX_FLOAT",
@@ -254,18 +253,28 @@ class SpeData(Data):
             optionality="required",
             units="NX_ANGLE",
         ),
-        a_eln=ELNAnnotation(
-            component=ELNComponentEnum.NumberEditQuantity,
-        ),
-        a_display={"unit": "radian"},
+    )
+    azimuthal__min = Quantity(
+        type=np.float64,
+        description="Minimum of azimuthal, computed over the full array at parse time.",
+    )
+    azimuthal__max = Quantity(
+        type=np.float64,
+        description="Maximum of azimuthal, computed over the full array at parse time.",
+    )
+    azimuthal__size = Quantity(
+        type=np.int64,
+        description="Number of elements of azimuthal in the HDF5 file.",
+    )
+    azimuthal__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of azimuthal in the HDF5 file.",
     )
     azimuthal_width = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXspe.html#nxspe-entry-data-azimuthal-width-field"
         ],
-        dimensionality="[angle]",
-        unit="radian",
         a_nexus_field=NeXusField(
             name="azimuthal_width",
             type="NX_FLOAT",
@@ -273,18 +282,28 @@ class SpeData(Data):
             optionality="required",
             units="NX_ANGLE",
         ),
-        a_eln=ELNAnnotation(
-            component=ELNComponentEnum.NumberEditQuantity,
-        ),
-        a_display={"unit": "radian"},
+    )
+    azimuthal_width__min = Quantity(
+        type=np.float64,
+        description="Minimum of azimuthal_width, computed over the full array at parse time.",
+    )
+    azimuthal_width__max = Quantity(
+        type=np.float64,
+        description="Maximum of azimuthal_width, computed over the full array at parse time.",
+    )
+    azimuthal_width__size = Quantity(
+        type=np.int64,
+        description="Number of elements of azimuthal_width in the HDF5 file.",
+    )
+    azimuthal_width__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of azimuthal_width in the HDF5 file.",
     )
     polar = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXspe.html#nxspe-entry-data-polar-field"
         ],
-        dimensionality="[angle]",
-        unit="radian",
         a_nexus_field=NeXusField(
             name="polar",
             type="NX_FLOAT",
@@ -292,18 +311,28 @@ class SpeData(Data):
             optionality="required",
             units="NX_ANGLE",
         ),
-        a_eln=ELNAnnotation(
-            component=ELNComponentEnum.NumberEditQuantity,
-        ),
-        a_display={"unit": "radian"},
+    )
+    polar__min = Quantity(
+        type=np.float64,
+        description="Minimum of polar, computed over the full array at parse time.",
+    )
+    polar__max = Quantity(
+        type=np.float64,
+        description="Maximum of polar, computed over the full array at parse time.",
+    )
+    polar__size = Quantity(
+        type=np.int64,
+        description="Number of elements of polar in the HDF5 file.",
+    )
+    polar__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of polar in the HDF5 file.",
     )
     polar_width = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXspe.html#nxspe-entry-data-polar-width-field"
         ],
-        dimensionality="[angle]",
-        unit="radian",
         a_nexus_field=NeXusField(
             name="polar_width",
             type="NX_FLOAT",
@@ -311,18 +340,28 @@ class SpeData(Data):
             optionality="required",
             units="NX_ANGLE",
         ),
-        a_eln=ELNAnnotation(
-            component=ELNComponentEnum.NumberEditQuantity,
-        ),
-        a_display={"unit": "radian"},
+    )
+    polar_width__min = Quantity(
+        type=np.float64,
+        description="Minimum of polar_width, computed over the full array at parse time.",
+    )
+    polar_width__max = Quantity(
+        type=np.float64,
+        description="Maximum of polar_width, computed over the full array at parse time.",
+    )
+    polar_width__size = Quantity(
+        type=np.int64,
+        description="Number of elements of polar_width in the HDF5 file.",
+    )
+    polar_width__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of polar_width in the HDF5 file.",
     )
     distance = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXspe.html#nxspe-entry-data-distance-field"
         ],
-        dimensionality="[length]",
-        unit="m",
         a_nexus_field=NeXusField(
             name="distance",
             type="NX_FLOAT",
@@ -330,13 +369,25 @@ class SpeData(Data):
             optionality="required",
             units="NX_LENGTH",
         ),
-        a_eln=ELNAnnotation(
-            component=ELNComponentEnum.NumberEditQuantity,
-        ),
-        a_display={"unit": "m"},
+    )
+    distance__min = Quantity(
+        type=np.float64,
+        description="Minimum of distance, computed over the full array at parse time.",
+    )
+    distance__max = Quantity(
+        type=np.float64,
+        description="Maximum of distance, computed over the full array at parse time.",
+    )
+    distance__size = Quantity(
+        type=np.int64,
+        description="Number of elements of distance in the HDF5 file.",
+    )
+    distance__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of distance in the HDF5 file.",
     )
     data_quantity = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXspe.html#nxspe-entry-data-data-field"
         ],
@@ -346,12 +397,25 @@ class SpeData(Data):
             name_type="specified",
             optionality="required",
         ),
-        a_eln=ELNAnnotation(
-            component=ELNComponentEnum.NumberEditQuantity,
-        ),
+    )
+    data_quantity__min = Quantity(
+        type=np.float64,
+        description="Minimum of data_quantity, computed over the full array at parse time.",
+    )
+    data_quantity__max = Quantity(
+        type=np.float64,
+        description="Maximum of data_quantity, computed over the full array at parse time.",
+    )
+    data_quantity__size = Quantity(
+        type=np.int64,
+        description="Number of elements of data_quantity in the HDF5 file.",
+    )
+    data_quantity__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of data_quantity in the HDF5 file.",
     )
     error = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXspe.html#nxspe-entry-data-error-field"
         ],
@@ -361,17 +425,28 @@ class SpeData(Data):
             name_type="specified",
             optionality="required",
         ),
-        a_eln=ELNAnnotation(
-            component=ELNComponentEnum.NumberEditQuantity,
-        ),
+    )
+    error__min = Quantity(
+        type=np.float64,
+        description="Minimum of error, computed over the full array at parse time.",
+    )
+    error__max = Quantity(
+        type=np.float64,
+        description="Maximum of error, computed over the full array at parse time.",
+    )
+    error__size = Quantity(
+        type=np.int64,
+        description="Number of elements of error in the HDF5 file.",
+    )
+    error__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of error in the HDF5 file.",
     )
     energy = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXspe.html#nxspe-entry-data-energy-field"
         ],
-        dimensionality="[mass] * [length] ** 2 / [time] ** 2",
-        unit="eV",
         a_nexus_field=NeXusField(
             name="energy",
             type="NX_FLOAT",
@@ -379,10 +454,22 @@ class SpeData(Data):
             optionality="required",
             units="NX_ENERGY",
         ),
-        a_eln=ELNAnnotation(
-            component=ELNComponentEnum.NumberEditQuantity,
-        ),
-        a_display={"unit": "eV"},
+    )
+    energy__min = Quantity(
+        type=np.float64,
+        description="Minimum of energy, computed over the full array at parse time.",
+    )
+    energy__max = Quantity(
+        type=np.float64,
+        description="Maximum of energy, computed over the full array at parse time.",
+    )
+    energy__size = Quantity(
+        type=np.int64,
+        description="Number of elements of energy in the HDF5 file.",
+    )
+    energy__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of energy in the HDF5 file.",
     )
 
     def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
