@@ -120,33 +120,6 @@ class TestExtended(Test):
         ),
         a_display={"unit": "eV"},
     )
-    program_name = Quantity(
-        type=str,
-        links=[
-            "https://fairmat-nfdi.github.io/nexus_definitions/classes/src/pynxtools/data/NXtest.html#nxtest-entry-program-name-field"
-        ],
-        a_nexus_field=NeXusField(
-            name="program_name",
-            type="NX_CHAR",
-            name_type="specified",
-            optionality="required",
-        ),
-        a_eln=ELNAnnotation(
-            component=ELNComponentEnum.StringEditQuantity,
-        ),
-    )
-
-    my_link = Quantity(
-        type=str,
-        links=[
-            "https://fairmat-nfdi.github.io/nexus_definitions/classes/src/pynxtools/data/NXtest.html#nxtest-entry-my-link-link"
-        ],
-        a_nexus_link=NeXusLink(
-            name="my_link",
-            target="NXentry/NXdata/specified_group_with_no_name_type",
-            optionality="optional",
-        ),
-    )
 
     def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
         super().normalize(archive, logger)
