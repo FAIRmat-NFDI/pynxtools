@@ -5,5 +5,5 @@
 [submodule "src/pynxtools/NeXusOntology"]
 	path = src/pynxtools/NeXusOntology
 	url = https://github.com/FAIRmat-NFDI/NeXusOntology.git
-	branch = oscars-project
+	branch = r2025_11
 	fetchRecurseSubmodules = false
