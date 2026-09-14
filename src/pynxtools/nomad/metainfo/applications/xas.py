@@ -330,35 +330,7 @@ class XasData(Data):
             nx_class="NXdata",
             name=None,
             name_type="any",
-<<<<<<< HEAD
             optionality="optional",
-=======
-            optionality="required",
-        ),
-    )
-
-    mode = Quantity(
-        type=HDF5Reference,
-        links=[
-            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXxas.html#nxxas-entry-data-mode-field"
-        ],
-        description=(
-            "Detection method used for observing the sample absorption (pick one "
-            "from the enumerated list and spell exactly)"
-        ),
-        a_nexus_field=NeXusField(
-            name="mode",
-            type="NX_CHAR_OR_NUMBER",
-            name_type="specified",
-            optionality="required",
-            enumeration=[
-                "Total Electron Yield",
-                "Partial Electron Yield",
-                "Auger Electron Yield",
-                "Fluorescence Yield",
-                "Transmission",
-            ],
->>>>>>> 19b9150c (drop ELN annotations for HDF5 Reference Quantities)
         ),
     )
 
