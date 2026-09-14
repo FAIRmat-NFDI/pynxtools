@@ -124,63 +124,6 @@ class Indirecttof(Tofraw):
             default="NXindirecttof",
         ),
     )
-    duration = Quantity(
-        type=np.float64,
-        links=[
-            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXtofraw.html#nxtofraw-entry-duration-field"
-        ],
-        a_nexus_field=NeXusField(
-            name="duration",
-            type="NX_FLOAT",
-            name_type="specified",
-            optionality="required",
-        ),
-        a_eln=ELNAnnotation(
-            component=ELNComponentEnum.NumberEditQuantity,
-        ),
-    )
-    run_number = Quantity(
-        type=np.int64,
-        links=[
-            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXtofraw.html#nxtofraw-entry-run-number-field"
-        ],
-        a_nexus_field=NeXusField(
-            name="run_number",
-            type="NX_INT",
-            name_type="specified",
-            optionality="required",
-        ),
-        a_eln=ELNAnnotation(
-            component=ELNComponentEnum.NumberEditQuantity,
-        ),
-    )
-    pre_sample_flightpath = Quantity(
-        type=np.float64,
-        links=[
-            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXtofraw.html#nxtofraw-entry-pre-sample-flightpath-field"
-        ],
-        dimensionality="[length]",
-        unit="m",
-        description=(
-            "This is the flight path before the sample position. This can be "
-            "determined by a chopper, by the moderator, or the source itself. In "
-            "other words: it is the distance to the component which gives the T0 "
-            "signal to the detector electronics. If another component in the "
-            "NXinstrument hierarchy provides this information, this should be a "
-            "link."
-        ),
-        a_nexus_field=NeXusField(
-            name="pre_sample_flightpath",
-            type="NX_FLOAT",
-            name_type="specified",
-            optionality="required",
-            units="NX_LENGTH",
-        ),
-        a_eln=ELNAnnotation(
-            component=ELNComponentEnum.NumberEditQuantity,
-        ),
-        a_display={"unit": "m"},
-    )
 
     def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
         super().normalize(archive, logger)

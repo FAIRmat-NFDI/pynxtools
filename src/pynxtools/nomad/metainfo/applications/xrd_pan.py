@@ -174,36 +174,6 @@ class XrdPan(Xrd):
             component=ELNComponentEnum.StringEditQuantity,
         ),
     )
-    title = Quantity(
-        type=str,
-        links=[
-            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXmonopd.html#nxmonopd-entry-title-field"
-        ],
-        a_nexus_field=NeXusField(
-            name="title",
-            type="NX_CHAR",
-            name_type="specified",
-            optionality="required",
-        ),
-        a_eln=ELNAnnotation(
-            component=ELNComponentEnum.StringEditQuantity,
-        ),
-    )
-    start_time = Quantity(
-        type=Datetime,
-        links=[
-            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXmonopd.html#nxmonopd-entry-start-time-field"
-        ],
-        a_nexus_field=NeXusField(
-            name="start_time",
-            type="NX_DATE_TIME",
-            name_type="specified",
-            optionality="required",
-        ),
-        a_eln=ELNAnnotation(
-            component=ELNComponentEnum.DateTimeEditQuantity,
-        ),
-    )
 
     def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
         super().normalize(archive, logger)

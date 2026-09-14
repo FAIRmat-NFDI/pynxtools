@@ -203,61 +203,6 @@ class Xps(Mpes):
             component=ELNComponentEnum.StringEditQuantity,
         ),
     )
-    title = Quantity(
-        type=str,
-        links=[
-            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXmpes.html#nxmpes-entry-title-field"
-        ],
-        a_nexus_field=NeXusField(
-            name="title",
-            type="NX_CHAR",
-            name_type="specified",
-            optionality="required",
-        ),
-        a_eln=ELNAnnotation(
-            component=ELNComponentEnum.StringEditQuantity,
-        ),
-    )
-    start_time = Quantity(
-        type=Datetime,
-        links=[
-            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXmpes.html#nxmpes-entry-start-time-field"
-        ],
-        description=(
-            "Datetime of the start of the measurement. Should be an ISO8601 "
-            "date/time stamp. It is recommended to add an explicit time zone, "
-            "otherwise the local time zone is assumed per ISO8601."
-        ),
-        a_nexus_field=NeXusField(
-            name="start_time",
-            type="NX_DATE_TIME",
-            name_type="specified",
-            optionality="required",
-        ),
-        a_eln=ELNAnnotation(
-            component=ELNComponentEnum.DateTimeEditQuantity,
-        ),
-    )
-    end_time = Quantity(
-        type=Datetime,
-        links=[
-            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXmpes.html#nxmpes-entry-end-time-field"
-        ],
-        description=(
-            "Datetime of the end of the measurement. Should be a ISO8601 "
-            "date/time stamp. It is recommended to add an explicit time zone, "
-            "otherwise the local time zone is assumed per ISO8601."
-        ),
-        a_nexus_field=NeXusField(
-            name="end_time",
-            type="NX_DATE_TIME",
-            name_type="specified",
-            optionality="recommended",
-        ),
-        a_eln=ELNAnnotation(
-            component=ELNComponentEnum.DateTimeEditQuantity,
-        ),
-    )
 
     def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
         super().normalize(archive, logger)

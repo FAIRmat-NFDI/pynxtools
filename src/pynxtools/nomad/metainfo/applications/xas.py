@@ -9,7 +9,8 @@
 # (Quantity/SubSection) objects. Accordingly, it is distributed under
 # LGPL-3.0-or-later, matching the license of the upstream NXDL
 # definitions, unlike the rest of this package (Apache-2.0).
-# During generation, pynxtools may add project-specific content (extra quantities,
+# During generation, pynxtools may add or
+# adjust project-specific content (extra quantities,
 # annotations, normalize() logic, ...). See
 # docs/learn/pynxtools/licensing.md and
 # LICENSES/LGPL-3.0-or-later.txt.
@@ -19,6 +20,9 @@
 # Additive-only: the generator will not remove or rename existing class members
 # (unless the `--force` flag is used).
 # Add normalize() logic directly; it will be preserved on regeneration.
+#
+# NOTE: This class is generated from a community-contributed NXDL definition.
+# The NXDL source may change across versions. Regenerate after updating definitions.
 from __future__ import annotations
 
 from typing import TYPE_CHECKING
@@ -42,13 +46,9 @@ from pynxtools.nomad.annotations import (
 )
 from pynxtools.nomad.metainfo._category import ExperimentCategory
 from pynxtools.nomad.metainfo.base_classes.data import Data
-from pynxtools.nomad.metainfo.base_classes.detector import Detector
+from pynxtools.nomad.metainfo.base_classes.element import Element
 from pynxtools.nomad.metainfo.base_classes.entry import Entry
-from pynxtools.nomad.metainfo.base_classes.instrument import Instrument
-from pynxtools.nomad.metainfo.base_classes.monitor import Monitor
-from pynxtools.nomad.metainfo.base_classes.monochromator import Monochromator
 from pynxtools.nomad.metainfo.base_classes.sample import Sample
-from pynxtools.nomad.metainfo.base_classes.source import Source
 
 if TYPE_CHECKING:
     from nomad.datamodel import EntryArchive
@@ -59,36 +59,48 @@ __all__ = ["Xas"]
 
 class Xas(Entry):
     """
-    This is an application definition for raw data from an X-ray absorption
-    spectroscopy experiment.
-
-    This is essentially a scan on energy versus incoming/ absorbed beam.
+    This is a generic application definition for X-ray absorption spectroscopy.
+    Technique-specific application definitions extend this base definition.
     """
 
     m_def = Section(
         links=[
-            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXxas.html#nxxas"
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXxas.html#nxxas"
         ],
         categories=[ExperimentCategory],
         a_nexus_definition=NeXusDefinition(
             nx_class="NXxas",
             category="application",
-            symbols={"nP": "Number of points"},
+            symbols={
+                "nP": "Number of stacked spectra (scan points). This is the growable\n                first dimension: data could be appended along it during acquisition.\n                It is absent when a single spectrum is stored.",
+                "nEnergy": "Number of energy data points",
+                "dataRank": "Rank of the ``intensity`` field: 1 for a single spectrum\n                ``[nEnergy]`` or 2 for a stack of spectra ``[nP, nEnergy]``.",
+            },
         ),
     )
 
-    instrument = SubSection(
-        section_def="pynxtools.nomad.metainfo.applications.xas.XasInstrument",
-        repeats=True,
-        variable=True,
+    element = SubSection(
+        section_def="pynxtools.nomad.metainfo.applications.xas.XasElement",
+        repeats=False,
+    )
+    edge = SubSection(
+        section_def="pynxtools.nomad.metainfo.base_classes.absorption_edge.AbsorptionEdge",
+        repeats=False,
+        description=(
+            "The absorption edge being probed, defined by the principal quantum "
+            "number and orbital symmetry of the photoionized electron (e.g. K, "
+            "L1, L2, L3, L2,3). Together with the element uniquely identifies "
+            "probed electronic transition."
+        ),
+        a_nexus_group=NeXusGroup(
+            nx_class="NXabsorption_edge",
+            name="edge",
+            name_type="specified",
+            optionality="required",
+        ),
     )
     sample = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.xas.XasSample",
-        repeats=True,
-        variable=True,
-    )
-    monitor = SubSection(
-        section_def="pynxtools.nomad.metainfo.applications.xas.XasMonitor",
         repeats=True,
         variable=True,
     )
@@ -98,42 +110,12 @@ class Xas(Entry):
         variable=True,
     )
 
-    title = Quantity(
-        type=str,
-        links=[
-            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXxas.html#nxxas-entry-title-field"
-        ],
-        a_nexus_field=NeXusField(
-            name="title",
-            type="NX_CHAR",
-            name_type="specified",
-            optionality="required",
-        ),
-        a_eln=ELNAnnotation(
-            component=ELNComponentEnum.StringEditQuantity,
-        ),
-    )
-    start_time = Quantity(
-        type=Datetime,
-        links=[
-            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXxas.html#nxxas-entry-start-time-field"
-        ],
-        a_nexus_field=NeXusField(
-            name="start_time",
-            type="NX_DATE_TIME",
-            name_type="specified",
-            optionality="required",
-        ),
-        a_eln=ELNAnnotation(
-            component=ELNComponentEnum.DateTimeEditQuantity,
-        ),
-    )
     definition = Quantity(
         type=MEnum(["NXxas"]),
         links=[
-            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXxas.html#nxxas-entry-definition-field"
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXxas.html#nxxas-entry-definition-field"
         ],
-        description=("Official NeXus NXDL schema to which this file conforms"),
+        description=("Official NeXus NXDL schema to which this file conforms."),
         a_nexus_field=NeXusField(
             name="definition",
             type="NX_CHAR",
@@ -144,6 +126,85 @@ class Xas(Entry):
         a_eln=ELNAnnotation(
             component=ELNComponentEnum.EnumEditQuantity,
             default="NXxas",
+        ),
+    )
+    is_experimental = Quantity(
+        type=bool,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXxas.html#nxxas-entry-is-experimental-field"
+        ],
+        description=(
+            "Specify if the data comes from an experiment. Use ``true`` for data "
+            "acquired at a beamline or laboratory instrument, and ``false`` for "
+            "spectra calculated/simulated using a computational tool, "
+            "reconstructed from a linear combination of reference components, "
+            "etc."
+        ),
+        a_nexus_field=NeXusField(
+            name="is_experimental",
+            type="NX_BOOLEAN",
+            name_type="specified",
+            optionality="required",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.BoolEditQuantity,
+        ),
+    )
+    energy = Quantity(
+        type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXxas.html#nxxas-entry-energy-field"
+        ],
+        dimensionality="[mass] * [length] ** 2 / [time] ** 2",
+        unit="eV",
+        shape=["*"],
+        description=("The energy axis of the spectrum."),
+        a_nexus_field=NeXusField(
+            name="energy",
+            type="NX_FLOAT",
+            name_type="specified",
+            optionality="required",
+            units="NX_ENERGY",
+        ),
+    )
+    intensity = Quantity(
+        type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXxas.html#nxxas-entry-intensity-field"
+        ],
+        flexible_unit=True,
+        description=(
+            "The intensity of the spectrum. The precise definition of what is "
+            "meant by intensity depends on the acquisition mode, and will be "
+            "specified by each subclass application definition."
+        ),
+        a_nexus_field=NeXusField(
+            name="intensity",
+            type="NX_FLOAT",
+            name_type="specified",
+            optionality="required",
+            units="NX_ANY",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+    )
+    intensity_errors = Quantity(
+        type=np.float64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXxas.html#nxxas-entry-intensity-errors-field"
+        ],
+        flexible_unit=True,
+        description=("The errors associated with the intensity of the spectrum."),
+        a_nexus_field=NeXusField(
+            name="intensity_errors",
+            type="NX_FLOAT",
+            name_type="specified",
+            optionality="optional",
+            units="NX_ANY",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
         ),
     )
 
@@ -160,100 +221,27 @@ class Xas(Entry):
 # =============================================================================
 
 
-class XasInstrument(Instrument):
+class XasElement(Element):
+    """
+    The element being probed by the incident X-rays.
+    """
+
     m_def = Section(
         links=[
-            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXxas.html#nxxas-entry-instrument-group"
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXxas.html#nxxas-entry-element-group"
         ],
-        variable=True,
         a_nexus_group=NeXusGroup(
-            nx_class="NXinstrument",
-            name=None,
-            name_type="any",
-            optionality="required",
-        ),
-    )
-
-    source = SubSection(
-        section_def="pynxtools.nomad.metainfo.applications.xas.XasInstrumentSource",
-        repeats=True,
-        variable=True,
-    )
-    monochromator = SubSection(
-        section_def="pynxtools.nomad.metainfo.applications.xas.XasInstrumentMonochromator",
-        repeats=False,
-    )
-    incoming_beam = SubSection(
-        section_def="pynxtools.nomad.metainfo.applications.xas.XasInstrumentIncomingBeam",
-        repeats=False,
-    )
-    absorbed_beam = SubSection(
-        section_def="pynxtools.nomad.metainfo.applications.xas.XasInstrumentAbsorbedBeam",
-        repeats=False,
-    )
-
-    def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
-        super().normalize(archive, logger)
-
-
-class XasInstrumentSource(Source):
-    m_def = Section(
-        links=[
-            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXxas.html#nxxas-entry-instrument-source-group"
-        ],
-        variable=True,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXsource",
-            name=None,
-            name_type="any",
-            optionality="required",
-        ),
-    )
-
-    type = Quantity(
-        type=str,
-        links=[
-            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXxas.html#nxxas-entry-instrument-source-type-field"
-        ],
-        a_nexus_field=NeXusField(
-            name="type",
-            type="NX_CHAR",
+            nx_class="NXelement",
+            name="element",
             name_type="specified",
             optionality="required",
-            enumeration=[
-                "Spallation Neutron Source",
-                "Pulsed Reactor Neutron Source",
-                "Reactor Neutron Source",
-                "Synchrotron X-ray Source",
-                "Pulsed Muon Source",
-                "Rotating Anode X-ray",
-                "Fixed Tube X-ray",
-                "UV Laser",
-                "Free-Electron Laser",
-                "Optical Laser",
-                "Ion Source",
-                "UV Plasma Source",
-                "Metal Jet X-ray",
-                "Laser",
-                "Dye Laser",
-                "Broadband Tunable Light Source",
-                "Halogen Lamp",
-                "LED",
-                "Mercury Cadmium Telluride Lamp",
-                "Deuterium Lamp",
-                "Xenon Lamp",
-                "Globar",
-            ],
-            open_enum=True,
-        ),
-        a_eln=ELNAnnotation(
-            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
+
     name = Quantity(
         type=str,
         links=[
-            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXxas.html#nxxas-entry-instrument-source-name-field"
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXxas.html#nxxas-entry-element-name-field"
         ],
         a_nexus_field=NeXusField(
             name="name",
@@ -265,124 +253,6 @@ class XasInstrumentSource(Source):
             component=ELNComponentEnum.StringEditQuantity,
         ),
     )
-    probe = Quantity(
-        type=MEnum(["x-ray"]),
-        links=[
-            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXxas.html#nxxas-entry-instrument-source-probe-field"
-        ],
-        a_nexus_field=NeXusField(
-            name="probe",
-            type="NX_CHAR",
-            name_type="specified",
-            optionality="required",
-            enumeration=["x-ray"],
-        ),
-        a_eln=ELNAnnotation(
-            component=ELNComponentEnum.EnumEditQuantity,
-            default="x-ray",
-        ),
-    )
-
-    def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
-        super().normalize(archive, logger)
-
-
-class XasInstrumentMonochromator(Monochromator):
-    m_def = Section(
-        links=[
-            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXxas.html#nxxas-entry-instrument-monochromator-group"
-        ],
-        a_nexus_group=NeXusGroup(
-            nx_class="NXmonochromator",
-            name="monochromator",
-            name_type="specified",
-            optionality="required",
-        ),
-    )
-
-    energy = Quantity(
-        type=np.float64,
-        links=[
-            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXxas.html#nxxas-entry-instrument-monochromator-energy-field"
-        ],
-        dimensionality="[mass] * [length] ** 2 / [time] ** 2",
-        unit="eV",
-        shape=["*"],
-        a_nexus_field=NeXusField(
-            name="energy",
-            type="NX_FLOAT",
-            name_type="specified",
-            optionality="required",
-            units="NX_ENERGY",
-        ),
-    )
-
-    def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
-        super().normalize(archive, logger)
-
-
-class XasInstrumentIncomingBeam(Detector):
-    m_def = Section(
-        links=[
-            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXxas.html#nxxas-entry-instrument-incoming-beam-group"
-        ],
-        a_nexus_group=NeXusGroup(
-            nx_class="NXdetector",
-            name="incoming_beam",
-            name_type="specified",
-            optionality="required",
-        ),
-    )
-
-    data_quantity = Quantity(
-        type=np.float64,
-        links=[
-            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXxas.html#nxxas-entry-instrument-incoming-beam-data-field"
-        ],
-        flexible_unit=True,
-        shape=["*"],
-        a_nexus_field=NeXusField(
-            name="data",
-            type="NX_NUMBER",
-            name_type="specified",
-            optionality="required",
-            units="NX_ANY",
-        ),
-    )
-
-    def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
-        super().normalize(archive, logger)
-
-
-class XasInstrumentAbsorbedBeam(Detector):
-    m_def = Section(
-        links=[
-            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXxas.html#nxxas-entry-instrument-absorbed-beam-group"
-        ],
-        a_nexus_group=NeXusGroup(
-            nx_class="NXdetector",
-            name="absorbed_beam",
-            name_type="specified",
-            optionality="required",
-        ),
-    )
-
-    data_quantity = Quantity(
-        type=np.float64,
-        links=[
-            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXxas.html#nxxas-entry-instrument-absorbed-beam-data-field"
-        ],
-        flexible_unit=True,
-        shape=["*"],
-        description=("This data corresponds to the sample signal."),
-        a_nexus_field=NeXusField(
-            name="data",
-            type="NX_NUMBER",
-            name_type="specified",
-            optionality="required",
-            units="NX_ANY",
-        ),
-    )
 
     def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
         super().normalize(archive, logger)
@@ -391,7 +261,7 @@ class XasInstrumentAbsorbedBeam(Detector):
 class XasSample(Sample):
     m_def = Section(
         links=[
-            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXxas.html#nxxas-entry-sample-group"
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXxas.html#nxxas-entry-sample-group"
         ],
         variable=True,
         a_nexus_group=NeXusGroup(
@@ -405,9 +275,9 @@ class XasSample(Sample):
     name = Quantity(
         type=str,
         links=[
-            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXxas.html#nxxas-entry-sample-name-field"
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXxas.html#nxxas-entry-sample-name-field"
         ],
-        description=("Descriptive name of sample"),
+        description=("Descriptive name of the sample"),
         a_nexus_field=NeXusField(
             name="name",
             type="NX_CHAR",
@@ -418,80 +288,21 @@ class XasSample(Sample):
             component=ELNComponentEnum.StringEditQuantity,
         ),
     )
-
-    def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
-        super().normalize(archive, logger)
-
-
-class XasMonitor(Monitor):
-    m_def = Section(
-        links=[
-            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXxas.html#nxxas-entry-monitor-group"
-        ],
-        variable=True,
-        a_nexus_group=NeXusGroup(
-            nx_class="NXmonitor",
-            name=None,
-            name_type="any",
-            optionality="required",
-        ),
-    )
-
-    mode = Quantity(
-        type=MEnum(["monitor", "timer"]),
-        links=[
-            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXxas.html#nxxas-entry-monitor-mode-field"
-        ],
-        description=(
-            "Count to a preset value based on either clock time (timer) or "
-            "received monitor counts (monitor)."
-        ),
-        a_nexus_field=NeXusField(
-            name="mode",
-            type="NX_CHAR",
-            name_type="specified",
-            optionality="required",
-            enumeration=["monitor", "timer"],
-        ),
-        a_eln=ELNAnnotation(
-            component=ELNComponentEnum.EnumEditQuantity,
-        ),
-    )
-    preset = Quantity(
+    temperature = Quantity(
         type=np.float64,
         links=[
-            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXxas.html#nxxas-entry-monitor-preset-field"
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXxas.html#nxxas-entry-sample-temperature-field"
         ],
-        flexible_unit=True,
-        description=("preset value for time or monitor"),
+        dimensionality="[temperature]",
+        unit="kelvin",
+        shape=["*"],
+        description=("Sample temperature."),
         a_nexus_field=NeXusField(
-            name="preset",
+            name="temperature",
             type="NX_FLOAT",
             name_type="specified",
-            optionality="required",
-            units="NX_ANY",
-        ),
-        a_eln=ELNAnnotation(
-            component=ELNComponentEnum.NumberEditQuantity,
-        ),
-    )
-    data_quantity = Quantity(
-        type=np.float64,
-        links=[
-            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXxas.html#nxxas-entry-monitor-data-field"
-        ],
-        flexible_unit=True,
-        shape=["*"],
-        description=(
-            "This field could be a link to "
-            "``/NXentry/NXinstrument/incoming_beam:NXdetector/data``"
-        ),
-        a_nexus_field=NeXusField(
-            name="data",
-            type="NX_NUMBER",
-            name_type="specified",
-            optionality="required",
-            units="NX_ANY",
+            optionality="optional",
+            units="NX_TEMPERATURE",
         ),
     )
 
@@ -500,73 +311,57 @@ class XasMonitor(Monitor):
 
 
 class XasData(Data):
+    """
+    Plot of the X-ray absorption intensity versus energy.
+
+    When several spectra are stacked along ``nP`` (a time series, a spatial
+    map, an operando series, ...), the quantity that varies across the stack is
+    stored in its standard NeXus location (for example
+    ``NXsample/temperature``, ``NXsample/electric_field``, an
+    ``NXsample/NXtransformations`` axis, or an ``NXbeam`` polarization field)
+    and linked here as an additional axis with its ``AXISNAME_indices`` set to
+    0, the ``nP`` dimension. The application definition does not enumerate
+    these coordinates: any of them, including ones not listed here, is declared
+    simply by adding the field in its base-class location and wiring it into
+    this group.
+    """
+
     m_def = Section(
         links=[
-            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXxas.html#nxxas-entry-data-group"
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXxas.html#nxxas-entry-data-group"
         ],
         variable=True,
         a_nexus_group=NeXusGroup(
             nx_class="NXdata",
             name=None,
             name_type="any",
-            optionality="required",
-        ),
-    )
-
-    mode = Quantity(
-        type=MEnum(
-            [
-                "Total Electron Yield",
-                "Partial Electron Yield",
-                "Auger Electron Yield",
-                "Fluorescence Yield",
-                "Transmission",
-            ]
-        ),
-        links=[
-            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXxas.html#nxxas-entry-data-mode-field"
-        ],
-        description=(
-            "Detection method used for observing the sample absorption (pick one "
-            "from the enumerated list and spell exactly)"
-        ),
-        a_nexus_field=NeXusField(
-            name="mode",
-            type="NX_CHAR_OR_NUMBER",
-            name_type="specified",
-            optionality="required",
-            enumeration=[
-                "Total Electron Yield",
-                "Partial Electron Yield",
-                "Auger Electron Yield",
-                "Fluorescence Yield",
-                "Transmission",
-            ],
-        ),
-        a_eln=ELNAnnotation(
-            component=ELNComponentEnum.EnumEditQuantity,
+            optionality="optional",
         ),
     )
 
     energy = Quantity(
-        type=str,
+        type=np.float64,
         links=[
-            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXxas.html#nxxas-entry-data-energy-link"
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXxas.html#nxxas-entry-data-energy-link"
         ],
+        dimensionality="[mass] * [length] ** 2 / [time] ** 2",
+        unit="eV",
+        shape=["*"],
         a_nexus_link=NeXusLink(
             name="energy",
-            target="/NXentry/NXinstrument/monochromator:NXmonochromator/energy",
+            target="/NXentry/energy",
             optionality="required",
         ),
     )
-    absorbed_beam = Quantity(
-        type=str,
+    intensity = Quantity(
+        type=np.float64,
         links=[
-            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXxas.html#nxxas-entry-data-absorbed-beam-link"
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXxas.html#nxxas-entry-data-intensity-link"
         ],
+        flexible_unit=True,
         a_nexus_link=NeXusLink(
-            name="absorbed_beam",
-            target="/NXentry/NXinstrument/absorbed_beam:NXdetector/data",
+            name="intensity",
+            target="/NXentry/intensity",
             optionality="required",
         ),
     )

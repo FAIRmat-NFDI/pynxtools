@@ -1658,9 +1658,12 @@ def build_context(nx_name: str) -> dict:
         )
 
     # For unwrapped application definitions, children come from the NXentry group;
-    # for all others, from root_node directly.
-    # primary_nxdl filter is relaxed for unwrapped children (they belong to the
-    # NXentry element, whose nxdl_base may differ from the application root).
+    # for all others, from root_node directly. Members inherited from an ancestor
+    # definition carry that ancestor's file in nxdl_base; only members whose
+    # nxdl_base matches this definition's own file are emitted here, so inherited
+    # members reach the class through Python inheritance instead of being
+    # re-declared. A member redeclared at this level (a real override) carries
+    # this file as its nxdl_base and is kept.
     effective_children = (
         _unwrapped_children if _unwrapped_children is not None else root_node.children
     )
@@ -1684,7 +1687,11 @@ def build_context(nx_name: str) -> dict:
     all_sub_names = parent_sub_names | own_sub_names
 
     for child in effective_children:
-        if child.nx_type == "group" and child.nxdl_base != primary_nxdl:
+        # Ownership rule: emit only members declared or overridden at this
+        # definition's own level. Inherited members carry an ancestor's file in
+        # nxdl_base and reach the class through Python inheritance, so skip them
+        # here regardless of member kind (field, attribute, group, link).
+        if child.nxdl_base != primary_nxdl:
             continue
 
         if child.nx_type == "attribute":

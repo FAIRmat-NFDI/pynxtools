@@ -49,6 +49,7 @@ from pynxtools.nomad.metainfo.applications.apm_paraprobe_tool_results import (
     ApmParaprobeToolResults,
     ApmParaprobeToolResultsTaskprocessed,
 )
+from pynxtools.nomad.metainfo.base_classes.atom import Atom
 
 if TYPE_CHECKING:
     from nomad.datamodel import EntryArchive
@@ -152,6 +153,12 @@ class ApmParaprobeRangerResultsIontypesID(ApmParaprobeToolResultsTaskprocessed):
         ),
     )
 
+    ionID = SubSection(
+        section_def="pynxtools.nomad.metainfo.applications.apm_paraprobe_ranger_results.ApmParaprobeRangerResultsIontypesIDIonID",
+        repeats=True,
+        variable=True,
+    )
+
     iontypes = Quantity(
         type=np.int64,
         links=[
@@ -170,6 +177,98 @@ class ApmParaprobeRangerResultsIontypesID(ApmParaprobeToolResultsTaskprocessed):
             name_type="specified",
             optionality="required",
             units="NX_UNITLESS",
+        ),
+    )
+
+    def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
+        super().normalize(archive, logger)
+
+
+class ApmParaprobeRangerResultsIontypesIDIonID(Atom):
+    """
+    An ion ranged; the instance name ``ion0`` is reserved for documenting
+    ``unknown_type`` (positions of atoms not ranged).
+    """
+
+    m_def = Section(
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_ranger_results.html#nxapm_paraprobe_ranger_results-entry-iontypesid-ionid-group"
+        ],
+        variable=True,
+        a_nexus_group=NeXusGroup(
+            nx_class="NXatom",
+            name="ionID",
+            name_type="partial",
+            optionality="required",
+            min_occurs=1,
+            max_occurs=256,
+        ),
+    )
+
+    nuclide_hash = Quantity(
+        type=np.int64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_ranger_results.html#nxapm_paraprobe_ranger_results-entry-iontypesid-ionid-nuclide-hash-field"
+        ],
+        dimensionality="dimensionless",
+        unit="dimensionless",
+        shape=["*"],
+        a_nexus_field=NeXusField(
+            name="nuclide_hash",
+            type="NX_UINT",
+            name_type="specified",
+            optionality="required",
+            units="NX_UNITLESS",
+        ),
+    )
+    charge_state = Quantity(
+        type=np.int64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_ranger_results.html#nxapm_paraprobe_ranger_results-entry-iontypesid-ionid-charge-state-field"
+        ],
+        dimensionality="dimensionless",
+        unit="dimensionless",
+        a_nexus_field=NeXusField(
+            name="charge_state",
+            type="NX_INT",
+            name_type="specified",
+            optionality="required",
+            units="NX_UNITLESS",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.NumberEditQuantity,
+        ),
+        a_display={"unit": "dimensionless"},
+    )
+    nuclide_list = Quantity(
+        type=np.int64,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_ranger_results.html#nxapm_paraprobe_ranger_results-entry-iontypesid-ionid-nuclide-list-field"
+        ],
+        dimensionality="dimensionless",
+        unit="dimensionless",
+        shape=["*", 2],
+        a_nexus_field=NeXusField(
+            name="nuclide_list",
+            type="NX_UINT",
+            name_type="specified",
+            optionality="recommended",
+            units="NX_UNITLESS",
+        ),
+    )
+    name = Quantity(
+        type=str,
+        links=[
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_ranger_results.html#nxapm_paraprobe_ranger_results-entry-iontypesid-ionid-name-field"
+        ],
+        a_nexus_field=NeXusField(
+            name="name",
+            type="NX_CHAR",
+            name_type="specified",
+            optionality="recommended",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
 

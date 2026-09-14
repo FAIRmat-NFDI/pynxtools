@@ -136,63 +136,6 @@ class XasPey(Xas):
             units="NX_ANY",
         ),
     )
-    is_experimental = Quantity(
-        type=bool,
-        links=[
-            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXxas.html#nxxas-entry-is-experimental-field"
-        ],
-        description=(
-            "Specify if the data comes from an experiment. Use ``true`` for data "
-            "acquired at a beamline or laboratory instrument, and ``false`` for "
-            "spectra calculated/simulated using a computational tool, "
-            "reconstructed from a linear combination of reference components, "
-            "etc."
-        ),
-        a_nexus_field=NeXusField(
-            name="is_experimental",
-            type="NX_BOOLEAN",
-            name_type="specified",
-            optionality="required",
-        ),
-        a_eln=ELNAnnotation(
-            component=ELNComponentEnum.BoolEditQuantity,
-        ),
-    )
-    energy = Quantity(
-        type=np.float64,
-        links=[
-            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXxas.html#nxxas-entry-energy-field"
-        ],
-        dimensionality="[mass] * [length] ** 2 / [time] ** 2",
-        unit="eV",
-        shape=["*"],
-        description=("The energy axis of the spectrum."),
-        a_nexus_field=NeXusField(
-            name="energy",
-            type="NX_FLOAT",
-            name_type="specified",
-            optionality="required",
-            units="NX_ENERGY",
-        ),
-    )
-    intensity_errors = Quantity(
-        type=np.float64,
-        links=[
-            "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXxas.html#nxxas-entry-intensity-errors-field"
-        ],
-        flexible_unit=True,
-        description=("The errors associated with the intensity of the spectrum."),
-        a_nexus_field=NeXusField(
-            name="intensity_errors",
-            type="NX_FLOAT",
-            name_type="specified",
-            optionality="optional",
-            units="NX_ANY",
-        ),
-        a_eln=ELNAnnotation(
-            component=ELNComponentEnum.NumberEditQuantity,
-        ),
-    )
 
     def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
         super().normalize(archive, logger)
