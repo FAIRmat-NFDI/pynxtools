@@ -580,10 +580,12 @@ class CansasData(Data):
     )
     Q__min = Quantity(
         type=np.float64,
+        unit="1 / m",
         description="Minimum of Q, computed over the full array at parse time.",
     )
     Q__max = Quantity(
         type=np.float64,
+        unit="1 / m",
         description="Maximum of Q, computed over the full array at parse time.",
     )
     Q__size = Quantity(
@@ -944,10 +946,12 @@ class CansasData(Data):
     )
     Qdev__min = Quantity(
         type=np.float64,
+        unit="1 / m",
         description="Minimum of Qdev, computed over the full array at parse time.",
     )
     Qdev__max = Quantity(
         type=np.float64,
+        unit="1 / m",
         description="Maximum of Qdev, computed over the full array at parse time.",
     )
     Qdev__size = Quantity(
@@ -1004,10 +1008,12 @@ class CansasData(Data):
     )
     dQw__min = Quantity(
         type=np.float64,
+        unit="1 / m",
         description="Minimum of dQw, computed over the full array at parse time.",
     )
     dQw__max = Quantity(
         type=np.float64,
+        unit="1 / m",
         description="Maximum of dQw, computed over the full array at parse time.",
     )
     dQw__size = Quantity(
@@ -1064,10 +1070,12 @@ class CansasData(Data):
     )
     dQl__min = Quantity(
         type=np.float64,
+        unit="1 / m",
         description="Minimum of dQl, computed over the full array at parse time.",
     )
     dQl__max = Quantity(
         type=np.float64,
+        unit="1 / m",
         description="Maximum of dQl, computed over the full array at parse time.",
     )
     dQl__size = Quantity(
@@ -1121,10 +1129,12 @@ class CansasData(Data):
     )
     Qmean__min = Quantity(
         type=np.float64,
+        unit="1 / m",
         description="Minimum of Qmean, computed over the full array at parse time.",
     )
     Qmean__max = Quantity(
         type=np.float64,
+        unit="1 / m",
         description="Maximum of Qmean, computed over the full array at parse time.",
     )
     Qmean__size = Quantity(
@@ -1177,10 +1187,12 @@ class CansasData(Data):
     )
     ShadowFactor__min = Quantity(
         type=np.float64,
+        unit="dimensionless",
         description="Minimum of ShadowFactor, computed over the full array at parse time.",
     )
     ShadowFactor__max = Quantity(
         type=np.float64,
+        unit="dimensionless",
         description="Maximum of ShadowFactor, computed over the full array at parse time.",
     )
     ShadowFactor__size = Quantity(
@@ -2642,10 +2654,12 @@ class CansasTransmissionSpectrum(Data):
     )
     lambda_quantity__min = Quantity(
         type=np.float64,
+        unit="angstrom",
         description="Minimum of lambda_quantity, computed over the full array at parse time.",
     )
     lambda_quantity__max = Quantity(
         type=np.float64,
+        unit="angstrom",
         description="Maximum of lambda_quantity, computed over the full array at parse time.",
     )
     lambda_quantity__size = Quantity(
@@ -2675,10 +2689,12 @@ class CansasTransmissionSpectrum(Data):
     )
     T__min = Quantity(
         type=np.float64,
+        unit="dimensionless",
         description="Minimum of T, computed over the full array at parse time.",
     )
     T__max = Quantity(
         type=np.float64,
+        unit="dimensionless",
         description="Maximum of T, computed over the full array at parse time.",
     )
     T__size = Quantity(
@@ -2735,10 +2751,12 @@ class CansasTransmissionSpectrum(Data):
     )
     Tdev__min = Quantity(
         type=np.float64,
+        unit="dimensionless",
         description="Minimum of Tdev, computed over the full array at parse time.",
     )
     Tdev__max = Quantity(
         type=np.float64,
+        unit="dimensionless",
         description="Maximum of Tdev, computed over the full array at parse time.",
     )
     Tdev__size = Quantity(

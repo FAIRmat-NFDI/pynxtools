@@ -868,10 +868,12 @@ class XrdPanExperimentResult(XrdData):
     )
     two_theta__min = Quantity(
         type=np.float64,
+        unit="radian",
         description="Minimum of two_theta, computed over the full array at parse time.",
     )
     two_theta__max = Quantity(
         type=np.float64,
+        unit="radian",
         description="Maximum of two_theta, computed over the full array at parse time.",
     )
     two_theta__size = Quantity(
@@ -898,10 +900,12 @@ class XrdPanExperimentResult(XrdData):
     )
     omega__min = Quantity(
         type=np.float64,
+        unit="radian",
         description="Minimum of omega, computed over the full array at parse time.",
     )
     omega__max = Quantity(
         type=np.float64,
+        unit="radian",
         description="Maximum of omega, computed over the full array at parse time.",
     )
     omega__size = Quantity(
@@ -928,10 +932,12 @@ class XrdPanExperimentResult(XrdData):
     )
     phi__min = Quantity(
         type=np.float64,
+        unit="radian",
         description="Minimum of phi, computed over the full array at parse time.",
     )
     phi__max = Quantity(
         type=np.float64,
+        unit="radian",
         description="Maximum of phi, computed over the full array at parse time.",
     )
     phi__size = Quantity(
@@ -958,10 +964,12 @@ class XrdPanExperimentResult(XrdData):
     )
     chi__min = Quantity(
         type=np.float64,
+        unit="radian",
         description="Minimum of chi, computed over the full array at parse time.",
     )
     chi__max = Quantity(
         type=np.float64,
+        unit="radian",
         description="Maximum of chi, computed over the full array at parse time.",
     )
     chi__size = Quantity(
@@ -990,10 +998,12 @@ class XrdPanExperimentResult(XrdData):
     )
     q_parallel__min = Quantity(
         type=np.float64,
+        flexible_unit=True,
         description="Minimum of q_parallel, computed over the full array at parse time.",
     )
     q_parallel__max = Quantity(
         type=np.float64,
+        flexible_unit=True,
         description="Maximum of q_parallel, computed over the full array at parse time.",
     )
     q_parallel__size = Quantity(
@@ -1023,10 +1033,12 @@ class XrdPanExperimentResult(XrdData):
     )
     q_perpendicular__min = Quantity(
         type=np.float64,
+        flexible_unit=True,
         description="Minimum of q_perpendicular, computed over the full array at parse time.",
     )
     q_perpendicular__max = Quantity(
         type=np.float64,
+        flexible_unit=True,
         description="Maximum of q_perpendicular, computed over the full array at parse time.",
     )
     q_perpendicular__size = Quantity(
@@ -1059,10 +1071,12 @@ class XrdPanExperimentResult(XrdData):
     )
     q_norm__min = Quantity(
         type=np.float64,
+        flexible_unit=True,
         description="Minimum of q_norm, computed over the full array at parse time.",
     )
     q_norm__max = Quantity(
         type=np.float64,
+        flexible_unit=True,
         description="Maximum of q_norm, computed over the full array at parse time.",
     )
     q_norm__size = Quantity(

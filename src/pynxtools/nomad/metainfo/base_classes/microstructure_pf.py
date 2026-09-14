@@ -253,10 +253,12 @@ class MicrostructurePfPf(Data):
     )
     intensity__min = Quantity(
         type=np.float64,
+        unit="dimensionless",
         description="Minimum of intensity, computed over the full array at parse time.",
     )
     intensity__max = Quantity(
         type=np.float64,
+        unit="dimensionless",
         description="Maximum of intensity, computed over the full array at parse time.",
     )
     intensity__size = Quantity(
@@ -286,10 +288,12 @@ class MicrostructurePfPf(Data):
     )
     axis_y__min = Quantity(
         type=np.float64,
+        flexible_unit=True,
         description="Minimum of axis_y, computed over the full array at parse time.",
     )
     axis_y__max = Quantity(
         type=np.float64,
+        flexible_unit=True,
         description="Maximum of axis_y, computed over the full array at parse time.",
     )
     axis_y__size = Quantity(
@@ -319,10 +323,12 @@ class MicrostructurePfPf(Data):
     )
     axis_x__min = Quantity(
         type=np.float64,
+        flexible_unit=True,
         description="Minimum of axis_x, computed over the full array at parse time.",
     )
     axis_x__max = Quantity(
         type=np.float64,
+        flexible_unit=True,
         description="Maximum of axis_x, computed over the full array at parse time.",
     )
     axis_x__size = Quantity(

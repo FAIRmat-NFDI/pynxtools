@@ -289,10 +289,12 @@ class SpectrumSpectrum0d(Data):
     )
     intensity__min = Quantity(
         type=np.float64,
+        unit="dimensionless",
         description="Minimum of intensity, computed over the full array at parse time.",
     )
     intensity__max = Quantity(
         type=np.float64,
+        unit="dimensionless",
         description="Maximum of intensity, computed over the full array at parse time.",
     )
     intensity__size = Quantity(
@@ -336,10 +338,12 @@ class SpectrumSpectrum0d(Data):
     )
     axis_energy__min = Quantity(
         type=np.float64,
+        unit="eV",
         description="Minimum of axis_energy, computed over the full array at parse time.",
     )
     axis_energy__max = Quantity(
         type=np.float64,
+        unit="eV",
         description="Maximum of axis_energy, computed over the full array at parse time.",
     )
     axis_energy__size = Quantity(
@@ -405,10 +409,12 @@ class SpectrumSpectrum1d(Data):
     )
     intensity__min = Quantity(
         type=np.float64,
+        unit="dimensionless",
         description="Minimum of intensity, computed over the full array at parse time.",
     )
     intensity__max = Quantity(
         type=np.float64,
+        unit="dimensionless",
         description="Maximum of intensity, computed over the full array at parse time.",
     )
     intensity__size = Quantity(
@@ -452,10 +458,12 @@ class SpectrumSpectrum1d(Data):
     )
     axis_i__min = Quantity(
         type=np.float64,
+        unit="m",
         description="Minimum of axis_i, computed over the full array at parse time.",
     )
     axis_i__max = Quantity(
         type=np.float64,
+        unit="m",
         description="Maximum of axis_i, computed over the full array at parse time.",
     )
     axis_i__size = Quantity(
@@ -499,10 +507,12 @@ class SpectrumSpectrum1d(Data):
     )
     axis_energy__min = Quantity(
         type=np.float64,
+        unit="eV",
         description="Minimum of axis_energy, computed over the full array at parse time.",
     )
     axis_energy__max = Quantity(
         type=np.float64,
+        unit="eV",
         description="Maximum of axis_energy, computed over the full array at parse time.",
     )
     axis_energy__size = Quantity(
@@ -568,10 +578,12 @@ class SpectrumSpectrum2d(Data):
     )
     intensity__min = Quantity(
         type=np.float64,
+        unit="dimensionless",
         description="Minimum of intensity, computed over the full array at parse time.",
     )
     intensity__max = Quantity(
         type=np.float64,
+        unit="dimensionless",
         description="Maximum of intensity, computed over the full array at parse time.",
     )
     intensity__size = Quantity(
@@ -615,10 +627,12 @@ class SpectrumSpectrum2d(Data):
     )
     axis_j__min = Quantity(
         type=np.float64,
+        unit="m",
         description="Minimum of axis_j, computed over the full array at parse time.",
     )
     axis_j__max = Quantity(
         type=np.float64,
+        unit="m",
         description="Maximum of axis_j, computed over the full array at parse time.",
     )
     axis_j__size = Quantity(
@@ -662,10 +676,12 @@ class SpectrumSpectrum2d(Data):
     )
     axis_i__min = Quantity(
         type=np.float64,
+        unit="m",
         description="Minimum of axis_i, computed over the full array at parse time.",
     )
     axis_i__max = Quantity(
         type=np.float64,
+        unit="m",
         description="Maximum of axis_i, computed over the full array at parse time.",
     )
     axis_i__size = Quantity(
@@ -709,10 +725,12 @@ class SpectrumSpectrum2d(Data):
     )
     axis_energy__min = Quantity(
         type=np.float64,
+        unit="eV",
         description="Minimum of axis_energy, computed over the full array at parse time.",
     )
     axis_energy__max = Quantity(
         type=np.float64,
+        unit="eV",
         description="Maximum of axis_energy, computed over the full array at parse time.",
     )
     axis_energy__size = Quantity(
@@ -778,10 +796,12 @@ class SpectrumSpectrum3d(Data):
     )
     intensity__min = Quantity(
         type=np.float64,
+        unit="dimensionless",
         description="Minimum of intensity, computed over the full array at parse time.",
     )
     intensity__max = Quantity(
         type=np.float64,
+        unit="dimensionless",
         description="Maximum of intensity, computed over the full array at parse time.",
     )
     intensity__size = Quantity(
@@ -825,10 +845,12 @@ class SpectrumSpectrum3d(Data):
     )
     axis_k__min = Quantity(
         type=np.float64,
+        unit="m",
         description="Minimum of axis_k, computed over the full array at parse time.",
     )
     axis_k__max = Quantity(
         type=np.float64,
+        unit="m",
         description="Maximum of axis_k, computed over the full array at parse time.",
     )
     axis_k__size = Quantity(
@@ -872,10 +894,12 @@ class SpectrumSpectrum3d(Data):
     )
     axis_j__min = Quantity(
         type=np.float64,
+        unit="m",
         description="Minimum of axis_j, computed over the full array at parse time.",
     )
     axis_j__max = Quantity(
         type=np.float64,
+        unit="m",
         description="Maximum of axis_j, computed over the full array at parse time.",
     )
     axis_j__size = Quantity(
@@ -919,10 +943,12 @@ class SpectrumSpectrum3d(Data):
     )
     axis_i__min = Quantity(
         type=np.float64,
+        unit="m",
         description="Minimum of axis_i, computed over the full array at parse time.",
     )
     axis_i__max = Quantity(
         type=np.float64,
+        unit="m",
         description="Maximum of axis_i, computed over the full array at parse time.",
     )
     axis_i__size = Quantity(
@@ -966,10 +992,12 @@ class SpectrumSpectrum3d(Data):
     )
     axis_energy__min = Quantity(
         type=np.float64,
+        unit="eV",
         description="Minimum of axis_energy, computed over the full array at parse time.",
     )
     axis_energy__max = Quantity(
         type=np.float64,
+        unit="eV",
         description="Maximum of axis_energy, computed over the full array at parse time.",
     )
     axis_energy__size = Quantity(
@@ -1035,10 +1063,12 @@ class SpectrumStack0d(Data):
     )
     intensity__min = Quantity(
         type=np.float64,
+        unit="dimensionless",
         description="Minimum of intensity, computed over the full array at parse time.",
     )
     intensity__max = Quantity(
         type=np.float64,
+        unit="dimensionless",
         description="Maximum of intensity, computed over the full array at parse time.",
     )
     intensity__size = Quantity(
@@ -1082,10 +1112,12 @@ class SpectrumStack0d(Data):
     )
     indices_group__min = Quantity(
         type=np.int64,
+        unit="dimensionless",
         description="Minimum of indices_group, computed over the full array at parse time.",
     )
     indices_group__max = Quantity(
         type=np.int64,
+        unit="dimensionless",
         description="Maximum of indices_group, computed over the full array at parse time.",
     )
     indices_group__size = Quantity(
@@ -1129,10 +1161,12 @@ class SpectrumStack0d(Data):
     )
     indices_spectrum__min = Quantity(
         type=np.int64,
+        unit="dimensionless",
         description="Minimum of indices_spectrum, computed over the full array at parse time.",
     )
     indices_spectrum__max = Quantity(
         type=np.int64,
+        unit="dimensionless",
         description="Maximum of indices_spectrum, computed over the full array at parse time.",
     )
     indices_spectrum__size = Quantity(
@@ -1176,10 +1210,12 @@ class SpectrumStack0d(Data):
     )
     axis_energy__min = Quantity(
         type=np.float64,
+        unit="eV",
         description="Minimum of axis_energy, computed over the full array at parse time.",
     )
     axis_energy__max = Quantity(
         type=np.float64,
+        unit="eV",
         description="Maximum of axis_energy, computed over the full array at parse time.",
     )
     axis_energy__size = Quantity(
@@ -1245,10 +1281,12 @@ class SpectrumStack2d(Data):
     )
     intensity__min = Quantity(
         type=np.float64,
+        unit="dimensionless",
         description="Minimum of intensity, computed over the full array at parse time.",
     )
     intensity__max = Quantity(
         type=np.float64,
+        unit="dimensionless",
         description="Maximum of intensity, computed over the full array at parse time.",
     )
     intensity__size = Quantity(
@@ -1292,10 +1330,12 @@ class SpectrumStack2d(Data):
     )
     indices_group__min = Quantity(
         type=np.int64,
+        unit="dimensionless",
         description="Minimum of indices_group, computed over the full array at parse time.",
     )
     indices_group__max = Quantity(
         type=np.int64,
+        unit="dimensionless",
         description="Maximum of indices_group, computed over the full array at parse time.",
     )
     indices_group__size = Quantity(
@@ -1339,10 +1379,12 @@ class SpectrumStack2d(Data):
     )
     indices_spectrum__min = Quantity(
         type=np.int64,
+        unit="dimensionless",
         description="Minimum of indices_spectrum, computed over the full array at parse time.",
     )
     indices_spectrum__max = Quantity(
         type=np.int64,
+        unit="dimensionless",
         description="Maximum of indices_spectrum, computed over the full array at parse time.",
     )
     indices_spectrum__size = Quantity(
@@ -1386,10 +1428,12 @@ class SpectrumStack2d(Data):
     )
     axis_j__min = Quantity(
         type=np.float64,
+        unit="m",
         description="Minimum of axis_j, computed over the full array at parse time.",
     )
     axis_j__max = Quantity(
         type=np.float64,
+        unit="m",
         description="Maximum of axis_j, computed over the full array at parse time.",
     )
     axis_j__size = Quantity(
@@ -1433,10 +1477,12 @@ class SpectrumStack2d(Data):
     )
     axis_i__min = Quantity(
         type=np.float64,
+        unit="m",
         description="Minimum of axis_i, computed over the full array at parse time.",
     )
     axis_i__max = Quantity(
         type=np.float64,
+        unit="m",
         description="Maximum of axis_i, computed over the full array at parse time.",
     )
     axis_i__size = Quantity(
@@ -1480,10 +1526,12 @@ class SpectrumStack2d(Data):
     )
     axis_energy__min = Quantity(
         type=np.float64,
+        unit="eV",
         description="Minimum of axis_energy, computed over the full array at parse time.",
     )
     axis_energy__max = Quantity(
         type=np.float64,
+        unit="eV",
         description="Maximum of axis_energy, computed over the full array at parse time.",
     )
     axis_energy__size = Quantity(
@@ -1549,10 +1597,12 @@ class SpectrumStack3d(Data):
     )
     intensity__min = Quantity(
         type=np.float64,
+        unit="dimensionless",
         description="Minimum of intensity, computed over the full array at parse time.",
     )
     intensity__max = Quantity(
         type=np.float64,
+        unit="dimensionless",
         description="Maximum of intensity, computed over the full array at parse time.",
     )
     intensity__size = Quantity(
@@ -1596,10 +1646,12 @@ class SpectrumStack3d(Data):
     )
     indices_group__min = Quantity(
         type=np.int64,
+        unit="dimensionless",
         description="Minimum of indices_group, computed over the full array at parse time.",
     )
     indices_group__max = Quantity(
         type=np.int64,
+        unit="dimensionless",
         description="Maximum of indices_group, computed over the full array at parse time.",
     )
     indices_group__size = Quantity(
@@ -1643,10 +1695,12 @@ class SpectrumStack3d(Data):
     )
     indices_spectrum__min = Quantity(
         type=np.int64,
+        unit="dimensionless",
         description="Minimum of indices_spectrum, computed over the full array at parse time.",
     )
     indices_spectrum__max = Quantity(
         type=np.int64,
+        unit="dimensionless",
         description="Maximum of indices_spectrum, computed over the full array at parse time.",
     )
     indices_spectrum__size = Quantity(
@@ -1690,10 +1744,12 @@ class SpectrumStack3d(Data):
     )
     axis_k__min = Quantity(
         type=np.float64,
+        unit="m",
         description="Minimum of axis_k, computed over the full array at parse time.",
     )
     axis_k__max = Quantity(
         type=np.float64,
+        unit="m",
         description="Maximum of axis_k, computed over the full array at parse time.",
     )
     axis_k__size = Quantity(
@@ -1737,10 +1793,12 @@ class SpectrumStack3d(Data):
     )
     axis_j__min = Quantity(
         type=np.float64,
+        unit="m",
         description="Minimum of axis_j, computed over the full array at parse time.",
     )
     axis_j__max = Quantity(
         type=np.float64,
+        unit="m",
         description="Maximum of axis_j, computed over the full array at parse time.",
     )
     axis_j__size = Quantity(
@@ -1784,10 +1842,12 @@ class SpectrumStack3d(Data):
     )
     axis_i__min = Quantity(
         type=np.float64,
+        unit="m",
         description="Minimum of axis_i, computed over the full array at parse time.",
     )
     axis_i__max = Quantity(
         type=np.float64,
+        unit="m",
         description="Maximum of axis_i, computed over the full array at parse time.",
     )
     axis_i__size = Quantity(
@@ -1831,10 +1891,12 @@ class SpectrumStack3d(Data):
     )
     axis_energy__min = Quantity(
         type=np.float64,
+        unit="eV",
         description="Minimum of axis_energy, computed over the full array at parse time.",
     )
     axis_energy__max = Quantity(
         type=np.float64,
+        unit="eV",
         description="Maximum of axis_energy, computed over the full array at parse time.",
     )
     axis_energy__size = Quantity(

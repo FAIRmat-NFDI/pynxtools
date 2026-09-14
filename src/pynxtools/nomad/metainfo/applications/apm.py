@@ -9095,10 +9095,12 @@ class ApmAtomProbeIDInitialSpecimenImage2d(Data):
     )
     real__min = Quantity(
         type=np.float64,
+        unit="dimensionless",
         description="Minimum of real, computed over the full array at parse time.",
     )
     real__max = Quantity(
         type=np.float64,
+        unit="dimensionless",
         description="Maximum of real, computed over the full array at parse time.",
     )
     real__size = Quantity(
@@ -9124,10 +9126,12 @@ class ApmAtomProbeIDInitialSpecimenImage2d(Data):
     )
     axis_j__min = Quantity(
         type=np.float64,
+        flexible_unit=True,
         description="Minimum of axis_j, computed over the full array at parse time.",
     )
     axis_j__max = Quantity(
         type=np.float64,
+        flexible_unit=True,
         description="Maximum of axis_j, computed over the full array at parse time.",
     )
     axis_j__size = Quantity(
@@ -9185,10 +9189,12 @@ class ApmAtomProbeIDInitialSpecimenImage2d(Data):
     )
     axis_i__min = Quantity(
         type=np.float64,
+        flexible_unit=True,
         description="Minimum of axis_i, computed over the full array at parse time.",
     )
     axis_i__max = Quantity(
         type=np.float64,
+        flexible_unit=True,
         description="Maximum of axis_i, computed over the full array at parse time.",
     )
     axis_i__size = Quantity(
@@ -9332,10 +9338,12 @@ class ApmAtomProbeIDFinalSpecimenImage2d(Data):
     )
     real__min = Quantity(
         type=np.float64,
+        unit="dimensionless",
         description="Minimum of real, computed over the full array at parse time.",
     )
     real__max = Quantity(
         type=np.float64,
+        unit="dimensionless",
         description="Maximum of real, computed over the full array at parse time.",
     )
     real__size = Quantity(
@@ -9361,10 +9369,12 @@ class ApmAtomProbeIDFinalSpecimenImage2d(Data):
     )
     axis_j__min = Quantity(
         type=np.float64,
+        flexible_unit=True,
         description="Minimum of axis_j, computed over the full array at parse time.",
     )
     axis_j__max = Quantity(
         type=np.float64,
+        flexible_unit=True,
         description="Maximum of axis_j, computed over the full array at parse time.",
     )
     axis_j__size = Quantity(
@@ -9422,10 +9432,12 @@ class ApmAtomProbeIDFinalSpecimenImage2d(Data):
     )
     axis_i__min = Quantity(
         type=np.float64,
+        flexible_unit=True,
         description="Minimum of axis_i, computed over the full array at parse time.",
     )
     axis_i__max = Quantity(
         type=np.float64,
+        flexible_unit=True,
         description="Maximum of axis_i, computed over the full array at parse time.",
     )
     axis_i__size = Quantity(

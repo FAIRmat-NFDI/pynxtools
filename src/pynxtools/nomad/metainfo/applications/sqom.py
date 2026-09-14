@@ -471,10 +471,12 @@ class SqomData(Data):
     )
     qx__min = Quantity(
         type=np.float64,
+        unit="1 / angstrom",
         description="Minimum of qx, computed over the full array at parse time.",
     )
     qx__max = Quantity(
         type=np.float64,
+        unit="1 / angstrom",
         description="Maximum of qx, computed over the full array at parse time.",
     )
     qx__size = Quantity(
@@ -501,10 +503,12 @@ class SqomData(Data):
     )
     qy__min = Quantity(
         type=np.float64,
+        unit="1 / angstrom",
         description="Minimum of qy, computed over the full array at parse time.",
     )
     qy__max = Quantity(
         type=np.float64,
+        unit="1 / angstrom",
         description="Maximum of qy, computed over the full array at parse time.",
     )
     qy__size = Quantity(
@@ -531,10 +535,12 @@ class SqomData(Data):
     )
     qz__min = Quantity(
         type=np.float64,
+        unit="1 / angstrom",
         description="Minimum of qz, computed over the full array at parse time.",
     )
     qz__max = Quantity(
         type=np.float64,
+        unit="1 / angstrom",
         description="Maximum of qz, computed over the full array at parse time.",
     )
     qz__size = Quantity(
@@ -561,10 +567,12 @@ class SqomData(Data):
     )
     en__min = Quantity(
         type=np.float64,
+        unit="eV",
         description="Minimum of en, computed over the full array at parse time.",
     )
     en__max = Quantity(
         type=np.float64,
+        unit="eV",
         description="Maximum of en, computed over the full array at parse time.",
     )
     en__size = Quantity(

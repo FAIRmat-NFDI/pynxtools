@@ -1475,10 +1475,12 @@ class MpesArpesData(MpesData):
     )
     energy__min = Quantity(
         type=np.float64,
+        unit="eV",
         description="Minimum of energy, computed over the full array at parse time.",
     )
     energy__max = Quantity(
         type=np.float64,
+        unit="eV",
         description="Maximum of energy, computed over the full array at parse time.",
     )
     energy__size = Quantity(
@@ -1525,10 +1527,12 @@ class MpesArpesData(MpesData):
     )
     angular0__min = Quantity(
         type=np.float64,
+        unit="radian",
         description="Minimum of angular0, computed over the full array at parse time.",
     )
     angular0__max = Quantity(
         type=np.float64,
+        unit="radian",
         description="Maximum of angular0, computed over the full array at parse time.",
     )
     angular0__size = Quantity(
@@ -1558,10 +1562,12 @@ class MpesArpesData(MpesData):
     )
     angular1__min = Quantity(
         type=np.float64,
+        unit="radian",
         description="Minimum of angular1, computed over the full array at parse time.",
     )
     angular1__max = Quantity(
         type=np.float64,
+        unit="radian",
         description="Maximum of angular1, computed over the full array at parse time.",
     )
     angular1__size = Quantity(
@@ -1594,10 +1600,12 @@ class MpesArpesData(MpesData):
     )
     data_quantity__min = Quantity(
         type=np.float64,
+        flexible_unit=True,
         description="Minimum of data_quantity, computed over the full array at parse time.",
     )
     data_quantity__max = Quantity(
         type=np.float64,
+        flexible_unit=True,
         description="Maximum of data_quantity, computed over the full array at parse time.",
     )
     data_quantity__size = Quantity(

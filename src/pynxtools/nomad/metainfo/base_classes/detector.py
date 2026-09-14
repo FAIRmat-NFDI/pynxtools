@@ -1900,10 +1900,12 @@ class DetectorEfficiency(Data):
     )
     efficiency__min = Quantity(
         type=np.float64,
+        unit="dimensionless",
         description="Minimum of efficiency, computed over the full array at parse time.",
     )
     efficiency__max = Quantity(
         type=np.float64,
+        unit="dimensionless",
         description="Maximum of efficiency, computed over the full array at parse time.",
     )
     efficiency__size = Quantity(
@@ -1938,10 +1940,12 @@ class DetectorEfficiency(Data):
     )
     wavelength__min = Quantity(
         type=np.float64,
+        unit="angstrom",
         description="Minimum of wavelength, computed over the full array at parse time.",
     )
     wavelength__max = Quantity(
         type=np.float64,
+        unit="angstrom",
         description="Maximum of wavelength, computed over the full array at parse time.",
     )
     wavelength__size = Quantity(

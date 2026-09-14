@@ -334,10 +334,12 @@ class ImageImage1d(Data):
     )
     intensity__min = Quantity(
         type=np.float64,
+        unit="dimensionless",
         description="Minimum of intensity, computed over the full array at parse time.",
     )
     intensity__max = Quantity(
         type=np.float64,
+        unit="dimensionless",
         description="Maximum of intensity, computed over the full array at parse time.",
     )
     intensity__size = Quantity(
@@ -364,10 +366,12 @@ class ImageImage1d(Data):
     )
     real__min = Quantity(
         type=np.float64,
+        unit="dimensionless",
         description="Minimum of real, computed over the full array at parse time.",
     )
     real__max = Quantity(
         type=np.float64,
+        unit="dimensionless",
         description="Maximum of real, computed over the full array at parse time.",
     )
     real__size = Quantity(
@@ -394,10 +398,12 @@ class ImageImage1d(Data):
     )
     imag__min = Quantity(
         type=np.float64,
+        unit="dimensionless",
         description="Minimum of imag, computed over the full array at parse time.",
     )
     imag__max = Quantity(
         type=np.float64,
+        unit="dimensionless",
         description="Maximum of imag, computed over the full array at parse time.",
     )
     imag__size = Quantity(
@@ -446,10 +452,12 @@ class ImageImage1d(Data):
     )
     axis_i__min = Quantity(
         type=np.float64,
+        flexible_unit=True,
         description="Minimum of axis_i, computed over the full array at parse time.",
     )
     axis_i__max = Quantity(
         type=np.float64,
+        flexible_unit=True,
         description="Maximum of axis_i, computed over the full array at parse time.",
     )
     axis_i__size = Quantity(
@@ -518,10 +526,12 @@ class ImageImage2d(Data):
     )
     intensity__min = Quantity(
         type=np.float64,
+        unit="dimensionless",
         description="Minimum of intensity, computed over the full array at parse time.",
     )
     intensity__max = Quantity(
         type=np.float64,
+        unit="dimensionless",
         description="Maximum of intensity, computed over the full array at parse time.",
     )
     intensity__size = Quantity(
@@ -548,10 +558,12 @@ class ImageImage2d(Data):
     )
     real__min = Quantity(
         type=np.float64,
+        unit="dimensionless",
         description="Minimum of real, computed over the full array at parse time.",
     )
     real__max = Quantity(
         type=np.float64,
+        unit="dimensionless",
         description="Maximum of real, computed over the full array at parse time.",
     )
     real__size = Quantity(
@@ -578,10 +590,12 @@ class ImageImage2d(Data):
     )
     imag__min = Quantity(
         type=np.float64,
+        unit="dimensionless",
         description="Minimum of imag, computed over the full array at parse time.",
     )
     imag__max = Quantity(
         type=np.float64,
+        unit="dimensionless",
         description="Maximum of imag, computed over the full array at parse time.",
     )
     imag__size = Quantity(
@@ -630,10 +644,12 @@ class ImageImage2d(Data):
     )
     axis_j__min = Quantity(
         type=np.float64,
+        flexible_unit=True,
         description="Minimum of axis_j, computed over the full array at parse time.",
     )
     axis_j__max = Quantity(
         type=np.float64,
+        flexible_unit=True,
         description="Maximum of axis_j, computed over the full array at parse time.",
     )
     axis_j__size = Quantity(
@@ -682,10 +698,12 @@ class ImageImage2d(Data):
     )
     axis_i__min = Quantity(
         type=np.float64,
+        flexible_unit=True,
         description="Minimum of axis_i, computed over the full array at parse time.",
     )
     axis_i__max = Quantity(
         type=np.float64,
+        flexible_unit=True,
         description="Maximum of axis_i, computed over the full array at parse time.",
     )
     axis_i__size = Quantity(
@@ -754,10 +772,12 @@ class ImageImage3d(Data):
     )
     intensity__min = Quantity(
         type=np.float64,
+        unit="dimensionless",
         description="Minimum of intensity, computed over the full array at parse time.",
     )
     intensity__max = Quantity(
         type=np.float64,
+        unit="dimensionless",
         description="Maximum of intensity, computed over the full array at parse time.",
     )
     intensity__size = Quantity(
@@ -784,10 +804,12 @@ class ImageImage3d(Data):
     )
     real__min = Quantity(
         type=np.float64,
+        unit="dimensionless",
         description="Minimum of real, computed over the full array at parse time.",
     )
     real__max = Quantity(
         type=np.float64,
+        unit="dimensionless",
         description="Maximum of real, computed over the full array at parse time.",
     )
     real__size = Quantity(
@@ -814,10 +836,12 @@ class ImageImage3d(Data):
     )
     imag__min = Quantity(
         type=np.float64,
+        unit="dimensionless",
         description="Minimum of imag, computed over the full array at parse time.",
     )
     imag__max = Quantity(
         type=np.float64,
+        unit="dimensionless",
         description="Maximum of imag, computed over the full array at parse time.",
     )
     imag__size = Quantity(
@@ -866,10 +890,12 @@ class ImageImage3d(Data):
     )
     axis_k__min = Quantity(
         type=np.float64,
+        flexible_unit=True,
         description="Minimum of axis_k, computed over the full array at parse time.",
     )
     axis_k__max = Quantity(
         type=np.float64,
+        flexible_unit=True,
         description="Maximum of axis_k, computed over the full array at parse time.",
     )
     axis_k__size = Quantity(
@@ -918,10 +944,12 @@ class ImageImage3d(Data):
     )
     axis_j__min = Quantity(
         type=np.float64,
+        flexible_unit=True,
         description="Minimum of axis_j, computed over the full array at parse time.",
     )
     axis_j__max = Quantity(
         type=np.float64,
+        flexible_unit=True,
         description="Maximum of axis_j, computed over the full array at parse time.",
     )
     axis_j__size = Quantity(
@@ -970,10 +998,12 @@ class ImageImage3d(Data):
     )
     axis_i__min = Quantity(
         type=np.float64,
+        flexible_unit=True,
         description="Minimum of axis_i, computed over the full array at parse time.",
     )
     axis_i__max = Quantity(
         type=np.float64,
+        flexible_unit=True,
         description="Maximum of axis_i, computed over the full array at parse time.",
     )
     axis_i__size = Quantity(
@@ -1042,10 +1072,12 @@ class ImageImage4d(Data):
     )
     intensity__min = Quantity(
         type=np.float64,
+        unit="dimensionless",
         description="Minimum of intensity, computed over the full array at parse time.",
     )
     intensity__max = Quantity(
         type=np.float64,
+        unit="dimensionless",
         description="Maximum of intensity, computed over the full array at parse time.",
     )
     intensity__size = Quantity(
@@ -1072,10 +1104,12 @@ class ImageImage4d(Data):
     )
     real__min = Quantity(
         type=np.float64,
+        unit="dimensionless",
         description="Minimum of real, computed over the full array at parse time.",
     )
     real__max = Quantity(
         type=np.float64,
+        unit="dimensionless",
         description="Maximum of real, computed over the full array at parse time.",
     )
     real__size = Quantity(
@@ -1102,10 +1136,12 @@ class ImageImage4d(Data):
     )
     imag__min = Quantity(
         type=np.float64,
+        unit="dimensionless",
         description="Minimum of imag, computed over the full array at parse time.",
     )
     imag__max = Quantity(
         type=np.float64,
+        unit="dimensionless",
         description="Maximum of imag, computed over the full array at parse time.",
     )
     imag__size = Quantity(
@@ -1154,10 +1190,12 @@ class ImageImage4d(Data):
     )
     axis_m__min = Quantity(
         type=np.float64,
+        flexible_unit=True,
         description="Minimum of axis_m, computed over the full array at parse time.",
     )
     axis_m__max = Quantity(
         type=np.float64,
+        flexible_unit=True,
         description="Maximum of axis_m, computed over the full array at parse time.",
     )
     axis_m__size = Quantity(
@@ -1206,10 +1244,12 @@ class ImageImage4d(Data):
     )
     axis_k__min = Quantity(
         type=np.float64,
+        flexible_unit=True,
         description="Minimum of axis_k, computed over the full array at parse time.",
     )
     axis_k__max = Quantity(
         type=np.float64,
+        flexible_unit=True,
         description="Maximum of axis_k, computed over the full array at parse time.",
     )
     axis_k__size = Quantity(
@@ -1258,10 +1298,12 @@ class ImageImage4d(Data):
     )
     axis_j__min = Quantity(
         type=np.float64,
+        flexible_unit=True,
         description="Minimum of axis_j, computed over the full array at parse time.",
     )
     axis_j__max = Quantity(
         type=np.float64,
+        flexible_unit=True,
         description="Maximum of axis_j, computed over the full array at parse time.",
     )
     axis_j__size = Quantity(
@@ -1310,10 +1352,12 @@ class ImageImage4d(Data):
     )
     axis_i__min = Quantity(
         type=np.float64,
+        flexible_unit=True,
         description="Minimum of axis_i, computed over the full array at parse time.",
     )
     axis_i__max = Quantity(
         type=np.float64,
+        flexible_unit=True,
         description="Maximum of axis_i, computed over the full array at parse time.",
     )
     axis_i__size = Quantity(
@@ -1382,10 +1426,12 @@ class ImageStack1d(Data):
     )
     intensity__min = Quantity(
         type=np.float64,
+        unit="dimensionless",
         description="Minimum of intensity, computed over the full array at parse time.",
     )
     intensity__max = Quantity(
         type=np.float64,
+        unit="dimensionless",
         description="Maximum of intensity, computed over the full array at parse time.",
     )
     intensity__size = Quantity(
@@ -1412,10 +1458,12 @@ class ImageStack1d(Data):
     )
     real__min = Quantity(
         type=np.float64,
+        unit="dimensionless",
         description="Minimum of real, computed over the full array at parse time.",
     )
     real__max = Quantity(
         type=np.float64,
+        unit="dimensionless",
         description="Maximum of real, computed over the full array at parse time.",
     )
     real__size = Quantity(
@@ -1442,10 +1490,12 @@ class ImageStack1d(Data):
     )
     imag__min = Quantity(
         type=np.float64,
+        unit="dimensionless",
         description="Minimum of imag, computed over the full array at parse time.",
     )
     imag__max = Quantity(
         type=np.float64,
+        unit="dimensionless",
         description="Maximum of imag, computed over the full array at parse time.",
     )
     imag__size = Quantity(
@@ -1489,10 +1539,12 @@ class ImageStack1d(Data):
     )
     indices_group__min = Quantity(
         type=np.int64,
+        unit="dimensionless",
         description="Minimum of indices_group, computed over the full array at parse time.",
     )
     indices_group__max = Quantity(
         type=np.int64,
+        unit="dimensionless",
         description="Maximum of indices_group, computed over the full array at parse time.",
     )
     indices_group__size = Quantity(
@@ -1536,10 +1588,12 @@ class ImageStack1d(Data):
     )
     indices_image__min = Quantity(
         type=np.int64,
+        unit="dimensionless",
         description="Minimum of indices_image, computed over the full array at parse time.",
     )
     indices_image__max = Quantity(
         type=np.int64,
+        unit="dimensionless",
         description="Maximum of indices_image, computed over the full array at parse time.",
     )
     indices_image__size = Quantity(
@@ -1588,10 +1642,12 @@ class ImageStack1d(Data):
     )
     axis_i__min = Quantity(
         type=np.float64,
+        flexible_unit=True,
         description="Minimum of axis_i, computed over the full array at parse time.",
     )
     axis_i__max = Quantity(
         type=np.float64,
+        flexible_unit=True,
         description="Maximum of axis_i, computed over the full array at parse time.",
     )
     axis_i__size = Quantity(
@@ -1660,10 +1716,12 @@ class ImageStack2d(Data):
     )
     intensity__min = Quantity(
         type=np.float64,
+        unit="dimensionless",
         description="Minimum of intensity, computed over the full array at parse time.",
     )
     intensity__max = Quantity(
         type=np.float64,
+        unit="dimensionless",
         description="Maximum of intensity, computed over the full array at parse time.",
     )
     intensity__size = Quantity(
@@ -1690,10 +1748,12 @@ class ImageStack2d(Data):
     )
     real__min = Quantity(
         type=np.float64,
+        unit="dimensionless",
         description="Minimum of real, computed over the full array at parse time.",
     )
     real__max = Quantity(
         type=np.float64,
+        unit="dimensionless",
         description="Maximum of real, computed over the full array at parse time.",
     )
     real__size = Quantity(
@@ -1720,10 +1780,12 @@ class ImageStack2d(Data):
     )
     imag__min = Quantity(
         type=np.float64,
+        unit="dimensionless",
         description="Minimum of imag, computed over the full array at parse time.",
     )
     imag__max = Quantity(
         type=np.float64,
+        unit="dimensionless",
         description="Maximum of imag, computed over the full array at parse time.",
     )
     imag__size = Quantity(
@@ -1767,10 +1829,12 @@ class ImageStack2d(Data):
     )
     indices_group__min = Quantity(
         type=np.int64,
+        unit="dimensionless",
         description="Minimum of indices_group, computed over the full array at parse time.",
     )
     indices_group__max = Quantity(
         type=np.int64,
+        unit="dimensionless",
         description="Maximum of indices_group, computed over the full array at parse time.",
     )
     indices_group__size = Quantity(
@@ -1814,10 +1878,12 @@ class ImageStack2d(Data):
     )
     indices_image__min = Quantity(
         type=np.int64,
+        unit="dimensionless",
         description="Minimum of indices_image, computed over the full array at parse time.",
     )
     indices_image__max = Quantity(
         type=np.int64,
+        unit="dimensionless",
         description="Maximum of indices_image, computed over the full array at parse time.",
     )
     indices_image__size = Quantity(
@@ -1866,10 +1932,12 @@ class ImageStack2d(Data):
     )
     axis_j__min = Quantity(
         type=np.float64,
+        flexible_unit=True,
         description="Minimum of axis_j, computed over the full array at parse time.",
     )
     axis_j__max = Quantity(
         type=np.float64,
+        flexible_unit=True,
         description="Maximum of axis_j, computed over the full array at parse time.",
     )
     axis_j__size = Quantity(
@@ -1918,10 +1986,12 @@ class ImageStack2d(Data):
     )
     axis_i__min = Quantity(
         type=np.float64,
+        flexible_unit=True,
         description="Minimum of axis_i, computed over the full array at parse time.",
     )
     axis_i__max = Quantity(
         type=np.float64,
+        flexible_unit=True,
         description="Maximum of axis_i, computed over the full array at parse time.",
     )
     axis_i__size = Quantity(
@@ -1990,10 +2060,12 @@ class ImageStack3d(Data):
     )
     intensity__min = Quantity(
         type=np.float64,
+        unit="dimensionless",
         description="Minimum of intensity, computed over the full array at parse time.",
     )
     intensity__max = Quantity(
         type=np.float64,
+        unit="dimensionless",
         description="Maximum of intensity, computed over the full array at parse time.",
     )
     intensity__size = Quantity(
@@ -2020,10 +2092,12 @@ class ImageStack3d(Data):
     )
     real__min = Quantity(
         type=np.float64,
+        unit="dimensionless",
         description="Minimum of real, computed over the full array at parse time.",
     )
     real__max = Quantity(
         type=np.float64,
+        unit="dimensionless",
         description="Maximum of real, computed over the full array at parse time.",
     )
     real__size = Quantity(
@@ -2050,10 +2124,12 @@ class ImageStack3d(Data):
     )
     imag__min = Quantity(
         type=np.float64,
+        unit="dimensionless",
         description="Minimum of imag, computed over the full array at parse time.",
     )
     imag__max = Quantity(
         type=np.float64,
+        unit="dimensionless",
         description="Maximum of imag, computed over the full array at parse time.",
     )
     imag__size = Quantity(
@@ -2097,10 +2173,12 @@ class ImageStack3d(Data):
     )
     indices_group__min = Quantity(
         type=np.int64,
+        unit="dimensionless",
         description="Minimum of indices_group, computed over the full array at parse time.",
     )
     indices_group__max = Quantity(
         type=np.int64,
+        unit="dimensionless",
         description="Maximum of indices_group, computed over the full array at parse time.",
     )
     indices_group__size = Quantity(
@@ -2144,10 +2222,12 @@ class ImageStack3d(Data):
     )
     indices_image__min = Quantity(
         type=np.int64,
+        unit="dimensionless",
         description="Minimum of indices_image, computed over the full array at parse time.",
     )
     indices_image__max = Quantity(
         type=np.int64,
+        unit="dimensionless",
         description="Maximum of indices_image, computed over the full array at parse time.",
     )
     indices_image__size = Quantity(
@@ -2196,10 +2276,12 @@ class ImageStack3d(Data):
     )
     axis_k__min = Quantity(
         type=np.float64,
+        flexible_unit=True,
         description="Minimum of axis_k, computed over the full array at parse time.",
     )
     axis_k__max = Quantity(
         type=np.float64,
+        flexible_unit=True,
         description="Maximum of axis_k, computed over the full array at parse time.",
     )
     axis_k__size = Quantity(
@@ -2248,10 +2330,12 @@ class ImageStack3d(Data):
     )
     axis_j__min = Quantity(
         type=np.float64,
+        flexible_unit=True,
         description="Minimum of axis_j, computed over the full array at parse time.",
     )
     axis_j__max = Quantity(
         type=np.float64,
+        flexible_unit=True,
         description="Maximum of axis_j, computed over the full array at parse time.",
     )
     axis_j__size = Quantity(
@@ -2300,10 +2384,12 @@ class ImageStack3d(Data):
     )
     axis_i__min = Quantity(
         type=np.float64,
+        flexible_unit=True,
         description="Minimum of axis_i, computed over the full array at parse time.",
     )
     axis_i__max = Quantity(
         type=np.float64,
+        flexible_unit=True,
         description="Maximum of axis_i, computed over the full array at parse time.",
     )
     axis_i__size = Quantity(

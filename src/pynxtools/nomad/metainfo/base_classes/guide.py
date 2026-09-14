@@ -508,10 +508,12 @@ class GuideReflectivity(Data):
     )
     surface__min = Quantity(
         type=np.float64,
+        flexible_unit=True,
         description="Minimum of surface, computed over the full array at parse time.",
     )
     surface__max = Quantity(
         type=np.float64,
+        flexible_unit=True,
         description="Maximum of surface, computed over the full array at parse time.",
     )
     surface__size = Quantity(
@@ -538,10 +540,12 @@ class GuideReflectivity(Data):
     )
     wavelength__min = Quantity(
         type=np.float64,
+        unit="angstrom",
         description="Minimum of wavelength, computed over the full array at parse time.",
     )
     wavelength__max = Quantity(
         type=np.float64,
+        unit="angstrom",
         description="Maximum of wavelength, computed over the full array at parse time.",
     )
     wavelength__size = Quantity(

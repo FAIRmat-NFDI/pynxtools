@@ -1070,10 +1070,12 @@ class MicrostructureScoreResultsSpatiotemporalIDSummaryStatisticsKinetics(Data):
     )
     time__min = Quantity(
         type=np.float64,
+        unit="second",
         description="Minimum of time, computed over the full array at parse time.",
     )
     time__max = Quantity(
         type=np.float64,
+        unit="second",
         description="Maximum of time, computed over the full array at parse time.",
     )
     time__size = Quantity(
@@ -1100,10 +1102,12 @@ class MicrostructureScoreResultsSpatiotemporalIDSummaryStatisticsKinetics(Data):
     )
     iteration__min = Quantity(
         type=np.int64,
+        unit="dimensionless",
         description="Minimum of iteration, computed over the full array at parse time.",
     )
     iteration__max = Quantity(
         type=np.int64,
+        unit="dimensionless",
         description="Maximum of iteration, computed over the full array at parse time.",
     )
     iteration__size = Quantity(
@@ -1130,10 +1134,12 @@ class MicrostructureScoreResultsSpatiotemporalIDSummaryStatisticsKinetics(Data):
     )
     temperature__min = Quantity(
         type=np.float64,
+        unit="kelvin",
         description="Minimum of temperature, computed over the full array at parse time.",
     )
     temperature__max = Quantity(
         type=np.float64,
+        unit="kelvin",
         description="Maximum of temperature, computed over the full array at parse time.",
     )
     temperature__size = Quantity(
@@ -1160,10 +1166,12 @@ class MicrostructureScoreResultsSpatiotemporalIDSummaryStatisticsKinetics(Data):
     )
     x__min = Quantity(
         type=np.float64,
+        unit="dimensionless",
         description="Minimum of x, computed over the full array at parse time.",
     )
     x__max = Quantity(
         type=np.float64,
+        unit="dimensionless",
         description="Maximum of x, computed over the full array at parse time.",
     )
     x__size = Quantity(
@@ -1226,10 +1234,12 @@ class MicrostructureScoreResultsSpatiotemporalIDSummaryStatisticsStress(Data):
     )
     tensor__min = Quantity(
         type=np.float64,
+        flexible_unit=True,
         description="Minimum of tensor, computed over the full array at parse time.",
     )
     tensor__max = Quantity(
         type=np.float64,
+        flexible_unit=True,
         description="Maximum of tensor, computed over the full array at parse time.",
     )
     tensor__size = Quantity(
@@ -1290,10 +1300,12 @@ class MicrostructureScoreResultsSpatiotemporalIDSummaryStatisticsStrain(Data):
     )
     tensor__min = Quantity(
         type=np.float64,
+        flexible_unit=True,
         description="Minimum of tensor, computed over the full array at parse time.",
     )
     tensor__max = Quantity(
         type=np.float64,
+        flexible_unit=True,
         description="Maximum of tensor, computed over the full array at parse time.",
     )
     tensor__size = Quantity(

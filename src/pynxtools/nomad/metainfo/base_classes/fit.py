@@ -219,10 +219,12 @@ class FitData(Data):
     )
     input_independent__min = Quantity(
         type=np.float64,
+        flexible_unit=True,
         description="Minimum of input_independent, computed over the full array at parse time.",
     )
     input_independent__max = Quantity(
         type=np.float64,
+        flexible_unit=True,
         description="Maximum of input_independent, computed over the full array at parse time.",
     )
     input_independent__size = Quantity(
@@ -251,10 +253,12 @@ class FitData(Data):
     )
     input_dependent__min = Quantity(
         type=np.float64,
+        flexible_unit=True,
         description="Minimum of input_dependent, computed over the full array at parse time.",
     )
     input_dependent__max = Quantity(
         type=np.float64,
+        flexible_unit=True,
         description="Maximum of input_dependent, computed over the full array at parse time.",
     )
     input_dependent__size = Quantity(
@@ -286,10 +290,12 @@ class FitData(Data):
     )
     fit_sum__min = Quantity(
         type=np.float64,
+        flexible_unit=True,
         description="Minimum of fit_sum, computed over the full array at parse time.",
     )
     fit_sum__max = Quantity(
         type=np.float64,
+        flexible_unit=True,
         description="Maximum of fit_sum, computed over the full array at parse time.",
     )
     fit_sum__size = Quantity(
@@ -320,10 +326,12 @@ class FitData(Data):
     )
     residual__min = Quantity(
         type=np.float64,
+        flexible_unit=True,
         description="Minimum of residual, computed over the full array at parse time.",
     )
     residual__max = Quantity(
         type=np.float64,
+        flexible_unit=True,
         description="Maximum of residual, computed over the full array at parse time.",
     )
     residual__size = Quantity(

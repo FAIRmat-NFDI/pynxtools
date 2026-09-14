@@ -512,10 +512,12 @@ class TomoprocData(Data):
     )
     x__min = Quantity(
         type=np.float64,
+        flexible_unit=True,
         description="Minimum of x, computed over the full array at parse time.",
     )
     x__max = Quantity(
         type=np.float64,
+        flexible_unit=True,
         description="Maximum of x, computed over the full array at parse time.",
     )
     x__size = Quantity(
@@ -545,10 +547,12 @@ class TomoprocData(Data):
     )
     y__min = Quantity(
         type=np.float64,
+        flexible_unit=True,
         description="Minimum of y, computed over the full array at parse time.",
     )
     y__max = Quantity(
         type=np.float64,
+        flexible_unit=True,
         description="Maximum of y, computed over the full array at parse time.",
     )
     y__size = Quantity(
@@ -578,10 +582,12 @@ class TomoprocData(Data):
     )
     z__min = Quantity(
         type=np.float64,
+        flexible_unit=True,
         description="Minimum of z, computed over the full array at parse time.",
     )
     z__max = Quantity(
         type=np.float64,
+        flexible_unit=True,
         description="Maximum of z, computed over the full array at parse time.",
     )
     z__size = Quantity(

@@ -991,10 +991,12 @@ class ApmCompositionspaceResultsAutophaseResult(Data):
     )
     axis_feature_indices__min = Quantity(
         type=np.int64,
+        unit="dimensionless",
         description="Minimum of axis_feature_indices, computed over the full array at parse time.",
     )
     axis_feature_indices__max = Quantity(
         type=np.int64,
+        unit="dimensionless",
         description="Maximum of axis_feature_indices, computed over the full array at parse time.",
     )
     axis_feature_indices__size = Quantity(
@@ -1041,10 +1043,12 @@ class ApmCompositionspaceResultsAutophaseResult(Data):
     )
     axis_feature_importance__min = Quantity(
         type=np.float64,
+        unit="dimensionless",
         description="Minimum of axis_feature_importance, computed over the full array at parse time.",
     )
     axis_feature_importance__max = Quantity(
         type=np.float64,
+        unit="dimensionless",
         description="Maximum of axis_feature_importance, computed over the full array at parse time.",
     )
     axis_feature_importance__size = Quantity(
@@ -1240,10 +1244,12 @@ class ApmCompositionspaceResultsSegmentationPcaResult(Data):
     )
     axis_explained_variance__min = Quantity(
         type=np.float64,
+        unit="dimensionless",
         description="Minimum of axis_explained_variance, computed over the full array at parse time.",
     )
     axis_explained_variance__max = Quantity(
         type=np.float64,
+        unit="dimensionless",
         description="Maximum of axis_explained_variance, computed over the full array at parse time.",
     )
     axis_explained_variance__size = Quantity(
@@ -1273,10 +1279,12 @@ class ApmCompositionspaceResultsSegmentationPcaResult(Data):
     )
     axis_pca_dimension__min = Quantity(
         type=np.int64,
+        unit="dimensionless",
         description="Minimum of axis_pca_dimension, computed over the full array at parse time.",
     )
     axis_pca_dimension__max = Quantity(
         type=np.int64,
+        unit="dimensionless",
         description="Maximum of axis_pca_dimension, computed over the full array at parse time.",
     )
     axis_pca_dimension__size = Quantity(
@@ -1488,10 +1496,12 @@ class ApmCompositionspaceResultsSegmentationIcOptResult(Data):
     )
     axis_aic__min = Quantity(
         type=np.float64,
+        flexible_unit=True,
         description="Minimum of axis_aic, computed over the full array at parse time.",
     )
     axis_aic__max = Quantity(
         type=np.float64,
+        flexible_unit=True,
         description="Maximum of axis_aic, computed over the full array at parse time.",
     )
     axis_aic__size = Quantity(
@@ -1518,10 +1528,12 @@ class ApmCompositionspaceResultsSegmentationIcOptResult(Data):
     )
     axis_bic__min = Quantity(
         type=np.float64,
+        unit="dimensionless",
         description="Minimum of axis_bic, computed over the full array at parse time.",
     )
     axis_bic__max = Quantity(
         type=np.float64,
+        unit="dimensionless",
         description="Maximum of axis_bic, computed over the full array at parse time.",
     )
     axis_bic__size = Quantity(
@@ -1548,10 +1560,12 @@ class ApmCompositionspaceResultsSegmentationIcOptResult(Data):
     )
     axis_dimension__min = Quantity(
         type=np.int64,
+        unit="dimensionless",
         description="Minimum of axis_dimension, computed over the full array at parse time.",
     )
     axis_dimension__max = Quantity(
         type=np.int64,
+        unit="dimensionless",
         description="Maximum of axis_dimension, computed over the full array at parse time.",
     )
     axis_dimension__size = Quantity(

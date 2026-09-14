@@ -156,7 +156,7 @@ def test_arpes_example(arpes_archive):
     assert data.AXISNAME["angles"] is not None
     # Field statistics are computed at parse time for NXdata numeric arrays; this
     # covers the variadic MQuantity-wrapped stats path.
-    assert data.AXISNAME__max["angles__max"].value == 2.168025463513032
+    assert data.AXISNAME__max["angles__max"].value == pytest.approx(2.168025463513032)
     assert data.AXISNAME["angles"].value.endswith("#/entry/data/angles")
     assert data.AXISNAME["delays"].value.endswith("#/entry/data/delays")
     assert data.axes == ["angles", "energies", "delays"]

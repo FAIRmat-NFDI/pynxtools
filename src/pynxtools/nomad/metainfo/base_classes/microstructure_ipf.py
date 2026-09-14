@@ -299,10 +299,12 @@ class MicrostructureIpfMap(Data):
     )
     data_quantity__min = Quantity(
         type=np.float64,
+        unit="dimensionless",
         description="Minimum of data_quantity, computed over the full array at parse time.",
     )
     data_quantity__max = Quantity(
         type=np.float64,
+        unit="dimensionless",
         description="Maximum of data_quantity, computed over the full array at parse time.",
     )
     data_quantity__size = Quantity(
@@ -332,10 +334,12 @@ class MicrostructureIpfMap(Data):
     )
     axis_z__min = Quantity(
         type=np.float64,
+        unit="m",
         description="Minimum of axis_z, computed over the full array at parse time.",
     )
     axis_z__max = Quantity(
         type=np.float64,
+        unit="m",
         description="Maximum of axis_z, computed over the full array at parse time.",
     )
     axis_z__size = Quantity(
@@ -365,10 +369,12 @@ class MicrostructureIpfMap(Data):
     )
     axis_y__min = Quantity(
         type=np.float64,
+        unit="m",
         description="Minimum of axis_y, computed over the full array at parse time.",
     )
     axis_y__max = Quantity(
         type=np.float64,
+        unit="m",
         description="Maximum of axis_y, computed over the full array at parse time.",
     )
     axis_y__size = Quantity(
@@ -398,10 +404,12 @@ class MicrostructureIpfMap(Data):
     )
     axis_x__min = Quantity(
         type=np.float64,
+        unit="m",
         description="Minimum of axis_x, computed over the full array at parse time.",
     )
     axis_x__max = Quantity(
         type=np.float64,
+        unit="m",
         description="Maximum of axis_x, computed over the full array at parse time.",
     )
     axis_x__size = Quantity(
@@ -469,10 +477,12 @@ class MicrostructureIpfLegend(Data):
     )
     data_quantity__min = Quantity(
         type=np.float64,
+        flexible_unit=True,
         description="Minimum of data_quantity, computed over the full array at parse time.",
     )
     data_quantity__max = Quantity(
         type=np.float64,
+        flexible_unit=True,
         description="Maximum of data_quantity, computed over the full array at parse time.",
     )
     data_quantity__size = Quantity(
@@ -499,10 +509,12 @@ class MicrostructureIpfLegend(Data):
     )
     axis_y__min = Quantity(
         type=np.float64,
+        unit="dimensionless",
         description="Minimum of axis_y, computed over the full array at parse time.",
     )
     axis_y__max = Quantity(
         type=np.float64,
+        unit="dimensionless",
         description="Maximum of axis_y, computed over the full array at parse time.",
     )
     axis_y__size = Quantity(
@@ -529,10 +541,12 @@ class MicrostructureIpfLegend(Data):
     )
     axis_x__min = Quantity(
         type=np.float64,
+        unit="dimensionless",
         description="Minimum of axis_x, computed over the full array at parse time.",
     )
     axis_x__max = Quantity(
         type=np.float64,
+        unit="dimensionless",
         description="Maximum of axis_x, computed over the full array at parse time.",
     )
     axis_x__size = Quantity(

@@ -502,8 +502,7 @@ some_attr = Quantity(
 )
 ```
 
-**Fields** become `HDF5Reference`-typed instead, whenever they are array-valued —
-either because the NXDL declares `<dimensions>`, or, inside an `NXdata`-derived class, because rank is only known at parse time (e.g. `NXdata`'s own `DATA`/`AXISNAME` fields, which declare no `<dimensions>` at all). The array is never copied into the archive. The `Quantity` instead stores a reference string to the dataset in the source HDF5/NeXus file (`<file>#/<hdf5_path>`), resolved at parse time in `pynxtools/nomad/parsers/parser_v2.py`. `shape`, `unit`, `dimensionality`, and `flexible_unit` don't apply to a reference and are omitted. No ELN component is attached — there is nothing to edit.
+**Fields** become `HDF5Reference`-typed instead, whenever they are array-valued — either because the NXDL declares `<dimensions>`, or, inside an `NXdata`-derived class, because rank is only known at parse time (e.g. `NXdata`'s own `DATA`/`AXISNAME` fields, which declare no `<dimensions>` at all). The array is never copied into the archive. The `Quantity` instead stores a reference string to the dataset in the source HDF5/NeXus file (`<file>#/<hdf5_path>`), resolved at parse time in pynxtools's NOMAD parser. `shape`, `unit`, `dimensionality`, and `flexible_unit` don't apply to a reference and are omitted. No ELN component is attached — there is nothing to edit.
 
 ```python
 # NXDL: <field name="data" type="NX_FLOAT" units="NX_ANY"> inside an NXdata group
@@ -532,7 +531,6 @@ A NXDL `<field>`'s `@units` category (e.g. `NX_ENERGY`) maps to `dimensionality`
 # NXDL: <field name="energy" type="NX_FLOAT" units="NX_ENERGY">
 energy = Quantity(
     type=np.float64,
-    dimensionality="[mass] * [length] ** 2 / [time] ** 2",
     unit="joule",
     ...
 )

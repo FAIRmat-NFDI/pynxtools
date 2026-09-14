@@ -210,10 +210,12 @@ class EmEdsIndexingSummary(Data):
     )
     intensity__min = Quantity(
         type=np.float64,
+        unit="dimensionless",
         description="Minimum of intensity, computed over the full array at parse time.",
     )
     intensity__max = Quantity(
         type=np.float64,
+        unit="dimensionless",
         description="Maximum of intensity, computed over the full array at parse time.",
     )
     intensity__size = Quantity(
@@ -257,10 +259,12 @@ class EmEdsIndexingSummary(Data):
     )
     axis_energy__min = Quantity(
         type=np.float64,
+        unit="eV",
         description="Minimum of axis_energy, computed over the full array at parse time.",
     )
     axis_energy__max = Quantity(
         type=np.float64,
+        unit="eV",
         description="Maximum of axis_energy, computed over the full array at parse time.",
     )
     axis_energy__size = Quantity(

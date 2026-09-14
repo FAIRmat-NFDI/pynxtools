@@ -807,10 +807,12 @@ class ElectronanalyzerTransmissionFunction(Data):
     )
     kinetic_energy__min = Quantity(
         type=np.float64,
+        unit="eV",
         description="Minimum of kinetic_energy, computed over the full array at parse time.",
     )
     kinetic_energy__max = Quantity(
         type=np.float64,
+        unit="eV",
         description="Maximum of kinetic_energy, computed over the full array at parse time.",
     )
     kinetic_energy__size = Quantity(
@@ -837,10 +839,12 @@ class ElectronanalyzerTransmissionFunction(Data):
     )
     relative_intensity__min = Quantity(
         type=np.float64,
+        unit="dimensionless",
         description="Minimum of relative_intensity, computed over the full array at parse time.",
     )
     relative_intensity__max = Quantity(
         type=np.float64,
+        unit="dimensionless",
         description="Maximum of relative_intensity, computed over the full array at parse time.",
     )
     relative_intensity__size = Quantity(

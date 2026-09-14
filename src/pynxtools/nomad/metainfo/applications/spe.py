@@ -256,10 +256,12 @@ class SpeData(Data):
     )
     azimuthal__min = Quantity(
         type=np.float64,
+        unit="radian",
         description="Minimum of azimuthal, computed over the full array at parse time.",
     )
     azimuthal__max = Quantity(
         type=np.float64,
+        unit="radian",
         description="Maximum of azimuthal, computed over the full array at parse time.",
     )
     azimuthal__size = Quantity(
@@ -285,10 +287,12 @@ class SpeData(Data):
     )
     azimuthal_width__min = Quantity(
         type=np.float64,
+        unit="radian",
         description="Minimum of azimuthal_width, computed over the full array at parse time.",
     )
     azimuthal_width__max = Quantity(
         type=np.float64,
+        unit="radian",
         description="Maximum of azimuthal_width, computed over the full array at parse time.",
     )
     azimuthal_width__size = Quantity(
@@ -314,10 +318,12 @@ class SpeData(Data):
     )
     polar__min = Quantity(
         type=np.float64,
+        unit="radian",
         description="Minimum of polar, computed over the full array at parse time.",
     )
     polar__max = Quantity(
         type=np.float64,
+        unit="radian",
         description="Maximum of polar, computed over the full array at parse time.",
     )
     polar__size = Quantity(
@@ -343,10 +349,12 @@ class SpeData(Data):
     )
     polar_width__min = Quantity(
         type=np.float64,
+        unit="radian",
         description="Minimum of polar_width, computed over the full array at parse time.",
     )
     polar_width__max = Quantity(
         type=np.float64,
+        unit="radian",
         description="Maximum of polar_width, computed over the full array at parse time.",
     )
     polar_width__size = Quantity(
@@ -372,10 +380,12 @@ class SpeData(Data):
     )
     distance__min = Quantity(
         type=np.float64,
+        unit="m",
         description="Minimum of distance, computed over the full array at parse time.",
     )
     distance__max = Quantity(
         type=np.float64,
+        unit="m",
         description="Maximum of distance, computed over the full array at parse time.",
     )
     distance__size = Quantity(
@@ -457,10 +467,12 @@ class SpeData(Data):
     )
     energy__min = Quantity(
         type=np.float64,
+        unit="eV",
         description="Minimum of energy, computed over the full array at parse time.",
     )
     energy__max = Quantity(
         type=np.float64,
+        unit="eV",
         description="Maximum of energy, computed over the full array at parse time.",
     )
     energy__size = Quantity(

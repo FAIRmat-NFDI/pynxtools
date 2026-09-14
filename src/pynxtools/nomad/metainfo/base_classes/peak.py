@@ -172,10 +172,12 @@ class PeakData(Data):
     )
     position__min = Quantity(
         type=np.float64,
+        flexible_unit=True,
         description="Minimum of position, computed over the full array at parse time.",
     )
     position__max = Quantity(
         type=np.float64,
+        flexible_unit=True,
         description="Maximum of position, computed over the full array at parse time.",
     )
     position__size = Quantity(
@@ -205,10 +207,12 @@ class PeakData(Data):
     )
     intensity__min = Quantity(
         type=np.float64,
+        flexible_unit=True,
         description="Minimum of intensity, computed over the full array at parse time.",
     )
     intensity__max = Quantity(
         type=np.float64,
+        flexible_unit=True,
         description="Maximum of intensity, computed over the full array at parse time.",
     )
     intensity__size = Quantity(

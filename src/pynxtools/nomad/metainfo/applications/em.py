@@ -5459,10 +5459,12 @@ class EmMeasurementEventIDImageIDImage1d(Data):
     )
     real__min = Quantity(
         type=np.float64,
+        unit="dimensionless",
         description="Minimum of real, computed over the full array at parse time.",
     )
     real__max = Quantity(
         type=np.float64,
+        unit="dimensionless",
         description="Maximum of real, computed over the full array at parse time.",
     )
     real__size = Quantity(
@@ -5504,10 +5506,12 @@ class EmMeasurementEventIDImageIDImage1d(Data):
     )
     imag__min = Quantity(
         type=np.float64,
+        unit="dimensionless",
         description="Minimum of imag, computed over the full array at parse time.",
     )
     imag__max = Quantity(
         type=np.float64,
+        unit="dimensionless",
         description="Maximum of imag, computed over the full array at parse time.",
     )
     imag__size = Quantity(
@@ -5549,10 +5553,12 @@ class EmMeasurementEventIDImageIDImage1d(Data):
     )
     intensity__min = Quantity(
         type=np.float64,
+        unit="dimensionless",
         description="Minimum of intensity, computed over the full array at parse time.",
     )
     intensity__max = Quantity(
         type=np.float64,
+        unit="dimensionless",
         description="Maximum of intensity, computed over the full array at parse time.",
     )
     intensity__size = Quantity(
@@ -5623,10 +5629,12 @@ class EmMeasurementEventIDImageIDImage1d(Data):
     )
     axis_i__min = Quantity(
         type=np.float64,
+        flexible_unit=True,
         description="Minimum of axis_i, computed over the full array at parse time.",
     )
     axis_i__max = Quantity(
         type=np.float64,
+        flexible_unit=True,
         description="Maximum of axis_i, computed over the full array at parse time.",
     )
     axis_i__size = Quantity(
@@ -5742,10 +5750,12 @@ class EmMeasurementEventIDImageIDImage2d(Data):
     )
     real__min = Quantity(
         type=np.float64,
+        unit="dimensionless",
         description="Minimum of real, computed over the full array at parse time.",
     )
     real__max = Quantity(
         type=np.float64,
+        unit="dimensionless",
         description="Maximum of real, computed over the full array at parse time.",
     )
     real__size = Quantity(
@@ -5787,10 +5797,12 @@ class EmMeasurementEventIDImageIDImage2d(Data):
     )
     imag__min = Quantity(
         type=np.float64,
+        unit="dimensionless",
         description="Minimum of imag, computed over the full array at parse time.",
     )
     imag__max = Quantity(
         type=np.float64,
+        unit="dimensionless",
         description="Maximum of imag, computed over the full array at parse time.",
     )
     imag__size = Quantity(
@@ -5832,10 +5844,12 @@ class EmMeasurementEventIDImageIDImage2d(Data):
     )
     intensity__min = Quantity(
         type=np.float64,
+        unit="dimensionless",
         description="Minimum of intensity, computed over the full array at parse time.",
     )
     intensity__max = Quantity(
         type=np.float64,
+        unit="dimensionless",
         description="Maximum of intensity, computed over the full array at parse time.",
     )
     intensity__size = Quantity(
@@ -5905,10 +5919,12 @@ class EmMeasurementEventIDImageIDImage2d(Data):
     )
     axis_j__min = Quantity(
         type=np.float64,
+        flexible_unit=True,
         description="Minimum of axis_j, computed over the full array at parse time.",
     )
     axis_j__max = Quantity(
         type=np.float64,
+        flexible_unit=True,
         description="Maximum of axis_j, computed over the full array at parse time.",
     )
     axis_j__size = Quantity(
@@ -5950,10 +5966,12 @@ class EmMeasurementEventIDImageIDImage2d(Data):
     )
     axis_i__min = Quantity(
         type=np.float64,
+        flexible_unit=True,
         description="Minimum of axis_i, computed over the full array at parse time.",
     )
     axis_i__max = Quantity(
         type=np.float64,
+        flexible_unit=True,
         description="Maximum of axis_i, computed over the full array at parse time.",
     )
     axis_i__size = Quantity(
@@ -6069,10 +6087,12 @@ class EmMeasurementEventIDImageIDImage3d(Data):
     )
     real__min = Quantity(
         type=np.float64,
+        unit="dimensionless",
         description="Minimum of real, computed over the full array at parse time.",
     )
     real__max = Quantity(
         type=np.float64,
+        unit="dimensionless",
         description="Maximum of real, computed over the full array at parse time.",
     )
     real__size = Quantity(
@@ -6114,10 +6134,12 @@ class EmMeasurementEventIDImageIDImage3d(Data):
     )
     imag__min = Quantity(
         type=np.float64,
+        unit="dimensionless",
         description="Minimum of imag, computed over the full array at parse time.",
     )
     imag__max = Quantity(
         type=np.float64,
+        unit="dimensionless",
         description="Maximum of imag, computed over the full array at parse time.",
     )
     imag__size = Quantity(
@@ -6159,10 +6181,12 @@ class EmMeasurementEventIDImageIDImage3d(Data):
     )
     intensity__min = Quantity(
         type=np.float64,
+        unit="dimensionless",
         description="Minimum of intensity, computed over the full array at parse time.",
     )
     intensity__max = Quantity(
         type=np.float64,
+        unit="dimensionless",
         description="Maximum of intensity, computed over the full array at parse time.",
     )
     intensity__size = Quantity(
@@ -6233,10 +6257,12 @@ class EmMeasurementEventIDImageIDImage3d(Data):
     )
     axis_k__min = Quantity(
         type=np.float64,
+        flexible_unit=True,
         description="Minimum of axis_k, computed over the full array at parse time.",
     )
     axis_k__max = Quantity(
         type=np.float64,
+        flexible_unit=True,
         description="Maximum of axis_k, computed over the full array at parse time.",
     )
     axis_k__size = Quantity(
@@ -6278,10 +6304,12 @@ class EmMeasurementEventIDImageIDImage3d(Data):
     )
     axis_j__min = Quantity(
         type=np.float64,
+        flexible_unit=True,
         description="Minimum of axis_j, computed over the full array at parse time.",
     )
     axis_j__max = Quantity(
         type=np.float64,
+        flexible_unit=True,
         description="Maximum of axis_j, computed over the full array at parse time.",
     )
     axis_j__size = Quantity(
@@ -6323,10 +6351,12 @@ class EmMeasurementEventIDImageIDImage3d(Data):
     )
     axis_i__min = Quantity(
         type=np.float64,
+        flexible_unit=True,
         description="Minimum of axis_i, computed over the full array at parse time.",
     )
     axis_i__max = Quantity(
         type=np.float64,
+        flexible_unit=True,
         description="Maximum of axis_i, computed over the full array at parse time.",
     )
     axis_i__size = Quantity(
@@ -6442,10 +6472,12 @@ class EmMeasurementEventIDImageIDImage4d(Data):
     )
     real__min = Quantity(
         type=np.float64,
+        unit="dimensionless",
         description="Minimum of real, computed over the full array at parse time.",
     )
     real__max = Quantity(
         type=np.float64,
+        unit="dimensionless",
         description="Maximum of real, computed over the full array at parse time.",
     )
     real__size = Quantity(
@@ -6487,10 +6519,12 @@ class EmMeasurementEventIDImageIDImage4d(Data):
     )
     imag__min = Quantity(
         type=np.float64,
+        unit="dimensionless",
         description="Minimum of imag, computed over the full array at parse time.",
     )
     imag__max = Quantity(
         type=np.float64,
+        unit="dimensionless",
         description="Maximum of imag, computed over the full array at parse time.",
     )
     imag__size = Quantity(
@@ -6532,10 +6566,12 @@ class EmMeasurementEventIDImageIDImage4d(Data):
     )
     intensity__min = Quantity(
         type=np.float64,
+        unit="dimensionless",
         description="Minimum of intensity, computed over the full array at parse time.",
     )
     intensity__max = Quantity(
         type=np.float64,
+        unit="dimensionless",
         description="Maximum of intensity, computed over the full array at parse time.",
     )
     intensity__size = Quantity(
@@ -6606,10 +6642,12 @@ class EmMeasurementEventIDImageIDImage4d(Data):
     )
     axis_m__min = Quantity(
         type=np.float64,
+        flexible_unit=True,
         description="Minimum of axis_m, computed over the full array at parse time.",
     )
     axis_m__max = Quantity(
         type=np.float64,
+        flexible_unit=True,
         description="Maximum of axis_m, computed over the full array at parse time.",
     )
     axis_m__size = Quantity(
@@ -6651,10 +6689,12 @@ class EmMeasurementEventIDImageIDImage4d(Data):
     )
     axis_k__min = Quantity(
         type=np.float64,
+        flexible_unit=True,
         description="Minimum of axis_k, computed over the full array at parse time.",
     )
     axis_k__max = Quantity(
         type=np.float64,
+        flexible_unit=True,
         description="Maximum of axis_k, computed over the full array at parse time.",
     )
     axis_k__size = Quantity(
@@ -6696,10 +6736,12 @@ class EmMeasurementEventIDImageIDImage4d(Data):
     )
     axis_j__min = Quantity(
         type=np.float64,
+        flexible_unit=True,
         description="Minimum of axis_j, computed over the full array at parse time.",
     )
     axis_j__max = Quantity(
         type=np.float64,
+        flexible_unit=True,
         description="Maximum of axis_j, computed over the full array at parse time.",
     )
     axis_j__size = Quantity(
@@ -6741,10 +6783,12 @@ class EmMeasurementEventIDImageIDImage4d(Data):
     )
     axis_i__min = Quantity(
         type=np.float64,
+        flexible_unit=True,
         description="Minimum of axis_i, computed over the full array at parse time.",
     )
     axis_i__max = Quantity(
         type=np.float64,
+        flexible_unit=True,
         description="Maximum of axis_i, computed over the full array at parse time.",
     )
     axis_i__size = Quantity(
@@ -6860,10 +6904,12 @@ class EmMeasurementEventIDImageIDStack1d(Data):
     )
     real__min = Quantity(
         type=np.float64,
+        unit="dimensionless",
         description="Minimum of real, computed over the full array at parse time.",
     )
     real__max = Quantity(
         type=np.float64,
+        unit="dimensionless",
         description="Maximum of real, computed over the full array at parse time.",
     )
     real__size = Quantity(
@@ -6905,10 +6951,12 @@ class EmMeasurementEventIDImageIDStack1d(Data):
     )
     imag__min = Quantity(
         type=np.float64,
+        unit="dimensionless",
         description="Minimum of imag, computed over the full array at parse time.",
     )
     imag__max = Quantity(
         type=np.float64,
+        unit="dimensionless",
         description="Maximum of imag, computed over the full array at parse time.",
     )
     imag__size = Quantity(
@@ -6950,10 +6998,12 @@ class EmMeasurementEventIDImageIDStack1d(Data):
     )
     intensity__min = Quantity(
         type=np.float64,
+        unit="dimensionless",
         description="Minimum of intensity, computed over the full array at parse time.",
     )
     intensity__max = Quantity(
         type=np.float64,
+        unit="dimensionless",
         description="Maximum of intensity, computed over the full array at parse time.",
     )
     intensity__size = Quantity(
@@ -7024,10 +7074,12 @@ class EmMeasurementEventIDImageIDStack1d(Data):
     )
     indices_group__min = Quantity(
         type=np.int64,
+        unit="dimensionless",
         description="Minimum of indices_group, computed over the full array at parse time.",
     )
     indices_group__max = Quantity(
         type=np.int64,
+        unit="dimensionless",
         description="Maximum of indices_group, computed over the full array at parse time.",
     )
     indices_group__size = Quantity(
@@ -7069,10 +7121,12 @@ class EmMeasurementEventIDImageIDStack1d(Data):
     )
     indices_image__min = Quantity(
         type=np.int64,
+        unit="dimensionless",
         description="Minimum of indices_image, computed over the full array at parse time.",
     )
     indices_image__max = Quantity(
         type=np.int64,
+        unit="dimensionless",
         description="Maximum of indices_image, computed over the full array at parse time.",
     )
     indices_image__size = Quantity(
@@ -7114,10 +7168,12 @@ class EmMeasurementEventIDImageIDStack1d(Data):
     )
     axis_i__min = Quantity(
         type=np.float64,
+        flexible_unit=True,
         description="Minimum of axis_i, computed over the full array at parse time.",
     )
     axis_i__max = Quantity(
         type=np.float64,
+        flexible_unit=True,
         description="Maximum of axis_i, computed over the full array at parse time.",
     )
     axis_i__size = Quantity(
@@ -7233,10 +7289,12 @@ class EmMeasurementEventIDImageIDStack2d(Data):
     )
     real__min = Quantity(
         type=np.float64,
+        unit="dimensionless",
         description="Minimum of real, computed over the full array at parse time.",
     )
     real__max = Quantity(
         type=np.float64,
+        unit="dimensionless",
         description="Maximum of real, computed over the full array at parse time.",
     )
     real__size = Quantity(
@@ -7278,10 +7336,12 @@ class EmMeasurementEventIDImageIDStack2d(Data):
     )
     imag__min = Quantity(
         type=np.float64,
+        unit="dimensionless",
         description="Minimum of imag, computed over the full array at parse time.",
     )
     imag__max = Quantity(
         type=np.float64,
+        unit="dimensionless",
         description="Maximum of imag, computed over the full array at parse time.",
     )
     imag__size = Quantity(
@@ -7323,10 +7383,12 @@ class EmMeasurementEventIDImageIDStack2d(Data):
     )
     intensity__min = Quantity(
         type=np.float64,
+        unit="dimensionless",
         description="Minimum of intensity, computed over the full array at parse time.",
     )
     intensity__max = Quantity(
         type=np.float64,
+        unit="dimensionless",
         description="Maximum of intensity, computed over the full array at parse time.",
     )
     intensity__size = Quantity(
@@ -7397,10 +7459,12 @@ class EmMeasurementEventIDImageIDStack2d(Data):
     )
     indices_group__min = Quantity(
         type=np.int64,
+        unit="dimensionless",
         description="Minimum of indices_group, computed over the full array at parse time.",
     )
     indices_group__max = Quantity(
         type=np.int64,
+        unit="dimensionless",
         description="Maximum of indices_group, computed over the full array at parse time.",
     )
     indices_group__size = Quantity(
@@ -7442,10 +7506,12 @@ class EmMeasurementEventIDImageIDStack2d(Data):
     )
     indices_image__min = Quantity(
         type=np.int64,
+        unit="dimensionless",
         description="Minimum of indices_image, computed over the full array at parse time.",
     )
     indices_image__max = Quantity(
         type=np.int64,
+        unit="dimensionless",
         description="Maximum of indices_image, computed over the full array at parse time.",
     )
     indices_image__size = Quantity(
@@ -7487,10 +7553,12 @@ class EmMeasurementEventIDImageIDStack2d(Data):
     )
     axis_j__min = Quantity(
         type=np.float64,
+        flexible_unit=True,
         description="Minimum of axis_j, computed over the full array at parse time.",
     )
     axis_j__max = Quantity(
         type=np.float64,
+        flexible_unit=True,
         description="Maximum of axis_j, computed over the full array at parse time.",
     )
     axis_j__size = Quantity(
@@ -7532,10 +7600,12 @@ class EmMeasurementEventIDImageIDStack2d(Data):
     )
     axis_i__min = Quantity(
         type=np.float64,
+        flexible_unit=True,
         description="Minimum of axis_i, computed over the full array at parse time.",
     )
     axis_i__max = Quantity(
         type=np.float64,
+        flexible_unit=True,
         description="Maximum of axis_i, computed over the full array at parse time.",
     )
     axis_i__size = Quantity(
@@ -7651,10 +7721,12 @@ class EmMeasurementEventIDImageIDStack3d(Data):
     )
     real__min = Quantity(
         type=np.float64,
+        unit="dimensionless",
         description="Minimum of real, computed over the full array at parse time.",
     )
     real__max = Quantity(
         type=np.float64,
+        unit="dimensionless",
         description="Maximum of real, computed over the full array at parse time.",
     )
     real__size = Quantity(
@@ -7696,10 +7768,12 @@ class EmMeasurementEventIDImageIDStack3d(Data):
     )
     imag__min = Quantity(
         type=np.float64,
+        unit="dimensionless",
         description="Minimum of imag, computed over the full array at parse time.",
     )
     imag__max = Quantity(
         type=np.float64,
+        unit="dimensionless",
         description="Maximum of imag, computed over the full array at parse time.",
     )
     imag__size = Quantity(
@@ -7741,10 +7815,12 @@ class EmMeasurementEventIDImageIDStack3d(Data):
     )
     intensity__min = Quantity(
         type=np.float64,
+        unit="dimensionless",
         description="Minimum of intensity, computed over the full array at parse time.",
     )
     intensity__max = Quantity(
         type=np.float64,
+        unit="dimensionless",
         description="Maximum of intensity, computed over the full array at parse time.",
     )
     intensity__size = Quantity(
@@ -7815,10 +7891,12 @@ class EmMeasurementEventIDImageIDStack3d(Data):
     )
     indices_group__min = Quantity(
         type=np.int64,
+        unit="dimensionless",
         description="Minimum of indices_group, computed over the full array at parse time.",
     )
     indices_group__max = Quantity(
         type=np.int64,
+        unit="dimensionless",
         description="Maximum of indices_group, computed over the full array at parse time.",
     )
     indices_group__size = Quantity(
@@ -7860,10 +7938,12 @@ class EmMeasurementEventIDImageIDStack3d(Data):
     )
     indices_image__min = Quantity(
         type=np.int64,
+        unit="dimensionless",
         description="Minimum of indices_image, computed over the full array at parse time.",
     )
     indices_image__max = Quantity(
         type=np.int64,
+        unit="dimensionless",
         description="Maximum of indices_image, computed over the full array at parse time.",
     )
     indices_image__size = Quantity(
@@ -7905,10 +7985,12 @@ class EmMeasurementEventIDImageIDStack3d(Data):
     )
     axis_k__min = Quantity(
         type=np.float64,
+        flexible_unit=True,
         description="Minimum of axis_k, computed over the full array at parse time.",
     )
     axis_k__max = Quantity(
         type=np.float64,
+        flexible_unit=True,
         description="Maximum of axis_k, computed over the full array at parse time.",
     )
     axis_k__size = Quantity(
@@ -7950,10 +8032,12 @@ class EmMeasurementEventIDImageIDStack3d(Data):
     )
     axis_j__min = Quantity(
         type=np.float64,
+        flexible_unit=True,
         description="Minimum of axis_j, computed over the full array at parse time.",
     )
     axis_j__max = Quantity(
         type=np.float64,
+        flexible_unit=True,
         description="Maximum of axis_j, computed over the full array at parse time.",
     )
     axis_j__size = Quantity(
@@ -7995,10 +8079,12 @@ class EmMeasurementEventIDImageIDStack3d(Data):
     )
     axis_i__min = Quantity(
         type=np.float64,
+        flexible_unit=True,
         description="Minimum of axis_i, computed over the full array at parse time.",
     )
     axis_i__max = Quantity(
         type=np.float64,
+        flexible_unit=True,
         description="Maximum of axis_i, computed over the full array at parse time.",
     )
     axis_i__size = Quantity(
@@ -8303,10 +8389,12 @@ class EmMeasurementEventIDSpectrumIDSpectrum0d(Data):
     )
     intensity__min = Quantity(
         type=np.float64,
+        unit="dimensionless",
         description="Minimum of intensity, computed over the full array at parse time.",
     )
     intensity__max = Quantity(
         type=np.float64,
+        unit="dimensionless",
         description="Maximum of intensity, computed over the full array at parse time.",
     )
     intensity__size = Quantity(
@@ -8348,10 +8436,12 @@ class EmMeasurementEventIDSpectrumIDSpectrum0d(Data):
     )
     axis_energy__min = Quantity(
         type=np.float64,
+        unit="eV",
         description="Minimum of axis_energy, computed over the full array at parse time.",
     )
     axis_energy__max = Quantity(
         type=np.float64,
+        unit="eV",
         description="Maximum of axis_energy, computed over the full array at parse time.",
     )
     axis_energy__size = Quantity(
@@ -8467,10 +8557,12 @@ class EmMeasurementEventIDSpectrumIDSpectrum1d(Data):
     )
     intensity__min = Quantity(
         type=np.float64,
+        unit="dimensionless",
         description="Minimum of intensity, computed over the full array at parse time.",
     )
     intensity__max = Quantity(
         type=np.float64,
+        unit="dimensionless",
         description="Maximum of intensity, computed over the full array at parse time.",
     )
     intensity__size = Quantity(
@@ -8512,10 +8604,12 @@ class EmMeasurementEventIDSpectrumIDSpectrum1d(Data):
     )
     axis_i__min = Quantity(
         type=np.float64,
+        unit="m",
         description="Minimum of axis_i, computed over the full array at parse time.",
     )
     axis_i__max = Quantity(
         type=np.float64,
+        unit="m",
         description="Maximum of axis_i, computed over the full array at parse time.",
     )
     axis_i__size = Quantity(
@@ -8557,10 +8651,12 @@ class EmMeasurementEventIDSpectrumIDSpectrum1d(Data):
     )
     axis_energy__min = Quantity(
         type=np.float64,
+        unit="eV",
         description="Minimum of axis_energy, computed over the full array at parse time.",
     )
     axis_energy__max = Quantity(
         type=np.float64,
+        unit="eV",
         description="Maximum of axis_energy, computed over the full array at parse time.",
     )
     axis_energy__size = Quantity(
@@ -8676,10 +8772,12 @@ class EmMeasurementEventIDSpectrumIDSpectrum2d(Data):
     )
     intensity__min = Quantity(
         type=np.float64,
+        unit="dimensionless",
         description="Minimum of intensity, computed over the full array at parse time.",
     )
     intensity__max = Quantity(
         type=np.float64,
+        unit="dimensionless",
         description="Maximum of intensity, computed over the full array at parse time.",
     )
     intensity__size = Quantity(
@@ -8721,10 +8819,12 @@ class EmMeasurementEventIDSpectrumIDSpectrum2d(Data):
     )
     axis_j__min = Quantity(
         type=np.float64,
+        unit="m",
         description="Minimum of axis_j, computed over the full array at parse time.",
     )
     axis_j__max = Quantity(
         type=np.float64,
+        unit="m",
         description="Maximum of axis_j, computed over the full array at parse time.",
     )
     axis_j__size = Quantity(
@@ -8766,10 +8866,12 @@ class EmMeasurementEventIDSpectrumIDSpectrum2d(Data):
     )
     axis_i__min = Quantity(
         type=np.float64,
+        unit="m",
         description="Minimum of axis_i, computed over the full array at parse time.",
     )
     axis_i__max = Quantity(
         type=np.float64,
+        unit="m",
         description="Maximum of axis_i, computed over the full array at parse time.",
     )
     axis_i__size = Quantity(
@@ -8811,10 +8913,12 @@ class EmMeasurementEventIDSpectrumIDSpectrum2d(Data):
     )
     axis_energy__min = Quantity(
         type=np.float64,
+        unit="eV",
         description="Minimum of axis_energy, computed over the full array at parse time.",
     )
     axis_energy__max = Quantity(
         type=np.float64,
+        unit="eV",
         description="Maximum of axis_energy, computed over the full array at parse time.",
     )
     axis_energy__size = Quantity(
@@ -8930,10 +9034,12 @@ class EmMeasurementEventIDSpectrumIDSpectrum3d(Data):
     )
     intensity__min = Quantity(
         type=np.float64,
+        unit="dimensionless",
         description="Minimum of intensity, computed over the full array at parse time.",
     )
     intensity__max = Quantity(
         type=np.float64,
+        unit="dimensionless",
         description="Maximum of intensity, computed over the full array at parse time.",
     )
     intensity__size = Quantity(
@@ -8975,10 +9081,12 @@ class EmMeasurementEventIDSpectrumIDSpectrum3d(Data):
     )
     axis_k__min = Quantity(
         type=np.float64,
+        unit="m",
         description="Minimum of axis_k, computed over the full array at parse time.",
     )
     axis_k__max = Quantity(
         type=np.float64,
+        unit="m",
         description="Maximum of axis_k, computed over the full array at parse time.",
     )
     axis_k__size = Quantity(
@@ -9020,10 +9128,12 @@ class EmMeasurementEventIDSpectrumIDSpectrum3d(Data):
     )
     axis_j__min = Quantity(
         type=np.float64,
+        unit="m",
         description="Minimum of axis_j, computed over the full array at parse time.",
     )
     axis_j__max = Quantity(
         type=np.float64,
+        unit="m",
         description="Maximum of axis_j, computed over the full array at parse time.",
     )
     axis_j__size = Quantity(
@@ -9065,10 +9175,12 @@ class EmMeasurementEventIDSpectrumIDSpectrum3d(Data):
     )
     axis_i__min = Quantity(
         type=np.float64,
+        unit="m",
         description="Minimum of axis_i, computed over the full array at parse time.",
     )
     axis_i__max = Quantity(
         type=np.float64,
+        unit="m",
         description="Maximum of axis_i, computed over the full array at parse time.",
     )
     axis_i__size = Quantity(
@@ -9110,10 +9222,12 @@ class EmMeasurementEventIDSpectrumIDSpectrum3d(Data):
     )
     axis_energy__min = Quantity(
         type=np.float64,
+        unit="eV",
         description="Minimum of axis_energy, computed over the full array at parse time.",
     )
     axis_energy__max = Quantity(
         type=np.float64,
+        unit="eV",
         description="Maximum of axis_energy, computed over the full array at parse time.",
     )
     axis_energy__size = Quantity(
@@ -9229,10 +9343,12 @@ class EmMeasurementEventIDSpectrumIDStack0d(Data):
     )
     intensity__min = Quantity(
         type=np.float64,
+        unit="dimensionless",
         description="Minimum of intensity, computed over the full array at parse time.",
     )
     intensity__max = Quantity(
         type=np.float64,
+        unit="dimensionless",
         description="Maximum of intensity, computed over the full array at parse time.",
     )
     intensity__size = Quantity(
@@ -9274,10 +9390,12 @@ class EmMeasurementEventIDSpectrumIDStack0d(Data):
     )
     indices_spectrum__min = Quantity(
         type=np.int64,
+        unit="dimensionless",
         description="Minimum of indices_spectrum, computed over the full array at parse time.",
     )
     indices_spectrum__max = Quantity(
         type=np.int64,
+        unit="dimensionless",
         description="Maximum of indices_spectrum, computed over the full array at parse time.",
     )
     indices_spectrum__size = Quantity(
@@ -9319,10 +9437,12 @@ class EmMeasurementEventIDSpectrumIDStack0d(Data):
     )
     axis_energy__min = Quantity(
         type=np.float64,
+        unit="eV",
         description="Minimum of axis_energy, computed over the full array at parse time.",
     )
     axis_energy__max = Quantity(
         type=np.float64,
+        unit="eV",
         description="Maximum of axis_energy, computed over the full array at parse time.",
     )
     axis_energy__size = Quantity(
@@ -9688,10 +9808,12 @@ class EmMeasurementEventIDSpectrumIDStack2d(Data):
     )
     intensity__min = Quantity(
         type=np.float64,
+        unit="dimensionless",
         description="Minimum of intensity, computed over the full array at parse time.",
     )
     intensity__max = Quantity(
         type=np.float64,
+        unit="dimensionless",
         description="Maximum of intensity, computed over the full array at parse time.",
     )
     intensity__size = Quantity(
@@ -9733,10 +9855,12 @@ class EmMeasurementEventIDSpectrumIDStack2d(Data):
     )
     indices_spectrum__min = Quantity(
         type=np.int64,
+        unit="dimensionless",
         description="Minimum of indices_spectrum, computed over the full array at parse time.",
     )
     indices_spectrum__max = Quantity(
         type=np.int64,
+        unit="dimensionless",
         description="Maximum of indices_spectrum, computed over the full array at parse time.",
     )
     indices_spectrum__size = Quantity(
@@ -9778,10 +9902,12 @@ class EmMeasurementEventIDSpectrumIDStack2d(Data):
     )
     axis_j__min = Quantity(
         type=np.float64,
+        unit="m",
         description="Minimum of axis_j, computed over the full array at parse time.",
     )
     axis_j__max = Quantity(
         type=np.float64,
+        unit="m",
         description="Maximum of axis_j, computed over the full array at parse time.",
     )
     axis_j__size = Quantity(
@@ -9823,10 +9949,12 @@ class EmMeasurementEventIDSpectrumIDStack2d(Data):
     )
     axis_i__min = Quantity(
         type=np.float64,
+        unit="m",
         description="Minimum of axis_i, computed over the full array at parse time.",
     )
     axis_i__max = Quantity(
         type=np.float64,
+        unit="m",
         description="Maximum of axis_i, computed over the full array at parse time.",
     )
     axis_i__size = Quantity(
@@ -9868,10 +9996,12 @@ class EmMeasurementEventIDSpectrumIDStack2d(Data):
     )
     axis_energy__min = Quantity(
         type=np.float64,
+        unit="eV",
         description="Minimum of axis_energy, computed over the full array at parse time.",
     )
     axis_energy__max = Quantity(
         type=np.float64,
+        unit="eV",
         description="Maximum of axis_energy, computed over the full array at parse time.",
     )
     axis_energy__size = Quantity(
@@ -9987,10 +10117,12 @@ class EmMeasurementEventIDSpectrumIDStack3d(Data):
     )
     intensity__min = Quantity(
         type=np.float64,
+        unit="dimensionless",
         description="Minimum of intensity, computed over the full array at parse time.",
     )
     intensity__max = Quantity(
         type=np.float64,
+        unit="dimensionless",
         description="Maximum of intensity, computed over the full array at parse time.",
     )
     intensity__size = Quantity(
@@ -10032,10 +10164,12 @@ class EmMeasurementEventIDSpectrumIDStack3d(Data):
     )
     indices_spectrum__min = Quantity(
         type=np.int64,
+        unit="dimensionless",
         description="Minimum of indices_spectrum, computed over the full array at parse time.",
     )
     indices_spectrum__max = Quantity(
         type=np.int64,
+        unit="dimensionless",
         description="Maximum of indices_spectrum, computed over the full array at parse time.",
     )
     indices_spectrum__size = Quantity(
@@ -10077,10 +10211,12 @@ class EmMeasurementEventIDSpectrumIDStack3d(Data):
     )
     axis_k__min = Quantity(
         type=np.float64,
+        unit="m",
         description="Minimum of axis_k, computed over the full array at parse time.",
     )
     axis_k__max = Quantity(
         type=np.float64,
+        unit="m",
         description="Maximum of axis_k, computed over the full array at parse time.",
     )
     axis_k__size = Quantity(
@@ -10122,10 +10258,12 @@ class EmMeasurementEventIDSpectrumIDStack3d(Data):
     )
     axis_j__min = Quantity(
         type=np.float64,
+        unit="m",
         description="Minimum of axis_j, computed over the full array at parse time.",
     )
     axis_j__max = Quantity(
         type=np.float64,
+        unit="m",
         description="Maximum of axis_j, computed over the full array at parse time.",
     )
     axis_j__size = Quantity(
@@ -10167,10 +10305,12 @@ class EmMeasurementEventIDSpectrumIDStack3d(Data):
     )
     axis_i__min = Quantity(
         type=np.float64,
+        unit="m",
         description="Minimum of axis_i, computed over the full array at parse time.",
     )
     axis_i__max = Quantity(
         type=np.float64,
+        unit="m",
         description="Maximum of axis_i, computed over the full array at parse time.",
     )
     axis_i__size = Quantity(
@@ -10212,10 +10352,12 @@ class EmMeasurementEventIDSpectrumIDStack3d(Data):
     )
     axis_energy__min = Quantity(
         type=np.float64,
+        unit="eV",
         description="Minimum of axis_energy, computed over the full array at parse time.",
     )
     axis_energy__max = Quantity(
         type=np.float64,
+        unit="eV",
         description="Maximum of axis_energy, computed over the full array at parse time.",
     )
     axis_energy__size = Quantity(
@@ -15006,10 +15148,12 @@ class EmRoiIDEbsdIndexingPhaseIDIpfIDMap(Data):
     )
     data_quantity__min = Quantity(
         type=np.float64,
+        unit="dimensionless",
         description="Minimum of data_quantity, computed over the full array at parse time.",
     )
     data_quantity__max = Quantity(
         type=np.float64,
+        unit="dimensionless",
         description="Maximum of data_quantity, computed over the full array at parse time.",
     )
     data_quantity__size = Quantity(
@@ -15051,10 +15195,12 @@ class EmRoiIDEbsdIndexingPhaseIDIpfIDMap(Data):
     )
     axis_x__min = Quantity(
         type=np.float64,
+        unit="m",
         description="Minimum of axis_x, computed over the full array at parse time.",
     )
     axis_x__max = Quantity(
         type=np.float64,
+        unit="m",
         description="Maximum of axis_x, computed over the full array at parse time.",
     )
     axis_x__size = Quantity(
@@ -15096,10 +15242,12 @@ class EmRoiIDEbsdIndexingPhaseIDIpfIDMap(Data):
     )
     axis_y__min = Quantity(
         type=np.float64,
+        unit="m",
         description="Minimum of axis_y, computed over the full array at parse time.",
     )
     axis_y__max = Quantity(
         type=np.float64,
+        unit="m",
         description="Maximum of axis_y, computed over the full array at parse time.",
     )
     axis_y__size = Quantity(
@@ -15141,10 +15289,12 @@ class EmRoiIDEbsdIndexingPhaseIDIpfIDMap(Data):
     )
     axis_z__min = Quantity(
         type=np.float64,
+        unit="m",
         description="Minimum of axis_z, computed over the full array at parse time.",
     )
     axis_z__max = Quantity(
         type=np.float64,
+        unit="m",
         description="Maximum of axis_z, computed over the full array at parse time.",
     )
     axis_z__size = Quantity(
@@ -15260,10 +15410,12 @@ class EmRoiIDEbsdIndexingPhaseIDIpfIDLegend(Data):
     )
     data_quantity__min = Quantity(
         type=np.float64,
+        flexible_unit=True,
         description="Minimum of data_quantity, computed over the full array at parse time.",
     )
     data_quantity__max = Quantity(
         type=np.float64,
+        flexible_unit=True,
         description="Maximum of data_quantity, computed over the full array at parse time.",
     )
     data_quantity__size = Quantity(
@@ -15305,10 +15457,12 @@ class EmRoiIDEbsdIndexingPhaseIDIpfIDLegend(Data):
     )
     axis_x__min = Quantity(
         type=np.float64,
+        unit="dimensionless",
         description="Minimum of axis_x, computed over the full array at parse time.",
     )
     axis_x__max = Quantity(
         type=np.float64,
+        unit="dimensionless",
         description="Maximum of axis_x, computed over the full array at parse time.",
     )
     axis_x__size = Quantity(
@@ -15350,10 +15504,12 @@ class EmRoiIDEbsdIndexingPhaseIDIpfIDLegend(Data):
     )
     axis_y__min = Quantity(
         type=np.float64,
+        unit="dimensionless",
         description="Minimum of axis_y, computed over the full array at parse time.",
     )
     axis_y__max = Quantity(
         type=np.float64,
+        unit="dimensionless",
         description="Maximum of axis_y, computed over the full array at parse time.",
     )
     axis_y__size = Quantity(
@@ -15639,10 +15795,12 @@ class EmRoiIDEbsdIndexingPhaseIDOdfIDPhiTwoPlot(Data):
     )
     intensity__min = Quantity(
         type=np.float64,
+        unit="dimensionless",
         description="Minimum of intensity, computed over the full array at parse time.",
     )
     intensity__max = Quantity(
         type=np.float64,
+        unit="dimensionless",
         description="Maximum of intensity, computed over the full array at parse time.",
     )
     intensity__size = Quantity(
@@ -15684,10 +15842,12 @@ class EmRoiIDEbsdIndexingPhaseIDOdfIDPhiTwoPlot(Data):
     )
     varphi_one__min = Quantity(
         type=np.float64,
+        unit="radian",
         description="Minimum of varphi_one, computed over the full array at parse time.",
     )
     varphi_one__max = Quantity(
         type=np.float64,
+        unit="radian",
         description="Maximum of varphi_one, computed over the full array at parse time.",
     )
     varphi_one__size = Quantity(
@@ -15729,10 +15889,12 @@ class EmRoiIDEbsdIndexingPhaseIDOdfIDPhiTwoPlot(Data):
     )
     capital_phi__min = Quantity(
         type=np.float64,
+        unit="radian",
         description="Minimum of capital_phi, computed over the full array at parse time.",
     )
     capital_phi__max = Quantity(
         type=np.float64,
+        unit="radian",
         description="Maximum of capital_phi, computed over the full array at parse time.",
     )
     capital_phi__size = Quantity(
@@ -15774,10 +15936,12 @@ class EmRoiIDEbsdIndexingPhaseIDOdfIDPhiTwoPlot(Data):
     )
     varphi_two__min = Quantity(
         type=np.float64,
+        unit="radian",
         description="Minimum of varphi_two, computed over the full array at parse time.",
     )
     varphi_two__max = Quantity(
         type=np.float64,
+        unit="radian",
         description="Maximum of varphi_two, computed over the full array at parse time.",
     )
     varphi_two__size = Quantity(
@@ -15909,10 +16073,12 @@ class EmRoiIDEbsdIndexingRoi(Data):
     )
     data_quantity__min = Quantity(
         type=np.float64,
+        unit="dimensionless",
         description="Minimum of data_quantity, computed over the full array at parse time.",
     )
     data_quantity__max = Quantity(
         type=np.float64,
+        unit="dimensionless",
         description="Maximum of data_quantity, computed over the full array at parse time.",
     )
     data_quantity__size = Quantity(
@@ -15982,10 +16148,12 @@ class EmRoiIDEbsdIndexingRoi(Data):
     )
     axis_y__min = Quantity(
         type=np.float64,
+        unit="m",
         description="Minimum of axis_y, computed over the full array at parse time.",
     )
     axis_y__max = Quantity(
         type=np.float64,
+        unit="m",
         description="Maximum of axis_y, computed over the full array at parse time.",
     )
     axis_y__size = Quantity(
@@ -16027,10 +16195,12 @@ class EmRoiIDEbsdIndexingRoi(Data):
     )
     axis_x__min = Quantity(
         type=np.float64,
+        unit="m",
         description="Minimum of axis_x, computed over the full array at parse time.",
     )
     axis_x__max = Quantity(
         type=np.float64,
+        unit="m",
         description="Maximum of axis_x, computed over the full array at parse time.",
     )
     axis_x__size = Quantity(
@@ -16211,10 +16381,12 @@ class EmRoiIDEdsIndexingSummary(Data):
     )
     intensity__min = Quantity(
         type=np.float64,
+        unit="dimensionless",
         description="Minimum of intensity, computed over the full array at parse time.",
     )
     intensity__max = Quantity(
         type=np.float64,
+        unit="dimensionless",
         description="Maximum of intensity, computed over the full array at parse time.",
     )
     intensity__size = Quantity(
@@ -16399,10 +16571,12 @@ class EmRoiIDEdsIndexingElementSpecificMapImage2d(Data):
     )
     intensity__min = Quantity(
         type=np.float64,
+        unit="dimensionless",
         description="Minimum of intensity, computed over the full array at parse time.",
     )
     intensity__max = Quantity(
         type=np.float64,
+        unit="dimensionless",
         description="Maximum of intensity, computed over the full array at parse time.",
     )
     intensity__size = Quantity(
@@ -16444,10 +16618,12 @@ class EmRoiIDEdsIndexingElementSpecificMapImage2d(Data):
     )
     axis_i__min = Quantity(
         type=np.float64,
+        flexible_unit=True,
         description="Minimum of axis_i, computed over the full array at parse time.",
     )
     axis_i__max = Quantity(
         type=np.float64,
+        flexible_unit=True,
         description="Maximum of axis_i, computed over the full array at parse time.",
     )
     axis_i__size = Quantity(
@@ -16489,10 +16665,12 @@ class EmRoiIDEdsIndexingElementSpecificMapImage2d(Data):
     )
     axis_j__min = Quantity(
         type=np.float64,
+        flexible_unit=True,
         description="Minimum of axis_j, computed over the full array at parse time.",
     )
     axis_j__max = Quantity(
         type=np.float64,
+        flexible_unit=True,
         description="Maximum of axis_j, computed over the full array at parse time.",
     )
     axis_j__size = Quantity(

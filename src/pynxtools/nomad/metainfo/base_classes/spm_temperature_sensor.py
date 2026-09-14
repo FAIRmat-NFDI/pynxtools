@@ -279,11 +279,13 @@ class SpmTemperatureSensorData(Data):
     DATA__min = Quantity(
         type=np.float64,
         variable=True,
+        unit="kelvin",
         description="Minimum of DATA, computed over the full array at parse time.",
     )
     DATA__max = Quantity(
         type=np.float64,
         variable=True,
+        unit="kelvin",
         description="Maximum of DATA, computed over the full array at parse time.",
     )
     DATA__size = Quantity(
@@ -314,11 +316,13 @@ class SpmTemperatureSensorData(Data):
     AXISNAME__min = Quantity(
         type=np.float64,
         variable=True,
+        flexible_unit=True,
         description="Minimum of AXISNAME, computed over the full array at parse time.",
     )
     AXISNAME__max = Quantity(
         type=np.float64,
         variable=True,
+        flexible_unit=True,
         description="Maximum of AXISNAME, computed over the full array at parse time.",
     )
     AXISNAME__size = Quantity(

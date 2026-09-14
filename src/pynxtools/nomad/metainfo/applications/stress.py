@@ -2528,11 +2528,13 @@ class StressFitDiffractogram(Data):
     XAXIS__min = Quantity(
         type=np.float64,
         variable=True,
+        flexible_unit=True,
         description="Minimum of XAXIS, computed over the full array at parse time.",
     )
     XAXIS__max = Quantity(
         type=np.float64,
         variable=True,
+        flexible_unit=True,
         description="Maximum of XAXIS, computed over the full array at parse time.",
     )
     XAXIS__size = Quantity(
@@ -2615,10 +2617,12 @@ class StressFitDiffractogram(Data):
     )
     diffractogram__min = Quantity(
         type=np.float64,
+        flexible_unit=True,
         description="Minimum of diffractogram, computed over the full array at parse time.",
     )
     diffractogram__max = Quantity(
         type=np.float64,
+        flexible_unit=True,
         description="Maximum of diffractogram, computed over the full array at parse time.",
     )
     diffractogram__size = Quantity(
@@ -2680,10 +2684,12 @@ class StressFitDiffractogram(Data):
     )
     diffractogram_errors__min = Quantity(
         type=np.float64,
+        flexible_unit=True,
         description="Minimum of diffractogram_errors, computed over the full array at parse time.",
     )
     diffractogram_errors__max = Quantity(
         type=np.float64,
+        flexible_unit=True,
         description="Maximum of diffractogram_errors, computed over the full array at parse time.",
     )
     diffractogram_errors__size = Quantity(
@@ -2745,10 +2751,12 @@ class StressFitDiffractogram(Data):
     )
     fit__min = Quantity(
         type=np.float64,
+        flexible_unit=True,
         description="Minimum of fit, computed over the full array at parse time.",
     )
     fit__max = Quantity(
         type=np.float64,
+        flexible_unit=True,
         description="Maximum of fit, computed over the full array at parse time.",
     )
     fit__size = Quantity(
@@ -2810,10 +2818,12 @@ class StressFitDiffractogram(Data):
     )
     fit_errors__min = Quantity(
         type=np.float64,
+        flexible_unit=True,
         description="Minimum of fit_errors, computed over the full array at parse time.",
     )
     fit_errors__max = Quantity(
         type=np.float64,
+        flexible_unit=True,
         description="Maximum of fit_errors, computed over the full array at parse time.",
     )
     fit_errors__size = Quantity(
@@ -2860,10 +2870,12 @@ class StressFitDiffractogram(Data):
     )
     background__min = Quantity(
         type=np.float64,
+        flexible_unit=True,
         description="Minimum of background, computed over the full array at parse time.",
     )
     background__max = Quantity(
         type=np.float64,
+        flexible_unit=True,
         description="Maximum of background, computed over the full array at parse time.",
     )
     background__size = Quantity(
@@ -2925,10 +2937,12 @@ class StressFitDiffractogram(Data):
     )
     residuals__min = Quantity(
         type=np.float64,
+        flexible_unit=True,
         description="Minimum of residuals, computed over the full array at parse time.",
     )
     residuals__max = Quantity(
         type=np.float64,
+        flexible_unit=True,
         description="Maximum of residuals, computed over the full array at parse time.",
     )
     residuals__size = Quantity(

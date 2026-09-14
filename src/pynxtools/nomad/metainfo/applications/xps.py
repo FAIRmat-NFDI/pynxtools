@@ -1210,10 +1210,12 @@ class XpsFitData(Data):
     )
     input_dependent__min = Quantity(
         type=np.float64,
+        flexible_unit=True,
         description="Minimum of input_dependent, computed over the full array at parse time.",
     )
     input_dependent__max = Quantity(
         type=np.float64,
+        flexible_unit=True,
         description="Maximum of input_dependent, computed over the full array at parse time.",
     )
     input_dependent__size = Quantity(
@@ -1243,10 +1245,12 @@ class XpsFitData(Data):
     )
     input_independent__min = Quantity(
         type=np.float64,
+        unit="eV",
         description="Minimum of input_independent, computed over the full array at parse time.",
     )
     input_independent__max = Quantity(
         type=np.float64,
+        unit="eV",
         description="Maximum of input_independent, computed over the full array at parse time.",
     )
     input_independent__size = Quantity(
@@ -1272,10 +1276,12 @@ class XpsFitData(Data):
     )
     fit_sum__min = Quantity(
         type=np.float64,
+        flexible_unit=True,
         description="Minimum of fit_sum, computed over the full array at parse time.",
     )
     fit_sum__max = Quantity(
         type=np.float64,
+        flexible_unit=True,
         description="Maximum of fit_sum, computed over the full array at parse time.",
     )
     fit_sum__size = Quantity(
@@ -1301,10 +1307,12 @@ class XpsFitData(Data):
     )
     residual__min = Quantity(
         type=np.float64,
+        flexible_unit=True,
         description="Minimum of residual, computed over the full array at parse time.",
     )
     residual__max = Quantity(
         type=np.float64,
+        flexible_unit=True,
         description="Maximum of residual, computed over the full array at parse time.",
     )
     residual__size = Quantity(
@@ -1435,10 +1443,12 @@ class XpsFitPeakPEAKData(Data):
     )
     position__min = Quantity(
         type=np.float64,
+        unit="eV",
         description="Minimum of position, computed over the full array at parse time.",
     )
     position__max = Quantity(
         type=np.float64,
+        unit="eV",
         description="Maximum of position, computed over the full array at parse time.",
     )
     position__size = Quantity(
@@ -1470,10 +1480,12 @@ class XpsFitPeakPEAKData(Data):
     )
     intensity__min = Quantity(
         type=np.float64,
+        flexible_unit=True,
         description="Minimum of intensity, computed over the full array at parse time.",
     )
     intensity__max = Quantity(
         type=np.float64,
+        flexible_unit=True,
         description="Maximum of intensity, computed over the full array at parse time.",
     )
     intensity__size = Quantity(
@@ -1744,10 +1756,12 @@ class XpsFitBackgroundBACKGROUNDData(Data):
     )
     position__min = Quantity(
         type=np.float64,
+        unit="eV",
         description="Minimum of position, computed over the full array at parse time.",
     )
     position__max = Quantity(
         type=np.float64,
+        unit="eV",
         description="Maximum of position, computed over the full array at parse time.",
     )
     position__size = Quantity(
@@ -1773,10 +1787,12 @@ class XpsFitBackgroundBACKGROUNDData(Data):
     )
     intensity__min = Quantity(
         type=np.float64,
+        flexible_unit=True,
         description="Minimum of intensity, computed over the full array at parse time.",
     )
     intensity__max = Quantity(
         type=np.float64,
+        flexible_unit=True,
         description="Maximum of intensity, computed over the full array at parse time.",
     )
     intensity__size = Quantity(
@@ -2303,10 +2319,12 @@ class XpsData(MpesData):
     )
     energy__min = Quantity(
         type=np.float64,
+        unit="eV",
         description="Minimum of energy, computed over the full array at parse time.",
     )
     energy__max = Quantity(
         type=np.float64,
+        unit="eV",
         description="Maximum of energy, computed over the full array at parse time.",
     )
     energy__size = Quantity(

@@ -1721,10 +1721,12 @@ class MicrostructureScoreConfigDispersoidDragZenerSmithRadiusEvolution(Data):
     )
     time__min = Quantity(
         type=np.float64,
+        unit="second",
         description="Minimum of time, computed over the full array at parse time.",
     )
     time__max = Quantity(
         type=np.float64,
+        unit="second",
         description="Maximum of time, computed over the full array at parse time.",
     )
     time__size = Quantity(
@@ -1769,10 +1771,12 @@ class MicrostructureScoreConfigDispersoidDragZenerSmithRadiusEvolution(Data):
     )
     radius__min = Quantity(
         type=np.float64,
+        unit="m",
         description="Minimum of radius, computed over the full array at parse time.",
     )
     radius__max = Quantity(
         type=np.float64,
+        unit="m",
         description="Maximum of radius, computed over the full array at parse time.",
     )
     radius__size = Quantity(
@@ -1982,10 +1986,12 @@ class MicrostructureScoreConfigTimeTemperature(Data):
     )
     time__min = Quantity(
         type=np.float64,
+        unit="second",
         description="Minimum of time, computed over the full array at parse time.",
     )
     time__max = Quantity(
         type=np.float64,
+        unit="second",
         description="Maximum of time, computed over the full array at parse time.",
     )
     time__size = Quantity(
@@ -2028,10 +2034,12 @@ class MicrostructureScoreConfigTimeTemperature(Data):
     )
     temperature__min = Quantity(
         type=np.float64,
+        unit="kelvin",
         description="Minimum of temperature, computed over the full array at parse time.",
     )
     temperature__max = Quantity(
         type=np.float64,
+        unit="kelvin",
         description="Maximum of temperature, computed over the full array at parse time.",
     )
     temperature__size = Quantity(

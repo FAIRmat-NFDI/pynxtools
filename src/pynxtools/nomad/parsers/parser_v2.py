@@ -46,7 +46,7 @@ except ImportError as exc:
         "Could not import nomad package. Please install the package 'nomad-lab'."
     ) from exc
 
-from pynxtools.dataconverter.helpers import decode_if_bytes, is_valid_data_type_hdf
+from pynxtools.dataconverter.helpers import is_valid_data_type_hdf
 from pynxtools.definitions.dev_tools.utils.nxdl_utils import get_nx_namefit
 from pynxtools.nexus.handler import NexusFileHandler, NexusVisitor
 from pynxtools.nexus.nexus_tree import NexusNode
@@ -708,6 +708,23 @@ class NomadVisitorV2(NexusVisitor):
                 continue
             try:
                 value = stats[f"__{suffix}"]
+                # min/max carry the field's unit; size/ndim are dimensionless
+                # counts (no unit= in the generated schema). Apply the unit before
+                # any MQuantity.wrap so the MQuantity holds the pint Quantity,
+                # matching _populate_field's order.
+                if suffix in ("min", "max"):
+                    unit = hdf_node.attrs.get("units", None)
+                    if unit is not None:
+                        try:
+                            unit_str = (
+                                unit.decode() if isinstance(unit, bytes) else str(unit)
+                            )
+                            if unit_str == "counts":
+                                unit_str = "1"
+                            pint_unit = ureg.parse_units(unit_str)
+                            value = ureg.Quantity(value, pint_unit)
+                        except (ValueError, UndefinedUnitError, Exception):
+                            pass
                 if qty.use_full_storage:
                     value = MQuantity.wrap(value, f"{hdf_field_name}__{suffix}")
                 current.m_set(stat_qty, value)
@@ -894,8 +911,12 @@ class NomadVisitorV2(NexusVisitor):
 
         HDF5Reference only checks that the string looks like ``file#path``;
         it never opens the file, so nothing validates the dataset's real
-        type, unit, or enumeration against the schema. pynxtools does that
-        check here instead, while the dataset is already open for parsing.
+        type or unit against the schema. pynxtools does that check here
+        instead, while the dataset is already open for parsing.
+
+        Only numeric array fields become HDF5References, so no enumeration
+        check is needed here: closed-enum fields are ``MEnum``-typed and never
+        references, and open enums are advisory.
         """
         field_ann = qty.m_get_annotations("nexus_field")
         if field_ann is None:
@@ -926,37 +947,6 @@ class NomadVisitorV2(NexusVisitor):
                     hdf_field_name,
                     field_ann.units,
                     real_unit_str,
-                )
-
-        if field_ann.enumeration and not field_ann.open_enum:
-            try:
-                value = decode_if_bytes(hdf_node[()])
-                if isinstance(value, np.ndarray) and isinstance(
-                    field_ann.enumeration[0], list
-                ):
-                    # A single fixed-shape value must equal one of several
-                    # allowed vectors (e.g. a default axis direction).
-                    bad_values = (
-                        [] if list(value) in field_ann.enumeration else [list(value)]
-                    )
-                elif isinstance(value, np.ndarray):
-                    # Each element of the array is independently enumerated
-                    # (e.g. NXsample's sample_component: one label per entry).
-                    bad_values = [
-                        v for v in value.flat if v not in field_ann.enumeration
-                    ]
-                else:
-                    bad_values = [] if value in field_ann.enumeration else [value]
-            except Exception as e:
-                self._logger.debug("Error checking enum for %s: %s", hdf_field_name, e)
-                return
-            if bad_values:
-                self._logger.warning(
-                    "HDF5Reference %s: %s not in the NXDL-declared "
-                    "enumeration values %s",
-                    hdf_field_name,
-                    bad_values,
-                    field_ann.enumeration,
                 )
 
     def _populate_attribute(

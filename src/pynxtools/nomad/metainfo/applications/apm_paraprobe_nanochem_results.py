@@ -859,10 +859,12 @@ class ApmParaprobeNanochemResultsDelocalizationIDGridScalarFieldMagnSUFFIX(Data)
     )
     xdmf_intensity__min = Quantity(
         type=np.float64,
+        flexible_unit=True,
         description="Minimum of xdmf_intensity, computed over the full array at parse time.",
     )
     xdmf_intensity__max = Quantity(
         type=np.float64,
+        flexible_unit=True,
         description="Maximum of xdmf_intensity, computed over the full array at parse time.",
     )
     xdmf_intensity__size = Quantity(
@@ -892,10 +894,12 @@ class ApmParaprobeNanochemResultsDelocalizationIDGridScalarFieldMagnSUFFIX(Data)
     )
     xdmf_xyz__min = Quantity(
         type=np.float64,
+        unit="m",
         description="Minimum of xdmf_xyz, computed over the full array at parse time.",
     )
     xdmf_xyz__max = Quantity(
         type=np.float64,
+        unit="m",
         description="Maximum of xdmf_xyz, computed over the full array at parse time.",
     )
     xdmf_xyz__size = Quantity(
@@ -925,10 +929,12 @@ class ApmParaprobeNanochemResultsDelocalizationIDGridScalarFieldMagnSUFFIX(Data)
     )
     xdmf_topology__min = Quantity(
         type=np.float64,
+        unit="dimensionless",
         description="Minimum of xdmf_topology, computed over the full array at parse time.",
     )
     xdmf_topology__max = Quantity(
         type=np.float64,
+        unit="dimensionless",
         description="Maximum of xdmf_topology, computed over the full array at parse time.",
     )
     xdmf_topology__size = Quantity(
@@ -983,10 +989,12 @@ class ApmParaprobeNanochemResultsDelocalizationIDGridScalarFieldGradSUFFIX(Data)
     )
     xdmf_gradient__min = Quantity(
         type=np.float64,
+        flexible_unit=True,
         description="Minimum of xdmf_gradient, computed over the full array at parse time.",
     )
     xdmf_gradient__max = Quantity(
         type=np.float64,
+        flexible_unit=True,
         description="Maximum of xdmf_gradient, computed over the full array at parse time.",
     )
     xdmf_gradient__size = Quantity(
@@ -1016,10 +1024,12 @@ class ApmParaprobeNanochemResultsDelocalizationIDGridScalarFieldGradSUFFIX(Data)
     )
     xdmf_xyz__min = Quantity(
         type=np.float64,
+        unit="m",
         description="Minimum of xdmf_xyz, computed over the full array at parse time.",
     )
     xdmf_xyz__max = Quantity(
         type=np.float64,
+        unit="m",
         description="Maximum of xdmf_xyz, computed over the full array at parse time.",
     )
     xdmf_xyz__size = Quantity(
@@ -1049,10 +1059,12 @@ class ApmParaprobeNanochemResultsDelocalizationIDGridScalarFieldGradSUFFIX(Data)
     )
     xdmf_topology__min = Quantity(
         type=np.float64,
+        unit="dimensionless",
         description="Minimum of xdmf_topology, computed over the full array at parse time.",
     )
     xdmf_topology__max = Quantity(
         type=np.float64,
+        unit="dimensionless",
         description="Maximum of xdmf_topology, computed over the full array at parse time.",
     )
     xdmf_topology__size = Quantity(

@@ -705,11 +705,13 @@ class EllipsometryDataCollection(OpticalSpectroscopyData):
     NAME_spectrum__min = Quantity(
         type=np.float64,
         variable=True,
+        flexible_unit=True,
         description="Minimum of NAME_spectrum, computed over the full array at parse time.",
     )
     NAME_spectrum__max = Quantity(
         type=np.float64,
         variable=True,
+        flexible_unit=True,
         description="Maximum of NAME_spectrum, computed over the full array at parse time.",
     )
     NAME_spectrum__size = Quantity(
@@ -770,10 +772,12 @@ class EllipsometryDataCollection(OpticalSpectroscopyData):
     )
     measured_data__min = Quantity(
         type=np.float64,
+        flexible_unit=True,
         description="Minimum of measured_data, computed over the full array at parse time.",
     )
     measured_data__max = Quantity(
         type=np.float64,
+        flexible_unit=True,
         description="Maximum of measured_data, computed over the full array at parse time.",
     )
     measured_data__size = Quantity(
@@ -824,10 +828,12 @@ class EllipsometryDataCollection(OpticalSpectroscopyData):
     )
     measured_data_errors__min = Quantity(
         type=np.float64,
+        flexible_unit=True,
         description="Minimum of measured_data_errors, computed over the full array at parse time.",
     )
     measured_data_errors__max = Quantity(
         type=np.float64,
+        flexible_unit=True,
         description="Maximum of measured_data_errors, computed over the full array at parse time.",
     )
     measured_data_errors__size = Quantity(

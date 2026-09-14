@@ -2752,10 +2752,12 @@ class MpesInstrumentElectronanalyzerElectronDetectorRawData(Data):
     )
     energy__min = Quantity(
         type=np.float64,
+        unit="eV",
         description="Minimum of energy, computed over the full array at parse time.",
     )
     energy__max = Quantity(
         type=np.float64,
+        unit="eV",
         description="Maximum of energy, computed over the full array at parse time.",
     )
     energy__size = Quantity(
@@ -2805,10 +2807,12 @@ class MpesInstrumentElectronanalyzerElectronDetectorRawData(Data):
     )
     photon_energy__min = Quantity(
         type=np.float64,
+        unit="eV",
         description="Minimum of photon_energy, computed over the full array at parse time.",
     )
     photon_energy__max = Quantity(
         type=np.float64,
+        unit="eV",
         description="Maximum of photon_energy, computed over the full array at parse time.",
     )
     photon_energy__size = Quantity(
@@ -2844,10 +2848,12 @@ class MpesInstrumentElectronanalyzerElectronDetectorRawData(Data):
     )
     kx__min = Quantity(
         type=np.float64,
+        unit="1 / angstrom",
         description="Minimum of kx, computed over the full array at parse time.",
     )
     kx__max = Quantity(
         type=np.float64,
+        unit="1 / angstrom",
         description="Maximum of kx, computed over the full array at parse time.",
     )
     kx__size = Quantity(
@@ -2879,10 +2885,12 @@ class MpesInstrumentElectronanalyzerElectronDetectorRawData(Data):
     )
     ky__min = Quantity(
         type=np.float64,
+        unit="1 / angstrom",
         description="Minimum of ky, computed over the full array at parse time.",
     )
     ky__max = Quantity(
         type=np.float64,
+        unit="1 / angstrom",
         description="Maximum of ky, computed over the full array at parse time.",
     )
     ky__size = Quantity(
@@ -2914,10 +2922,12 @@ class MpesInstrumentElectronanalyzerElectronDetectorRawData(Data):
     )
     kz__min = Quantity(
         type=np.float64,
+        unit="1 / angstrom",
         description="Minimum of kz, computed over the full array at parse time.",
     )
     kz__max = Quantity(
         type=np.float64,
+        unit="1 / angstrom",
         description="Maximum of kz, computed over the full array at parse time.",
     )
     kz__size = Quantity(
@@ -2955,10 +2965,12 @@ class MpesInstrumentElectronanalyzerElectronDetectorRawData(Data):
     )
     k_parallel__min = Quantity(
         type=np.float64,
+        unit="1 / angstrom",
         description="Minimum of k_parallel, computed over the full array at parse time.",
     )
     k_parallel__max = Quantity(
         type=np.float64,
+        unit="1 / angstrom",
         description="Maximum of k_parallel, computed over the full array at parse time.",
     )
     k_parallel__size = Quantity(
@@ -2995,10 +3007,12 @@ class MpesInstrumentElectronanalyzerElectronDetectorRawData(Data):
     )
     k_perpendicular__min = Quantity(
         type=np.float64,
+        unit="1 / angstrom",
         description="Minimum of k_perpendicular, computed over the full array at parse time.",
     )
     k_perpendicular__max = Quantity(
         type=np.float64,
+        unit="1 / angstrom",
         description="Maximum of k_perpendicular, computed over the full array at parse time.",
     )
     k_perpendicular__size = Quantity(
@@ -3034,10 +3048,12 @@ class MpesInstrumentElectronanalyzerElectronDetectorRawData(Data):
     )
     angular0__min = Quantity(
         type=np.float64,
+        unit="radian",
         description="Minimum of angular0, computed over the full array at parse time.",
     )
     angular0__max = Quantity(
         type=np.float64,
+        unit="radian",
         description="Maximum of angular0, computed over the full array at parse time.",
     )
     angular0__size = Quantity(
@@ -3070,10 +3086,12 @@ class MpesInstrumentElectronanalyzerElectronDetectorRawData(Data):
     )
     angular1__min = Quantity(
         type=np.float64,
+        unit="radian",
         description="Minimum of angular1, computed over the full array at parse time.",
     )
     angular1__max = Quantity(
         type=np.float64,
+        unit="radian",
         description="Maximum of angular1, computed over the full array at parse time.",
     )
     angular1__size = Quantity(
@@ -3109,10 +3127,12 @@ class MpesInstrumentElectronanalyzerElectronDetectorRawData(Data):
     )
     spatial0__min = Quantity(
         type=np.float64,
+        unit="m",
         description="Minimum of spatial0, computed over the full array at parse time.",
     )
     spatial0__max = Quantity(
         type=np.float64,
+        unit="m",
         description="Maximum of spatial0, computed over the full array at parse time.",
     )
     spatial0__size = Quantity(
@@ -3145,10 +3165,12 @@ class MpesInstrumentElectronanalyzerElectronDetectorRawData(Data):
     )
     spatial1__min = Quantity(
         type=np.float64,
+        unit="m",
         description="Minimum of spatial1, computed over the full array at parse time.",
     )
     spatial1__max = Quantity(
         type=np.float64,
+        unit="m",
         description="Maximum of spatial1, computed over the full array at parse time.",
     )
     spatial1__size = Quantity(
@@ -3180,10 +3202,12 @@ class MpesInstrumentElectronanalyzerElectronDetectorRawData(Data):
     )
     delay__min = Quantity(
         type=np.float64,
+        unit="second",
         description="Minimum of delay, computed over the full array at parse time.",
     )
     delay__max = Quantity(
         type=np.float64,
+        unit="second",
         description="Maximum of delay, computed over the full array at parse time.",
     )
     delay__size = Quantity(
@@ -3215,10 +3239,12 @@ class MpesInstrumentElectronanalyzerElectronDetectorRawData(Data):
     )
     temperature__min = Quantity(
         type=np.float64,
+        unit="second",
         description="Minimum of temperature, computed over the full array at parse time.",
     )
     temperature__max = Quantity(
         type=np.float64,
+        unit="second",
         description="Maximum of temperature, computed over the full array at parse time.",
     )
     temperature__size = Quantity(
@@ -4626,10 +4652,12 @@ class MpesTransmissionCorrectionTransmissionFunction(Data):
     )
     kinetic_energy__min = Quantity(
         type=np.float64,
+        unit="eV",
         description="Minimum of kinetic_energy, computed over the full array at parse time.",
     )
     kinetic_energy__max = Quantity(
         type=np.float64,
+        unit="eV",
         description="Maximum of kinetic_energy, computed over the full array at parse time.",
     )
     kinetic_energy__size = Quantity(
@@ -4656,10 +4684,12 @@ class MpesTransmissionCorrectionTransmissionFunction(Data):
     )
     relative_intensity__min = Quantity(
         type=np.float64,
+        unit="dimensionless",
         description="Minimum of relative_intensity, computed over the full array at parse time.",
     )
     relative_intensity__max = Quantity(
         type=np.float64,
+        unit="dimensionless",
         description="Maximum of relative_intensity, computed over the full array at parse time.",
     )
     relative_intensity__size = Quantity(
@@ -5371,10 +5401,12 @@ class MpesData(Data):
     )
     data_quantity__min = Quantity(
         type=np.float64,
+        flexible_unit=True,
         description="Minimum of data_quantity, computed over the full array at parse time.",
     )
     data_quantity__max = Quantity(
         type=np.float64,
+        flexible_unit=True,
         description="Maximum of data_quantity, computed over the full array at parse time.",
     )
     data_quantity__size = Quantity(
@@ -5401,10 +5433,12 @@ class MpesData(Data):
     )
     energy__min = Quantity(
         type=np.float64,
+        unit="eV",
         description="Minimum of energy, computed over the full array at parse time.",
     )
     energy__max = Quantity(
         type=np.float64,
+        unit="eV",
         description="Maximum of energy, computed over the full array at parse time.",
     )
     energy__size = Quantity(
@@ -5469,10 +5503,12 @@ class MpesData(Data):
     )
     photon_energy__min = Quantity(
         type=np.float64,
+        unit="eV",
         description="Minimum of photon_energy, computed over the full array at parse time.",
     )
     photon_energy__max = Quantity(
         type=np.float64,
+        unit="eV",
         description="Maximum of photon_energy, computed over the full array at parse time.",
     )
     photon_energy__size = Quantity(
@@ -5507,10 +5543,12 @@ class MpesData(Data):
     )
     kx__min = Quantity(
         type=np.float64,
+        unit="1 / angstrom",
         description="Minimum of kx, computed over the full array at parse time.",
     )
     kx__max = Quantity(
         type=np.float64,
+        unit="1 / angstrom",
         description="Maximum of kx, computed over the full array at parse time.",
     )
     kx__size = Quantity(
@@ -5541,10 +5579,12 @@ class MpesData(Data):
     )
     ky__min = Quantity(
         type=np.float64,
+        unit="1 / angstrom",
         description="Minimum of ky, computed over the full array at parse time.",
     )
     ky__max = Quantity(
         type=np.float64,
+        unit="1 / angstrom",
         description="Maximum of ky, computed over the full array at parse time.",
     )
     ky__size = Quantity(
@@ -5575,10 +5615,12 @@ class MpesData(Data):
     )
     kz__min = Quantity(
         type=np.float64,
+        unit="1 / angstrom",
         description="Minimum of kz, computed over the full array at parse time.",
     )
     kz__max = Quantity(
         type=np.float64,
+        unit="1 / angstrom",
         description="Maximum of kz, computed over the full array at parse time.",
     )
     kz__size = Quantity(
@@ -5615,10 +5657,12 @@ class MpesData(Data):
     )
     k_parallel__min = Quantity(
         type=np.float64,
+        unit="1 / angstrom",
         description="Minimum of k_parallel, computed over the full array at parse time.",
     )
     k_parallel__max = Quantity(
         type=np.float64,
+        unit="1 / angstrom",
         description="Maximum of k_parallel, computed over the full array at parse time.",
     )
     k_parallel__size = Quantity(
@@ -5654,10 +5698,12 @@ class MpesData(Data):
     )
     k_perpendicular__min = Quantity(
         type=np.float64,
+        unit="1 / angstrom",
         description="Minimum of k_perpendicular, computed over the full array at parse time.",
     )
     k_perpendicular__max = Quantity(
         type=np.float64,
+        unit="1 / angstrom",
         description="Maximum of k_perpendicular, computed over the full array at parse time.",
     )
     k_perpendicular__size = Quantity(
@@ -5693,10 +5739,12 @@ class MpesData(Data):
     )
     angular0__min = Quantity(
         type=np.float64,
+        unit="radian",
         description="Minimum of angular0, computed over the full array at parse time.",
     )
     angular0__max = Quantity(
         type=np.float64,
+        unit="radian",
         description="Maximum of angular0, computed over the full array at parse time.",
     )
     angular0__size = Quantity(
@@ -5728,10 +5776,12 @@ class MpesData(Data):
     )
     angular1__min = Quantity(
         type=np.float64,
+        unit="radian",
         description="Minimum of angular1, computed over the full array at parse time.",
     )
     angular1__max = Quantity(
         type=np.float64,
+        unit="radian",
         description="Maximum of angular1, computed over the full array at parse time.",
     )
     angular1__size = Quantity(
@@ -5767,10 +5817,12 @@ class MpesData(Data):
     )
     spatial0__min = Quantity(
         type=np.float64,
+        unit="m",
         description="Minimum of spatial0, computed over the full array at parse time.",
     )
     spatial0__max = Quantity(
         type=np.float64,
+        unit="m",
         description="Maximum of spatial0, computed over the full array at parse time.",
     )
     spatial0__size = Quantity(
@@ -5802,10 +5854,12 @@ class MpesData(Data):
     )
     spatial1__min = Quantity(
         type=np.float64,
+        unit="m",
         description="Minimum of spatial1, computed over the full array at parse time.",
     )
     spatial1__max = Quantity(
         type=np.float64,
+        unit="m",
         description="Maximum of spatial1, computed over the full array at parse time.",
     )
     spatial1__size = Quantity(
@@ -5835,10 +5889,12 @@ class MpesData(Data):
     )
     delay__min = Quantity(
         type=np.float64,
+        unit="second",
         description="Minimum of delay, computed over the full array at parse time.",
     )
     delay__max = Quantity(
         type=np.float64,
+        unit="second",
         description="Maximum of delay, computed over the full array at parse time.",
     )
     delay__size = Quantity(
@@ -5870,10 +5926,12 @@ class MpesData(Data):
     )
     temperature__min = Quantity(
         type=np.float64,
+        unit="second",
         description="Minimum of temperature, computed over the full array at parse time.",
     )
     temperature__max = Quantity(
         type=np.float64,
+        unit="second",
         description="Maximum of temperature, computed over the full array at parse time.",
     )
     temperature__size = Quantity(

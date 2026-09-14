@@ -1025,10 +1025,12 @@ class EmCalorimetryIntegrationResultBACKGROUND(Data):
     )
     intensity__min = Quantity(
         type=np.float64,
+        unit="dimensionless",
         description="Minimum of intensity, computed over the full array at parse time.",
     )
     intensity__max = Quantity(
         type=np.float64,
+        unit="dimensionless",
         description="Maximum of intensity, computed over the full array at parse time.",
     )
     intensity__size = Quantity(
@@ -1071,10 +1073,12 @@ class EmCalorimetryIntegrationResultBACKGROUND(Data):
     )
     indices_pattern__min = Quantity(
         type=np.int64,
+        unit="dimensionless",
         description="Minimum of indices_pattern, computed over the full array at parse time.",
     )
     indices_pattern__max = Quantity(
         type=np.int64,
+        unit="dimensionless",
         description="Maximum of indices_pattern, computed over the full array at parse time.",
     )
     indices_pattern__size = Quantity(
@@ -1117,10 +1121,12 @@ class EmCalorimetryIntegrationResultBACKGROUND(Data):
     )
     s__min = Quantity(
         type=np.float64,
+        flexible_unit=True,
         description="Minimum of s, computed over the full array at parse time.",
     )
     s__max = Quantity(
         type=np.float64,
+        flexible_unit=True,
         description="Maximum of s, computed over the full array at parse time.",
     )
     s__size = Quantity(
@@ -1163,10 +1169,12 @@ class EmCalorimetryIntegrationResultBACKGROUND(Data):
     )
     time__min = Quantity(
         type=np.float64,
+        unit="second",
         description="Minimum of time, computed over the full array at parse time.",
     )
     time__max = Quantity(
         type=np.float64,
+        unit="second",
         description="Maximum of time, computed over the full array at parse time.",
     )
     time__size = Quantity(

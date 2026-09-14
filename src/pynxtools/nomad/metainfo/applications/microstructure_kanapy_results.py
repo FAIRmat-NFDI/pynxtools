@@ -619,10 +619,12 @@ class MicrostructureKanapyResultsMicrostructureIDGridStructure(Data):
     )
     indices_crystal__min = Quantity(
         type=np.int64,
+        unit="dimensionless",
         description="Minimum of indices_crystal, computed over the full array at parse time.",
     )
     indices_crystal__max = Quantity(
         type=np.int64,
+        unit="dimensionless",
         description="Maximum of indices_crystal, computed over the full array at parse time.",
     )
     indices_crystal__size = Quantity(
@@ -649,10 +651,12 @@ class MicrostructureKanapyResultsMicrostructureIDGridStructure(Data):
     )
     z__min = Quantity(
         type=np.float64,
+        unit="m",
         description="Minimum of z, computed over the full array at parse time.",
     )
     z__max = Quantity(
         type=np.float64,
+        unit="m",
         description="Maximum of z, computed over the full array at parse time.",
     )
     z__size = Quantity(
@@ -696,10 +700,12 @@ class MicrostructureKanapyResultsMicrostructureIDGridStructure(Data):
     )
     y__min = Quantity(
         type=np.float64,
+        unit="m",
         description="Minimum of y, computed over the full array at parse time.",
     )
     y__max = Quantity(
         type=np.float64,
+        unit="m",
         description="Maximum of y, computed over the full array at parse time.",
     )
     y__size = Quantity(
@@ -743,10 +749,12 @@ class MicrostructureKanapyResultsMicrostructureIDGridStructure(Data):
     )
     x__min = Quantity(
         type=np.float64,
+        unit="m",
         description="Minimum of x, computed over the full array at parse time.",
     )
     x__max = Quantity(
         type=np.float64,
+        unit="m",
         description="Maximum of x, computed over the full array at parse time.",
     )
     x__size = Quantity(

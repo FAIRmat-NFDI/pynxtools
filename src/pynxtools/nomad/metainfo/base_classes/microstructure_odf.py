@@ -523,10 +523,12 @@ class MicrostructureOdfPhiTwoPlot(Data):
     )
     intensity__min = Quantity(
         type=np.float64,
+        unit="dimensionless",
         description="Minimum of intensity, computed over the full array at parse time.",
     )
     intensity__max = Quantity(
         type=np.float64,
+        unit="dimensionless",
         description="Maximum of intensity, computed over the full array at parse time.",
     )
     intensity__size = Quantity(
@@ -555,10 +557,12 @@ class MicrostructureOdfPhiTwoPlot(Data):
     )
     varphi_one__min = Quantity(
         type=np.float64,
+        unit="radian",
         description="Minimum of varphi_one, computed over the full array at parse time.",
     )
     varphi_one__max = Quantity(
         type=np.float64,
+        unit="radian",
         description="Maximum of varphi_one, computed over the full array at parse time.",
     )
     varphi_one__size = Quantity(
@@ -587,10 +591,12 @@ class MicrostructureOdfPhiTwoPlot(Data):
     )
     capital_phi__min = Quantity(
         type=np.float64,
+        unit="radian",
         description="Minimum of capital_phi, computed over the full array at parse time.",
     )
     capital_phi__max = Quantity(
         type=np.float64,
+        unit="radian",
         description="Maximum of capital_phi, computed over the full array at parse time.",
     )
     capital_phi__size = Quantity(
@@ -619,10 +625,12 @@ class MicrostructureOdfPhiTwoPlot(Data):
     )
     varphi_two__min = Quantity(
         type=np.float64,
+        unit="radian",
         description="Minimum of varphi_two, computed over the full array at parse time.",
     )
     varphi_two__max = Quantity(
         type=np.float64,
+        unit="radian",
         description="Maximum of varphi_two, computed over the full array at parse time.",
     )
     varphi_two__size = Quantity(

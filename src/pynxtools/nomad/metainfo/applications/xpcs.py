@@ -292,10 +292,12 @@ class XpcsData(Data):
     )
     frame_sum__min = Quantity(
         type=np.float64,
+        unit="dimensionless",
         description="Minimum of frame_sum, computed over the full array at parse time.",
     )
     frame_sum__max = Quantity(
         type=np.float64,
+        unit="dimensionless",
         description="Maximum of frame_sum, computed over the full array at parse time.",
     )
     frame_sum__size = Quantity(
@@ -325,10 +327,12 @@ class XpcsData(Data):
     )
     frame_average__min = Quantity(
         type=np.float64,
+        unit="dimensionless",
         description="Minimum of frame_average, computed over the full array at parse time.",
     )
     frame_average__max = Quantity(
         type=np.float64,
+        unit="dimensionless",
         description="Maximum of frame_average, computed over the full array at parse time.",
     )
     frame_average__size = Quantity(
@@ -380,10 +384,12 @@ class XpcsData(Data):
     )
     g2__min = Quantity(
         type=np.float64,
+        unit="dimensionless",
         description="Minimum of g2, computed over the full array at parse time.",
     )
     g2__max = Quantity(
         type=np.float64,
+        unit="dimensionless",
         description="Maximum of g2, computed over the full array at parse time.",
     )
     g2__size = Quantity(
@@ -439,10 +445,12 @@ class XpcsData(Data):
     )
     g2_derr__min = Quantity(
         type=np.float64,
+        unit="dimensionless",
         description="Minimum of g2_derr, computed over the full array at parse time.",
     )
     g2_derr__max = Quantity(
         type=np.float64,
+        unit="dimensionless",
         description="Maximum of g2_derr, computed over the full array at parse time.",
     )
     g2_derr__size = Quantity(
@@ -490,10 +498,12 @@ class XpcsData(Data):
     )
     G2_unnormalized__min = Quantity(
         type=np.float64,
+        flexible_unit=True,
         description="Minimum of G2_unnormalized, computed over the full array at parse time.",
     )
     G2_unnormalized__max = Quantity(
         type=np.float64,
+        flexible_unit=True,
         description="Maximum of G2_unnormalized, computed over the full array at parse time.",
     )
     G2_unnormalized__size = Quantity(
@@ -545,10 +555,12 @@ class XpcsData(Data):
     )
     delay_difference__min = Quantity(
         type=np.int64,
+        unit="dimensionless",
         description="Minimum of delay_difference, computed over the full array at parse time.",
     )
     delay_difference__max = Quantity(
         type=np.int64,
+        unit="dimensionless",
         description="Maximum of delay_difference, computed over the full array at parse time.",
     )
     delay_difference__size = Quantity(
@@ -642,10 +654,12 @@ class XpcsTwotime(Data):
     )
     two_time_corr_func__min = Quantity(
         type=np.float64,
+        flexible_unit=True,
         description="Minimum of two_time_corr_func, computed over the full array at parse time.",
     )
     two_time_corr_func__max = Quantity(
         type=np.float64,
+        flexible_unit=True,
         description="Maximum of two_time_corr_func, computed over the full array at parse time.",
     )
     two_time_corr_func__size = Quantity(
@@ -773,10 +787,12 @@ class XpcsTwotime(Data):
     )
     g2_from_two_time_corr_func__min = Quantity(
         type=np.float64,
+        unit="dimensionless",
         description="Minimum of g2_from_two_time_corr_func, computed over the full array at parse time.",
     )
     g2_from_two_time_corr_func__max = Quantity(
         type=np.float64,
+        unit="dimensionless",
         description="Maximum of g2_from_two_time_corr_func, computed over the full array at parse time.",
     )
     g2_from_two_time_corr_func__size = Quantity(
@@ -872,10 +888,12 @@ class XpcsTwotime(Data):
     )
     g2_err_from_two_time_corr_func__min = Quantity(
         type=np.float64,
+        unit="dimensionless",
         description="Minimum of g2_err_from_two_time_corr_func, computed over the full array at parse time.",
     )
     g2_err_from_two_time_corr_func__max = Quantity(
         type=np.float64,
+        unit="dimensionless",
         description="Maximum of g2_err_from_two_time_corr_func, computed over the full array at parse time.",
     )
     g2_err_from_two_time_corr_func__size = Quantity(
@@ -939,10 +957,12 @@ class XpcsTwotime(Data):
     )
     g2_from_two_time_corr_func_partials__min = Quantity(
         type=np.float64,
+        unit="dimensionless",
         description="Minimum of g2_from_two_time_corr_func_partials, computed over the full array at parse time.",
     )
     g2_from_two_time_corr_func_partials__max = Quantity(
         type=np.float64,
+        unit="dimensionless",
         description="Maximum of g2_from_two_time_corr_func_partials, computed over the full array at parse time.",
     )
     g2_from_two_time_corr_func_partials__size = Quantity(
@@ -1007,10 +1027,12 @@ class XpcsTwotime(Data):
     )
     g2_err_from_two_time_corr_func_partials__min = Quantity(
         type=np.float64,
+        unit="dimensionless",
         description="Minimum of g2_err_from_two_time_corr_func_partials, computed over the full array at parse time.",
     )
     g2_err_from_two_time_corr_func_partials__max = Quantity(
         type=np.float64,
+        unit="dimensionless",
         description="Maximum of g2_err_from_two_time_corr_func_partials, computed over the full array at parse time.",
     )
     g2_err_from_two_time_corr_func_partials__size = Quantity(

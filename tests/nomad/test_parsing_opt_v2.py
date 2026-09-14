@@ -174,7 +174,8 @@ def test_parse_file_array_statistics(storage_layout, data_type, tmp_path):
 
     # FIELD_STATISTICS: `real` itself stays unset (it correctly keeps its
     # NXDL 3D shape and the parser has no path to populate full arrays), but the
-    # parallel {name}__mean/__min/__max/__size/__ndim scalar quantities are populated.
+    # parallel {name}__min/__max/__size/__ndim scalar quantities are populated
+    # (__mean is computed at parse time but not stored as its own quantity).
     for stat in ("min", "max"):
         parsed = np.asarray(getattr(stack_2d, f"real__{stat}"), dtype=data_type).item()
 
