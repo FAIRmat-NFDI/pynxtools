@@ -24,6 +24,7 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 
 import numpy as np
+from nomad.datamodel.hdf5 import HDF5Reference
 from nomad.datamodel.metainfo.annotations import (
     ELNAnnotation,
     ELNComponentEnum,
@@ -88,13 +89,10 @@ class CgFaceListDataStructure(CgPrimitive):
     )
 
     number_of_vertices = Quantity(
-        type=np.int64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXcg_face_list_data_structure.html#nxcg_face_list_data_structure-number-of-vertices-field"
         ],
-        dimensionality="dimensionless",
-        unit="dimensionless",
-        shape=["*"],
         description=(
             "Number of vertices for each face. Each entry represents the total "
             "number of vertices for that face, irrespectively whether vertices "
@@ -109,13 +107,10 @@ class CgFaceListDataStructure(CgPrimitive):
         ),
     )
     number_of_edges = Quantity(
-        type=np.int64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXcg_face_list_data_structure.html#nxcg_face_list_data_structure-number-of-edges-field"
         ],
-        dimensionality="dimensionless",
-        unit="dimensionless",
-        shape=["*"],
         description=(
             "Number of edges for each face. Each entry represents the total "
             "number of edges for that face, irrespectively whether edges are "
@@ -225,13 +220,10 @@ class CgFaceListDataStructure(CgPrimitive):
         a_display={"unit": "dimensionless"},
     )
     indices_vertex = Quantity(
-        type=np.int64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXcg_face_list_data_structure.html#nxcg_face_list_data_structure-indices-vertex-field"
         ],
-        dimensionality="dimensionless",
-        unit="dimensionless",
-        shape=["*"],
         description=("Integer identifier to distinguish all vertices explicitly."),
         a_nexus_field=NeXusField(
             name="indices_vertex",
@@ -242,13 +234,10 @@ class CgFaceListDataStructure(CgPrimitive):
         ),
     )
     indices_edge = Quantity(
-        type=np.int64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXcg_face_list_data_structure.html#nxcg_face_list_data_structure-indices-edge-field"
         ],
-        dimensionality="dimensionless",
-        unit="dimensionless",
-        shape=["*"],
         description=("Integer used to distinguish all edges explicitly."),
         a_nexus_field=NeXusField(
             name="indices_edge",
@@ -259,13 +248,10 @@ class CgFaceListDataStructure(CgPrimitive):
         ),
     )
     indices_face = Quantity(
-        type=np.int64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXcg_face_list_data_structure.html#nxcg_face_list_data_structure-indices-face-field"
         ],
-        dimensionality="dimensionless",
-        unit="dimensionless",
-        shape=["*"],
         description=("Integer used to distinguish all faces explicitly."),
         a_nexus_field=NeXusField(
             name="indices_face",
@@ -276,12 +262,10 @@ class CgFaceListDataStructure(CgPrimitive):
         ),
     )
     vertices = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXcg_face_list_data_structure.html#nxcg_face_list_data_structure-vertices-field"
         ],
-        flexible_unit=True,
-        shape=["*", "*"],
         description=(
             "Positions of the vertices. Users are encouraged to reduce the "
             "vertices to a unique set as this may result in more efficient "
@@ -299,13 +283,10 @@ class CgFaceListDataStructure(CgPrimitive):
         ),
     )
     edges = Quantity(
-        type=np.int64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXcg_face_list_data_structure.html#nxcg_face_list_data_structure-edges-field"
         ],
-        dimensionality="dimensionless",
-        unit="dimensionless",
-        shape=["*", 2],
         description=("The edges are stored as pairs of vertex identifier."),
         a_nexus_field=NeXusField(
             name="edges",
@@ -316,13 +297,10 @@ class CgFaceListDataStructure(CgPrimitive):
         ),
     )
     faces = Quantity(
-        type=np.int64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXcg_face_list_data_structure.html#nxcg_face_list_data_structure-faces-field"
         ],
-        dimensionality="dimensionless",
-        unit="dimensionless",
-        shape=["*"],
         description=(
             "The faces are stored as a concatenated array of vertex identifier "
             "tuples. The first entry is the identifier of the start vertex of "
@@ -398,13 +376,10 @@ class CgFaceListDataStructure(CgPrimitive):
         ),
     )
     winding_order = Quantity(
-        type=np.int64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXcg_face_list_data_structure.html#nxcg_face_list_data_structure-winding-order-field"
         ],
-        dimensionality="dimensionless",
-        unit="dimensionless",
-        shape=["*"],
         description=(
             "Specifies for each face which winding order was used if any: * 0 - "
             "undefined * 1 - counter-clockwise (CCW) * 2 - clock-wise (CW)"

@@ -23,6 +23,7 @@ import pytest
 
 try:
     from nomad.datamodel.data import EntryData
+    from nomad.datamodel.hdf5 import HDF5Reference
     from nomad.datamodel.metainfo import basesections
     from nomad.metainfo.data_type import Enum as NomadEnum
 except ImportError:
@@ -166,7 +167,7 @@ def _inheritance_index(node: NexusGroup, nxdl_filename: str) -> int:
     ],
 )
 def test_base_class_quantity_unit_and_shape_matches_nxdl(nx_class, cls):
-    """Every field's shape, and every unit-bearing field's unit, matches NXDL."""
+    """Scalar fields keep NXDL shape/unit; shape-ful fields become HDF5Reference."""
     fields = _own_fields(nx_class)
     assert fields, f"{nx_class} declares no fields"
     quantities = cls.m_def.all_quantities
@@ -175,9 +176,14 @@ def test_base_class_quantity_unit_and_shape_matches_nxdl(nx_class, cls):
         # "_quantity" suffix if array-shaped (converters/_mapping.py's
         # _BASESECTION_RESERVED_NAMES) — "data" is exactly this case.
         quantity = quantities.get(node.name) or quantities[f"{node.name}_quantity"]
-        assert quantity.shape == _expected_shape(node)
-        if node.unit:
-            assert quantity.unit == _expected_unit(node)
+        expected_shape = _expected_shape(node)
+        if expected_shape:
+            assert isinstance(quantity.type, HDF5Reference)
+            assert quantity.shape == []
+        else:
+            assert quantity.shape == expected_shape
+            if node.unit:
+                assert quantity.unit == _expected_unit(node)
 
 
 def test_base_class_enum_values_match_nxdl_enumeration():
@@ -272,13 +278,16 @@ def test_multi_level_named_concept_exposes_terms_from_every_ancestor():
             )
 
     # dtype/shape from the raw NXDL node must survive the full chain unchanged.
+    # polar_angle is shape-ful, so it's an HDF5Reference (shape=[]) rather than
+    # carrying the NXDL shape/unit directly.
     polar_angle_node = next(
         c
         for c in detector.children
         if isinstance(c, NexusField) and c.name == "polar_angle"
     )
-    assert quantities["polar_angle"].shape == _expected_shape(polar_angle_node)
-    assert quantities["polar_angle"].unit == _expected_unit(polar_angle_node)
+    assert _expected_shape(polar_angle_node)
+    assert isinstance(quantities["polar_angle"].type, HDF5Reference)
+    assert quantities["polar_angle"].shape == []
 
 
 def test_sample_named_concept_inherits_across_applications():

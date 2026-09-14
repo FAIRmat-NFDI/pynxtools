@@ -24,6 +24,7 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 
 import numpy as np
+from nomad.datamodel.hdf5 import HDF5Reference
 from nomad.datamodel.metainfo.annotations import (
     ELNAnnotation,
     ELNComponentEnum,
@@ -337,12 +338,10 @@ class ArpesInstrumentAnalyser(Detector):
     )
 
     data_quantity = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXarpes.html#nxarpes-entry-instrument-analyser-data-field"
         ],
-        flexible_unit=True,
-        shape=["*", "*", "*", "*"],
         a_nexus_field=NeXusField(
             name="data",
             type="NX_NUMBER",
@@ -524,11 +523,10 @@ class ArpesInstrumentAnalyser(Detector):
         a_display={"unit": "eV"},
     )
     sensor_size = Quantity(
-        type=np.int64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXarpes.html#nxarpes-entry-instrument-analyser-sensor-size-field"
         ],
-        shape=[2],
         description=("number of raw active elements in each dimension"),
         a_nexus_field=NeXusField(
             name="sensor_size",
@@ -538,11 +536,10 @@ class ArpesInstrumentAnalyser(Detector):
         ),
     )
     region_origin = Quantity(
-        type=np.int64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXarpes.html#nxarpes-entry-instrument-analyser-region-origin-field"
         ],
-        shape=[2],
         description=("origin of rectangular region selected for readout"),
         a_nexus_field=NeXusField(
             name="region_origin",
@@ -552,11 +549,10 @@ class ArpesInstrumentAnalyser(Detector):
         ),
     )
     region_size = Quantity(
-        type=np.int64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXarpes.html#nxarpes-entry-instrument-analyser-region-size-field"
         ],
-        shape=[2],
         description=("size of rectangular region selected for readout"),
         a_nexus_field=NeXusField(
             name="region_size",

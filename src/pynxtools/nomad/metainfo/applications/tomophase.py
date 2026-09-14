@@ -24,6 +24,7 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 
 import numpy as np
+from nomad.datamodel.hdf5 import HDF5Reference
 from nomad.datamodel.metainfo.annotations import (
     ELNAnnotation,
     ELNComponentEnum,
@@ -318,12 +319,10 @@ class TomophaseInstrumentBrightField(Detector):
     )
 
     data_quantity = Quantity(
-        type=np.int64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXtomophase.html#nxtomophase-entry-instrument-bright-field-data-field"
         ],
-        flexible_unit=True,
-        shape=["*", "*", "*"],
         a_nexus_field=NeXusField(
             name="data",
             type="NX_INT",
@@ -333,11 +332,10 @@ class TomophaseInstrumentBrightField(Detector):
         ),
     )
     sequence_number = Quantity(
-        type=np.int64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXtomophase.html#nxtomophase-entry-instrument-bright-field-sequence-number-field"
         ],
-        shape=["*"],
         a_nexus_field=NeXusField(
             name="sequence_number",
             type="NX_INT",
@@ -364,12 +362,10 @@ class TomophaseInstrumentDarkField(Detector):
     )
 
     data_quantity = Quantity(
-        type=np.int64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXtomophase.html#nxtomophase-entry-instrument-dark-field-data-field"
         ],
-        flexible_unit=True,
-        shape=["*", "*", "*"],
         a_nexus_field=NeXusField(
             name="data",
             type="NX_INT",
@@ -379,11 +375,10 @@ class TomophaseInstrumentDarkField(Detector):
         ),
     )
     sequence_number = Quantity(
-        type=np.int64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXtomophase.html#nxtomophase-entry-instrument-dark-field-sequence-number-field"
         ],
-        shape=["*"],
         a_nexus_field=NeXusField(
             name="sequence_number",
             type="NX_INT",
@@ -410,12 +405,10 @@ class TomophaseInstrumentSample(Detector):
     )
 
     data_quantity = Quantity(
-        type=np.int64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXtomophase.html#nxtomophase-entry-instrument-sample-data-field"
         ],
-        flexible_unit=True,
-        shape=["*", "*", "*", "*"],
         a_nexus_field=NeXusField(
             name="data",
             type="NX_INT",
@@ -425,11 +418,10 @@ class TomophaseInstrumentSample(Detector):
         ),
     )
     sequence_number = Quantity(
-        type=np.int64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXtomophase.html#nxtomophase-entry-instrument-sample-sequence-number-field"
         ],
-        shape=["*", "*"],
         a_nexus_field=NeXusField(
             name="sequence_number",
             type="NX_INT",
@@ -438,13 +430,10 @@ class TomophaseInstrumentSample(Detector):
         ),
     )
     x_pixel_size = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXtomophase.html#nxtomophase-entry-instrument-sample-x-pixel-size-field"
         ],
-        dimensionality="[length]",
-        unit="m",
-        shape=["*", "*"],
         a_nexus_field=NeXusField(
             name="x_pixel_size",
             type="NX_FLOAT",
@@ -454,13 +443,10 @@ class TomophaseInstrumentSample(Detector):
         ),
     )
     y_pixel_size = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXtomophase.html#nxtomophase-entry-instrument-sample-y-pixel-size-field"
         ],
-        dimensionality="[length]",
-        unit="m",
-        shape=["*", "*"],
         a_nexus_field=NeXusField(
             name="y_pixel_size",
             type="NX_FLOAT",
@@ -470,13 +456,10 @@ class TomophaseInstrumentSample(Detector):
         ),
     )
     distance = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXtomophase.html#nxtomophase-entry-instrument-sample-distance-field"
         ],
-        dimensionality="[length]",
-        unit="m",
-        shape=["*", "*", "*"],
         description=("Distance between detector and sample"),
         a_nexus_field=NeXusField(
             name="distance",
@@ -521,13 +504,10 @@ class TomophaseSample(Sample):
         ),
     )
     rotation_angle = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXtomophase.html#nxtomophase-entry-sample-rotation-angle-field"
         ],
-        dimensionality="[angle]",
-        unit="radian",
-        shape=["*"],
         a_nexus_field=NeXusField(
             name="rotation_angle",
             type="NX_FLOAT",
@@ -537,13 +517,10 @@ class TomophaseSample(Sample):
         ),
     )
     x_translation = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXtomophase.html#nxtomophase-entry-sample-x-translation-field"
         ],
-        dimensionality="[length]",
-        unit="m",
-        shape=["*"],
         a_nexus_field=NeXusField(
             name="x_translation",
             type="NX_FLOAT",
@@ -553,13 +530,10 @@ class TomophaseSample(Sample):
         ),
     )
     y_translation = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXtomophase.html#nxtomophase-entry-sample-y-translation-field"
         ],
-        dimensionality="[length]",
-        unit="m",
-        shape=["*"],
         a_nexus_field=NeXusField(
             name="y_translation",
             type="NX_FLOAT",
@@ -569,13 +543,10 @@ class TomophaseSample(Sample):
         ),
     )
     z_translation = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXtomophase.html#nxtomophase-entry-sample-z-translation-field"
         ],
-        dimensionality="[length]",
-        unit="m",
-        shape=["*"],
         a_nexus_field=NeXusField(
             name="z_translation",
             type="NX_FLOAT",
@@ -603,12 +574,10 @@ class TomophaseControl(Monitor):
     )
 
     integral = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXtomophase.html#nxtomophase-entry-control-integral-field"
         ],
-        flexible_unit=True,
-        shape=["*"],
         description=(
             "Total integral monitor counts for each measured frame. Allows a "
             "correction for fluctuations in the beam between frames."
@@ -651,13 +620,10 @@ class TomophaseData(Data):
         ),
     )
     rotation_angle = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXtomophase.html#nxtomophase-entry-data-rotation-angle-link"
         ],
-        dimensionality="[angle]",
-        unit="radian",
-        shape=["*"],
         a_nexus_link=NeXusLink(
             name="rotation_angle",
             target="/NXentry/NXsample/rotation_angle",

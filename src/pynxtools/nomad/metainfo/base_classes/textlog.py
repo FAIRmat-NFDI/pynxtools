@@ -28,6 +28,7 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 
 import numpy as np
+from nomad.datamodel.hdf5 import HDF5Reference
 from nomad.datamodel.metainfo.annotations import (
     ELNAnnotation,
     ELNComponentEnum,
@@ -92,13 +93,10 @@ class Textlog(Object):
     )
 
     time = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXtextlog.html#nxtextlog-time-field"
         ],
-        dimensionality="[time]",
-        unit="second",
-        shape=["*"],
         description=(
             'Time of logged entry. The times are relative to the "start" '
             'attribute and in the units specified in the "units" attribute. '

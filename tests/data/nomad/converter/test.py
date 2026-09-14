@@ -24,6 +24,7 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 
 import numpy as np
+from nomad.datamodel.hdf5 import HDF5Reference
 from nomad.datamodel.metainfo.annotations import (
     ELNAnnotation,
     ELNComponentEnum,
@@ -233,7 +234,7 @@ class TestOPTIONAL_group(Data):
     )
 
     required_field = Quantity(
-        type=np.int64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/src/pynxtools/data/NXtest.html#nxtest-entry-optional-group-required-field-field"
         ],
@@ -246,12 +247,25 @@ class TestOPTIONAL_group(Data):
             name_type="specified",
             optionality="required",
         ),
-        a_eln=ELNAnnotation(
-            component=ELNComponentEnum.NumberEditQuantity,
-        ),
+    )
+    required_field__min = Quantity(
+        type=np.int64,
+        description="Minimum of required_field, computed over the full array at parse time.",
+    )
+    required_field__max = Quantity(
+        type=np.int64,
+        description="Maximum of required_field, computed over the full array at parse time.",
+    )
+    required_field__size = Quantity(
+        type=np.int64,
+        description="Number of elements of required_field in the HDF5 file.",
+    )
+    required_field__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of required_field in the HDF5 file.",
     )
     required_field_set = Quantity(
-        type=np.int64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/src/pynxtools/data/NXtest.html#nxtest-entry-optional-group-required-field-set-field"
         ],
@@ -262,12 +276,25 @@ class TestOPTIONAL_group(Data):
             name_type="specified",
             optionality="optional",
         ),
-        a_eln=ELNAnnotation(
-            component=ELNComponentEnum.NumberEditQuantity,
-        ),
+    )
+    required_field_set__min = Quantity(
+        type=np.int64,
+        description="Minimum of required_field_set, computed over the full array at parse time.",
+    )
+    required_field_set__max = Quantity(
+        type=np.int64,
+        description="Maximum of required_field_set, computed over the full array at parse time.",
+    )
+    required_field_set__size = Quantity(
+        type=np.int64,
+        description="Number of elements of required_field_set in the HDF5 file.",
+    )
+    required_field_set__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of required_field_set in the HDF5 file.",
     )
     some_field_set = Quantity(
-        type=np.int64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/src/pynxtools/data/NXtest.html#nxtest-entry-optional-group-some-field-set-field"
         ],
@@ -282,12 +309,25 @@ class TestOPTIONAL_group(Data):
             name_type="specified",
             optionality="optional",
         ),
-        a_eln=ELNAnnotation(
-            component=ELNComponentEnum.NumberEditQuantity,
-        ),
+    )
+    some_field_set__min = Quantity(
+        type=np.int64,
+        description="Minimum of some_field_set, computed over the full array at parse time.",
+    )
+    some_field_set__max = Quantity(
+        type=np.int64,
+        description="Maximum of some_field_set, computed over the full array at parse time.",
+    )
+    some_field_set__size = Quantity(
+        type=np.int64,
+        description="Number of elements of some_field_set in the HDF5 file.",
+    )
+    some_field_set__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of some_field_set in the HDF5 file.",
     )
     optional_field = Quantity(
-        type=np.int64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/src/pynxtools/data/NXtest.html#nxtest-entry-optional-group-optional-field-field"
         ],
@@ -300,9 +340,22 @@ class TestOPTIONAL_group(Data):
             name_type="specified",
             optionality="optional",
         ),
-        a_eln=ELNAnnotation(
-            component=ELNComponentEnum.NumberEditQuantity,
-        ),
+    )
+    optional_field__min = Quantity(
+        type=np.int64,
+        description="Minimum of optional_field, computed over the full array at parse time.",
+    )
+    optional_field__max = Quantity(
+        type=np.int64,
+        description="Maximum of optional_field, computed over the full array at parse time.",
+    )
+    optional_field__size = Quantity(
+        type=np.int64,
+        description="Number of elements of optional_field in the HDF5 file.",
+    )
+    optional_field__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of optional_field in the HDF5 file.",
     )
 
     def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
@@ -327,11 +380,10 @@ class TestSpecifiedGroupWithNoNameType(Data):
     )
 
     specified_field_with_no_name_type = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/src/pynxtools/data/NXtest.html#nxtest-entry-specified-group-with-no-name-type-specified-field-with-no-name-type-field"
         ],
-        flexible_unit=True,
         a_nexus_field=NeXusField(
             name="specified_field_with_no_name_type",
             type="NX_FLOAT",
@@ -339,9 +391,22 @@ class TestSpecifiedGroupWithNoNameType(Data):
             optionality="required",
             units="NX_ANY",
         ),
-        a_eln=ELNAnnotation(
-            component=ELNComponentEnum.NumberEditQuantity,
-        ),
+    )
+    specified_field_with_no_name_type__min = Quantity(
+        type=np.float64,
+        description="Minimum of specified_field_with_no_name_type, computed over the full array at parse time.",
+    )
+    specified_field_with_no_name_type__max = Quantity(
+        type=np.float64,
+        description="Maximum of specified_field_with_no_name_type, computed over the full array at parse time.",
+    )
+    specified_field_with_no_name_type__size = Quantity(
+        type=np.int64,
+        description="Number of elements of specified_field_with_no_name_type in the HDF5 file.",
+    )
+    specified_field_with_no_name_type__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of specified_field_with_no_name_type in the HDF5 file.",
     )
     specified_field_with_no_name_type__specified_attr_in_field_with_no_name_type = Quantity(
         type=str,
@@ -397,11 +462,10 @@ class TestSpecifiedGroup(Data):
     )
 
     specified_field = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/src/pynxtools/data/NXtest.html#nxtest-entry-specified-group-specified-field-field"
         ],
-        flexible_unit=True,
         a_nexus_field=NeXusField(
             name="specified_field",
             type="NX_FLOAT",
@@ -409,9 +473,22 @@ class TestSpecifiedGroup(Data):
             optionality="optional",
             units="NX_ANY",
         ),
-        a_eln=ELNAnnotation(
-            component=ELNComponentEnum.NumberEditQuantity,
-        ),
+    )
+    specified_field__min = Quantity(
+        type=np.float64,
+        description="Minimum of specified_field, computed over the full array at parse time.",
+    )
+    specified_field__max = Quantity(
+        type=np.float64,
+        description="Maximum of specified_field, computed over the full array at parse time.",
+    )
+    specified_field__size = Quantity(
+        type=np.int64,
+        description="Number of elements of specified_field in the HDF5 file.",
+    )
+    specified_field__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of specified_field in the HDF5 file.",
     )
     specified_field__specified_attr_in_field = Quantity(
         type=str,
@@ -468,12 +545,11 @@ class TestAnyGroupgroup(Data):
     )
 
     any_fieldFIELD = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/src/pynxtools/data/NXtest.html#nxtest-entry-any-groupgroup-any-fieldfield-field"
         ],
         variable=True,
-        flexible_unit=True,
         a_nexus_field=NeXusField(
             name="any_fieldFIELD",
             type="NX_FLOAT",
@@ -481,6 +557,26 @@ class TestAnyGroupgroup(Data):
             optionality="required",
             units="NX_ANY",
         ),
+    )
+    any_fieldFIELD__min = Quantity(
+        type=np.float64,
+        variable=True,
+        description="Minimum of any_fieldFIELD, computed over the full array at parse time.",
+    )
+    any_fieldFIELD__max = Quantity(
+        type=np.float64,
+        variable=True,
+        description="Maximum of any_fieldFIELD, computed over the full array at parse time.",
+    )
+    any_fieldFIELD__size = Quantity(
+        type=np.int64,
+        variable=True,
+        description="Number of elements of any_fieldFIELD in the HDF5 file.",
+    )
+    any_fieldFIELD__ndim = Quantity(
+        type=np.int8,
+        variable=True,
+        description="Number of dimensions of any_fieldFIELD in the HDF5 file.",
     )
     any_fieldFIELD__any_attrATTR_in_field = Quantity(
         type=str,
@@ -529,13 +625,11 @@ class TestNXODD_name(Data):
     )
 
     anamethatRENAMES = Quantity(
-        type=np.int64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/src/pynxtools/data/NXtest.html#nxtest-entry-nxodd-name-anamethatrenames-field"
         ],
         variable=True,
-        dimensionality="dimensionless",
-        unit="dimensionless",
         a_nexus_field=NeXusField(
             name="anamethatRENAMES",
             type="NX_INT",
@@ -544,13 +638,31 @@ class TestNXODD_name(Data):
             units="NX_UNITLESS",
         ),
     )
+    anamethatRENAMES__min = Quantity(
+        type=np.int64,
+        variable=True,
+        description="Minimum of anamethatRENAMES, computed over the full array at parse time.",
+    )
+    anamethatRENAMES__max = Quantity(
+        type=np.int64,
+        variable=True,
+        description="Maximum of anamethatRENAMES, computed over the full array at parse time.",
+    )
+    anamethatRENAMES__size = Quantity(
+        type=np.int64,
+        variable=True,
+        description="Number of elements of anamethatRENAMES in the HDF5 file.",
+    )
+    anamethatRENAMES__ndim = Quantity(
+        type=np.int8,
+        variable=True,
+        description="Number of dimensions of anamethatRENAMES in the HDF5 file.",
+    )
     float_value = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/src/pynxtools/data/NXtest.html#nxtest-entry-nxodd-name-float-value-field"
         ],
-        dimensionality="[mass] * [length] ** 2 / [time] ** 2",
-        unit="eV",
         description=("A dummy entry for a float value."),
         a_nexus_field=NeXusField(
             name="float_value",
@@ -559,18 +671,28 @@ class TestNXODD_name(Data):
             optionality="optional",
             units="NX_ENERGY",
         ),
-        a_eln=ELNAnnotation(
-            component=ELNComponentEnum.NumberEditQuantity,
-        ),
-        a_display={"unit": "eV"},
+    )
+    float_value__min = Quantity(
+        type=np.float64,
+        description="Minimum of float_value, computed over the full array at parse time.",
+    )
+    float_value__max = Quantity(
+        type=np.float64,
+        description="Maximum of float_value, computed over the full array at parse time.",
+    )
+    float_value__size = Quantity(
+        type=np.int64,
+        description="Number of elements of float_value in the HDF5 file.",
+    )
+    float_value__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of float_value in the HDF5 file.",
     )
     number_value = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/src/pynxtools/data/NXtest.html#nxtest-entry-nxodd-name-number-value-field"
         ],
-        dimensionality="[mass] * [length] ** 2 / [time] ** 2",
-        unit="eV",
         description=("A dummy entry for a number value."),
         a_nexus_field=NeXusField(
             name="number_value",
@@ -579,18 +701,28 @@ class TestNXODD_name(Data):
             optionality="optional",
             units="NX_ENERGY",
         ),
-        a_eln=ELNAnnotation(
-            component=ELNComponentEnum.NumberEditQuantity,
-        ),
-        a_display={"unit": "eV"},
+    )
+    number_value__min = Quantity(
+        type=np.float64,
+        description="Minimum of number_value, computed over the full array at parse time.",
+    )
+    number_value__max = Quantity(
+        type=np.float64,
+        description="Maximum of number_value, computed over the full array at parse time.",
+    )
+    number_value__size = Quantity(
+        type=np.int64,
+        description="Number of elements of number_value in the HDF5 file.",
+    )
+    number_value__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of number_value in the HDF5 file.",
     )
     bool_value = Quantity(
-        type=bool,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/src/pynxtools/data/NXtest.html#nxtest-entry-nxodd-name-bool-value-field"
         ],
-        dimensionality="dimensionless",
-        unit="dimensionless",
         description=("A dummy entry for a bool value."),
         a_nexus_field=NeXusField(
             name="bool_value",
@@ -599,17 +731,12 @@ class TestNXODD_name(Data):
             optionality="required",
             units="NX_UNITLESS",
         ),
-        a_eln=ELNAnnotation(
-            component=ELNComponentEnum.BoolEditQuantity,
-        ),
     )
     int_value = Quantity(
-        type=np.int64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/src/pynxtools/data/NXtest.html#nxtest-entry-nxodd-name-int-value-field"
         ],
-        dimensionality="[length]",
-        unit="m",
         description=("A dummy entry for an int value."),
         a_nexus_field=NeXusField(
             name="int_value",
@@ -618,18 +745,28 @@ class TestNXODD_name(Data):
             optionality="required",
             units="NX_LENGTH",
         ),
-        a_eln=ELNAnnotation(
-            component=ELNComponentEnum.NumberEditQuantity,
-        ),
-        a_display={"unit": "m"},
+    )
+    int_value__min = Quantity(
+        type=np.int64,
+        description="Minimum of int_value, computed over the full array at parse time.",
+    )
+    int_value__max = Quantity(
+        type=np.int64,
+        description="Maximum of int_value, computed over the full array at parse time.",
+    )
+    int_value__size = Quantity(
+        type=np.int64,
+        description="Number of elements of int_value in the HDF5 file.",
+    )
+    int_value__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of int_value in the HDF5 file.",
     )
     posint_value = Quantity(
-        type=np.int64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/src/pynxtools/data/NXtest.html#nxtest-entry-nxodd-name-posint-value-field"
         ],
-        dimensionality="[length]",
-        unit="m",
         description=("A dummy entry for a positive int value."),
         a_nexus_field=NeXusField(
             name="posint_value",
@@ -638,18 +775,28 @@ class TestNXODD_name(Data):
             optionality="required",
             units="NX_LENGTH",
         ),
-        a_eln=ELNAnnotation(
-            component=ELNComponentEnum.NumberEditQuantity,
-        ),
-        a_display={"unit": "m"},
+    )
+    posint_value__min = Quantity(
+        type=np.int64,
+        description="Minimum of posint_value, computed over the full array at parse time.",
+    )
+    posint_value__max = Quantity(
+        type=np.int64,
+        description="Maximum of posint_value, computed over the full array at parse time.",
+    )
+    posint_value__size = Quantity(
+        type=np.int64,
+        description="Number of elements of posint_value in the HDF5 file.",
+    )
+    posint_value__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of posint_value in the HDF5 file.",
     )
     char_value = Quantity(
-        type=str,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/src/pynxtools/data/NXtest.html#nxtest-entry-nxodd-name-char-value-field"
         ],
-        dimensionality="dimensionless",
-        unit="dimensionless",
         description=("A dummy entry for a char value."),
         a_nexus_field=NeXusField(
             name="char_value",
@@ -658,17 +805,12 @@ class TestNXODD_name(Data):
             optionality="required",
             units="NX_UNITLESS",
         ),
-        a_eln=ELNAnnotation(
-            component=ELNComponentEnum.StringEditQuantity,
-        ),
     )
     date_value = Quantity(
-        type=Datetime,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/src/pynxtools/data/NXtest.html#nxtest-entry-nxodd-name-date-value-field"
         ],
-        dimensionality="dimensionless",
-        unit="dimensionless",
         description=("A dummy entry for a date value."),
         a_nexus_field=NeXusField(
             name="date_value",
@@ -677,12 +819,9 @@ class TestNXODD_name(Data):
             optionality="required",
             units="NX_UNITLESS",
         ),
-        a_eln=ELNAnnotation(
-            component=ELNComponentEnum.DateTimeEditQuantity,
-        ),
     )
     type = Quantity(
-        type=MEnum(["1st type", "2nd type", "3rd type", "4th type"]),
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/src/pynxtools/data/NXtest.html#nxtest-entry-nxodd-name-type-field"
         ],
@@ -692,9 +831,6 @@ class TestNXODD_name(Data):
             name_type="specified",
             optionality="required",
             enumeration=["1st type", "2nd type", "3rd type", "4th type"],
-        ),
-        a_eln=ELNAnnotation(
-            component=ELNComponentEnum.EnumEditQuantity,
         ),
     )
     type__array = Quantity(
@@ -714,7 +850,7 @@ class TestNXODD_name(Data):
         ),
     )
     type2 = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/src/pynxtools/data/NXtest.html#nxtest-entry-nxodd-name-type2-field"
         ],
@@ -726,9 +862,22 @@ class TestNXODD_name(Data):
             enumeration=["1st type open", "2nd type open"],
             open_enum=True,
         ),
-        a_eln=ELNAnnotation(
-            component=ELNComponentEnum.NumberEditQuantity,
-        ),
+    )
+    type2__min = Quantity(
+        type=np.float64,
+        description="Minimum of type2, computed over the full array at parse time.",
+    )
+    type2__max = Quantity(
+        type=np.float64,
+        description="Maximum of type2, computed over the full array at parse time.",
+    )
+    type2__size = Quantity(
+        type=np.int64,
+        description="Number of elements of type2 in the HDF5 file.",
+    )
+    type2__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of type2 in the HDF5 file.",
     )
     type2__attribute_with_open_enum = Quantity(
         type=str,
@@ -825,7 +974,7 @@ class TestOptionalParent(Data):
     )
 
     required_child = Quantity(
-        type=np.int64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/src/pynxtools/data/NXtest.html#nxtest-entry-optional-parent-required-child-field"
         ],
@@ -836,12 +985,25 @@ class TestOptionalParent(Data):
             name_type="specified",
             optionality="required",
         ),
-        a_eln=ELNAnnotation(
-            component=ELNComponentEnum.NumberEditQuantity,
-        ),
+    )
+    required_child__min = Quantity(
+        type=np.int64,
+        description="Minimum of required_child, computed over the full array at parse time.",
+    )
+    required_child__max = Quantity(
+        type=np.int64,
+        description="Maximum of required_child, computed over the full array at parse time.",
+    )
+    required_child__size = Quantity(
+        type=np.int64,
+        description="Number of elements of required_child in the HDF5 file.",
+    )
+    required_child__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of required_child in the HDF5 file.",
     )
     optional_child = Quantity(
-        type=np.int64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/src/pynxtools/data/NXtest.html#nxtest-entry-optional-parent-optional-child-field"
         ],
@@ -852,9 +1014,22 @@ class TestOptionalParent(Data):
             name_type="specified",
             optionality="optional",
         ),
-        a_eln=ELNAnnotation(
-            component=ELNComponentEnum.NumberEditQuantity,
-        ),
+    )
+    optional_child__min = Quantity(
+        type=np.int64,
+        description="Minimum of optional_child, computed over the full array at parse time.",
+    )
+    optional_child__max = Quantity(
+        type=np.int64,
+        description="Maximum of optional_child, computed over the full array at parse time.",
+    )
+    optional_child__size = Quantity(
+        type=np.int64,
+        description="Number of elements of optional_child in the HDF5 file.",
+    )
+    optional_child__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of optional_child in the HDF5 file.",
     )
 
     def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
@@ -962,11 +1137,10 @@ class TestSymbolGroup(Note):
     )
 
     field_a = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/src/pynxtools/data/NXtest.html#nxtest-entry-symbol-group-field-a-field"
         ],
-        shape=["*"],
         description=("First field sharing symbol n."),
         a_nexus_field=NeXusField(
             name="field_a",
@@ -976,11 +1150,10 @@ class TestSymbolGroup(Note):
         ),
     )
     field_b = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/src/pynxtools/data/NXtest.html#nxtest-entry-symbol-group-field-b-field"
         ],
-        shape=["*"],
         description=("Second field sharing symbol n."),
         a_nexus_field=NeXusField(
             name="field_b",

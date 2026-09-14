@@ -28,6 +28,7 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 
 import numpy as np
+from nomad.datamodel.hdf5 import HDF5Reference
 from nomad.datamodel.metainfo.annotations import (
     ELNAnnotation,
     ELNComponentEnum,
@@ -206,12 +207,10 @@ class ApmParaprobeSurfacerConfigSurfaceMeshingID(ApmParaprobeToolConfigTaskconfi
         ),
     )
     alpha_values = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_surfacer_config.html#nxapm_paraprobe_surfacer_config-entry-surface-meshingid-alpha-values-field"
         ],
-        flexible_unit=True,
-        shape=["*"],
         description=(
             "Array of alpha values to use when alpha_value_choice is "
             "set_of_values or when alpha_value_choice is set_of_alpha_wrappings."
@@ -225,13 +224,10 @@ class ApmParaprobeSurfacerConfigSurfaceMeshingID(ApmParaprobeToolConfigTaskconfi
         ),
     )
     offset_values = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_surfacer_config.html#nxapm_paraprobe_surfacer_config-entry-surface-meshingid-offset-values-field"
         ],
-        dimensionality="[length]",
-        unit="m",
-        shape=["*"],
         description=(
             "Array of offset values to use when alpha_value_choice is "
             "set_of_alpha_wrappings. The array of alpha_values and offset_values "

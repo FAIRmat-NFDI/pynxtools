@@ -24,6 +24,7 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 
 import numpy as np
+from nomad.datamodel.hdf5 import HDF5Reference
 from nomad.datamodel.metainfo.annotations import (
     ELNAnnotation,
     ELNComponentEnum,
@@ -282,13 +283,10 @@ class Crystal(Component):
         ),
     )
     unit_cell = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXcrystal.html#nxcrystal-unit-cell-field"
         ],
-        dimensionality="[length]",
-        unit="m",
-        shape=["*", 6],
         description=("Unit cell parameters (lengths and angles)"),
         a_nexus_field=NeXusField(
             name="unit_cell",
@@ -439,11 +437,10 @@ class Crystal(Component):
         a_display={"unit": "m ** 3"},
     )
     orientation_matrix = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXcrystal.html#nxcrystal-orientation-matrix-field"
         ],
-        shape=[3, 3],
         description=(
             "Orientation matrix of single crystal sample using Busing-Levy "
             "convention: W. R. Busing and H. A. Levy (1967). Acta Cryst. 22, "
@@ -457,13 +454,10 @@ class Crystal(Component):
         ),
     )
     wavelength = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXcrystal.html#nxcrystal-wavelength-field"
         ],
-        dimensionality="[length]",
-        unit="angstrom",
-        shape=["*"],
         description=("Optimum diffracted wavelength"),
         a_nexus_field=NeXusField(
             name="wavelength",
@@ -514,13 +508,10 @@ class Crystal(Component):
         a_display={"unit": "1 / angstrom"},
     )
     reflection = Quantity(
-        type=np.int64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXcrystal.html#nxcrystal-reflection-field"
         ],
-        dimensionality="dimensionless",
-        unit="dimensionless",
-        shape=[3],
         description=("Miller indices (hkl) values of nominal reflection"),
         a_nexus_field=NeXusField(
             name="reflection",
@@ -810,13 +801,10 @@ class Crystal(Component):
         a_display={"unit": "radian"},
     )
     polar_angle = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXcrystal.html#nxcrystal-polar-angle-field"
         ],
-        dimensionality="[angle]",
-        unit="radian",
-        shape=["*"],
         description=(
             "Polar (scattering) angle at which crystal assembly is positioned. "
             "Note: some instrument geometries call this term 2theta. Note: it is "
@@ -831,13 +819,10 @@ class Crystal(Component):
         ),
     )
     azimuthal_angle = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXcrystal.html#nxcrystal-azimuthal-angle-field"
         ],
-        dimensionality="[angle]",
-        unit="radian",
-        shape=["*"],
         description=(
             "Azimuthal angle at which crystal assembly is positioned. Note: it "
             "is recommended to use NXtransformations instead."
@@ -851,13 +836,10 @@ class Crystal(Component):
         ),
     )
     bragg_angle = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXcrystal.html#nxcrystal-bragg-angle-field"
         ],
-        dimensionality="[angle]",
-        unit="radian",
-        shape=["*"],
         description=("Bragg angle of nominal reflection"),
         a_nexus_field=NeXusField(
             name="bragg_angle",

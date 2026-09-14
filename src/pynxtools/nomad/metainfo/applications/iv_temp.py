@@ -28,6 +28,7 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 
 import numpy as np
+from nomad.datamodel.hdf5 import HDF5Reference
 from nomad.datamodel.metainfo.annotations import (
     ELNAnnotation,
     ELNComponentEnum,
@@ -318,7 +319,7 @@ class IvTempData(Data):
     )
 
     temperature = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXiv_temp.html#nxiv_temp-entry-data-temperature-field"
         ],
@@ -328,12 +329,25 @@ class IvTempData(Data):
             name_type="specified",
             optionality="required",
         ),
-        a_eln=ELNAnnotation(
-            component=ELNComponentEnum.NumberEditQuantity,
-        ),
+    )
+    temperature__min = Quantity(
+        type=np.float64,
+        description="Minimum of temperature, computed over the full array at parse time.",
+    )
+    temperature__max = Quantity(
+        type=np.float64,
+        description="Maximum of temperature, computed over the full array at parse time.",
+    )
+    temperature__size = Quantity(
+        type=np.int64,
+        description="Number of elements of temperature in the HDF5 file.",
+    )
+    temperature__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of temperature in the HDF5 file.",
     )
     voltage = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXiv_temp.html#nxiv_temp-entry-data-voltage-field"
         ],
@@ -343,22 +357,50 @@ class IvTempData(Data):
             name_type="specified",
             optionality="required",
         ),
-        a_eln=ELNAnnotation(
-            component=ELNComponentEnum.NumberEditQuantity,
-        ),
+    )
+    voltage__min = Quantity(
+        type=np.float64,
+        description="Minimum of voltage, computed over the full array at parse time.",
+    )
+    voltage__max = Quantity(
+        type=np.float64,
+        description="Maximum of voltage, computed over the full array at parse time.",
+    )
+    voltage__size = Quantity(
+        type=np.int64,
+        description="Number of elements of voltage in the HDF5 file.",
+    )
+    voltage__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of voltage in the HDF5 file.",
     )
     current = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXiv_temp.html#nxiv_temp-entry-data-current-field"
         ],
-        shape=["*", "*"],
         a_nexus_field=NeXusField(
             name="current",
             type="NX_NUMBER",
             name_type="specified",
             optionality="required",
         ),
+    )
+    current__min = Quantity(
+        type=np.float64,
+        description="Minimum of current, computed over the full array at parse time.",
+    )
+    current__max = Quantity(
+        type=np.float64,
+        description="Maximum of current, computed over the full array at parse time.",
+    )
+    current__size = Quantity(
+        type=np.int64,
+        description="Number of elements of current in the HDF5 file.",
+    )
+    current__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of current in the HDF5 file.",
     )
 
     def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:

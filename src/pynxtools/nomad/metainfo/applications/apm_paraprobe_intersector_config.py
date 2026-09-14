@@ -28,6 +28,7 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 
 import numpy as np
+from nomad.datamodel.hdf5 import HDF5Reference
 from nomad.datamodel.metainfo.annotations import (
     ELNAnnotation,
     ELNComponentEnum,
@@ -541,13 +542,10 @@ class ApmParaprobeIntersectorConfigVVSpatialCorrelationIDCurrentSetObjectID(Note
         ),
     )
     indices_feature = Quantity(
-        type=np.int64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_intersector_config.html#nxapm_paraprobe_intersector_config-entry-v-v-spatial-correlationid-current-set-objectid-indices-feature-field"
         ],
-        dimensionality="dimensionless",
-        unit="dimensionless",
-        shape=["*"],
         description=(
             "Array of identifier whereby the path to the geometry data can be "
             "inferred automatically."
@@ -762,13 +760,10 @@ class ApmParaprobeIntersectorConfigVVSpatialCorrelationIDNextSetObjectID(Note):
         ),
     )
     indices_feature = Quantity(
-        type=np.int64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_intersector_config.html#nxapm_paraprobe_intersector_config-entry-v-v-spatial-correlationid-next-set-objectid-indices-feature-field"
         ],
-        dimensionality="dimensionless",
-        unit="dimensionless",
-        shape=["*"],
         description=(
             "Array of identifier whereby the path to the geometry data can be "
             "inferred automatically."

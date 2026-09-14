@@ -24,6 +24,7 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 
 import numpy as np
+from nomad.datamodel.hdf5 import HDF5Reference
 from nomad.datamodel.metainfo.annotations import (
     ELNAnnotation,
     ELNComponentEnum,
@@ -109,13 +110,10 @@ class Shape(Object):
         ),
     )
     size = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXshape.html#nxshape-size-field"
         ],
-        dimensionality="[length]",
-        unit="m",
-        shape=["*", "*"],
         description=(
             "physical extent of the object along its local axes (after "
             "NXorientation) with the center of mass at the local origin (after "

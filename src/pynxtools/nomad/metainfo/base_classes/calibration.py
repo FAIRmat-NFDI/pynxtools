@@ -24,6 +24,7 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 
 import numpy as np
+from nomad.datamodel.hdf5 import HDF5Reference
 from nomad.datamodel.metainfo.annotations import (
     ELNAnnotation,
     ELNComponentEnum,
@@ -226,12 +227,10 @@ class Calibration(Process):
         ),
     )
     original_axis = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXcalibration.html#nxcalibration-original-axis-field"
         ],
-        flexible_unit=True,
-        shape=["*"],
         description=(
             "Array containing the data coordinates in the original uncalibrated axis"
         ),
@@ -339,12 +338,10 @@ class Calibration(Process):
         ),
     )
     calibrated_axis = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXcalibration.html#nxcalibration-calibrated-axis-field"
         ],
-        flexible_unit=True,
-        shape=["*"],
         description=(
             "An array representing the axis after calibration, matching the data length"
         ),

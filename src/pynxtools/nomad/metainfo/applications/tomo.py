@@ -24,6 +24,7 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 
 import numpy as np
+from nomad.datamodel.hdf5 import HDF5Reference
 from nomad.datamodel.metainfo.annotations import (
     ELNAnnotation,
     ELNComponentEnum,
@@ -309,12 +310,10 @@ class TomoInstrumentDetector(Detector):
     )
 
     data_quantity = Quantity(
-        type=np.int64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXtomo.html#nxtomo-entry-instrument-detector-data-field"
         ],
-        flexible_unit=True,
-        shape=["*", "*", "*"],
         a_nexus_field=NeXusField(
             name="data",
             type="NX_INT",
@@ -324,11 +323,10 @@ class TomoInstrumentDetector(Detector):
         ),
     )
     image_key = Quantity(
-        type=np.int64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXtomo.html#nxtomo-entry-instrument-detector-image-key-field"
         ],
-        shape=["*"],
         description=(
             "In order to distinguish between sample projections, dark and flat "
             "images, a magic number is recorded per frame. The key is as "
@@ -343,13 +341,10 @@ class TomoInstrumentDetector(Detector):
         ),
     )
     x_pixel_size = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXtomo.html#nxtomo-entry-instrument-detector-x-pixel-size-field"
         ],
-        dimensionality="[length]",
-        unit="m",
-        shape=["*", "*"],
         a_nexus_field=NeXusField(
             name="x_pixel_size",
             type="NX_FLOAT",
@@ -359,13 +354,10 @@ class TomoInstrumentDetector(Detector):
         ),
     )
     y_pixel_size = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXtomo.html#nxtomo-entry-instrument-detector-y-pixel-size-field"
         ],
-        dimensionality="[length]",
-        unit="m",
-        shape=["*", "*"],
         a_nexus_field=NeXusField(
             name="y_pixel_size",
             type="NX_FLOAT",
@@ -375,13 +367,10 @@ class TomoInstrumentDetector(Detector):
         ),
     )
     distance = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXtomo.html#nxtomo-entry-instrument-detector-distance-field"
         ],
-        dimensionality="[length]",
-        unit="m",
-        shape=["*", "*", "*"],
         description=("Distance between detector and sample"),
         a_nexus_field=NeXusField(
             name="distance",
@@ -456,13 +445,10 @@ class TomoSample(Sample):
         ),
     )
     rotation_angle = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXtomo.html#nxtomo-entry-sample-rotation-angle-field"
         ],
-        dimensionality="[angle]",
-        unit="radian",
-        shape=["*"],
         description=(
             "In practice this axis is always aligned along one pixel direction "
             "on the detector and usually vertical. There are experiments with "
@@ -478,13 +464,10 @@ class TomoSample(Sample):
         ),
     )
     x_translation = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXtomo.html#nxtomo-entry-sample-x-translation-field"
         ],
-        dimensionality="[length]",
-        unit="m",
-        shape=["*"],
         a_nexus_field=NeXusField(
             name="x_translation",
             type="NX_FLOAT",
@@ -494,13 +477,10 @@ class TomoSample(Sample):
         ),
     )
     y_translation = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXtomo.html#nxtomo-entry-sample-y-translation-field"
         ],
-        dimensionality="[length]",
-        unit="m",
-        shape=["*"],
         a_nexus_field=NeXusField(
             name="y_translation",
             type="NX_FLOAT",
@@ -510,13 +490,10 @@ class TomoSample(Sample):
         ),
     )
     z_translation = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXtomo.html#nxtomo-entry-sample-z-translation-field"
         ],
-        dimensionality="[length]",
-        unit="m",
-        shape=["*"],
         a_nexus_field=NeXusField(
             name="z_translation",
             type="NX_FLOAT",
@@ -546,12 +523,10 @@ class TomoControl(Monitor):
     )
 
     data_quantity = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXtomo.html#nxtomo-entry-control-data-field"
         ],
-        flexible_unit=True,
-        shape=["*"],
         description=(
             "Total integral monitor counts for each measured frame. Allows a to "
             "correction for fluctuations in the beam between frames."
@@ -594,13 +569,10 @@ class TomoData(Data):
         ),
     )
     rotation_angle = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXtomo.html#nxtomo-entry-data-rotation-angle-link"
         ],
-        dimensionality="[angle]",
-        unit="radian",
-        shape=["*"],
         a_nexus_link=NeXusLink(
             name="rotation_angle",
             target="/NXentry/NXsample/rotation_angle",

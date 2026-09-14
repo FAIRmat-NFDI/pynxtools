@@ -24,6 +24,7 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 
 import numpy as np
+from nomad.datamodel.hdf5 import HDF5Reference
 from nomad.datamodel.metainfo.annotations import (
     ELNAnnotation,
     ELNComponentEnum,
@@ -331,12 +332,10 @@ class FluoInstrumentFluorescence(Detector):
     )
 
     data_quantity = Quantity(
-        type=np.int64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXfluo.html#nxfluo-entry-instrument-fluorescence-data-field"
         ],
-        flexible_unit=True,
-        shape=["*"],
         a_nexus_field=NeXusField(
             name="data",
             type="NX_INT",
@@ -346,11 +345,10 @@ class FluoInstrumentFluorescence(Detector):
         ),
     )
     energy = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXfluo.html#nxfluo-entry-instrument-fluorescence-energy-field"
         ],
-        shape=["*"],
         a_nexus_field=NeXusField(
             name="energy",
             type="NX_FLOAT",

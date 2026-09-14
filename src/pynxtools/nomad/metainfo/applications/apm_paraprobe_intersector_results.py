@@ -28,6 +28,7 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 
 import numpy as np
+from nomad.datamodel.hdf5 import HDF5Reference
 from nomad.datamodel.metainfo.annotations import (
     ELNAnnotation,
     ELNComponentEnum,
@@ -163,13 +164,10 @@ class ApmParaprobeIntersectorResultsVVSpatialCorrelationID(
     )
 
     current_to_next_link = Quantity(
-        type=np.int64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_intersector_results.html#nxapm_paraprobe_intersector_results-entry-v-v-spatial-correlationid-current-to-next-link-field"
         ],
-        dimensionality="dimensionless",
-        unit="dimensionless",
-        shape=["*", 2],
         description=(
             "A matrix of indices_feature that specifies which named features "
             "from the current_set have directed link(s) pointing to which named "
@@ -184,13 +182,10 @@ class ApmParaprobeIntersectorResultsVVSpatialCorrelationID(
         ),
     )
     current_to_next_link_type = Quantity(
-        type=np.int64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_intersector_results.html#nxapm_paraprobe_intersector_results-entry-v-v-spatial-correlationid-current-to-next-link-type-field"
         ],
-        dimensionality="dimensionless",
-        unit="dimensionless",
-        shape=["*"],
         description=(
             "For each link/pair in current_to_next a characterization whether "
             "the link is due to volumetric overlap (0x00 == 0), proximity (0x01 "
@@ -205,13 +200,10 @@ class ApmParaprobeIntersectorResultsVVSpatialCorrelationID(
         ),
     )
     next_to_current_link = Quantity(
-        type=np.int64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_intersector_results.html#nxapm_paraprobe_intersector_results-entry-v-v-spatial-correlationid-next-to-current-link-field"
         ],
-        dimensionality="dimensionless",
-        unit="dimensionless",
-        shape=["*", 2],
         description=(
             "A matrix of indices_feature which specifies which named feature(s) "
             "from the next_set have directed link(s) pointing to which named "
@@ -228,13 +220,10 @@ class ApmParaprobeIntersectorResultsVVSpatialCorrelationID(
         ),
     )
     next_to_current_link_type = Quantity(
-        type=np.int64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_intersector_results.html#nxapm_paraprobe_intersector_results-entry-v-v-spatial-correlationid-next-to-current-link-type-field"
         ],
-        dimensionality="dimensionless",
-        unit="dimensionless",
-        shape=["*"],
         description=(
             "For each link/pair in next_to_current a characterization whether "
             "the link is due to a volumetric overlap (0x00 == 0), proximity "
@@ -249,13 +238,10 @@ class ApmParaprobeIntersectorResultsVVSpatialCorrelationID(
         ),
     )
     intersection_volume = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_intersector_results.html#nxapm_paraprobe_intersector_results-entry-v-v-spatial-correlationid-intersection-volume-field"
         ],
-        dimensionality="[length] ** 3",
-        unit="m ** 3",
-        shape=["*"],
         description=(
             "For each pair of links in current_to_next the volume of the "
             "intersection, i.e. how much volume do the two features share. If "
@@ -317,13 +303,10 @@ class ApmParaprobeIntersectorResultsVVSpatialCorrelationIDCoprecipitationAnalysi
     )
 
     current_set_feature_to_cluster = Quantity(
-        type=np.int64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_intersector_results.html#nxapm_paraprobe_intersector_results-entry-v-v-spatial-correlationid-coprecipitation-analysis-current-set-feature-to-cluster-field"
         ],
-        dimensionality="dimensionless",
-        unit="dimensionless",
-        shape=["*", 2],
         description=(
             "Matrix of indices_feature and cluster_id pairs which encodes the "
             "cluster to which each indices_feature was assigned. Here for "
@@ -338,13 +321,10 @@ class ApmParaprobeIntersectorResultsVVSpatialCorrelationIDCoprecipitationAnalysi
         ),
     )
     next_set_feature_to_cluster = Quantity(
-        type=np.int64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_intersector_results.html#nxapm_paraprobe_intersector_results-entry-v-v-spatial-correlationid-coprecipitation-analysis-next-set-feature-to-cluster-field"
         ],
-        dimensionality="dimensionless",
-        unit="dimensionless",
-        shape=["*", 2],
         description=(
             "Matrix of indices_feature and cluster_id pairs which encodes the "
             "cluster to which each indices_feature was assigned. Here for "
@@ -359,13 +339,10 @@ class ApmParaprobeIntersectorResultsVVSpatialCorrelationIDCoprecipitationAnalysi
         ),
     )
     cluster_id = Quantity(
-        type=np.int64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_intersector_results.html#nxapm_paraprobe_intersector_results-entry-v-v-spatial-correlationid-coprecipitation-analysis-cluster-id-field"
         ],
-        dimensionality="dimensionless",
-        unit="dimensionless",
-        shape=["*"],
         description=("The identifier (names) of the cluster."),
         a_nexus_field=NeXusField(
             name="cluster_id",
@@ -376,13 +353,10 @@ class ApmParaprobeIntersectorResultsVVSpatialCorrelationIDCoprecipitationAnalysi
         ),
     )
     cluster_composition = Quantity(
-        type=np.int64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_intersector_results.html#nxapm_paraprobe_intersector_results-entry-v-v-spatial-correlationid-coprecipitation-analysis-cluster-composition-field"
         ],
-        dimensionality="dimensionless",
-        unit="dimensionless",
-        shape=["*", 3],
         description=(
             "Pivot table as a matrix. The first column encodes how many members "
             "from the current_set are in each cluster, one row per cluster. The "
@@ -399,13 +373,10 @@ class ApmParaprobeIntersectorResultsVVSpatialCorrelationIDCoprecipitationAnalysi
         ),
     )
     cluster_statistics = Quantity(
-        type=np.int64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_intersector_results.html#nxapm_paraprobe_intersector_results-entry-v-v-spatial-correlationid-coprecipitation-analysis-cluster-statistics-field"
         ],
-        dimensionality="dimensionless",
-        unit="dimensionless",
-        shape=["*", 2],
         description=(
             "Pivot table as a matrix. The first column encodes the different "
             "types of clusters based on their number of members in the "

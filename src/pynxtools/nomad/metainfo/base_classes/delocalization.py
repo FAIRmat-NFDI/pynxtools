@@ -28,6 +28,7 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 
 import numpy as np
+from nomad.datamodel.hdf5 import HDF5Reference
 from nomad.datamodel.metainfo.annotations import (
     ELNAnnotation,
     ELNComponentEnum,
@@ -172,13 +173,10 @@ class DelocalizationWeightingModel(MatchFilter):
         ),
     )
     match = Quantity(
-        type=np.int64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXdelocalization.html#nxdelocalization-weighting-model-match-field"
         ],
-        dimensionality="dimensionless",
-        unit="dimensionless",
-        shape=["*"],
         description=(
             "A list of nuclides based on which to evaluate the weight. Nuclides "
             "need to exist in the nuclide table. Values are nuclide (isotope) "
@@ -196,13 +194,10 @@ class DelocalizationWeightingModel(MatchFilter):
         ),
     )
     mark = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXdelocalization.html#nxdelocalization-weighting-model-mark-field"
         ],
-        dimensionality="dimensionless",
-        unit="dimensionless",
-        shape=["*", "*"],
         description=(
             "Attribute data for each member of the point cloud. For APM these "
             "are the iontypes generated via ranging. The number of mark data per "
@@ -217,13 +212,10 @@ class DelocalizationWeightingModel(MatchFilter):
         ),
     )
     weight = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXdelocalization.html#nxdelocalization-weighting-model-weight-field"
         ],
-        dimensionality="dimensionless",
-        unit="dimensionless",
-        shape=["*"],
         description=(
             "Weighting factor with which the integrated intensity per grid cell "
             "is multiplied specifically for each point/object. For APM the "

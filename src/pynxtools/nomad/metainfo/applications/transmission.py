@@ -28,6 +28,7 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 
 import numpy as np
+from nomad.datamodel.hdf5 import HDF5Reference
 from nomad.datamodel.metainfo.annotations import (
     ELNAnnotation,
     ELNComponentEnum,
@@ -459,13 +460,10 @@ class TransmissionInstrument(Instrument):
         a_display={"unit": "radian"},
     )
     time_points = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXtransmission.html#nxtransmission-entry-instrument-time-points-field"
         ],
-        dimensionality="[time]",
-        unit="second",
-        shape=["*"],
         description=("An array of relative scan start time points."),
         a_nexus_field=NeXusField(
             name="time_points",
@@ -476,11 +474,10 @@ class TransmissionInstrument(Instrument):
         ),
     )
     measured_data = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXtransmission.html#nxtransmission-entry-instrument-measured-data-field"
         ],
-        shape=["*", "*"],
         description=(
             "Resulting data from the measurement. The length of the 2nd "
             "dimension is the number of time points. If it has length one the "
@@ -646,13 +643,10 @@ class TransmissionInstrumentSpectrometer(Monochromator):
     )
 
     wavelength = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXtransmission.html#nxtransmission-entry-instrument-spectrometer-wavelength-field"
         ],
-        dimensionality="[length]",
-        unit="m",
-        shape=["*"],
         description=(
             "Wavelength value(s) used for the measurement. An array of 1 or more "
             "elements. Length defines N_wavelenghts"
@@ -781,13 +775,10 @@ class TransmissionInstrumentSpectrometerGrating(Grating):
         a_display={"unit": "m"},
     )
     wavelength_range = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXtransmission.html#nxtransmission-entry-instrument-spectrometer-grating-wavelength-range-field"
         ],
-        dimensionality="[length]",
-        unit="m",
-        shape=[2],
         description=("Wavelength range in which this grating was used"),
         a_nexus_field=NeXusField(
             name="wavelength_range",
@@ -863,13 +854,10 @@ class TransmissionInstrumentDetector(Detector):
     )
 
     wavelength_range = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXtransmission.html#nxtransmission-entry-instrument-detector-wavelength-range-field"
         ],
-        dimensionality="[length]",
-        unit="m",
-        shape=[2],
         description=("Wavelength range in which this detector was used"),
         a_nexus_field=NeXusField(
             name="wavelength_range",
@@ -1012,11 +1000,10 @@ class TransmissionInstrumentSource(Source):
         ),
     )
     spectrum = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXtransmission.html#nxtransmission-entry-instrument-source-spectrum-field"
         ],
-        shape=["*"],
         description=("The spectrum of the lamp used"),
         a_nexus_field=NeXusField(
             name="spectrum",
@@ -1026,13 +1013,10 @@ class TransmissionInstrumentSource(Source):
         ),
     )
     wavelength_range = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXtransmission.html#nxtransmission-entry-instrument-source-wavelength-range-field"
         ],
-        dimensionality="[length]",
-        unit="m",
-        shape=[2],
         description=("Wavelength range in which the lamp was used"),
         a_nexus_field=NeXusField(
             name="wavelength_range",

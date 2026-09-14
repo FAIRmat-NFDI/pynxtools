@@ -66,6 +66,14 @@ _METAINFO_PACKAGE_ROOT = "pynxtools.nomad.metainfo"
 # Must match the Quantity/SubSection argument indent in nexus.py.j2.
 _DESCRIPTION_INDENT = 12
 
+# Numeric generated python_types whose array-valued fields are deferred as an
+# HDF5Reference.
+_HDF5_REFERENCE_TYPES = ("np.float64", "np.int64", "np.complex128")
+
+# Numeric python_types for which per-field statistics (__min/__max) are computed at
+# parse time. Complex is excluded: min/max are not defined for complex values.
+_STATISTICS_TYPES = ("np.float64", "np.int64")
+
 _jinja_env = jinja2.Environment(
     loader=jinja2.FileSystemLoader(str(_TEMPLATE_DIR)),
     trim_blocks=True,
@@ -103,6 +111,18 @@ class QuantityContext:
     eln_component: str | None
     # Default value for the ELN annotation; set for single-value MEnum only.
     eln_default: str | None
+    # True for numeric array fields inside NXdata-derived classes — the generator
+    # emits parallel {name}__min/__max/__size/__ndim scalar quantities (__mean is
+    # computed at parse time but not stored as its own quantity).
+    has_statistics: bool = False
+    # True for numeric array fields: the generated Quantity itself is emitted as
+    # type=HDF5Reference (a path string into the source .nxs file)
+    # instead of python_type. python_type/shape/dimensionality/default_unit/
+    # flexible_unit are left as the real NXDL-derived values regardless — the
+    # __min/__max statistics quantities (which reuse python_type) and
+    # a_nexus_field/a_nexus_attribute (which read the raw node/unit category
+    # directly) still need them.
+    is_hdf5_reference: bool = False
 
 
 @dataclass
@@ -484,13 +504,18 @@ def _eln_component_for(
     name_type: str | None,
     scalar_items: list[str] | None,
     field_name: str = "",
+    is_hdf5_reference: bool = False,
 ) -> tuple[str | None, str | None]:
     """Return (eln_component, eln_default) for a generated Quantity.
 
-    Returns (None, None) for arrays, variadic quantities, Bytes, and link targets.
+    Returns (None, None) for arrays, variadic quantities, Bytes, link targets,
+    and HDF5Reference quantities -- the value is a reference string, not
+    something a user edits, so no ELN component ever applies.
     Single-value MEnum fields get their sole enum string as ``eln_default``.
     String fields whose name contains "description" get RichTextEditQuantity.
     """
+    if is_hdf5_reference:
+        return None, None
     if shape:  # non-empty list → array; None or [] → scalar
         return None, None
     if (name_type or "specified") in ("any", "partial"):
@@ -516,6 +541,7 @@ def _build_quantity_from_node(
     node: NXTreeField | NXTreeAttribute,
     parent_field: str | None = None,
     python_name_override: str | None = None,
+    is_nxdata_class: bool = False,
 ) -> QuantityContext:
     """Build a QuantityContext from a NXTreeField or NXTreeAttribute node.
 
@@ -558,8 +584,36 @@ def _build_quantity_from_node(
     else:
         python_type = nx_type_to_source(node.dtype)
 
+    # Only NXdata fields receive statistics. Since signals and axes are always
+    # array-valued by convention, treat missing <dimensions> as "array of unknown
+    # rank" for this decision only; the Quantity.shape remains the explicit NXDL shape.
+    is_effectively_array = bool(shape) or (
+        is_nxdata_class and isinstance(node, NXTreeField)
+    )
+    # HDF5Reference defers reading a potentially large numeric array, storing a
+    # path into the source file instead. It applies only to numeric fields:
+    # str/bool/enum/datetime hold their actual value regardless of shape, and HDF5
+    # attributes are not independently addressable HDF5 objects (only fields are).
+    is_hdf5_reference = (
+        isinstance(node, NXTreeField)
+        and is_effectively_array
+        and python_type in _HDF5_REFERENCE_TYPES
+    )
+
     eln_component, eln_default = _eln_component_for(
-        python_type, shape, node.name_type, scalar_items, field_name=node.name or ""
+        python_type,
+        shape,
+        node.name_type,
+        scalar_items,
+        field_name=node.name or "",
+        is_hdf5_reference=is_hdf5_reference,
+    )
+
+    has_statistics = (
+        is_nxdata_class
+        and isinstance(node, NXTreeField)
+        and is_effectively_array
+        and python_type in _STATISTICS_TYPES
     )
 
     return QuantityContext(
@@ -578,6 +632,8 @@ def _build_quantity_from_node(
         node=node,
         eln_component=eln_component,
         eln_default=eln_default,
+        has_statistics=has_statistics,
+        is_hdf5_reference=is_hdf5_reference,
     )
 
 
@@ -1110,7 +1166,7 @@ def _build_named_concept(
     _seen_concept = seen_concept if seen_concept is not None else set()
     _naming_base = naming_base if naming_base is not None else concept_class_name
     nx_name_type = node.name_type or "specified"
-    variable = nx_name_type in ("any", "partial")
+    variable = node.variadic
 
     # None for a fully anonymous group (no name= attribute at all — NXDL
     # gives no template name); the literal name otherwise, even for "any"
@@ -1171,7 +1227,9 @@ def _build_named_concept(
             child, (NXTreeField, NXTreeAttribute)
         ):
             continue
-        qty = _build_quantity_from_node(child)
+        qty = _build_quantity_from_node(
+            child, is_nxdata_class=(node.nx_class == "NXdata")
+        )
         # Suppress ELN annotation when the override has no explicit shape but
         # the base class field is multi-dimensional: NOMAD's __init_metainfo__
         # inherits the parent's shape, making the ELN validator fail with
@@ -1705,7 +1763,10 @@ def build_context(nx_name: str) -> dict:
             quantities.append(qty)
 
         elif child.nx_type == "field":
-            qty = _build_quantity_from_node(child)
+            qty = _build_quantity_from_node(
+                child, is_nxdata_class=(nx_name == "NXdata")
+            )
+            # Ancestor SubSection wins: rename field with _quantity suffix.
             if qty.python_name in all_sub_names:
                 qty.python_name = field_conflicts_with_group(qty.python_name)
             if qty.python_name in seen_quantities:
@@ -1864,10 +1925,9 @@ def build_context(nx_name: str) -> dict:
                     )
                 )
 
-    needs_m_enum = any(
-        q.python_type.startswith("MEnum")
-        for q in quantities + [q for c in named_concepts for q in c.quantities]
-    )
+    _all_quantities = quantities + [q for c in named_concepts for q in c.quantities]
+    needs_m_enum = any(q.python_type.startswith("MEnum") for q in _all_quantities)
+    needs_hdf5_reference = any(q.is_hdf5_reference for q in _all_quantities)
 
     # Remove concept imports already covered by the main generated-base import.
     if base_is_generated:
@@ -1909,6 +1969,7 @@ def build_context(nx_name: str) -> dict:
         "choices": choices,
         "concept_imports": sorted(concept_imports),
         "needs_m_enum": needs_m_enum,
+        "needs_hdf5_reference": needs_hdf5_reference,
     }
 
 

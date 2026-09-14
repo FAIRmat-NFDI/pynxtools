@@ -28,6 +28,7 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 
 import numpy as np
+from nomad.datamodel.hdf5 import HDF5Reference
 from nomad.datamodel.metainfo.annotations import (
     ELNAnnotation,
     ELNComponentEnum,
@@ -185,13 +186,10 @@ class SimilarityGrouping(Object):
         a_display={"unit": "dimensionless"},
     )
     numerical_label = Quantity(
-        type=np.int64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXsimilarity_grouping.html#nxsimilarity_grouping-numerical-label-field"
         ],
-        dimensionality="dimensionless",
-        unit="dimensionless",
-        shape=["*", "*"],
         description=(
             "Matrix of numerical label for each member in the set. For classical "
             "clustering algorithms this can for instance encode the "
@@ -314,13 +312,10 @@ class SimilarityGroupingStatistics(Process):
         a_display={"unit": "dimensionless"},
     )
     indices_cluster = Quantity(
-        type=np.int64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXsimilarity_grouping.html#nxsimilarity_grouping-statistics-indices-cluster-field"
         ],
-        dimensionality="dimensionless",
-        unit="dimensionless",
-        shape=["*"],
         description=("Array of numerical identifier of each feature."),
         a_nexus_field=NeXusField(
             name="indices_cluster",
@@ -331,13 +326,10 @@ class SimilarityGroupingStatistics(Process):
         ),
     )
     member_count = Quantity(
-        type=np.int64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXsimilarity_grouping.html#nxsimilarity_grouping-statistics-member-count-field"
         ],
-        dimensionality="dimensionless",
-        unit="dimensionless",
-        shape=["*", "*"],
         description=("Array of number of objects for each feature."),
         a_nexus_field=NeXusField(
             name="member_count",

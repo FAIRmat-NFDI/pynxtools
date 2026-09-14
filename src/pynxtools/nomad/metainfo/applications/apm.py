@@ -24,6 +24,7 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 
 import numpy as np
+from nomad.datamodel.hdf5 import HDF5Reference
 from nomad.datamodel.metainfo.annotations import (
     ELNAnnotation,
     ELNComponentEnum,
@@ -1983,13 +1984,10 @@ class ApmNAMED_reference_frameID(CoordinateSystem):
         ),
     )
     x = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-named-reference-frameid-x-field"
         ],
-        dimensionality="[length]",
-        unit="m",
-        shape=[3],
         a_nexus_field=NeXusField(
             name="x",
             type="NX_NUMBER",
@@ -2014,13 +2012,10 @@ class ApmNAMED_reference_frameID(CoordinateSystem):
         ),
     )
     y = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-named-reference-frameid-y-field"
         ],
-        dimensionality="[length]",
-        unit="m",
-        shape=[3],
         a_nexus_field=NeXusField(
             name="y",
             type="NX_NUMBER",
@@ -2045,13 +2040,10 @@ class ApmNAMED_reference_frameID(CoordinateSystem):
         ),
     )
     z = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-named-reference-frameid-z-field"
         ],
-        dimensionality="[length]",
-        unit="m",
-        shape=[3],
         a_nexus_field=NeXusField(
             name="z",
             type="NX_NUMBER",
@@ -3694,13 +3686,10 @@ class ApmMeasurementEventIDInstrumentPulser(Component):
         a_display={"unit": "dimensionless"},
     )
     pulse_voltage = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-measurement-eventid-instrument-pulser-pulse-voltage-field"
         ],
-        dimensionality="[mass] * [length] ** 2 / [time] ** 3 / [current]",
-        unit="volt",
-        shape=["*"],
         a_nexus_field=NeXusField(
             name="pulse_voltage",
             type="NX_FLOAT",
@@ -3710,13 +3699,10 @@ class ApmMeasurementEventIDInstrumentPulser(Component):
         ),
     )
     pulse_number = Quantity(
-        type=np.int64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-measurement-eventid-instrument-pulser-pulse-number-field"
         ],
-        dimensionality="dimensionless",
-        unit="dimensionless",
-        shape=["*"],
         a_nexus_field=NeXusField(
             name="pulse_number",
             type="NX_UINT",
@@ -3726,13 +3712,10 @@ class ApmMeasurementEventIDInstrumentPulser(Component):
         ),
     )
     standing_voltage = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-measurement-eventid-instrument-pulser-standing-voltage-field"
         ],
-        dimensionality="[mass] * [length] ** 2 / [time] ** 3 / [current]",
-        unit="volt",
-        shape=["*"],
         a_nexus_field=NeXusField(
             name="standing_voltage",
             type="NX_FLOAT",
@@ -3801,13 +3784,10 @@ class ApmMeasurementEventIDInstrumentPulserSourceID(Source):
         a_display={"unit": "watt"},
     )
     pulse_energy = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-measurement-eventid-instrument-pulser-sourceid-pulse-energy-field"
         ],
-        dimensionality="[mass] * [length] ** 2 / [time] ** 2",
-        unit="eV",
-        shape=["*"],
         a_nexus_field=NeXusField(
             name="pulse_energy",
             type="NX_FLOAT",
@@ -3874,13 +3854,10 @@ class ApmMeasurementEventIDInstrumentStageTemperatureSensor(Sensor):
         ),
     )
     value = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-measurement-eventid-instrument-stage-temperature-sensor-value-field"
         ],
-        dimensionality="[temperature]",
-        unit="kelvin",
-        shape=["*"],
         a_nexus_field=NeXusField(
             name="value",
             type="NX_FLOAT",
@@ -3947,13 +3924,10 @@ class ApmMeasurementEventIDInstrumentAnalysisChamberPressureSensor(Sensor):
         ),
     )
     value = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-measurement-eventid-instrument-analysis-chamber-pressure-sensor-value-field"
         ],
-        dimensionality="[mass] / [length] / [time] ** 2",
-        unit="mbar",
-        shape=["*"],
         a_nexus_field=NeXusField(
             name="value",
             type="NX_FLOAT",
@@ -4099,7 +4073,7 @@ class ApmMeasurementStandingVoltageTime(Data):
         ),
     )
     elapsed_time = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-measurement-standing-voltage-time-elapsed-time-field"
         ],
@@ -4109,9 +4083,22 @@ class ApmMeasurementStandingVoltageTime(Data):
             name_type="specified",
             optionality="required",
         ),
-        a_eln=ELNAnnotation(
-            component=ELNComponentEnum.NumberEditQuantity,
-        ),
+    )
+    elapsed_time__min = Quantity(
+        type=np.float64,
+        description="Minimum of elapsed_time, computed over the full array at parse time.",
+    )
+    elapsed_time__max = Quantity(
+        type=np.float64,
+        description="Maximum of elapsed_time, computed over the full array at parse time.",
+    )
+    elapsed_time__size = Quantity(
+        type=np.int64,
+        description="Number of elements of elapsed_time in the HDF5 file.",
+    )
+    elapsed_time__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of elapsed_time in the HDF5 file.",
     )
     elapsed_time__units = Quantity(
         type=str,
@@ -4146,7 +4133,7 @@ class ApmMeasurementStandingVoltageTime(Data):
         ),
     )
     standing_voltage = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-measurement-standing-voltage-time-standing-voltage-field"
         ],
@@ -4156,9 +4143,22 @@ class ApmMeasurementStandingVoltageTime(Data):
             name_type="specified",
             optionality="required",
         ),
-        a_eln=ELNAnnotation(
-            component=ELNComponentEnum.NumberEditQuantity,
-        ),
+    )
+    standing_voltage__min = Quantity(
+        type=np.float64,
+        description="Minimum of standing_voltage, computed over the full array at parse time.",
+    )
+    standing_voltage__max = Quantity(
+        type=np.float64,
+        description="Maximum of standing_voltage, computed over the full array at parse time.",
+    )
+    standing_voltage__size = Quantity(
+        type=np.int64,
+        description="Number of elements of standing_voltage in the HDF5 file.",
+    )
+    standing_voltage__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of standing_voltage in the HDF5 file.",
     )
     standing_voltage__units = Quantity(
         type=str,
@@ -4279,7 +4279,7 @@ class ApmMeasurementPulseFrequencyTime(Data):
         ),
     )
     elapsed_time = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-measurement-pulse-frequency-time-elapsed-time-field"
         ],
@@ -4289,9 +4289,22 @@ class ApmMeasurementPulseFrequencyTime(Data):
             name_type="specified",
             optionality="required",
         ),
-        a_eln=ELNAnnotation(
-            component=ELNComponentEnum.NumberEditQuantity,
-        ),
+    )
+    elapsed_time__min = Quantity(
+        type=np.float64,
+        description="Minimum of elapsed_time, computed over the full array at parse time.",
+    )
+    elapsed_time__max = Quantity(
+        type=np.float64,
+        description="Maximum of elapsed_time, computed over the full array at parse time.",
+    )
+    elapsed_time__size = Quantity(
+        type=np.int64,
+        description="Number of elements of elapsed_time in the HDF5 file.",
+    )
+    elapsed_time__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of elapsed_time in the HDF5 file.",
     )
     elapsed_time__units = Quantity(
         type=str,
@@ -4326,7 +4339,7 @@ class ApmMeasurementPulseFrequencyTime(Data):
         ),
     )
     pulse_frequency = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-measurement-pulse-frequency-time-pulse-frequency-field"
         ],
@@ -4336,9 +4349,22 @@ class ApmMeasurementPulseFrequencyTime(Data):
             name_type="specified",
             optionality="required",
         ),
-        a_eln=ELNAnnotation(
-            component=ELNComponentEnum.NumberEditQuantity,
-        ),
+    )
+    pulse_frequency__min = Quantity(
+        type=np.float64,
+        description="Minimum of pulse_frequency, computed over the full array at parse time.",
+    )
+    pulse_frequency__max = Quantity(
+        type=np.float64,
+        description="Maximum of pulse_frequency, computed over the full array at parse time.",
+    )
+    pulse_frequency__size = Quantity(
+        type=np.int64,
+        description="Number of elements of pulse_frequency in the HDF5 file.",
+    )
+    pulse_frequency__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of pulse_frequency in the HDF5 file.",
     )
     pulse_frequency__units = Quantity(
         type=str,
@@ -4459,7 +4485,7 @@ class ApmMeasurementDetectionRateTime(Data):
         ),
     )
     elapsed_time = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-measurement-detection-rate-time-elapsed-time-field"
         ],
@@ -4469,9 +4495,22 @@ class ApmMeasurementDetectionRateTime(Data):
             name_type="specified",
             optionality="required",
         ),
-        a_eln=ELNAnnotation(
-            component=ELNComponentEnum.NumberEditQuantity,
-        ),
+    )
+    elapsed_time__min = Quantity(
+        type=np.float64,
+        description="Minimum of elapsed_time, computed over the full array at parse time.",
+    )
+    elapsed_time__max = Quantity(
+        type=np.float64,
+        description="Maximum of elapsed_time, computed over the full array at parse time.",
+    )
+    elapsed_time__size = Quantity(
+        type=np.int64,
+        description="Number of elements of elapsed_time in the HDF5 file.",
+    )
+    elapsed_time__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of elapsed_time in the HDF5 file.",
     )
     elapsed_time__units = Quantity(
         type=str,
@@ -4506,7 +4545,7 @@ class ApmMeasurementDetectionRateTime(Data):
         ),
     )
     detection_rate = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-measurement-detection-rate-time-detection-rate-field"
         ],
@@ -4516,9 +4555,22 @@ class ApmMeasurementDetectionRateTime(Data):
             name_type="specified",
             optionality="required",
         ),
-        a_eln=ELNAnnotation(
-            component=ELNComponentEnum.NumberEditQuantity,
-        ),
+    )
+    detection_rate__min = Quantity(
+        type=np.float64,
+        description="Minimum of detection_rate, computed over the full array at parse time.",
+    )
+    detection_rate__max = Quantity(
+        type=np.float64,
+        description="Maximum of detection_rate, computed over the full array at parse time.",
+    )
+    detection_rate__size = Quantity(
+        type=np.int64,
+        description="Number of elements of detection_rate in the HDF5 file.",
+    )
+    detection_rate__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of detection_rate in the HDF5 file.",
     )
     detection_rate__units = Quantity(
         type=str,
@@ -4639,7 +4691,7 @@ class ApmMeasurementDetectionRateSetTime(Data):
         ),
     )
     elapsed_time = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-measurement-detection-rate-set-time-elapsed-time-field"
         ],
@@ -4649,9 +4701,22 @@ class ApmMeasurementDetectionRateSetTime(Data):
             name_type="specified",
             optionality="required",
         ),
-        a_eln=ELNAnnotation(
-            component=ELNComponentEnum.NumberEditQuantity,
-        ),
+    )
+    elapsed_time__min = Quantity(
+        type=np.float64,
+        description="Minimum of elapsed_time, computed over the full array at parse time.",
+    )
+    elapsed_time__max = Quantity(
+        type=np.float64,
+        description="Maximum of elapsed_time, computed over the full array at parse time.",
+    )
+    elapsed_time__size = Quantity(
+        type=np.int64,
+        description="Number of elements of elapsed_time in the HDF5 file.",
+    )
+    elapsed_time__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of elapsed_time in the HDF5 file.",
     )
     elapsed_time__units = Quantity(
         type=str,
@@ -4686,7 +4751,7 @@ class ApmMeasurementDetectionRateSetTime(Data):
         ),
     )
     detection_rate_set = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-measurement-detection-rate-set-time-detection-rate-set-field"
         ],
@@ -4696,9 +4761,22 @@ class ApmMeasurementDetectionRateSetTime(Data):
             name_type="specified",
             optionality="required",
         ),
-        a_eln=ELNAnnotation(
-            component=ELNComponentEnum.NumberEditQuantity,
-        ),
+    )
+    detection_rate_set__min = Quantity(
+        type=np.float64,
+        description="Minimum of detection_rate_set, computed over the full array at parse time.",
+    )
+    detection_rate_set__max = Quantity(
+        type=np.float64,
+        description="Maximum of detection_rate_set, computed over the full array at parse time.",
+    )
+    detection_rate_set__size = Quantity(
+        type=np.int64,
+        description="Number of elements of detection_rate_set in the HDF5 file.",
+    )
+    detection_rate_set__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of detection_rate_set in the HDF5 file.",
     )
     detection_rate_set__units = Quantity(
         type=str,
@@ -4819,7 +4897,7 @@ class ApmMeasurementPressureTime(Data):
         ),
     )
     elapsed_time = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-measurement-pressure-time-elapsed-time-field"
         ],
@@ -4829,9 +4907,22 @@ class ApmMeasurementPressureTime(Data):
             name_type="specified",
             optionality="required",
         ),
-        a_eln=ELNAnnotation(
-            component=ELNComponentEnum.NumberEditQuantity,
-        ),
+    )
+    elapsed_time__min = Quantity(
+        type=np.float64,
+        description="Minimum of elapsed_time, computed over the full array at parse time.",
+    )
+    elapsed_time__max = Quantity(
+        type=np.float64,
+        description="Maximum of elapsed_time, computed over the full array at parse time.",
+    )
+    elapsed_time__size = Quantity(
+        type=np.int64,
+        description="Number of elements of elapsed_time in the HDF5 file.",
+    )
+    elapsed_time__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of elapsed_time in the HDF5 file.",
     )
     elapsed_time__units = Quantity(
         type=str,
@@ -4866,7 +4957,7 @@ class ApmMeasurementPressureTime(Data):
         ),
     )
     pressure = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-measurement-pressure-time-pressure-field"
         ],
@@ -4876,9 +4967,22 @@ class ApmMeasurementPressureTime(Data):
             name_type="specified",
             optionality="required",
         ),
-        a_eln=ELNAnnotation(
-            component=ELNComponentEnum.NumberEditQuantity,
-        ),
+    )
+    pressure__min = Quantity(
+        type=np.float64,
+        description="Minimum of pressure, computed over the full array at parse time.",
+    )
+    pressure__max = Quantity(
+        type=np.float64,
+        description="Maximum of pressure, computed over the full array at parse time.",
+    )
+    pressure__size = Quantity(
+        type=np.int64,
+        description="Number of elements of pressure in the HDF5 file.",
+    )
+    pressure__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of pressure in the HDF5 file.",
     )
     pressure__units = Quantity(
         type=str,
@@ -4999,7 +5103,7 @@ class ApmMeasurementSpecimenVoltageTime(Data):
         ),
     )
     elapsed_time = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-measurement-specimen-voltage-time-elapsed-time-field"
         ],
@@ -5009,9 +5113,22 @@ class ApmMeasurementSpecimenVoltageTime(Data):
             name_type="specified",
             optionality="required",
         ),
-        a_eln=ELNAnnotation(
-            component=ELNComponentEnum.NumberEditQuantity,
-        ),
+    )
+    elapsed_time__min = Quantity(
+        type=np.float64,
+        description="Minimum of elapsed_time, computed over the full array at parse time.",
+    )
+    elapsed_time__max = Quantity(
+        type=np.float64,
+        description="Maximum of elapsed_time, computed over the full array at parse time.",
+    )
+    elapsed_time__size = Quantity(
+        type=np.int64,
+        description="Number of elements of elapsed_time in the HDF5 file.",
+    )
+    elapsed_time__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of elapsed_time in the HDF5 file.",
     )
     elapsed_time__units = Quantity(
         type=str,
@@ -5046,7 +5163,7 @@ class ApmMeasurementSpecimenVoltageTime(Data):
         ),
     )
     specimen_voltage = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-measurement-specimen-voltage-time-specimen-voltage-field"
         ],
@@ -5056,9 +5173,22 @@ class ApmMeasurementSpecimenVoltageTime(Data):
             name_type="specified",
             optionality="required",
         ),
-        a_eln=ELNAnnotation(
-            component=ELNComponentEnum.NumberEditQuantity,
-        ),
+    )
+    specimen_voltage__min = Quantity(
+        type=np.float64,
+        description="Minimum of specimen_voltage, computed over the full array at parse time.",
+    )
+    specimen_voltage__max = Quantity(
+        type=np.float64,
+        description="Maximum of specimen_voltage, computed over the full array at parse time.",
+    )
+    specimen_voltage__size = Quantity(
+        type=np.int64,
+        description="Number of elements of specimen_voltage in the HDF5 file.",
+    )
+    specimen_voltage__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of specimen_voltage in the HDF5 file.",
     )
     specimen_voltage__units = Quantity(
         type=str,
@@ -5179,7 +5309,7 @@ class ApmMeasurementSpecimenTemperatureTime(Data):
         ),
     )
     elapsed_time = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-measurement-specimen-temperature-time-elapsed-time-field"
         ],
@@ -5189,9 +5319,22 @@ class ApmMeasurementSpecimenTemperatureTime(Data):
             name_type="specified",
             optionality="required",
         ),
-        a_eln=ELNAnnotation(
-            component=ELNComponentEnum.NumberEditQuantity,
-        ),
+    )
+    elapsed_time__min = Quantity(
+        type=np.float64,
+        description="Minimum of elapsed_time, computed over the full array at parse time.",
+    )
+    elapsed_time__max = Quantity(
+        type=np.float64,
+        description="Maximum of elapsed_time, computed over the full array at parse time.",
+    )
+    elapsed_time__size = Quantity(
+        type=np.int64,
+        description="Number of elements of elapsed_time in the HDF5 file.",
+    )
+    elapsed_time__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of elapsed_time in the HDF5 file.",
     )
     elapsed_time__units = Quantity(
         type=str,
@@ -5226,7 +5369,7 @@ class ApmMeasurementSpecimenTemperatureTime(Data):
         ),
     )
     specimen_temperature = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-measurement-specimen-temperature-time-specimen-temperature-field"
         ],
@@ -5236,9 +5379,22 @@ class ApmMeasurementSpecimenTemperatureTime(Data):
             name_type="specified",
             optionality="required",
         ),
-        a_eln=ELNAnnotation(
-            component=ELNComponentEnum.NumberEditQuantity,
-        ),
+    )
+    specimen_temperature__min = Quantity(
+        type=np.float64,
+        description="Minimum of specimen_temperature, computed over the full array at parse time.",
+    )
+    specimen_temperature__max = Quantity(
+        type=np.float64,
+        description="Maximum of specimen_temperature, computed over the full array at parse time.",
+    )
+    specimen_temperature__size = Quantity(
+        type=np.int64,
+        description="Number of elements of specimen_temperature in the HDF5 file.",
+    )
+    specimen_temperature__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of specimen_temperature in the HDF5 file.",
     )
     specimen_temperature__units = Quantity(
         type=str,
@@ -5359,7 +5515,7 @@ class ApmMeasurementAmbientTemperatureTime(Data):
         ),
     )
     elapsed_time = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-measurement-ambient-temperature-time-elapsed-time-field"
         ],
@@ -5369,9 +5525,22 @@ class ApmMeasurementAmbientTemperatureTime(Data):
             name_type="specified",
             optionality="required",
         ),
-        a_eln=ELNAnnotation(
-            component=ELNComponentEnum.NumberEditQuantity,
-        ),
+    )
+    elapsed_time__min = Quantity(
+        type=np.float64,
+        description="Minimum of elapsed_time, computed over the full array at parse time.",
+    )
+    elapsed_time__max = Quantity(
+        type=np.float64,
+        description="Maximum of elapsed_time, computed over the full array at parse time.",
+    )
+    elapsed_time__size = Quantity(
+        type=np.int64,
+        description="Number of elements of elapsed_time in the HDF5 file.",
+    )
+    elapsed_time__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of elapsed_time in the HDF5 file.",
     )
     elapsed_time__units = Quantity(
         type=str,
@@ -5406,7 +5575,7 @@ class ApmMeasurementAmbientTemperatureTime(Data):
         ),
     )
     ambient_temperature = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-measurement-ambient-temperature-time-ambient-temperature-field"
         ],
@@ -5416,9 +5585,22 @@ class ApmMeasurementAmbientTemperatureTime(Data):
             name_type="specified",
             optionality="required",
         ),
-        a_eln=ELNAnnotation(
-            component=ELNComponentEnum.NumberEditQuantity,
-        ),
+    )
+    ambient_temperature__min = Quantity(
+        type=np.float64,
+        description="Minimum of ambient_temperature, computed over the full array at parse time.",
+    )
+    ambient_temperature__max = Quantity(
+        type=np.float64,
+        description="Maximum of ambient_temperature, computed over the full array at parse time.",
+    )
+    ambient_temperature__size = Quantity(
+        type=np.int64,
+        description="Number of elements of ambient_temperature in the HDF5 file.",
+    )
+    ambient_temperature__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of ambient_temperature in the HDF5 file.",
     )
     ambient_temperature__units = Quantity(
         type=str,
@@ -5539,7 +5721,7 @@ class ApmMeasurementReflectronVoltageTime(Data):
         ),
     )
     elapsed_time = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-measurement-reflectron-voltage-time-elapsed-time-field"
         ],
@@ -5549,9 +5731,22 @@ class ApmMeasurementReflectronVoltageTime(Data):
             name_type="specified",
             optionality="required",
         ),
-        a_eln=ELNAnnotation(
-            component=ELNComponentEnum.NumberEditQuantity,
-        ),
+    )
+    elapsed_time__min = Quantity(
+        type=np.float64,
+        description="Minimum of elapsed_time, computed over the full array at parse time.",
+    )
+    elapsed_time__max = Quantity(
+        type=np.float64,
+        description="Maximum of elapsed_time, computed over the full array at parse time.",
+    )
+    elapsed_time__size = Quantity(
+        type=np.int64,
+        description="Number of elements of elapsed_time in the HDF5 file.",
+    )
+    elapsed_time__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of elapsed_time in the HDF5 file.",
     )
     elapsed_time__units = Quantity(
         type=str,
@@ -5586,7 +5781,7 @@ class ApmMeasurementReflectronVoltageTime(Data):
         ),
     )
     reflectron_voltage = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-measurement-reflectron-voltage-time-reflectron-voltage-field"
         ],
@@ -5596,9 +5791,22 @@ class ApmMeasurementReflectronVoltageTime(Data):
             name_type="specified",
             optionality="required",
         ),
-        a_eln=ELNAnnotation(
-            component=ELNComponentEnum.NumberEditQuantity,
-        ),
+    )
+    reflectron_voltage__min = Quantity(
+        type=np.float64,
+        description="Minimum of reflectron_voltage, computed over the full array at parse time.",
+    )
+    reflectron_voltage__max = Quantity(
+        type=np.float64,
+        description="Maximum of reflectron_voltage, computed over the full array at parse time.",
+    )
+    reflectron_voltage__size = Quantity(
+        type=np.int64,
+        description="Number of elements of reflectron_voltage in the HDF5 file.",
+    )
+    reflectron_voltage__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of reflectron_voltage in the HDF5 file.",
     )
     reflectron_voltage__units = Quantity(
         type=str,
@@ -5719,7 +5927,7 @@ class ApmMeasurementXstagePositionTime(Data):
         ),
     )
     elapsed_time = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-measurement-xstage-position-time-elapsed-time-field"
         ],
@@ -5729,9 +5937,22 @@ class ApmMeasurementXstagePositionTime(Data):
             name_type="specified",
             optionality="required",
         ),
-        a_eln=ELNAnnotation(
-            component=ELNComponentEnum.NumberEditQuantity,
-        ),
+    )
+    elapsed_time__min = Quantity(
+        type=np.float64,
+        description="Minimum of elapsed_time, computed over the full array at parse time.",
+    )
+    elapsed_time__max = Quantity(
+        type=np.float64,
+        description="Maximum of elapsed_time, computed over the full array at parse time.",
+    )
+    elapsed_time__size = Quantity(
+        type=np.int64,
+        description="Number of elements of elapsed_time in the HDF5 file.",
+    )
+    elapsed_time__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of elapsed_time in the HDF5 file.",
     )
     elapsed_time__units = Quantity(
         type=str,
@@ -5766,7 +5987,7 @@ class ApmMeasurementXstagePositionTime(Data):
         ),
     )
     xstage_position = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-measurement-xstage-position-time-xstage-position-field"
         ],
@@ -5776,9 +5997,22 @@ class ApmMeasurementXstagePositionTime(Data):
             name_type="specified",
             optionality="required",
         ),
-        a_eln=ELNAnnotation(
-            component=ELNComponentEnum.NumberEditQuantity,
-        ),
+    )
+    xstage_position__min = Quantity(
+        type=np.float64,
+        description="Minimum of xstage_position, computed over the full array at parse time.",
+    )
+    xstage_position__max = Quantity(
+        type=np.float64,
+        description="Maximum of xstage_position, computed over the full array at parse time.",
+    )
+    xstage_position__size = Quantity(
+        type=np.int64,
+        description="Number of elements of xstage_position in the HDF5 file.",
+    )
+    xstage_position__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of xstage_position in the HDF5 file.",
     )
     xstage_position__units = Quantity(
         type=str,
@@ -5899,7 +6133,7 @@ class ApmMeasurementYstagePositionTime(Data):
         ),
     )
     elapsed_time = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-measurement-ystage-position-time-elapsed-time-field"
         ],
@@ -5909,9 +6143,22 @@ class ApmMeasurementYstagePositionTime(Data):
             name_type="specified",
             optionality="required",
         ),
-        a_eln=ELNAnnotation(
-            component=ELNComponentEnum.NumberEditQuantity,
-        ),
+    )
+    elapsed_time__min = Quantity(
+        type=np.float64,
+        description="Minimum of elapsed_time, computed over the full array at parse time.",
+    )
+    elapsed_time__max = Quantity(
+        type=np.float64,
+        description="Maximum of elapsed_time, computed over the full array at parse time.",
+    )
+    elapsed_time__size = Quantity(
+        type=np.int64,
+        description="Number of elements of elapsed_time in the HDF5 file.",
+    )
+    elapsed_time__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of elapsed_time in the HDF5 file.",
     )
     elapsed_time__units = Quantity(
         type=str,
@@ -5946,7 +6193,7 @@ class ApmMeasurementYstagePositionTime(Data):
         ),
     )
     ystage_position = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-measurement-ystage-position-time-ystage-position-field"
         ],
@@ -5956,9 +6203,22 @@ class ApmMeasurementYstagePositionTime(Data):
             name_type="specified",
             optionality="required",
         ),
-        a_eln=ELNAnnotation(
-            component=ELNComponentEnum.NumberEditQuantity,
-        ),
+    )
+    ystage_position__min = Quantity(
+        type=np.float64,
+        description="Minimum of ystage_position, computed over the full array at parse time.",
+    )
+    ystage_position__max = Quantity(
+        type=np.float64,
+        description="Maximum of ystage_position, computed over the full array at parse time.",
+    )
+    ystage_position__size = Quantity(
+        type=np.int64,
+        description="Number of elements of ystage_position in the HDF5 file.",
+    )
+    ystage_position__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of ystage_position in the HDF5 file.",
     )
     ystage_position__units = Quantity(
         type=str,
@@ -6079,7 +6339,7 @@ class ApmMeasurementZstagePositionTime(Data):
         ),
     )
     elapsed_time = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-measurement-zstage-position-time-elapsed-time-field"
         ],
@@ -6089,9 +6349,22 @@ class ApmMeasurementZstagePositionTime(Data):
             name_type="specified",
             optionality="required",
         ),
-        a_eln=ELNAnnotation(
-            component=ELNComponentEnum.NumberEditQuantity,
-        ),
+    )
+    elapsed_time__min = Quantity(
+        type=np.float64,
+        description="Minimum of elapsed_time, computed over the full array at parse time.",
+    )
+    elapsed_time__max = Quantity(
+        type=np.float64,
+        description="Maximum of elapsed_time, computed over the full array at parse time.",
+    )
+    elapsed_time__size = Quantity(
+        type=np.int64,
+        description="Number of elements of elapsed_time in the HDF5 file.",
+    )
+    elapsed_time__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of elapsed_time in the HDF5 file.",
     )
     elapsed_time__units = Quantity(
         type=str,
@@ -6126,7 +6399,7 @@ class ApmMeasurementZstagePositionTime(Data):
         ),
     )
     zstage_position = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-measurement-zstage-position-time-zstage-position-field"
         ],
@@ -6136,9 +6409,22 @@ class ApmMeasurementZstagePositionTime(Data):
             name_type="specified",
             optionality="required",
         ),
-        a_eln=ELNAnnotation(
-            component=ELNComponentEnum.NumberEditQuantity,
-        ),
+    )
+    zstage_position__min = Quantity(
+        type=np.float64,
+        description="Minimum of zstage_position, computed over the full array at parse time.",
+    )
+    zstage_position__max = Quantity(
+        type=np.float64,
+        description="Maximum of zstage_position, computed over the full array at parse time.",
+    )
+    zstage_position__size = Quantity(
+        type=np.int64,
+        description="Number of elements of zstage_position in the HDF5 file.",
+    )
+    zstage_position__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of zstage_position in the HDF5 file.",
     )
     zstage_position__units = Quantity(
         type=str,
@@ -6259,7 +6545,7 @@ class ApmMeasurementStandingVoltageSequence(Data):
         ),
     )
     event_id = Quantity(
-        type=np.int64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-measurement-standing-voltage-sequence-event-id-field"
         ],
@@ -6269,9 +6555,22 @@ class ApmMeasurementStandingVoltageSequence(Data):
             name_type="specified",
             optionality="required",
         ),
-        a_eln=ELNAnnotation(
-            component=ELNComponentEnum.NumberEditQuantity,
-        ),
+    )
+    event_id__min = Quantity(
+        type=np.int64,
+        description="Minimum of event_id, computed over the full array at parse time.",
+    )
+    event_id__max = Quantity(
+        type=np.int64,
+        description="Maximum of event_id, computed over the full array at parse time.",
+    )
+    event_id__size = Quantity(
+        type=np.int64,
+        description="Number of elements of event_id in the HDF5 file.",
+    )
+    event_id__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of event_id in the HDF5 file.",
     )
     event_id__units = Quantity(
         type=str,
@@ -6306,7 +6605,7 @@ class ApmMeasurementStandingVoltageSequence(Data):
         ),
     )
     standing_voltage = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-measurement-standing-voltage-sequence-standing-voltage-field"
         ],
@@ -6316,9 +6615,22 @@ class ApmMeasurementStandingVoltageSequence(Data):
             name_type="specified",
             optionality="required",
         ),
-        a_eln=ELNAnnotation(
-            component=ELNComponentEnum.NumberEditQuantity,
-        ),
+    )
+    standing_voltage__min = Quantity(
+        type=np.float64,
+        description="Minimum of standing_voltage, computed over the full array at parse time.",
+    )
+    standing_voltage__max = Quantity(
+        type=np.float64,
+        description="Maximum of standing_voltage, computed over the full array at parse time.",
+    )
+    standing_voltage__size = Quantity(
+        type=np.int64,
+        description="Number of elements of standing_voltage in the HDF5 file.",
+    )
+    standing_voltage__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of standing_voltage in the HDF5 file.",
     )
     standing_voltage__units = Quantity(
         type=str,
@@ -6439,7 +6751,7 @@ class ApmMeasurementPulseFrequencySequence(Data):
         ),
     )
     event_id = Quantity(
-        type=np.int64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-measurement-pulse-frequency-sequence-event-id-field"
         ],
@@ -6449,9 +6761,22 @@ class ApmMeasurementPulseFrequencySequence(Data):
             name_type="specified",
             optionality="required",
         ),
-        a_eln=ELNAnnotation(
-            component=ELNComponentEnum.NumberEditQuantity,
-        ),
+    )
+    event_id__min = Quantity(
+        type=np.int64,
+        description="Minimum of event_id, computed over the full array at parse time.",
+    )
+    event_id__max = Quantity(
+        type=np.int64,
+        description="Maximum of event_id, computed over the full array at parse time.",
+    )
+    event_id__size = Quantity(
+        type=np.int64,
+        description="Number of elements of event_id in the HDF5 file.",
+    )
+    event_id__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of event_id in the HDF5 file.",
     )
     event_id__units = Quantity(
         type=str,
@@ -6486,7 +6811,7 @@ class ApmMeasurementPulseFrequencySequence(Data):
         ),
     )
     pulse_frequency = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-measurement-pulse-frequency-sequence-pulse-frequency-field"
         ],
@@ -6496,9 +6821,22 @@ class ApmMeasurementPulseFrequencySequence(Data):
             name_type="specified",
             optionality="required",
         ),
-        a_eln=ELNAnnotation(
-            component=ELNComponentEnum.NumberEditQuantity,
-        ),
+    )
+    pulse_frequency__min = Quantity(
+        type=np.float64,
+        description="Minimum of pulse_frequency, computed over the full array at parse time.",
+    )
+    pulse_frequency__max = Quantity(
+        type=np.float64,
+        description="Maximum of pulse_frequency, computed over the full array at parse time.",
+    )
+    pulse_frequency__size = Quantity(
+        type=np.int64,
+        description="Number of elements of pulse_frequency in the HDF5 file.",
+    )
+    pulse_frequency__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of pulse_frequency in the HDF5 file.",
     )
     pulse_frequency__units = Quantity(
         type=str,
@@ -6619,7 +6957,7 @@ class ApmMeasurementDetectionRateSequence(Data):
         ),
     )
     event_id = Quantity(
-        type=np.int64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-measurement-detection-rate-sequence-event-id-field"
         ],
@@ -6629,9 +6967,22 @@ class ApmMeasurementDetectionRateSequence(Data):
             name_type="specified",
             optionality="required",
         ),
-        a_eln=ELNAnnotation(
-            component=ELNComponentEnum.NumberEditQuantity,
-        ),
+    )
+    event_id__min = Quantity(
+        type=np.int64,
+        description="Minimum of event_id, computed over the full array at parse time.",
+    )
+    event_id__max = Quantity(
+        type=np.int64,
+        description="Maximum of event_id, computed over the full array at parse time.",
+    )
+    event_id__size = Quantity(
+        type=np.int64,
+        description="Number of elements of event_id in the HDF5 file.",
+    )
+    event_id__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of event_id in the HDF5 file.",
     )
     event_id__units = Quantity(
         type=str,
@@ -6666,7 +7017,7 @@ class ApmMeasurementDetectionRateSequence(Data):
         ),
     )
     detection_rate = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-measurement-detection-rate-sequence-detection-rate-field"
         ],
@@ -6676,9 +7027,22 @@ class ApmMeasurementDetectionRateSequence(Data):
             name_type="specified",
             optionality="required",
         ),
-        a_eln=ELNAnnotation(
-            component=ELNComponentEnum.NumberEditQuantity,
-        ),
+    )
+    detection_rate__min = Quantity(
+        type=np.float64,
+        description="Minimum of detection_rate, computed over the full array at parse time.",
+    )
+    detection_rate__max = Quantity(
+        type=np.float64,
+        description="Maximum of detection_rate, computed over the full array at parse time.",
+    )
+    detection_rate__size = Quantity(
+        type=np.int64,
+        description="Number of elements of detection_rate in the HDF5 file.",
+    )
+    detection_rate__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of detection_rate in the HDF5 file.",
     )
     detection_rate__units = Quantity(
         type=str,
@@ -6799,7 +7163,7 @@ class ApmMeasurementDetectionRateSetSequence(Data):
         ),
     )
     event_id = Quantity(
-        type=np.int64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-measurement-detection-rate-set-sequence-event-id-field"
         ],
@@ -6809,9 +7173,22 @@ class ApmMeasurementDetectionRateSetSequence(Data):
             name_type="specified",
             optionality="required",
         ),
-        a_eln=ELNAnnotation(
-            component=ELNComponentEnum.NumberEditQuantity,
-        ),
+    )
+    event_id__min = Quantity(
+        type=np.int64,
+        description="Minimum of event_id, computed over the full array at parse time.",
+    )
+    event_id__max = Quantity(
+        type=np.int64,
+        description="Maximum of event_id, computed over the full array at parse time.",
+    )
+    event_id__size = Quantity(
+        type=np.int64,
+        description="Number of elements of event_id in the HDF5 file.",
+    )
+    event_id__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of event_id in the HDF5 file.",
     )
     event_id__units = Quantity(
         type=str,
@@ -6846,7 +7223,7 @@ class ApmMeasurementDetectionRateSetSequence(Data):
         ),
     )
     detection_rate_set = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-measurement-detection-rate-set-sequence-detection-rate-set-field"
         ],
@@ -6856,9 +7233,22 @@ class ApmMeasurementDetectionRateSetSequence(Data):
             name_type="specified",
             optionality="required",
         ),
-        a_eln=ELNAnnotation(
-            component=ELNComponentEnum.NumberEditQuantity,
-        ),
+    )
+    detection_rate_set__min = Quantity(
+        type=np.float64,
+        description="Minimum of detection_rate_set, computed over the full array at parse time.",
+    )
+    detection_rate_set__max = Quantity(
+        type=np.float64,
+        description="Maximum of detection_rate_set, computed over the full array at parse time.",
+    )
+    detection_rate_set__size = Quantity(
+        type=np.int64,
+        description="Number of elements of detection_rate_set in the HDF5 file.",
+    )
+    detection_rate_set__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of detection_rate_set in the HDF5 file.",
     )
     detection_rate_set__units = Quantity(
         type=str,
@@ -6979,7 +7369,7 @@ class ApmMeasurementPressureSequence(Data):
         ),
     )
     event_id = Quantity(
-        type=np.int64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-measurement-pressure-sequence-event-id-field"
         ],
@@ -6989,9 +7379,22 @@ class ApmMeasurementPressureSequence(Data):
             name_type="specified",
             optionality="required",
         ),
-        a_eln=ELNAnnotation(
-            component=ELNComponentEnum.NumberEditQuantity,
-        ),
+    )
+    event_id__min = Quantity(
+        type=np.int64,
+        description="Minimum of event_id, computed over the full array at parse time.",
+    )
+    event_id__max = Quantity(
+        type=np.int64,
+        description="Maximum of event_id, computed over the full array at parse time.",
+    )
+    event_id__size = Quantity(
+        type=np.int64,
+        description="Number of elements of event_id in the HDF5 file.",
+    )
+    event_id__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of event_id in the HDF5 file.",
     )
     event_id__units = Quantity(
         type=str,
@@ -7026,7 +7429,7 @@ class ApmMeasurementPressureSequence(Data):
         ),
     )
     pressure = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-measurement-pressure-sequence-pressure-field"
         ],
@@ -7036,9 +7439,22 @@ class ApmMeasurementPressureSequence(Data):
             name_type="specified",
             optionality="required",
         ),
-        a_eln=ELNAnnotation(
-            component=ELNComponentEnum.NumberEditQuantity,
-        ),
+    )
+    pressure__min = Quantity(
+        type=np.float64,
+        description="Minimum of pressure, computed over the full array at parse time.",
+    )
+    pressure__max = Quantity(
+        type=np.float64,
+        description="Maximum of pressure, computed over the full array at parse time.",
+    )
+    pressure__size = Quantity(
+        type=np.int64,
+        description="Number of elements of pressure in the HDF5 file.",
+    )
+    pressure__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of pressure in the HDF5 file.",
     )
     pressure__units = Quantity(
         type=str,
@@ -7159,7 +7575,7 @@ class ApmMeasurementSpecimenVoltageSequence(Data):
         ),
     )
     event_id = Quantity(
-        type=np.int64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-measurement-specimen-voltage-sequence-event-id-field"
         ],
@@ -7169,9 +7585,22 @@ class ApmMeasurementSpecimenVoltageSequence(Data):
             name_type="specified",
             optionality="required",
         ),
-        a_eln=ELNAnnotation(
-            component=ELNComponentEnum.NumberEditQuantity,
-        ),
+    )
+    event_id__min = Quantity(
+        type=np.int64,
+        description="Minimum of event_id, computed over the full array at parse time.",
+    )
+    event_id__max = Quantity(
+        type=np.int64,
+        description="Maximum of event_id, computed over the full array at parse time.",
+    )
+    event_id__size = Quantity(
+        type=np.int64,
+        description="Number of elements of event_id in the HDF5 file.",
+    )
+    event_id__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of event_id in the HDF5 file.",
     )
     event_id__units = Quantity(
         type=str,
@@ -7206,7 +7635,7 @@ class ApmMeasurementSpecimenVoltageSequence(Data):
         ),
     )
     specimen_voltage = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-measurement-specimen-voltage-sequence-specimen-voltage-field"
         ],
@@ -7216,9 +7645,22 @@ class ApmMeasurementSpecimenVoltageSequence(Data):
             name_type="specified",
             optionality="required",
         ),
-        a_eln=ELNAnnotation(
-            component=ELNComponentEnum.NumberEditQuantity,
-        ),
+    )
+    specimen_voltage__min = Quantity(
+        type=np.float64,
+        description="Minimum of specimen_voltage, computed over the full array at parse time.",
+    )
+    specimen_voltage__max = Quantity(
+        type=np.float64,
+        description="Maximum of specimen_voltage, computed over the full array at parse time.",
+    )
+    specimen_voltage__size = Quantity(
+        type=np.int64,
+        description="Number of elements of specimen_voltage in the HDF5 file.",
+    )
+    specimen_voltage__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of specimen_voltage in the HDF5 file.",
     )
     specimen_voltage__units = Quantity(
         type=str,
@@ -7339,7 +7781,7 @@ class ApmMeasurementSpecimenTemperatureSequence(Data):
         ),
     )
     event_id = Quantity(
-        type=np.int64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-measurement-specimen-temperature-sequence-event-id-field"
         ],
@@ -7349,9 +7791,22 @@ class ApmMeasurementSpecimenTemperatureSequence(Data):
             name_type="specified",
             optionality="required",
         ),
-        a_eln=ELNAnnotation(
-            component=ELNComponentEnum.NumberEditQuantity,
-        ),
+    )
+    event_id__min = Quantity(
+        type=np.int64,
+        description="Minimum of event_id, computed over the full array at parse time.",
+    )
+    event_id__max = Quantity(
+        type=np.int64,
+        description="Maximum of event_id, computed over the full array at parse time.",
+    )
+    event_id__size = Quantity(
+        type=np.int64,
+        description="Number of elements of event_id in the HDF5 file.",
+    )
+    event_id__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of event_id in the HDF5 file.",
     )
     event_id__units = Quantity(
         type=str,
@@ -7386,7 +7841,7 @@ class ApmMeasurementSpecimenTemperatureSequence(Data):
         ),
     )
     specimen_temperature = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-measurement-specimen-temperature-sequence-specimen-temperature-field"
         ],
@@ -7396,9 +7851,22 @@ class ApmMeasurementSpecimenTemperatureSequence(Data):
             name_type="specified",
             optionality="required",
         ),
-        a_eln=ELNAnnotation(
-            component=ELNComponentEnum.NumberEditQuantity,
-        ),
+    )
+    specimen_temperature__min = Quantity(
+        type=np.float64,
+        description="Minimum of specimen_temperature, computed over the full array at parse time.",
+    )
+    specimen_temperature__max = Quantity(
+        type=np.float64,
+        description="Maximum of specimen_temperature, computed over the full array at parse time.",
+    )
+    specimen_temperature__size = Quantity(
+        type=np.int64,
+        description="Number of elements of specimen_temperature in the HDF5 file.",
+    )
+    specimen_temperature__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of specimen_temperature in the HDF5 file.",
     )
     specimen_temperature__units = Quantity(
         type=str,
@@ -7519,7 +7987,7 @@ class ApmMeasurementAmbientTemperatureSequence(Data):
         ),
     )
     event_id = Quantity(
-        type=np.int64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-measurement-ambient-temperature-sequence-event-id-field"
         ],
@@ -7529,9 +7997,22 @@ class ApmMeasurementAmbientTemperatureSequence(Data):
             name_type="specified",
             optionality="required",
         ),
-        a_eln=ELNAnnotation(
-            component=ELNComponentEnum.NumberEditQuantity,
-        ),
+    )
+    event_id__min = Quantity(
+        type=np.int64,
+        description="Minimum of event_id, computed over the full array at parse time.",
+    )
+    event_id__max = Quantity(
+        type=np.int64,
+        description="Maximum of event_id, computed over the full array at parse time.",
+    )
+    event_id__size = Quantity(
+        type=np.int64,
+        description="Number of elements of event_id in the HDF5 file.",
+    )
+    event_id__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of event_id in the HDF5 file.",
     )
     event_id__units = Quantity(
         type=str,
@@ -7566,7 +8047,7 @@ class ApmMeasurementAmbientTemperatureSequence(Data):
         ),
     )
     ambient_temperature = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-measurement-ambient-temperature-sequence-ambient-temperature-field"
         ],
@@ -7576,9 +8057,22 @@ class ApmMeasurementAmbientTemperatureSequence(Data):
             name_type="specified",
             optionality="required",
         ),
-        a_eln=ELNAnnotation(
-            component=ELNComponentEnum.NumberEditQuantity,
-        ),
+    )
+    ambient_temperature__min = Quantity(
+        type=np.float64,
+        description="Minimum of ambient_temperature, computed over the full array at parse time.",
+    )
+    ambient_temperature__max = Quantity(
+        type=np.float64,
+        description="Maximum of ambient_temperature, computed over the full array at parse time.",
+    )
+    ambient_temperature__size = Quantity(
+        type=np.int64,
+        description="Number of elements of ambient_temperature in the HDF5 file.",
+    )
+    ambient_temperature__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of ambient_temperature in the HDF5 file.",
     )
     ambient_temperature__units = Quantity(
         type=str,
@@ -7699,7 +8193,7 @@ class ApmMeasurementReflectronVoltageSequence(Data):
         ),
     )
     event_id = Quantity(
-        type=np.int64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-measurement-reflectron-voltage-sequence-event-id-field"
         ],
@@ -7709,9 +8203,22 @@ class ApmMeasurementReflectronVoltageSequence(Data):
             name_type="specified",
             optionality="required",
         ),
-        a_eln=ELNAnnotation(
-            component=ELNComponentEnum.NumberEditQuantity,
-        ),
+    )
+    event_id__min = Quantity(
+        type=np.int64,
+        description="Minimum of event_id, computed over the full array at parse time.",
+    )
+    event_id__max = Quantity(
+        type=np.int64,
+        description="Maximum of event_id, computed over the full array at parse time.",
+    )
+    event_id__size = Quantity(
+        type=np.int64,
+        description="Number of elements of event_id in the HDF5 file.",
+    )
+    event_id__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of event_id in the HDF5 file.",
     )
     event_id__units = Quantity(
         type=str,
@@ -7746,7 +8253,7 @@ class ApmMeasurementReflectronVoltageSequence(Data):
         ),
     )
     reflectron_voltage = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-measurement-reflectron-voltage-sequence-reflectron-voltage-field"
         ],
@@ -7756,9 +8263,22 @@ class ApmMeasurementReflectronVoltageSequence(Data):
             name_type="specified",
             optionality="required",
         ),
-        a_eln=ELNAnnotation(
-            component=ELNComponentEnum.NumberEditQuantity,
-        ),
+    )
+    reflectron_voltage__min = Quantity(
+        type=np.float64,
+        description="Minimum of reflectron_voltage, computed over the full array at parse time.",
+    )
+    reflectron_voltage__max = Quantity(
+        type=np.float64,
+        description="Maximum of reflectron_voltage, computed over the full array at parse time.",
+    )
+    reflectron_voltage__size = Quantity(
+        type=np.int64,
+        description="Number of elements of reflectron_voltage in the HDF5 file.",
+    )
+    reflectron_voltage__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of reflectron_voltage in the HDF5 file.",
     )
     reflectron_voltage__units = Quantity(
         type=str,
@@ -7879,7 +8399,7 @@ class ApmMeasurementXstagePositionSequence(Data):
         ),
     )
     event_id = Quantity(
-        type=np.int64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-measurement-xstage-position-sequence-event-id-field"
         ],
@@ -7889,9 +8409,22 @@ class ApmMeasurementXstagePositionSequence(Data):
             name_type="specified",
             optionality="required",
         ),
-        a_eln=ELNAnnotation(
-            component=ELNComponentEnum.NumberEditQuantity,
-        ),
+    )
+    event_id__min = Quantity(
+        type=np.int64,
+        description="Minimum of event_id, computed over the full array at parse time.",
+    )
+    event_id__max = Quantity(
+        type=np.int64,
+        description="Maximum of event_id, computed over the full array at parse time.",
+    )
+    event_id__size = Quantity(
+        type=np.int64,
+        description="Number of elements of event_id in the HDF5 file.",
+    )
+    event_id__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of event_id in the HDF5 file.",
     )
     event_id__units = Quantity(
         type=str,
@@ -7926,7 +8459,7 @@ class ApmMeasurementXstagePositionSequence(Data):
         ),
     )
     xstage_position = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-measurement-xstage-position-sequence-xstage-position-field"
         ],
@@ -7936,9 +8469,22 @@ class ApmMeasurementXstagePositionSequence(Data):
             name_type="specified",
             optionality="required",
         ),
-        a_eln=ELNAnnotation(
-            component=ELNComponentEnum.NumberEditQuantity,
-        ),
+    )
+    xstage_position__min = Quantity(
+        type=np.float64,
+        description="Minimum of xstage_position, computed over the full array at parse time.",
+    )
+    xstage_position__max = Quantity(
+        type=np.float64,
+        description="Maximum of xstage_position, computed over the full array at parse time.",
+    )
+    xstage_position__size = Quantity(
+        type=np.int64,
+        description="Number of elements of xstage_position in the HDF5 file.",
+    )
+    xstage_position__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of xstage_position in the HDF5 file.",
     )
     xstage_position__units = Quantity(
         type=str,
@@ -8059,7 +8605,7 @@ class ApmMeasurementYstagePositionSequence(Data):
         ),
     )
     event_id = Quantity(
-        type=np.int64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-measurement-ystage-position-sequence-event-id-field"
         ],
@@ -8069,9 +8615,22 @@ class ApmMeasurementYstagePositionSequence(Data):
             name_type="specified",
             optionality="required",
         ),
-        a_eln=ELNAnnotation(
-            component=ELNComponentEnum.NumberEditQuantity,
-        ),
+    )
+    event_id__min = Quantity(
+        type=np.int64,
+        description="Minimum of event_id, computed over the full array at parse time.",
+    )
+    event_id__max = Quantity(
+        type=np.int64,
+        description="Maximum of event_id, computed over the full array at parse time.",
+    )
+    event_id__size = Quantity(
+        type=np.int64,
+        description="Number of elements of event_id in the HDF5 file.",
+    )
+    event_id__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of event_id in the HDF5 file.",
     )
     event_id__units = Quantity(
         type=str,
@@ -8106,7 +8665,7 @@ class ApmMeasurementYstagePositionSequence(Data):
         ),
     )
     ystage_position = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-measurement-ystage-position-sequence-ystage-position-field"
         ],
@@ -8116,9 +8675,22 @@ class ApmMeasurementYstagePositionSequence(Data):
             name_type="specified",
             optionality="required",
         ),
-        a_eln=ELNAnnotation(
-            component=ELNComponentEnum.NumberEditQuantity,
-        ),
+    )
+    ystage_position__min = Quantity(
+        type=np.float64,
+        description="Minimum of ystage_position, computed over the full array at parse time.",
+    )
+    ystage_position__max = Quantity(
+        type=np.float64,
+        description="Maximum of ystage_position, computed over the full array at parse time.",
+    )
+    ystage_position__size = Quantity(
+        type=np.int64,
+        description="Number of elements of ystage_position in the HDF5 file.",
+    )
+    ystage_position__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of ystage_position in the HDF5 file.",
     )
     ystage_position__units = Quantity(
         type=str,
@@ -8239,7 +8811,7 @@ class ApmMeasurementZstagePositionSequence(Data):
         ),
     )
     event_id = Quantity(
-        type=np.int64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-measurement-zstage-position-sequence-event-id-field"
         ],
@@ -8249,9 +8821,22 @@ class ApmMeasurementZstagePositionSequence(Data):
             name_type="specified",
             optionality="required",
         ),
-        a_eln=ELNAnnotation(
-            component=ELNComponentEnum.NumberEditQuantity,
-        ),
+    )
+    event_id__min = Quantity(
+        type=np.int64,
+        description="Minimum of event_id, computed over the full array at parse time.",
+    )
+    event_id__max = Quantity(
+        type=np.int64,
+        description="Maximum of event_id, computed over the full array at parse time.",
+    )
+    event_id__size = Quantity(
+        type=np.int64,
+        description="Number of elements of event_id in the HDF5 file.",
+    )
+    event_id__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of event_id in the HDF5 file.",
     )
     event_id__units = Quantity(
         type=str,
@@ -8286,7 +8871,7 @@ class ApmMeasurementZstagePositionSequence(Data):
         ),
     )
     zstage_position = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-measurement-zstage-position-sequence-zstage-position-field"
         ],
@@ -8296,9 +8881,22 @@ class ApmMeasurementZstagePositionSequence(Data):
             name_type="specified",
             optionality="required",
         ),
-        a_eln=ELNAnnotation(
-            component=ELNComponentEnum.NumberEditQuantity,
-        ),
+    )
+    zstage_position__min = Quantity(
+        type=np.float64,
+        description="Minimum of zstage_position, computed over the full array at parse time.",
+    )
+    zstage_position__max = Quantity(
+        type=np.float64,
+        description="Maximum of zstage_position, computed over the full array at parse time.",
+    )
+    zstage_position__size = Quantity(
+        type=np.int64,
+        description="Number of elements of zstage_position in the HDF5 file.",
+    )
+    zstage_position__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of zstage_position in the HDF5 file.",
     )
     zstage_position__units = Quantity(
         type=str,
@@ -8483,13 +9081,10 @@ class ApmAtomProbeIDInitialSpecimenImage2d(Data):
         ),
     )
     real = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-atom-probeid-initial-specimen-image-2d-real-field"
         ],
-        dimensionality="dimensionless",
-        unit="dimensionless",
-        shape=["*", "*"],
         a_nexus_field=NeXusField(
             name="real",
             type="NX_NUMBER",
@@ -8498,13 +9093,29 @@ class ApmAtomProbeIDInitialSpecimenImage2d(Data):
             units="NX_UNITLESS",
         ),
     )
-    axis_j = Quantity(
+    real__min = Quantity(
         type=np.float64,
+        unit="dimensionless",
+        description="Minimum of real, computed over the full array at parse time.",
+    )
+    real__max = Quantity(
+        type=np.float64,
+        unit="dimensionless",
+        description="Maximum of real, computed over the full array at parse time.",
+    )
+    real__size = Quantity(
+        type=np.int64,
+        description="Number of elements of real in the HDF5 file.",
+    )
+    real__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of real in the HDF5 file.",
+    )
+    axis_j = Quantity(
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-atom-probeid-initial-specimen-image-2d-axis-j-field"
         ],
-        flexible_unit=True,
-        shape=["*"],
         a_nexus_field=NeXusField(
             name="axis_j",
             type="NX_NUMBER",
@@ -8512,6 +9123,24 @@ class ApmAtomProbeIDInitialSpecimenImage2d(Data):
             optionality="required",
             units="NX_ANY",
         ),
+    )
+    axis_j__min = Quantity(
+        type=np.float64,
+        flexible_unit=True,
+        description="Minimum of axis_j, computed over the full array at parse time.",
+    )
+    axis_j__max = Quantity(
+        type=np.float64,
+        flexible_unit=True,
+        description="Maximum of axis_j, computed over the full array at parse time.",
+    )
+    axis_j__size = Quantity(
+        type=np.int64,
+        description="Number of elements of axis_j in the HDF5 file.",
+    )
+    axis_j__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of axis_j in the HDF5 file.",
     )
     axis_j__units = Quantity(
         type=str,
@@ -8546,12 +9175,10 @@ class ApmAtomProbeIDInitialSpecimenImage2d(Data):
         ),
     )
     axis_i = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-atom-probeid-initial-specimen-image-2d-axis-i-field"
         ],
-        flexible_unit=True,
-        shape=["*"],
         a_nexus_field=NeXusField(
             name="axis_i",
             type="NX_NUMBER",
@@ -8559,6 +9186,24 @@ class ApmAtomProbeIDInitialSpecimenImage2d(Data):
             optionality="required",
             units="NX_ANY",
         ),
+    )
+    axis_i__min = Quantity(
+        type=np.float64,
+        flexible_unit=True,
+        description="Minimum of axis_i, computed over the full array at parse time.",
+    )
+    axis_i__max = Quantity(
+        type=np.float64,
+        flexible_unit=True,
+        description="Maximum of axis_i, computed over the full array at parse time.",
+    )
+    axis_i__size = Quantity(
+        type=np.int64,
+        description="Number of elements of axis_i in the HDF5 file.",
+    )
+    axis_i__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of axis_i in the HDF5 file.",
     )
     axis_i__units = Quantity(
         type=str,
@@ -8679,13 +9324,10 @@ class ApmAtomProbeIDFinalSpecimenImage2d(Data):
         ),
     )
     real = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-atom-probeid-final-specimen-image-2d-real-field"
         ],
-        dimensionality="dimensionless",
-        unit="dimensionless",
-        shape=["*", "*"],
         a_nexus_field=NeXusField(
             name="real",
             type="NX_NUMBER",
@@ -8694,13 +9336,29 @@ class ApmAtomProbeIDFinalSpecimenImage2d(Data):
             units="NX_UNITLESS",
         ),
     )
-    axis_j = Quantity(
+    real__min = Quantity(
         type=np.float64,
+        unit="dimensionless",
+        description="Minimum of real, computed over the full array at parse time.",
+    )
+    real__max = Quantity(
+        type=np.float64,
+        unit="dimensionless",
+        description="Maximum of real, computed over the full array at parse time.",
+    )
+    real__size = Quantity(
+        type=np.int64,
+        description="Number of elements of real in the HDF5 file.",
+    )
+    real__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of real in the HDF5 file.",
+    )
+    axis_j = Quantity(
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-atom-probeid-final-specimen-image-2d-axis-j-field"
         ],
-        flexible_unit=True,
-        shape=["*"],
         a_nexus_field=NeXusField(
             name="axis_j",
             type="NX_NUMBER",
@@ -8708,6 +9366,24 @@ class ApmAtomProbeIDFinalSpecimenImage2d(Data):
             optionality="required",
             units="NX_ANY",
         ),
+    )
+    axis_j__min = Quantity(
+        type=np.float64,
+        flexible_unit=True,
+        description="Minimum of axis_j, computed over the full array at parse time.",
+    )
+    axis_j__max = Quantity(
+        type=np.float64,
+        flexible_unit=True,
+        description="Maximum of axis_j, computed over the full array at parse time.",
+    )
+    axis_j__size = Quantity(
+        type=np.int64,
+        description="Number of elements of axis_j in the HDF5 file.",
+    )
+    axis_j__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of axis_j in the HDF5 file.",
     )
     axis_j__units = Quantity(
         type=str,
@@ -8742,12 +9418,10 @@ class ApmAtomProbeIDFinalSpecimenImage2d(Data):
         ),
     )
     axis_i = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-atom-probeid-final-specimen-image-2d-axis-i-field"
         ],
-        flexible_unit=True,
-        shape=["*"],
         a_nexus_field=NeXusField(
             name="axis_i",
             type="NX_NUMBER",
@@ -8755,6 +9429,24 @@ class ApmAtomProbeIDFinalSpecimenImage2d(Data):
             optionality="required",
             units="NX_ANY",
         ),
+    )
+    axis_i__min = Quantity(
+        type=np.float64,
+        flexible_unit=True,
+        description="Minimum of axis_i, computed over the full array at parse time.",
+    )
+    axis_i__max = Quantity(
+        type=np.float64,
+        flexible_unit=True,
+        description="Maximum of axis_i, computed over the full array at parse time.",
+    )
+    axis_i__size = Quantity(
+        type=np.int64,
+        description="Number of elements of axis_i in the HDF5 file.",
+    )
+    axis_i__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of axis_i in the HDF5 file.",
     )
     axis_i__units = Quantity(
         type=str,
@@ -8888,13 +9580,10 @@ class ApmAtomProbeIDRawData(Process):
         ),
     )
     arrival_time_pairs = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-atom-probeid-raw-data-arrival-time-pairs-field"
         ],
-        dimensionality="[time]",
-        unit="second",
-        shape=["*", "*", 2],
         description=(
             "Raw readings from the analog-to-digital-converter timing circuits "
             "of the detector wires."
@@ -9116,13 +9805,10 @@ class ApmAtomProbeIDHitFinding(Process):
         ),
     )
     hit_positions = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-atom-probeid-hit-finding-hit-positions-field"
         ],
-        dimensionality="[length]",
-        unit="m",
-        shape=["*", 2],
         description=(
             "Evaluated ion impact coordinates on the detector. Use the "
             "depends_on field to specify which reference frame the positions are "
@@ -9308,13 +9994,10 @@ class ApmAtomProbeIDHitFinding(Process):
         ),
     )
     hit_quality = Quantity(
-        type=np.int64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-atom-probeid-hit-finding-hit-quality-field"
         ],
-        dimensionality="dimensionless",
-        unit="dimensionless",
-        shape=["*"],
         description=(
             "Hit quality identifier for each pulse. Identifier has to be within "
             "hit_quality_type."
@@ -9328,13 +10011,10 @@ class ApmAtomProbeIDHitFinding(Process):
         ),
     )
     hit_multiplicity = Quantity(
-        type=np.int64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-atom-probeid-hit-finding-hit-multiplicity-field"
         ],
-        dimensionality="dimensionless",
-        unit="dimensionless",
-        shape=["*"],
         description=(
             "The number of ions determined to have been collected on the same "
             "pulse. These ions may hit different pixels, or even the same "
@@ -9550,13 +10230,10 @@ class ApmAtomProbeIDHitSpatialFiltering(Process):
         a_display={"unit": "dimensionless"},
     )
     evaporation_id = Quantity(
-        type=np.int64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-atom-probeid-hit-spatial-filtering-evaporation-id-field"
         ],
-        dimensionality="dimensionless",
-        unit="dimensionless",
-        shape=["*"],
         description=(
             "There are two possibilities to report evaporation_id values: If "
             "evaporation_id_offset is provided, the evaporation_id values are "
@@ -9835,11 +10512,10 @@ class ApmAtomProbeIDVoltageAndBowl(Process):
         ),
     )
     raw_tof = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-atom-probeid-voltage-and-bowl-raw-tof-field"
         ],
-        shape=["*"],
         description=("Raw time-of-flight data without corrections."),
         a_nexus_field=NeXusField(
             name="raw_tof",
@@ -9869,11 +10545,10 @@ class ApmAtomProbeIDVoltageAndBowl(Process):
         a_display={"unit": "second"},
     )
     calibrated_tof = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-atom-probeid-voltage-and-bowl-calibrated-tof-field"
         ],
-        shape=["*"],
         description=("Calibrated time-of-flight."),
         a_nexus_field=NeXusField(
             name="calibrated_tof",
@@ -10099,12 +10774,10 @@ class ApmAtomProbeIDMassToChargeConversion(Process):
         ),
     )
     mass_to_charge = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-atom-probeid-mass-to-charge-conversion-mass-to-charge-field"
         ],
-        flexible_unit=True,
-        shape=["*"],
         a_nexus_field=NeXusField(
             name="mass_to_charge",
             type="NX_FLOAT",
@@ -10288,12 +10961,10 @@ class ApmAtomProbeIDMassToChargeConversionConfig(Parameters):
         ),
     )
     mass_resolution = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-atom-probeid-mass-to-charge-conversion-config-mass-resolution-field"
         ],
-        flexible_unit=True,
-        shape=["*"],
         description=(
             "Inverse of the mass resolution :math:`\\frac{M}{\\Delta M}` as "
             "mentioned by `T. Blum et al. "
@@ -10319,12 +10990,10 @@ class ApmAtomProbeIDMassToChargeConversionConfig(Parameters):
         ),
     )
     mass_resolution_fw = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-atom-probeid-mass-to-charge-conversion-config-mass-resolution-fw-field"
         ],
-        flexible_unit=True,
-        shape=["*"],
         description=(
             "The full width at which :math:`{\\Delta M}_{fw}` fraction of "
             "maximum this value was defined. Examples are at tenth "
@@ -10368,13 +11037,10 @@ class ApmAtomProbeIDMassToChargeConversionConfigMassResolutionION(Atom):
     )
 
     nuclide_hash = Quantity(
-        type=np.int64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-atom-probeid-mass-to-charge-conversion-config-mass-resolutionion-nuclide-hash-field"
         ],
-        dimensionality="dimensionless",
-        unit="dimensionless",
-        shape=["*"],
         a_nexus_field=NeXusField(
             name="nuclide_hash",
             type="NX_UINT",
@@ -10454,13 +11120,10 @@ class ApmAtomProbeIDReconstruction(ApmReconstruction):
         ),
     )
     reconstructed_positions = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-atom-probeid-reconstruction-reconstructed-positions-field"
         ],
-        dimensionality="[length]",
-        unit="m",
-        shape=["*", 3],
         a_nexus_field=NeXusField(
             name="reconstructed_positions",
             type="NX_FLOAT",
@@ -11138,11 +11801,10 @@ class ApmAtomProbeIDReconstructionNaiveDiscretizationData(Data):
         ),
     )
     intensity = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-atom-probeid-reconstruction-naive-discretization-data-intensity-field"
         ],
-        shape=["*", "*", "*"],
         a_nexus_field=NeXusField(
             name="intensity",
             type="NX_NUMBER",
@@ -11150,18 +11812,49 @@ class ApmAtomProbeIDReconstructionNaiveDiscretizationData(Data):
             optionality="required",
         ),
     )
-    axis_z = Quantity(
+    intensity__min = Quantity(
         type=np.float64,
+        description="Minimum of intensity, computed over the full array at parse time.",
+    )
+    intensity__max = Quantity(
+        type=np.float64,
+        description="Maximum of intensity, computed over the full array at parse time.",
+    )
+    intensity__size = Quantity(
+        type=np.int64,
+        description="Number of elements of intensity in the HDF5 file.",
+    )
+    intensity__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of intensity in the HDF5 file.",
+    )
+    axis_z = Quantity(
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-atom-probeid-reconstruction-naive-discretization-data-axis-z-field"
         ],
-        shape=["*"],
         a_nexus_field=NeXusField(
             name="axis_z",
             type="NX_FLOAT",
             name_type="specified",
             optionality="required",
         ),
+    )
+    axis_z__min = Quantity(
+        type=np.float64,
+        description="Minimum of axis_z, computed over the full array at parse time.",
+    )
+    axis_z__max = Quantity(
+        type=np.float64,
+        description="Maximum of axis_z, computed over the full array at parse time.",
+    )
+    axis_z__size = Quantity(
+        type=np.int64,
+        description="Number of elements of axis_z in the HDF5 file.",
+    )
+    axis_z__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of axis_z in the HDF5 file.",
     )
     axis_z__units = Quantity(
         type=str,
@@ -11196,17 +11889,32 @@ class ApmAtomProbeIDReconstructionNaiveDiscretizationData(Data):
         ),
     )
     axis_y = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-atom-probeid-reconstruction-naive-discretization-data-axis-y-field"
         ],
-        shape=["*"],
         a_nexus_field=NeXusField(
             name="axis_y",
             type="NX_FLOAT",
             name_type="specified",
             optionality="required",
         ),
+    )
+    axis_y__min = Quantity(
+        type=np.float64,
+        description="Minimum of axis_y, computed over the full array at parse time.",
+    )
+    axis_y__max = Quantity(
+        type=np.float64,
+        description="Maximum of axis_y, computed over the full array at parse time.",
+    )
+    axis_y__size = Quantity(
+        type=np.int64,
+        description="Number of elements of axis_y in the HDF5 file.",
+    )
+    axis_y__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of axis_y in the HDF5 file.",
     )
     axis_y__units = Quantity(
         type=str,
@@ -11241,17 +11949,32 @@ class ApmAtomProbeIDReconstructionNaiveDiscretizationData(Data):
         ),
     )
     axis_x = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-atom-probeid-reconstruction-naive-discretization-data-axis-x-field"
         ],
-        shape=["*"],
         a_nexus_field=NeXusField(
             name="axis_x",
             type="NX_FLOAT",
             name_type="specified",
             optionality="required",
         ),
+    )
+    axis_x__min = Quantity(
+        type=np.float64,
+        description="Minimum of axis_x, computed over the full array at parse time.",
+    )
+    axis_x__max = Quantity(
+        type=np.float64,
+        description="Maximum of axis_x, computed over the full array at parse time.",
+    )
+    axis_x__size = Quantity(
+        type=np.int64,
+        description="Number of elements of axis_x in the HDF5 file.",
+    )
+    axis_x__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of axis_x in the HDF5 file.",
     )
     axis_x__units = Quantity(
         type=str,
@@ -11699,17 +12422,32 @@ class ApmAtomProbeIDRangingMassToChargeDistributionMassSpectrum(Data):
         ),
     )
     intensity = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-atom-probeid-ranging-mass-to-charge-distribution-mass-spectrum-intensity-field"
         ],
-        shape=["*"],
         a_nexus_field=NeXusField(
             name="intensity",
             type="NX_NUMBER",
             name_type="specified",
             optionality="required",
         ),
+    )
+    intensity__min = Quantity(
+        type=np.float64,
+        description="Minimum of intensity, computed over the full array at parse time.",
+    )
+    intensity__max = Quantity(
+        type=np.float64,
+        description="Maximum of intensity, computed over the full array at parse time.",
+    )
+    intensity__size = Quantity(
+        type=np.int64,
+        description="Number of elements of intensity in the HDF5 file.",
+    )
+    intensity__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of intensity in the HDF5 file.",
     )
     intensity__long_name = Quantity(
         type=str,
@@ -11728,17 +12466,32 @@ class ApmAtomProbeIDRangingMassToChargeDistributionMassSpectrum(Data):
         ),
     )
     axis_mass_to_charge = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-atom-probeid-ranging-mass-to-charge-distribution-mass-spectrum-axis-mass-to-charge-field"
         ],
-        shape=["*"],
         a_nexus_field=NeXusField(
             name="axis_mass_to_charge",
             type="NX_FLOAT",
             name_type="specified",
             optionality="required",
         ),
+    )
+    axis_mass_to_charge__min = Quantity(
+        type=np.float64,
+        description="Minimum of axis_mass_to_charge, computed over the full array at parse time.",
+    )
+    axis_mass_to_charge__max = Quantity(
+        type=np.float64,
+        description="Maximum of axis_mass_to_charge, computed over the full array at parse time.",
+    )
+    axis_mass_to_charge__size = Quantity(
+        type=np.int64,
+        description="Number of elements of axis_mass_to_charge in the HDF5 file.",
+    )
+    axis_mass_to_charge__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of axis_mass_to_charge in the HDF5 file.",
     )
     axis_mass_to_charge__units = Quantity(
         type=str,
@@ -12255,13 +13008,10 @@ class ApmAtomProbeIDRangingPeakIdentification(Process):
         a_display={"unit": "dimensionless"},
     )
     iontypes = Quantity(
-        type=np.int64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-atom-probeid-ranging-peak-identification-iontypes-field"
         ],
-        dimensionality="dimensionless",
-        unit="dimensionless",
-        shape=["*"],
         description=(
             "The iontype identifier for each ion that was best matching; stored "
             "in the order of the evaporation_id. The value zero is reserved for "
@@ -12361,13 +13111,10 @@ class ApmAtomProbeIDRangingPeakIdentificationIonID(Atom):
     )
 
     nuclide_hash = Quantity(
-        type=np.int64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-atom-probeid-ranging-peak-identification-ionid-nuclide-hash-field"
         ],
-        dimensionality="dimensionless",
-        unit="dimensionless",
-        shape=["*"],
         a_nexus_field=NeXusField(
             name="nuclide_hash",
             type="NX_UINT",
@@ -12396,12 +13143,10 @@ class ApmAtomProbeIDRangingPeakIdentificationIonID(Atom):
         a_display={"unit": "dimensionless"},
     )
     mass_to_charge_range = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-atom-probeid-ranging-peak-identification-ionid-mass-to-charge-range-field"
         ],
-        flexible_unit=True,
-        shape=["*", 2],
         a_nexus_field=NeXusField(
             name="mass_to_charge_range",
             type="NX_FLOAT",
@@ -12411,13 +13156,10 @@ class ApmAtomProbeIDRangingPeakIdentificationIonID(Atom):
         ),
     )
     nuclide_list = Quantity(
-        type=np.int64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-atom-probeid-ranging-peak-identification-ionid-nuclide-list-field"
         ],
-        dimensionality="dimensionless",
-        unit="dimensionless",
-        shape=["*", 2],
         a_nexus_field=NeXusField(
             name="nuclide_list",
             type="NX_UINT",
@@ -12467,13 +13209,10 @@ class ApmAtomProbeIDRangingPeakIdentificationIonIDChargeStateAnalysis(
     )
 
     charge_state = Quantity(
-        type=np.int64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-atom-probeid-ranging-peak-identification-ionid-charge-state-analysis-charge-state-field"
         ],
-        dimensionality="dimensionless",
-        unit="dimensionless",
-        shape=["*"],
         a_nexus_field=NeXusField(
             name="charge_state",
             type="NX_INT",
@@ -12483,13 +13222,10 @@ class ApmAtomProbeIDRangingPeakIdentificationIonIDChargeStateAnalysis(
         ),
     )
     nuclide_hash = Quantity(
-        type=np.int64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-atom-probeid-ranging-peak-identification-ionid-charge-state-analysis-nuclide-hash-field"
         ],
-        dimensionality="dimensionless",
-        unit="dimensionless",
-        shape=["*", "*"],
         a_nexus_field=NeXusField(
             name="nuclide_hash",
             type="NX_UINT",
@@ -12499,13 +13235,10 @@ class ApmAtomProbeIDRangingPeakIdentificationIonIDChargeStateAnalysis(
         ),
     )
     mass = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-atom-probeid-ranging-peak-identification-ionid-charge-state-analysis-mass-field"
         ],
-        dimensionality="[mass]",
-        unit="gram",
-        shape=["*"],
         a_nexus_field=NeXusField(
             name="mass",
             type="NX_FLOAT",
@@ -12515,13 +13248,10 @@ class ApmAtomProbeIDRangingPeakIdentificationIonIDChargeStateAnalysis(
         ),
     )
     natural_abundance_product = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-atom-probeid-ranging-peak-identification-ionid-charge-state-analysis-natural-abundance-product-field"
         ],
-        dimensionality="dimensionless",
-        unit="dimensionless",
-        shape=["*"],
         a_nexus_field=NeXusField(
             name="natural_abundance_product",
             type="NX_FLOAT",
@@ -12531,13 +13261,10 @@ class ApmAtomProbeIDRangingPeakIdentificationIonIDChargeStateAnalysis(
         ),
     )
     shortest_half_life = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-atom-probeid-ranging-peak-identification-ionid-charge-state-analysis-shortest-half-life-field"
         ],
-        dimensionality="[time]",
-        unit="second",
-        shape=["*"],
         a_nexus_field=NeXusField(
             name="shortest_half_life",
             type="NX_FLOAT",
@@ -12565,13 +13292,10 @@ class ApmAtomProbeIDRangingPeakIdentificationIonIDChargeStateAnalysisConfig(Para
     )
 
     nuclides = Quantity(
-        type=np.int64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-atom-probeid-ranging-peak-identification-ionid-charge-state-analysis-config-nuclides-field"
         ],
-        dimensionality="dimensionless",
-        unit="dimensionless",
-        shape=["*"],
         a_nexus_field=NeXusField(
             name="nuclides",
             type="NX_UINT",
@@ -12581,12 +13305,10 @@ class ApmAtomProbeIDRangingPeakIdentificationIonIDChargeStateAnalysisConfig(Para
         ),
     )
     mass_to_charge_range = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-atom-probeid-ranging-peak-identification-ionid-charge-state-analysis-config-mass-to-charge-range-field"
         ],
-        flexible_unit=True,
-        shape=[2],
         a_nexus_field=NeXusField(
             name="mass_to_charge_range",
             type="NX_FLOAT",

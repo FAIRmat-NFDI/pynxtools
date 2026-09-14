@@ -28,6 +28,7 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 
 import numpy as np
+from nomad.datamodel.hdf5 import HDF5Reference
 from nomad.datamodel.metainfo.annotations import (
     ELNAnnotation,
     ELNComponentEnum,
@@ -117,12 +118,10 @@ class XasPey(Xas):
         ),
     )
     intensity = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXxas_pey.html#nxxas_pey-entry-intensity-field"
         ],
-        flexible_unit=True,
-        shape=["*"],
         description=(
             "The absorption coefficient :math:`\\mu(E) \\propto I_{ey}/I_0`, "
             "where :math:`I_{ey}` is the partial electron yield signal above the "
@@ -195,12 +194,10 @@ class XasPeyInstrumentI0(Detector):
     )
 
     data_quantity = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXxas_pey.html#nxxas_pey-entry-instrument-i0-data-field"
         ],
-        flexible_unit=True,
-        shape=["*"],
         a_nexus_field=NeXusField(
             name="data",
             type="NX_NUMBER",
@@ -232,12 +229,10 @@ class XasPeyInstrumentIey(Detector):
     )
 
     data_quantity = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXxas_pey.html#nxxas_pey-entry-instrument-iey-data-field"
         ],
-        flexible_unit=True,
-        shape=["*"],
         a_nexus_field=NeXusField(
             name="data",
             type="NX_NUMBER",

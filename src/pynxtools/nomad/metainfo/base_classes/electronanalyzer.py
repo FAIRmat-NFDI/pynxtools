@@ -24,6 +24,7 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 
 import numpy as np
+from nomad.datamodel.hdf5 import HDF5Reference
 from nomad.datamodel.metainfo.annotations import (
     ELNAnnotation,
     ELNComponentEnum,
@@ -791,13 +792,10 @@ class ElectronanalyzerTransmissionFunction(Data):
         ),
     )
     kinetic_energy = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXelectronanalyzer.html#nxelectronanalyzer-transmission-function-kinetic-energy-field"
         ],
-        dimensionality="[mass] * [length] ** 2 / [time] ** 2",
-        unit="eV",
-        shape=["*"],
         description=("Kinetic energy values"),
         a_nexus_field=NeXusField(
             name="kinetic_energy",
@@ -807,14 +805,29 @@ class ElectronanalyzerTransmissionFunction(Data):
             units="NX_ENERGY",
         ),
     )
-    relative_intensity = Quantity(
+    kinetic_energy__min = Quantity(
         type=np.float64,
+        unit="eV",
+        description="Minimum of kinetic_energy, computed over the full array at parse time.",
+    )
+    kinetic_energy__max = Quantity(
+        type=np.float64,
+        unit="eV",
+        description="Maximum of kinetic_energy, computed over the full array at parse time.",
+    )
+    kinetic_energy__size = Quantity(
+        type=np.int64,
+        description="Number of elements of kinetic_energy in the HDF5 file.",
+    )
+    kinetic_energy__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of kinetic_energy in the HDF5 file.",
+    )
+    relative_intensity = Quantity(
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXelectronanalyzer.html#nxelectronanalyzer-transmission-function-relative-intensity-field"
         ],
-        dimensionality="dimensionless",
-        unit="dimensionless",
-        shape=["*"],
         description=("Relative transmission efficiency for the given kinetic energies"),
         a_nexus_field=NeXusField(
             name="relative_intensity",
@@ -823,6 +836,24 @@ class ElectronanalyzerTransmissionFunction(Data):
             optionality="optional",
             units="NX_UNITLESS",
         ),
+    )
+    relative_intensity__min = Quantity(
+        type=np.float64,
+        unit="dimensionless",
+        description="Minimum of relative_intensity, computed over the full array at parse time.",
+    )
+    relative_intensity__max = Quantity(
+        type=np.float64,
+        unit="dimensionless",
+        description="Maximum of relative_intensity, computed over the full array at parse time.",
+    )
+    relative_intensity__size = Quantity(
+        type=np.int64,
+        description="Number of elements of relative_intensity in the HDF5 file.",
+    )
+    relative_intensity__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of relative_intensity in the HDF5 file.",
     )
 
     def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:

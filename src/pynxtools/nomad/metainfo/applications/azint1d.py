@@ -24,6 +24,7 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 
 import numpy as np
+from nomad.datamodel.hdf5 import HDF5Reference
 from nomad.datamodel.metainfo.annotations import (
     ELNAnnotation,
     ELNComponentEnum,
@@ -588,12 +589,10 @@ class Azint1dMonitor(Monitor):
     )
 
     data_quantity = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXazint1d.html#nxazint1d-entry-monitor-data-field"
         ],
-        flexible_unit=True,
-        shape=["*"],
         a_nexus_field=NeXusField(
             name="data",
             type="NX_NUMBER",
@@ -673,17 +672,32 @@ class Azint1dData(Data):
         ),
     )
     I = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXazint1d.html#nxazint1d-entry-data-i-field"
         ],
-        shape=["*", "*"],
         a_nexus_field=NeXusField(
             name="I",
             type="NX_NUMBER",
             name_type="specified",
             optionality="required",
         ),
+    )
+    I__min = Quantity(
+        type=np.float64,
+        description="Minimum of I, computed over the full array at parse time.",
+    )
+    I__max = Quantity(
+        type=np.float64,
+        description="Maximum of I, computed over the full array at parse time.",
+    )
+    I__size = Quantity(
+        type=np.int64,
+        description="Number of elements of I in the HDF5 file.",
+    )
+    I__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of I in the HDF5 file.",
     )
     I__long_name = Quantity(
         type=MEnum(["intensity"]),
@@ -722,17 +736,32 @@ class Azint1dData(Data):
         ),
     )
     I_errors = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXazint1d.html#nxazint1d-entry-data-i-errors-field"
         ],
-        shape=["*", "*"],
         a_nexus_field=NeXusField(
             name="I_errors",
             type="NX_NUMBER",
             name_type="specified",
             optionality="optional",
         ),
+    )
+    I_errors__min = Quantity(
+        type=np.float64,
+        description="Minimum of I_errors, computed over the full array at parse time.",
+    )
+    I_errors__max = Quantity(
+        type=np.float64,
+        description="Maximum of I_errors, computed over the full array at parse time.",
+    )
+    I_errors__size = Quantity(
+        type=np.int64,
+        description="Number of elements of I_errors in the HDF5 file.",
+    )
+    I_errors__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of I_errors in the HDF5 file.",
     )
     I_errors__long_name = Quantity(
         type=MEnum(["estimated intensity error"]),
@@ -771,17 +800,32 @@ class Azint1dData(Data):
         ),
     )
     radial_axis = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXazint1d.html#nxazint1d-entry-data-radial-axis-field"
         ],
-        shape=["*"],
         a_nexus_field=NeXusField(
             name="radial_axis",
             type="NX_NUMBER",
             name_type="specified",
             optionality="required",
         ),
+    )
+    radial_axis__min = Quantity(
+        type=np.float64,
+        description="Minimum of radial_axis, computed over the full array at parse time.",
+    )
+    radial_axis__max = Quantity(
+        type=np.float64,
+        description="Maximum of radial_axis, computed over the full array at parse time.",
+    )
+    radial_axis__size = Quantity(
+        type=np.int64,
+        description="Number of elements of radial_axis in the HDF5 file.",
+    )
+    radial_axis__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of radial_axis in the HDF5 file.",
     )
     radial_axis__long_name = Quantity(
         type=MEnum(["q", "2theta"]),
@@ -818,17 +862,32 @@ class Azint1dData(Data):
         ),
     )
     radial_axis_edges = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXazint1d.html#nxazint1d-entry-data-radial-axis-edges-field"
         ],
-        shape=["*"],
         a_nexus_field=NeXusField(
             name="radial_axis_edges",
             type="NX_NUMBER",
             name_type="specified",
             optionality="optional",
         ),
+    )
+    radial_axis_edges__min = Quantity(
+        type=np.float64,
+        description="Minimum of radial_axis_edges, computed over the full array at parse time.",
+    )
+    radial_axis_edges__max = Quantity(
+        type=np.float64,
+        description="Maximum of radial_axis_edges, computed over the full array at parse time.",
+    )
+    radial_axis_edges__size = Quantity(
+        type=np.int64,
+        description="Number of elements of radial_axis_edges in the HDF5 file.",
+    )
+    radial_axis_edges__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of radial_axis_edges in the HDF5 file.",
     )
     radial_axis_edges__long_name = Quantity(
         type=MEnum(["q bin edges", "2theta bin edges"]),
@@ -865,11 +924,10 @@ class Azint1dData(Data):
         ),
     )
     norm = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXazint1d.html#nxazint1d-entry-data-norm-field"
         ],
-        shape=["*"],
         description=(
             "Values of the normalization correction. The normalization "
             "correction accounts for the effective number or weighted "
@@ -894,6 +952,22 @@ class Azint1dData(Data):
             name_type="specified",
             optionality="optional",
         ),
+    )
+    norm__min = Quantity(
+        type=np.float64,
+        description="Minimum of norm, computed over the full array at parse time.",
+    )
+    norm__max = Quantity(
+        type=np.float64,
+        description="Maximum of norm, computed over the full array at parse time.",
+    )
+    norm__size = Quantity(
+        type=np.int64,
+        description="Number of elements of norm in the HDF5 file.",
+    )
+    norm__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of norm in the HDF5 file.",
     )
     norm__long_name = Quantity(
         type=MEnum(

@@ -24,6 +24,7 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 
 import numpy as np
+from nomad.datamodel.hdf5 import HDF5Reference
 from nomad.datamodel.metainfo.annotations import (
     ELNAnnotation,
     ELNComponentEnum,
@@ -459,13 +460,10 @@ class ApmInstrumentIonDetector(Detector):
     )
 
     signal_amplitude = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXapm_instrument.html#nxapm_instrument-ion-detector-signal-amplitude-field"
         ],
-        dimensionality="[current]",
-        unit="ampere",
-        shape=["*"],
         description=(
             "Amplitude of the signal detected on the multi-channel plate (MCP). "
             "This field should be used for storing the signal amplitude quantity "
@@ -958,13 +956,10 @@ class ApmInstrumentStageTemperatureSensor(Sensor):
     )
 
     value = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXapm_instrument.html#nxapm_instrument-stage-temperature-sensor-value-field"
         ],
-        dimensionality="[temperature]",
-        unit="kelvin",
-        shape=["*"],
         description=(
             "The value can be extracted from the "
             "CRunHeader.CAnalysis.fSpecimenTemperature field of a CamecaRoot "
@@ -1060,13 +1055,10 @@ class ApmInstrumentAnalysisChamberPressureSensor(Sensor):
         ),
     )
     value = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXapm_instrument.html#nxapm_instrument-analysis-chamber-pressure-sensor-value-field"
         ],
-        dimensionality="[mass] / [length] / [time] ** 2",
-        unit="mbar",
-        shape=["*"],
         description=(
             "The value can be extracted from the "
             "CRunHeader.CLasHeader.fAnalysisPressure field of a CamecaRoot RHIT "

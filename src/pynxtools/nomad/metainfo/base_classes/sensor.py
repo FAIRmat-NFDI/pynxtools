@@ -24,6 +24,7 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 
 import numpy as np
+from nomad.datamodel.hdf5 import HDF5Reference
 from nomad.datamodel.metainfo.annotations import (
     ELNAnnotation,
     ELNComponentEnum,
@@ -316,12 +317,10 @@ class Sensor(Component):
         ),
     )
     value = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXsensor.html#nxsensor-value-field"
         ],
-        flexible_unit=True,
-        shape=["*"],
         description=("nominal setpoint or average value - need [n] as may be a vector"),
         a_nexus_field=NeXusField(
             name="value",

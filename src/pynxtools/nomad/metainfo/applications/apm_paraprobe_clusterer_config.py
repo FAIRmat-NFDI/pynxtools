@@ -28,6 +28,7 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 
 import numpy as np
+from nomad.datamodel.hdf5 import HDF5Reference
 from nomad.datamodel.metainfo.annotations import (
     ELNAnnotation,
     ELNComponentEnum,
@@ -444,13 +445,10 @@ class ApmParaprobeClustererConfigClusterAnalysisID(ApmParaprobeToolConfigTaskcon
         ),
     )
     ion_query_nuclide_vector = Quantity(
-        type=np.int64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_clusterer_config.html#nxapm_paraprobe_clusterer_config-entry-cluster-analysisid-ion-query-nuclide-vector-field"
         ],
-        dimensionality="dimensionless",
-        unit="dimensionless",
-        shape=["*", "*"],
         description=(
             "Matrix of nuclide vectors, as many as rows as different candidates "
             "for iontypes should be distinguished as possible source iontypes. "
@@ -612,13 +610,10 @@ class ApmParaprobeClustererConfigClusterAnalysisIDDbscan(Process):
         ),
     )
     eps = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_clusterer_config.html#nxapm_paraprobe_clusterer_config-entry-cluster-analysisid-dbscan-eps-field"
         ],
-        dimensionality="[length]",
-        unit="m",
-        shape=["*"],
         description=("Array of epsilon (eps) parameter values."),
         a_nexus_field=NeXusField(
             name="eps",
@@ -629,13 +624,10 @@ class ApmParaprobeClustererConfigClusterAnalysisIDDbscan(Process):
         ),
     )
     min_pts = Quantity(
-        type=np.int64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_clusterer_config.html#nxapm_paraprobe_clusterer_config-entry-cluster-analysisid-dbscan-min-pts-field"
         ],
-        dimensionality="dimensionless",
-        unit="dimensionless",
-        shape=["*"],
         description=("Array of minimum points (min_pts) parameter values."),
         a_nexus_field=NeXusField(
             name="min_pts",
@@ -695,12 +687,10 @@ class ApmParaprobeClustererConfigClusterAnalysisIDHdbscan(Process):
         ),
     )
     min_cluster_size = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_clusterer_config.html#nxapm_paraprobe_clusterer_config-entry-cluster-analysisid-hdbscan-min-cluster-size-field"
         ],
-        flexible_unit=True,
-        shape=["*"],
         description=("Array of min_cluster_size parameter values."),
         a_nexus_field=NeXusField(
             name="min_cluster_size",
@@ -711,12 +701,10 @@ class ApmParaprobeClustererConfigClusterAnalysisIDHdbscan(Process):
         ),
     )
     min_samples = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_clusterer_config.html#nxapm_paraprobe_clusterer_config-entry-cluster-analysisid-hdbscan-min-samples-field"
         ],
-        flexible_unit=True,
-        shape=["*"],
         description=("Array of min_samples parameter values."),
         a_nexus_field=NeXusField(
             name="min_samples",
@@ -727,12 +715,10 @@ class ApmParaprobeClustererConfigClusterAnalysisIDHdbscan(Process):
         ),
     )
     cluster_selection_epsilon = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_clusterer_config.html#nxapm_paraprobe_clusterer_config-entry-cluster-analysisid-hdbscan-cluster-selection-epsilon-field"
         ],
-        flexible_unit=True,
-        shape=["*"],
         description=("Array of cluster_selection parameter values."),
         a_nexus_field=NeXusField(
             name="cluster_selection_epsilon",
@@ -743,12 +729,10 @@ class ApmParaprobeClustererConfigClusterAnalysisIDHdbscan(Process):
         ),
     )
     alpha = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_clusterer_config.html#nxapm_paraprobe_clusterer_config-entry-cluster-analysisid-hdbscan-alpha-field"
         ],
-        flexible_unit=True,
-        shape=["*"],
         description=("Array of alpha parameter values."),
         a_nexus_field=NeXusField(
             name="alpha",

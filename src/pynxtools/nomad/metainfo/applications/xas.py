@@ -28,6 +28,7 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 
 import numpy as np
+from nomad.datamodel.hdf5 import HDF5Reference
 from nomad.datamodel.metainfo.annotations import (
     ELNAnnotation,
     ELNComponentEnum,
@@ -151,13 +152,10 @@ class Xas(Entry):
         ),
     )
     energy = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXxas.html#nxxas-entry-energy-field"
         ],
-        dimensionality="[mass] * [length] ** 2 / [time] ** 2",
-        unit="eV",
-        shape=["*"],
         description=("The energy axis of the spectrum."),
         a_nexus_field=NeXusField(
             name="energy",
@@ -289,13 +287,10 @@ class XasSample(Sample):
         ),
     )
     temperature = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXxas.html#nxxas-entry-sample-temperature-field"
         ],
-        dimensionality="[temperature]",
-        unit="kelvin",
-        shape=["*"],
         description=("Sample temperature."),
         a_nexus_field=NeXusField(
             name="temperature",
@@ -340,13 +335,10 @@ class XasData(Data):
     )
 
     energy = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXxas.html#nxxas-entry-data-energy-link"
         ],
-        dimensionality="[mass] * [length] ** 2 / [time] ** 2",
-        unit="eV",
-        shape=["*"],
         a_nexus_link=NeXusLink(
             name="energy",
             target="/NXentry/energy",

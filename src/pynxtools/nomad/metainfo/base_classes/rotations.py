@@ -24,6 +24,7 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 
 import numpy as np
+from nomad.datamodel.hdf5 import HDF5Reference
 from nomad.datamodel.metainfo.annotations import (
     ELNAnnotation,
     ELNComponentEnum,
@@ -161,13 +162,10 @@ class Rotations(Object):
         ),
     )
     rotation_quaternion = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXrotations.html#nxrotations-rotation-quaternion-field"
         ],
-        dimensionality="dimensionless",
-        unit="dimensionless",
-        shape=["*", 4],
         description=(
             "The set of rotations expressed in quaternion parameterization "
             "considering crystal_symmetry and sample_symmetry. Rotations which "
@@ -182,13 +180,10 @@ class Rotations(Object):
         ),
     )
     rotation_euler = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXrotations.html#nxrotations-rotation-euler-field"
         ],
-        dimensionality="[angle]",
-        unit="radian",
-        shape=["*", 3],
         description=(
             "The set of rotations expressed in Euler angle parameterization "
             "considering the same applied symmetries as detailed for the field "
@@ -223,13 +218,10 @@ class Rotations(Object):
         ),
     )
     orientation_quaternion = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXrotations.html#nxrotations-orientation-quaternion-field"
         ],
-        dimensionality="dimensionless",
-        unit="dimensionless",
-        shape=["*", 4],
         description=(
             "The set of orientations expressed in quaternion parameterization "
             "and obeying symmetry for equivalent cases as detailed in "
@@ -246,13 +238,10 @@ class Rotations(Object):
         ),
     )
     orientation_euler = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXrotations.html#nxrotations-orientation-euler-field"
         ],
-        dimensionality="[angle]",
-        unit="radian",
-        shape=["*", 3],
         description=(
             "The set of orientations expressed in Euler angle parameterization "
             "following the same assumptions like for orientation_quaternion. To "
@@ -270,13 +259,10 @@ class Rotations(Object):
         ),
     )
     misorientation_quaternion = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXrotations.html#nxrotations-misorientation-quaternion-field"
         ],
-        dimensionality="dimensionless",
-        unit="dimensionless",
-        shape=["*", 4],
         description=(
             "The set of misorientations expressed in quaternion parameterization "
             "obeying symmetry operations for equivalent misorientations as "
@@ -294,13 +280,10 @@ class Rotations(Object):
         ),
     )
     misorientation_angle = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXrotations.html#nxrotations-misorientation-angle-field"
         ],
-        dimensionality="[angle]",
-        unit="radian",
-        shape=["*"],
         description=(
             "Misorientation angular argument (eventually signed) following the "
             "same symmetry assumptions as expressed for the field "
@@ -315,13 +298,10 @@ class Rotations(Object):
         ),
     )
     misorientation_axis = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXrotations.html#nxrotations-misorientation-axis-field"
         ],
-        dimensionality="dimensionless",
-        unit="dimensionless",
-        shape=["*", 3],
         description=(
             "Misorientation axis (normalized) and signed following the same "
             "symmetry assumptions as expressed for the field "
@@ -336,13 +316,10 @@ class Rotations(Object):
         ),
     )
     disorientation_quaternion = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXrotations.html#nxrotations-disorientation-quaternion-field"
         ],
-        dimensionality="dimensionless",
-        unit="dimensionless",
-        shape=["*", 4],
         description=(
             "The set of disorientations expressed in quaternion parameterization "
             "obeying symmetry operations for equivalent disorientations as "
@@ -357,13 +334,10 @@ class Rotations(Object):
         ),
     )
     disorientation_angle = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXrotations.html#nxrotations-disorientation-angle-field"
         ],
-        dimensionality="[angle]",
-        unit="radian",
-        shape=["*"],
         description=(
             "Disorientations angular argument (should not be signed, see `D. "
             "Rowenhorst et al. "
@@ -380,13 +354,10 @@ class Rotations(Object):
         ),
     )
     disorientation_axis = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXrotations.html#nxrotations-disorientation-axis-field"
         ],
-        dimensionality="dimensionless",
-        unit="dimensionless",
-        shape=["*", 3],
         description=(
             "Disorientations axis (normalized) following the same symmetry "
             "assumptions as expressed for the field disorientation_angle."

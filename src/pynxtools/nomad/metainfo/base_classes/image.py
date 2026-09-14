@@ -24,6 +24,7 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 
 import numpy as np
+from nomad.datamodel.hdf5 import HDF5Reference
 from nomad.datamodel.metainfo.annotations import (
     ELNAnnotation,
     ELNComponentEnum,
@@ -315,13 +316,10 @@ class ImageImage1d(Data):
     )
 
     intensity = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXimage.html#nximage-image-1d-intensity-field"
         ],
-        dimensionality="dimensionless",
-        unit="dimensionless",
-        shape=["*"],
         description=(
             "Intensity for real-valued images as an alternative for real. "
             "Magnitude of the image intensity for complex-valued data."
@@ -334,14 +332,29 @@ class ImageImage1d(Data):
             units="NX_UNITLESS",
         ),
     )
-    real = Quantity(
+    intensity__min = Quantity(
         type=np.float64,
+        unit="dimensionless",
+        description="Minimum of intensity, computed over the full array at parse time.",
+    )
+    intensity__max = Quantity(
+        type=np.float64,
+        unit="dimensionless",
+        description="Maximum of intensity, computed over the full array at parse time.",
+    )
+    intensity__size = Quantity(
+        type=np.int64,
+        description="Number of elements of intensity in the HDF5 file.",
+    )
+    intensity__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of intensity in the HDF5 file.",
+    )
+    real = Quantity(
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXimage.html#nximage-image-1d-real-field"
         ],
-        dimensionality="dimensionless",
-        unit="dimensionless",
-        shape=["*"],
         description=("Real part of the image intensity per point."),
         a_nexus_field=NeXusField(
             name="real",
@@ -351,14 +364,29 @@ class ImageImage1d(Data):
             units="NX_UNITLESS",
         ),
     )
-    imag = Quantity(
+    real__min = Quantity(
         type=np.float64,
+        unit="dimensionless",
+        description="Minimum of real, computed over the full array at parse time.",
+    )
+    real__max = Quantity(
+        type=np.float64,
+        unit="dimensionless",
+        description="Maximum of real, computed over the full array at parse time.",
+    )
+    real__size = Quantity(
+        type=np.int64,
+        description="Number of elements of real in the HDF5 file.",
+    )
+    real__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of real in the HDF5 file.",
+    )
+    imag = Quantity(
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXimage.html#nximage-image-1d-imag-field"
         ],
-        dimensionality="dimensionless",
-        unit="dimensionless",
-        shape=["*"],
         description=("Imaginary part of the image intensity per point."),
         a_nexus_field=NeXusField(
             name="imag",
@@ -368,14 +396,29 @@ class ImageImage1d(Data):
             units="NX_UNITLESS",
         ),
     )
+    imag__min = Quantity(
+        type=np.float64,
+        unit="dimensionless",
+        description="Minimum of imag, computed over the full array at parse time.",
+    )
+    imag__max = Quantity(
+        type=np.float64,
+        unit="dimensionless",
+        description="Maximum of imag, computed over the full array at parse time.",
+    )
+    imag__size = Quantity(
+        type=np.int64,
+        description="Number of elements of imag in the HDF5 file.",
+    )
+    imag__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of imag in the HDF5 file.",
+    )
     complex = Quantity(
-        type=np.complex128,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXimage.html#nximage-image-1d-complex-field"
         ],
-        dimensionality="dimensionless",
-        unit="dimensionless",
-        shape=["*"],
         description=(
             "Image intensity as a complex number as an alternative to real and "
             "imag fields if values are stored as interleaved complex numbers."
@@ -389,12 +432,10 @@ class ImageImage1d(Data):
         ),
     )
     axis_i = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXimage.html#nximage-image-1d-axis-i-field"
         ],
-        flexible_unit=True,
-        shape=["*"],
         description=(
             "Point coordinate along the fastest dimension. Different NeXus Unit "
             "Category are allowed: * NX_LENGTH for images slicing real space. * "
@@ -408,6 +449,24 @@ class ImageImage1d(Data):
             optionality="optional",
             units="NX_ANY",
         ),
+    )
+    axis_i__min = Quantity(
+        type=np.float64,
+        flexible_unit=True,
+        description="Minimum of axis_i, computed over the full array at parse time.",
+    )
+    axis_i__max = Quantity(
+        type=np.float64,
+        flexible_unit=True,
+        description="Maximum of axis_i, computed over the full array at parse time.",
+    )
+    axis_i__size = Quantity(
+        type=np.int64,
+        description="Number of elements of axis_i in the HDF5 file.",
+    )
+    axis_i__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of axis_i in the HDF5 file.",
     )
     axis_i__long_name = Quantity(
         type=str,
@@ -449,13 +508,10 @@ class ImageImage2d(Data):
     )
 
     intensity = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXimage.html#nximage-image-2d-intensity-field"
         ],
-        dimensionality="dimensionless",
-        unit="dimensionless",
-        shape=["*", "*"],
         description=(
             "Intensity for real-valued images as an alternative for real. "
             "Magnitude of the image intensity for complex-valued data."
@@ -468,14 +524,29 @@ class ImageImage2d(Data):
             units="NX_UNITLESS",
         ),
     )
-    real = Quantity(
+    intensity__min = Quantity(
         type=np.float64,
+        unit="dimensionless",
+        description="Minimum of intensity, computed over the full array at parse time.",
+    )
+    intensity__max = Quantity(
+        type=np.float64,
+        unit="dimensionless",
+        description="Maximum of intensity, computed over the full array at parse time.",
+    )
+    intensity__size = Quantity(
+        type=np.int64,
+        description="Number of elements of intensity in the HDF5 file.",
+    )
+    intensity__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of intensity in the HDF5 file.",
+    )
+    real = Quantity(
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXimage.html#nximage-image-2d-real-field"
         ],
-        dimensionality="dimensionless",
-        unit="dimensionless",
-        shape=["*", "*"],
         description=("Real part of the image intensity per point."),
         a_nexus_field=NeXusField(
             name="real",
@@ -485,14 +556,29 @@ class ImageImage2d(Data):
             units="NX_UNITLESS",
         ),
     )
-    imag = Quantity(
+    real__min = Quantity(
         type=np.float64,
+        unit="dimensionless",
+        description="Minimum of real, computed over the full array at parse time.",
+    )
+    real__max = Quantity(
+        type=np.float64,
+        unit="dimensionless",
+        description="Maximum of real, computed over the full array at parse time.",
+    )
+    real__size = Quantity(
+        type=np.int64,
+        description="Number of elements of real in the HDF5 file.",
+    )
+    real__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of real in the HDF5 file.",
+    )
+    imag = Quantity(
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXimage.html#nximage-image-2d-imag-field"
         ],
-        dimensionality="dimensionless",
-        unit="dimensionless",
-        shape=["*", "*"],
         description=("Imaginary part of the image intensity per point."),
         a_nexus_field=NeXusField(
             name="imag",
@@ -502,14 +588,29 @@ class ImageImage2d(Data):
             units="NX_UNITLESS",
         ),
     )
+    imag__min = Quantity(
+        type=np.float64,
+        unit="dimensionless",
+        description="Minimum of imag, computed over the full array at parse time.",
+    )
+    imag__max = Quantity(
+        type=np.float64,
+        unit="dimensionless",
+        description="Maximum of imag, computed over the full array at parse time.",
+    )
+    imag__size = Quantity(
+        type=np.int64,
+        description="Number of elements of imag in the HDF5 file.",
+    )
+    imag__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of imag in the HDF5 file.",
+    )
     complex = Quantity(
-        type=np.complex128,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXimage.html#nximage-image-2d-complex-field"
         ],
-        dimensionality="dimensionless",
-        unit="dimensionless",
-        shape=["*", "*"],
         description=(
             "Image intensity as a complex number as an alternative to real and "
             "imag fields if values are stored as interleaved complex numbers."
@@ -523,12 +624,10 @@ class ImageImage2d(Data):
         ),
     )
     axis_j = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXimage.html#nximage-image-2d-axis-j-field"
         ],
-        flexible_unit=True,
-        shape=["*"],
         description=(
             "Point coordinate along the fast dimension. Different NeXus Unit "
             "Category are allowed: * NX_LENGTH for images slicing real space. * "
@@ -542,6 +641,24 @@ class ImageImage2d(Data):
             optionality="optional",
             units="NX_ANY",
         ),
+    )
+    axis_j__min = Quantity(
+        type=np.float64,
+        flexible_unit=True,
+        description="Minimum of axis_j, computed over the full array at parse time.",
+    )
+    axis_j__max = Quantity(
+        type=np.float64,
+        flexible_unit=True,
+        description="Maximum of axis_j, computed over the full array at parse time.",
+    )
+    axis_j__size = Quantity(
+        type=np.int64,
+        description="Number of elements of axis_j in the HDF5 file.",
+    )
+    axis_j__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of axis_j in the HDF5 file.",
     )
     axis_j__long_name = Quantity(
         type=str,
@@ -561,12 +678,10 @@ class ImageImage2d(Data):
         ),
     )
     axis_i = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXimage.html#nximage-image-2d-axis-i-field"
         ],
-        flexible_unit=True,
-        shape=["*"],
         description=(
             "Point coordinate along the fastest dimension. Different NeXus Unit "
             "Category are allowed: * NX_LENGTH for images slicing real space. * "
@@ -580,6 +695,24 @@ class ImageImage2d(Data):
             optionality="optional",
             units="NX_ANY",
         ),
+    )
+    axis_i__min = Quantity(
+        type=np.float64,
+        flexible_unit=True,
+        description="Minimum of axis_i, computed over the full array at parse time.",
+    )
+    axis_i__max = Quantity(
+        type=np.float64,
+        flexible_unit=True,
+        description="Maximum of axis_i, computed over the full array at parse time.",
+    )
+    axis_i__size = Quantity(
+        type=np.int64,
+        description="Number of elements of axis_i in the HDF5 file.",
+    )
+    axis_i__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of axis_i in the HDF5 file.",
     )
     axis_i__long_name = Quantity(
         type=str,
@@ -621,13 +754,10 @@ class ImageImage3d(Data):
     )
 
     intensity = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXimage.html#nximage-image-3d-intensity-field"
         ],
-        dimensionality="dimensionless",
-        unit="dimensionless",
-        shape=["*", "*", "*"],
         description=(
             "Intensity for real-valued images as an alternative for real. "
             "Magnitude of the image intensity for complex-valued data."
@@ -640,14 +770,29 @@ class ImageImage3d(Data):
             units="NX_UNITLESS",
         ),
     )
-    real = Quantity(
+    intensity__min = Quantity(
         type=np.float64,
+        unit="dimensionless",
+        description="Minimum of intensity, computed over the full array at parse time.",
+    )
+    intensity__max = Quantity(
+        type=np.float64,
+        unit="dimensionless",
+        description="Maximum of intensity, computed over the full array at parse time.",
+    )
+    intensity__size = Quantity(
+        type=np.int64,
+        description="Number of elements of intensity in the HDF5 file.",
+    )
+    intensity__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of intensity in the HDF5 file.",
+    )
+    real = Quantity(
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXimage.html#nximage-image-3d-real-field"
         ],
-        dimensionality="dimensionless",
-        unit="dimensionless",
-        shape=["*", "*", "*"],
         description=("Real part of the image intensity per point."),
         a_nexus_field=NeXusField(
             name="real",
@@ -657,14 +802,29 @@ class ImageImage3d(Data):
             units="NX_UNITLESS",
         ),
     )
-    imag = Quantity(
+    real__min = Quantity(
         type=np.float64,
+        unit="dimensionless",
+        description="Minimum of real, computed over the full array at parse time.",
+    )
+    real__max = Quantity(
+        type=np.float64,
+        unit="dimensionless",
+        description="Maximum of real, computed over the full array at parse time.",
+    )
+    real__size = Quantity(
+        type=np.int64,
+        description="Number of elements of real in the HDF5 file.",
+    )
+    real__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of real in the HDF5 file.",
+    )
+    imag = Quantity(
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXimage.html#nximage-image-3d-imag-field"
         ],
-        dimensionality="dimensionless",
-        unit="dimensionless",
-        shape=["*", "*", "*"],
         description=("Imaginary part of the image intensity per point."),
         a_nexus_field=NeXusField(
             name="imag",
@@ -674,14 +834,29 @@ class ImageImage3d(Data):
             units="NX_UNITLESS",
         ),
     )
+    imag__min = Quantity(
+        type=np.float64,
+        unit="dimensionless",
+        description="Minimum of imag, computed over the full array at parse time.",
+    )
+    imag__max = Quantity(
+        type=np.float64,
+        unit="dimensionless",
+        description="Maximum of imag, computed over the full array at parse time.",
+    )
+    imag__size = Quantity(
+        type=np.int64,
+        description="Number of elements of imag in the HDF5 file.",
+    )
+    imag__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of imag in the HDF5 file.",
+    )
     complex = Quantity(
-        type=np.complex128,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXimage.html#nximage-image-3d-complex-field"
         ],
-        dimensionality="dimensionless",
-        unit="dimensionless",
-        shape=["*", "*", "*"],
         description=(
             "Image intensity as a complex number as an alternative to real and "
             "imag fields if values are stored as interleaved complex numbers."
@@ -695,12 +870,10 @@ class ImageImage3d(Data):
         ),
     )
     axis_k = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXimage.html#nximage-image-3d-axis-k-field"
         ],
-        flexible_unit=True,
-        shape=["*"],
         description=(
             "Point coordinate along the slow dimension. Different NeXus Unit "
             "Category are allowed: * NX_LENGTH for images slicing real space. * "
@@ -714,6 +887,24 @@ class ImageImage3d(Data):
             optionality="optional",
             units="NX_ANY",
         ),
+    )
+    axis_k__min = Quantity(
+        type=np.float64,
+        flexible_unit=True,
+        description="Minimum of axis_k, computed over the full array at parse time.",
+    )
+    axis_k__max = Quantity(
+        type=np.float64,
+        flexible_unit=True,
+        description="Maximum of axis_k, computed over the full array at parse time.",
+    )
+    axis_k__size = Quantity(
+        type=np.int64,
+        description="Number of elements of axis_k in the HDF5 file.",
+    )
+    axis_k__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of axis_k in the HDF5 file.",
     )
     axis_k__long_name = Quantity(
         type=str,
@@ -733,12 +924,10 @@ class ImageImage3d(Data):
         ),
     )
     axis_j = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXimage.html#nximage-image-3d-axis-j-field"
         ],
-        flexible_unit=True,
-        shape=["*"],
         description=(
             "Point coordinate along the fast dimension. Different NeXus Unit "
             "Category are allowed: * NX_LENGTH for images slicing real space. * "
@@ -752,6 +941,24 @@ class ImageImage3d(Data):
             optionality="optional",
             units="NX_ANY",
         ),
+    )
+    axis_j__min = Quantity(
+        type=np.float64,
+        flexible_unit=True,
+        description="Minimum of axis_j, computed over the full array at parse time.",
+    )
+    axis_j__max = Quantity(
+        type=np.float64,
+        flexible_unit=True,
+        description="Maximum of axis_j, computed over the full array at parse time.",
+    )
+    axis_j__size = Quantity(
+        type=np.int64,
+        description="Number of elements of axis_j in the HDF5 file.",
+    )
+    axis_j__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of axis_j in the HDF5 file.",
     )
     axis_j__long_name = Quantity(
         type=str,
@@ -771,12 +978,10 @@ class ImageImage3d(Data):
         ),
     )
     axis_i = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXimage.html#nximage-image-3d-axis-i-field"
         ],
-        flexible_unit=True,
-        shape=["*"],
         description=(
             "Point coordinate along the fastest dimension. Different NeXus Unit "
             "Category are allowed: * NX_LENGTH for images slicing real space. * "
@@ -790,6 +995,24 @@ class ImageImage3d(Data):
             optionality="optional",
             units="NX_ANY",
         ),
+    )
+    axis_i__min = Quantity(
+        type=np.float64,
+        flexible_unit=True,
+        description="Minimum of axis_i, computed over the full array at parse time.",
+    )
+    axis_i__max = Quantity(
+        type=np.float64,
+        flexible_unit=True,
+        description="Maximum of axis_i, computed over the full array at parse time.",
+    )
+    axis_i__size = Quantity(
+        type=np.int64,
+        description="Number of elements of axis_i in the HDF5 file.",
+    )
+    axis_i__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of axis_i in the HDF5 file.",
     )
     axis_i__long_name = Quantity(
         type=str,
@@ -831,13 +1054,10 @@ class ImageImage4d(Data):
     )
 
     intensity = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXimage.html#nximage-image-4d-intensity-field"
         ],
-        dimensionality="dimensionless",
-        unit="dimensionless",
-        shape=["*", "*", "*", "*"],
         description=(
             "Intensity for real-valued images as an alternative for real. "
             "Magnitude of the image intensity for complex-valued data."
@@ -850,14 +1070,29 @@ class ImageImage4d(Data):
             units="NX_UNITLESS",
         ),
     )
-    real = Quantity(
+    intensity__min = Quantity(
         type=np.float64,
+        unit="dimensionless",
+        description="Minimum of intensity, computed over the full array at parse time.",
+    )
+    intensity__max = Quantity(
+        type=np.float64,
+        unit="dimensionless",
+        description="Maximum of intensity, computed over the full array at parse time.",
+    )
+    intensity__size = Quantity(
+        type=np.int64,
+        description="Number of elements of intensity in the HDF5 file.",
+    )
+    intensity__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of intensity in the HDF5 file.",
+    )
+    real = Quantity(
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXimage.html#nximage-image-4d-real-field"
         ],
-        dimensionality="dimensionless",
-        unit="dimensionless",
-        shape=["*", "*", "*", "*"],
         description=("Real part of the image intensity per point."),
         a_nexus_field=NeXusField(
             name="real",
@@ -867,14 +1102,29 @@ class ImageImage4d(Data):
             units="NX_UNITLESS",
         ),
     )
-    imag = Quantity(
+    real__min = Quantity(
         type=np.float64,
+        unit="dimensionless",
+        description="Minimum of real, computed over the full array at parse time.",
+    )
+    real__max = Quantity(
+        type=np.float64,
+        unit="dimensionless",
+        description="Maximum of real, computed over the full array at parse time.",
+    )
+    real__size = Quantity(
+        type=np.int64,
+        description="Number of elements of real in the HDF5 file.",
+    )
+    real__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of real in the HDF5 file.",
+    )
+    imag = Quantity(
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXimage.html#nximage-image-4d-imag-field"
         ],
-        dimensionality="dimensionless",
-        unit="dimensionless",
-        shape=["*", "*", "*", "*"],
         description=("Imaginary part of the image intensity per point."),
         a_nexus_field=NeXusField(
             name="imag",
@@ -884,14 +1134,29 @@ class ImageImage4d(Data):
             units="NX_UNITLESS",
         ),
     )
+    imag__min = Quantity(
+        type=np.float64,
+        unit="dimensionless",
+        description="Minimum of imag, computed over the full array at parse time.",
+    )
+    imag__max = Quantity(
+        type=np.float64,
+        unit="dimensionless",
+        description="Maximum of imag, computed over the full array at parse time.",
+    )
+    imag__size = Quantity(
+        type=np.int64,
+        description="Number of elements of imag in the HDF5 file.",
+    )
+    imag__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of imag in the HDF5 file.",
+    )
     complex = Quantity(
-        type=np.complex128,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXimage.html#nximage-image-4d-complex-field"
         ],
-        dimensionality="dimensionless",
-        unit="dimensionless",
-        shape=["*", "*", "*", "*"],
         description=(
             "Image intensity as a complex number as an alternative to real and "
             "imag fields if values are stored as interleaved complex numbers."
@@ -905,12 +1170,10 @@ class ImageImage4d(Data):
         ),
     )
     axis_m = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXimage.html#nximage-image-4d-axis-m-field"
         ],
-        flexible_unit=True,
-        shape=["*"],
         description=(
             "Point coordinate along the slowest dimension. Different NeXus Unit "
             "Category are allowed: * NX_LENGTH for images slicing real space. * "
@@ -924,6 +1187,24 @@ class ImageImage4d(Data):
             optionality="optional",
             units="NX_ANY",
         ),
+    )
+    axis_m__min = Quantity(
+        type=np.float64,
+        flexible_unit=True,
+        description="Minimum of axis_m, computed over the full array at parse time.",
+    )
+    axis_m__max = Quantity(
+        type=np.float64,
+        flexible_unit=True,
+        description="Maximum of axis_m, computed over the full array at parse time.",
+    )
+    axis_m__size = Quantity(
+        type=np.int64,
+        description="Number of elements of axis_m in the HDF5 file.",
+    )
+    axis_m__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of axis_m in the HDF5 file.",
     )
     axis_m__long_name = Quantity(
         type=str,
@@ -943,12 +1224,10 @@ class ImageImage4d(Data):
         ),
     )
     axis_k = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXimage.html#nximage-image-4d-axis-k-field"
         ],
-        flexible_unit=True,
-        shape=["*"],
         description=(
             "Point coordinate along the slow dimension. Different NeXus Unit "
             "Category are allowed: * NX_LENGTH for images slicing real space. * "
@@ -962,6 +1241,24 @@ class ImageImage4d(Data):
             optionality="optional",
             units="NX_ANY",
         ),
+    )
+    axis_k__min = Quantity(
+        type=np.float64,
+        flexible_unit=True,
+        description="Minimum of axis_k, computed over the full array at parse time.",
+    )
+    axis_k__max = Quantity(
+        type=np.float64,
+        flexible_unit=True,
+        description="Maximum of axis_k, computed over the full array at parse time.",
+    )
+    axis_k__size = Quantity(
+        type=np.int64,
+        description="Number of elements of axis_k in the HDF5 file.",
+    )
+    axis_k__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of axis_k in the HDF5 file.",
     )
     axis_k__long_name = Quantity(
         type=str,
@@ -981,12 +1278,10 @@ class ImageImage4d(Data):
         ),
     )
     axis_j = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXimage.html#nximage-image-4d-axis-j-field"
         ],
-        flexible_unit=True,
-        shape=["*"],
         description=(
             "Point coordinate along the fast dimension. Different NeXus Unit "
             "Category are allowed: * NX_LENGTH for images slicing real space. * "
@@ -1000,6 +1295,24 @@ class ImageImage4d(Data):
             optionality="optional",
             units="NX_ANY",
         ),
+    )
+    axis_j__min = Quantity(
+        type=np.float64,
+        flexible_unit=True,
+        description="Minimum of axis_j, computed over the full array at parse time.",
+    )
+    axis_j__max = Quantity(
+        type=np.float64,
+        flexible_unit=True,
+        description="Maximum of axis_j, computed over the full array at parse time.",
+    )
+    axis_j__size = Quantity(
+        type=np.int64,
+        description="Number of elements of axis_j in the HDF5 file.",
+    )
+    axis_j__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of axis_j in the HDF5 file.",
     )
     axis_j__long_name = Quantity(
         type=str,
@@ -1019,12 +1332,10 @@ class ImageImage4d(Data):
         ),
     )
     axis_i = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXimage.html#nximage-image-4d-axis-i-field"
         ],
-        flexible_unit=True,
-        shape=["*"],
         description=(
             "Point coordinate along the fastest dimension. Different NeXus Unit "
             "Category are allowed: * NX_LENGTH for images slicing real space. * "
@@ -1038,6 +1349,24 @@ class ImageImage4d(Data):
             optionality="optional",
             units="NX_ANY",
         ),
+    )
+    axis_i__min = Quantity(
+        type=np.float64,
+        flexible_unit=True,
+        description="Minimum of axis_i, computed over the full array at parse time.",
+    )
+    axis_i__max = Quantity(
+        type=np.float64,
+        flexible_unit=True,
+        description="Maximum of axis_i, computed over the full array at parse time.",
+    )
+    axis_i__size = Quantity(
+        type=np.int64,
+        description="Number of elements of axis_i in the HDF5 file.",
+    )
+    axis_i__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of axis_i in the HDF5 file.",
     )
     axis_i__long_name = Quantity(
         type=str,
@@ -1079,13 +1408,10 @@ class ImageStack1d(Data):
     )
 
     intensity = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXimage.html#nximage-stack-1d-intensity-field"
         ],
-        dimensionality="dimensionless",
-        unit="dimensionless",
-        shape=["*", "*"],
         description=(
             "Intensity for real-valued images as an alternative for real. "
             "Magnitude of the image intensity for complex-valued data."
@@ -1098,14 +1424,29 @@ class ImageStack1d(Data):
             units="NX_UNITLESS",
         ),
     )
-    real = Quantity(
+    intensity__min = Quantity(
         type=np.float64,
+        unit="dimensionless",
+        description="Minimum of intensity, computed over the full array at parse time.",
+    )
+    intensity__max = Quantity(
+        type=np.float64,
+        unit="dimensionless",
+        description="Maximum of intensity, computed over the full array at parse time.",
+    )
+    intensity__size = Quantity(
+        type=np.int64,
+        description="Number of elements of intensity in the HDF5 file.",
+    )
+    intensity__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of intensity in the HDF5 file.",
+    )
+    real = Quantity(
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXimage.html#nximage-stack-1d-real-field"
         ],
-        dimensionality="dimensionless",
-        unit="dimensionless",
-        shape=["*", "*"],
         description=("Real part of the image intensity per point."),
         a_nexus_field=NeXusField(
             name="real",
@@ -1115,14 +1456,29 @@ class ImageStack1d(Data):
             units="NX_UNITLESS",
         ),
     )
-    imag = Quantity(
+    real__min = Quantity(
         type=np.float64,
+        unit="dimensionless",
+        description="Minimum of real, computed over the full array at parse time.",
+    )
+    real__max = Quantity(
+        type=np.float64,
+        unit="dimensionless",
+        description="Maximum of real, computed over the full array at parse time.",
+    )
+    real__size = Quantity(
+        type=np.int64,
+        description="Number of elements of real in the HDF5 file.",
+    )
+    real__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of real in the HDF5 file.",
+    )
+    imag = Quantity(
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXimage.html#nximage-stack-1d-imag-field"
         ],
-        dimensionality="dimensionless",
-        unit="dimensionless",
-        shape=["*", "*"],
         description=("Imaginary part of the image intensity per point."),
         a_nexus_field=NeXusField(
             name="imag",
@@ -1132,14 +1488,29 @@ class ImageStack1d(Data):
             units="NX_UNITLESS",
         ),
     )
+    imag__min = Quantity(
+        type=np.float64,
+        unit="dimensionless",
+        description="Minimum of imag, computed over the full array at parse time.",
+    )
+    imag__max = Quantity(
+        type=np.float64,
+        unit="dimensionless",
+        description="Maximum of imag, computed over the full array at parse time.",
+    )
+    imag__size = Quantity(
+        type=np.int64,
+        description="Number of elements of imag in the HDF5 file.",
+    )
+    imag__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of imag in the HDF5 file.",
+    )
     complex = Quantity(
-        type=np.complex128,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXimage.html#nximage-stack-1d-complex-field"
         ],
-        dimensionality="dimensionless",
-        unit="dimensionless",
-        shape=["*", "*"],
         description=(
             "Image intensity as a complex number as an alternative to real and "
             "imag fields if values are stored as interleaved complex numbers."
@@ -1153,13 +1524,10 @@ class ImageStack1d(Data):
         ),
     )
     indices_group = Quantity(
-        type=np.int64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXimage.html#nximage-stack-1d-indices-group-field"
         ],
-        dimensionality="dimensionless",
-        unit="dimensionless",
-        shape=["*"],
         description=("Group identifier"),
         a_nexus_field=NeXusField(
             name="indices_group",
@@ -1168,6 +1536,24 @@ class ImageStack1d(Data):
             optionality="optional",
             units="NX_UNITLESS",
         ),
+    )
+    indices_group__min = Quantity(
+        type=np.int64,
+        unit="dimensionless",
+        description="Minimum of indices_group, computed over the full array at parse time.",
+    )
+    indices_group__max = Quantity(
+        type=np.int64,
+        unit="dimensionless",
+        description="Maximum of indices_group, computed over the full array at parse time.",
+    )
+    indices_group__size = Quantity(
+        type=np.int64,
+        description="Number of elements of indices_group in the HDF5 file.",
+    )
+    indices_group__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of indices_group in the HDF5 file.",
     )
     indices_group__long_name = Quantity(
         type=str,
@@ -1187,13 +1573,10 @@ class ImageStack1d(Data):
         ),
     )
     indices_image = Quantity(
-        type=np.int64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXimage.html#nximage-stack-1d-indices-image-field"
         ],
-        dimensionality="dimensionless",
-        unit="dimensionless",
-        shape=["*"],
         description=("Image identifier"),
         a_nexus_field=NeXusField(
             name="indices_image",
@@ -1202,6 +1585,24 @@ class ImageStack1d(Data):
             optionality="optional",
             units="NX_UNITLESS",
         ),
+    )
+    indices_image__min = Quantity(
+        type=np.int64,
+        unit="dimensionless",
+        description="Minimum of indices_image, computed over the full array at parse time.",
+    )
+    indices_image__max = Quantity(
+        type=np.int64,
+        unit="dimensionless",
+        description="Maximum of indices_image, computed over the full array at parse time.",
+    )
+    indices_image__size = Quantity(
+        type=np.int64,
+        description="Number of elements of indices_image in the HDF5 file.",
+    )
+    indices_image__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of indices_image in the HDF5 file.",
     )
     indices_image__long_name = Quantity(
         type=str,
@@ -1221,12 +1622,10 @@ class ImageStack1d(Data):
         ),
     )
     axis_i = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXimage.html#nximage-stack-1d-axis-i-field"
         ],
-        flexible_unit=True,
-        shape=["*"],
         description=(
             "Point coordinate along the fastest dimension. Different NeXus Unit "
             "Category are allowed: * NX_LENGTH for images slicing real space. * "
@@ -1240,6 +1639,24 @@ class ImageStack1d(Data):
             optionality="optional",
             units="NX_ANY",
         ),
+    )
+    axis_i__min = Quantity(
+        type=np.float64,
+        flexible_unit=True,
+        description="Minimum of axis_i, computed over the full array at parse time.",
+    )
+    axis_i__max = Quantity(
+        type=np.float64,
+        flexible_unit=True,
+        description="Maximum of axis_i, computed over the full array at parse time.",
+    )
+    axis_i__size = Quantity(
+        type=np.int64,
+        description="Number of elements of axis_i in the HDF5 file.",
+    )
+    axis_i__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of axis_i in the HDF5 file.",
     )
     axis_i__long_name = Quantity(
         type=str,
@@ -1281,13 +1698,10 @@ class ImageStack2d(Data):
     )
 
     intensity = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXimage.html#nximage-stack-2d-intensity-field"
         ],
-        dimensionality="dimensionless",
-        unit="dimensionless",
-        shape=["*", "*", "*"],
         description=(
             "Intensity for real-valued images as an alternative for real. "
             "Magnitude of the image intensity for complex-valued data."
@@ -1300,14 +1714,29 @@ class ImageStack2d(Data):
             units="NX_UNITLESS",
         ),
     )
-    real = Quantity(
+    intensity__min = Quantity(
         type=np.float64,
+        unit="dimensionless",
+        description="Minimum of intensity, computed over the full array at parse time.",
+    )
+    intensity__max = Quantity(
+        type=np.float64,
+        unit="dimensionless",
+        description="Maximum of intensity, computed over the full array at parse time.",
+    )
+    intensity__size = Quantity(
+        type=np.int64,
+        description="Number of elements of intensity in the HDF5 file.",
+    )
+    intensity__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of intensity in the HDF5 file.",
+    )
+    real = Quantity(
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXimage.html#nximage-stack-2d-real-field"
         ],
-        dimensionality="dimensionless",
-        unit="dimensionless",
-        shape=["*", "*", "*"],
         description=("Real part of the image intensity per point."),
         a_nexus_field=NeXusField(
             name="real",
@@ -1317,14 +1746,29 @@ class ImageStack2d(Data):
             units="NX_UNITLESS",
         ),
     )
-    imag = Quantity(
+    real__min = Quantity(
         type=np.float64,
+        unit="dimensionless",
+        description="Minimum of real, computed over the full array at parse time.",
+    )
+    real__max = Quantity(
+        type=np.float64,
+        unit="dimensionless",
+        description="Maximum of real, computed over the full array at parse time.",
+    )
+    real__size = Quantity(
+        type=np.int64,
+        description="Number of elements of real in the HDF5 file.",
+    )
+    real__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of real in the HDF5 file.",
+    )
+    imag = Quantity(
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXimage.html#nximage-stack-2d-imag-field"
         ],
-        dimensionality="dimensionless",
-        unit="dimensionless",
-        shape=["*", "*", "*"],
         description=("Imaginary part of the image intensity per point."),
         a_nexus_field=NeXusField(
             name="imag",
@@ -1334,14 +1778,29 @@ class ImageStack2d(Data):
             units="NX_UNITLESS",
         ),
     )
+    imag__min = Quantity(
+        type=np.float64,
+        unit="dimensionless",
+        description="Minimum of imag, computed over the full array at parse time.",
+    )
+    imag__max = Quantity(
+        type=np.float64,
+        unit="dimensionless",
+        description="Maximum of imag, computed over the full array at parse time.",
+    )
+    imag__size = Quantity(
+        type=np.int64,
+        description="Number of elements of imag in the HDF5 file.",
+    )
+    imag__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of imag in the HDF5 file.",
+    )
     complex = Quantity(
-        type=np.complex128,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXimage.html#nximage-stack-2d-complex-field"
         ],
-        dimensionality="dimensionless",
-        unit="dimensionless",
-        shape=["*", "*", "*"],
         description=(
             "Image intensity as a complex number as an alternative to real and "
             "imag fields if values are stored as interleaved complex numbers."
@@ -1355,13 +1814,10 @@ class ImageStack2d(Data):
         ),
     )
     indices_group = Quantity(
-        type=np.int64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXimage.html#nximage-stack-2d-indices-group-field"
         ],
-        dimensionality="dimensionless",
-        unit="dimensionless",
-        shape=["*"],
         description=("Group identifier"),
         a_nexus_field=NeXusField(
             name="indices_group",
@@ -1370,6 +1826,24 @@ class ImageStack2d(Data):
             optionality="optional",
             units="NX_UNITLESS",
         ),
+    )
+    indices_group__min = Quantity(
+        type=np.int64,
+        unit="dimensionless",
+        description="Minimum of indices_group, computed over the full array at parse time.",
+    )
+    indices_group__max = Quantity(
+        type=np.int64,
+        unit="dimensionless",
+        description="Maximum of indices_group, computed over the full array at parse time.",
+    )
+    indices_group__size = Quantity(
+        type=np.int64,
+        description="Number of elements of indices_group in the HDF5 file.",
+    )
+    indices_group__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of indices_group in the HDF5 file.",
     )
     indices_group__long_name = Quantity(
         type=str,
@@ -1389,13 +1863,10 @@ class ImageStack2d(Data):
         ),
     )
     indices_image = Quantity(
-        type=np.int64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXimage.html#nximage-stack-2d-indices-image-field"
         ],
-        dimensionality="dimensionless",
-        unit="dimensionless",
-        shape=["*"],
         description=("Image identifier"),
         a_nexus_field=NeXusField(
             name="indices_image",
@@ -1404,6 +1875,24 @@ class ImageStack2d(Data):
             optionality="optional",
             units="NX_UNITLESS",
         ),
+    )
+    indices_image__min = Quantity(
+        type=np.int64,
+        unit="dimensionless",
+        description="Minimum of indices_image, computed over the full array at parse time.",
+    )
+    indices_image__max = Quantity(
+        type=np.int64,
+        unit="dimensionless",
+        description="Maximum of indices_image, computed over the full array at parse time.",
+    )
+    indices_image__size = Quantity(
+        type=np.int64,
+        description="Number of elements of indices_image in the HDF5 file.",
+    )
+    indices_image__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of indices_image in the HDF5 file.",
     )
     indices_image__long_name = Quantity(
         type=str,
@@ -1423,12 +1912,10 @@ class ImageStack2d(Data):
         ),
     )
     axis_j = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXimage.html#nximage-stack-2d-axis-j-field"
         ],
-        flexible_unit=True,
-        shape=["*"],
         description=(
             "Point coordinate along the fast dimension. Different NeXus Unit "
             "Category are allowed: * NX_LENGTH for images slicing real space. * "
@@ -1442,6 +1929,24 @@ class ImageStack2d(Data):
             optionality="optional",
             units="NX_ANY",
         ),
+    )
+    axis_j__min = Quantity(
+        type=np.float64,
+        flexible_unit=True,
+        description="Minimum of axis_j, computed over the full array at parse time.",
+    )
+    axis_j__max = Quantity(
+        type=np.float64,
+        flexible_unit=True,
+        description="Maximum of axis_j, computed over the full array at parse time.",
+    )
+    axis_j__size = Quantity(
+        type=np.int64,
+        description="Number of elements of axis_j in the HDF5 file.",
+    )
+    axis_j__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of axis_j in the HDF5 file.",
     )
     axis_j__long_name = Quantity(
         type=str,
@@ -1461,12 +1966,10 @@ class ImageStack2d(Data):
         ),
     )
     axis_i = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXimage.html#nximage-stack-2d-axis-i-field"
         ],
-        flexible_unit=True,
-        shape=["*"],
         description=(
             "Point coordinate along the fastest dimension. Different NeXus Unit "
             "Category are allowed: * NX_LENGTH for images slicing real space. * "
@@ -1480,6 +1983,24 @@ class ImageStack2d(Data):
             optionality="optional",
             units="NX_ANY",
         ),
+    )
+    axis_i__min = Quantity(
+        type=np.float64,
+        flexible_unit=True,
+        description="Minimum of axis_i, computed over the full array at parse time.",
+    )
+    axis_i__max = Quantity(
+        type=np.float64,
+        flexible_unit=True,
+        description="Maximum of axis_i, computed over the full array at parse time.",
+    )
+    axis_i__size = Quantity(
+        type=np.int64,
+        description="Number of elements of axis_i in the HDF5 file.",
+    )
+    axis_i__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of axis_i in the HDF5 file.",
     )
     axis_i__long_name = Quantity(
         type=str,
@@ -1521,13 +2042,10 @@ class ImageStack3d(Data):
     )
 
     intensity = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXimage.html#nximage-stack-3d-intensity-field"
         ],
-        dimensionality="dimensionless",
-        unit="dimensionless",
-        shape=["*", "*", "*", "*"],
         description=(
             "Intensity for real-valued images as an alternative for real. "
             "Magnitude of the image intensity for complex-valued data."
@@ -1540,14 +2058,29 @@ class ImageStack3d(Data):
             units="NX_UNITLESS",
         ),
     )
-    real = Quantity(
+    intensity__min = Quantity(
         type=np.float64,
+        unit="dimensionless",
+        description="Minimum of intensity, computed over the full array at parse time.",
+    )
+    intensity__max = Quantity(
+        type=np.float64,
+        unit="dimensionless",
+        description="Maximum of intensity, computed over the full array at parse time.",
+    )
+    intensity__size = Quantity(
+        type=np.int64,
+        description="Number of elements of intensity in the HDF5 file.",
+    )
+    intensity__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of intensity in the HDF5 file.",
+    )
+    real = Quantity(
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXimage.html#nximage-stack-3d-real-field"
         ],
-        dimensionality="dimensionless",
-        unit="dimensionless",
-        shape=["*", "*", "*", "*"],
         description=("Real part of the image intensity per point."),
         a_nexus_field=NeXusField(
             name="real",
@@ -1557,14 +2090,29 @@ class ImageStack3d(Data):
             units="NX_UNITLESS",
         ),
     )
-    imag = Quantity(
+    real__min = Quantity(
         type=np.float64,
+        unit="dimensionless",
+        description="Minimum of real, computed over the full array at parse time.",
+    )
+    real__max = Quantity(
+        type=np.float64,
+        unit="dimensionless",
+        description="Maximum of real, computed over the full array at parse time.",
+    )
+    real__size = Quantity(
+        type=np.int64,
+        description="Number of elements of real in the HDF5 file.",
+    )
+    real__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of real in the HDF5 file.",
+    )
+    imag = Quantity(
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXimage.html#nximage-stack-3d-imag-field"
         ],
-        dimensionality="dimensionless",
-        unit="dimensionless",
-        shape=["*", "*", "*", "*"],
         description=("Imaginary part of the image intensity per point."),
         a_nexus_field=NeXusField(
             name="imag",
@@ -1574,14 +2122,29 @@ class ImageStack3d(Data):
             units="NX_UNITLESS",
         ),
     )
+    imag__min = Quantity(
+        type=np.float64,
+        unit="dimensionless",
+        description="Minimum of imag, computed over the full array at parse time.",
+    )
+    imag__max = Quantity(
+        type=np.float64,
+        unit="dimensionless",
+        description="Maximum of imag, computed over the full array at parse time.",
+    )
+    imag__size = Quantity(
+        type=np.int64,
+        description="Number of elements of imag in the HDF5 file.",
+    )
+    imag__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of imag in the HDF5 file.",
+    )
     complex = Quantity(
-        type=np.complex128,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXimage.html#nximage-stack-3d-complex-field"
         ],
-        dimensionality="dimensionless",
-        unit="dimensionless",
-        shape=["*", "*", "*", "*"],
         description=(
             "Image intensity as a complex number as an alternative to real and "
             "imag fields if values are stored as interleaved complex numbers."
@@ -1595,13 +2158,10 @@ class ImageStack3d(Data):
         ),
     )
     indices_group = Quantity(
-        type=np.int64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXimage.html#nximage-stack-3d-indices-group-field"
         ],
-        dimensionality="dimensionless",
-        unit="dimensionless",
-        shape=["*"],
         description=("Group identifier"),
         a_nexus_field=NeXusField(
             name="indices_group",
@@ -1610,6 +2170,24 @@ class ImageStack3d(Data):
             optionality="optional",
             units="NX_UNITLESS",
         ),
+    )
+    indices_group__min = Quantity(
+        type=np.int64,
+        unit="dimensionless",
+        description="Minimum of indices_group, computed over the full array at parse time.",
+    )
+    indices_group__max = Quantity(
+        type=np.int64,
+        unit="dimensionless",
+        description="Maximum of indices_group, computed over the full array at parse time.",
+    )
+    indices_group__size = Quantity(
+        type=np.int64,
+        description="Number of elements of indices_group in the HDF5 file.",
+    )
+    indices_group__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of indices_group in the HDF5 file.",
     )
     indices_group__long_name = Quantity(
         type=str,
@@ -1629,13 +2207,10 @@ class ImageStack3d(Data):
         ),
     )
     indices_image = Quantity(
-        type=np.int64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXimage.html#nximage-stack-3d-indices-image-field"
         ],
-        dimensionality="dimensionless",
-        unit="dimensionless",
-        shape=["*"],
         description=("Image identifier"),
         a_nexus_field=NeXusField(
             name="indices_image",
@@ -1644,6 +2219,24 @@ class ImageStack3d(Data):
             optionality="optional",
             units="NX_UNITLESS",
         ),
+    )
+    indices_image__min = Quantity(
+        type=np.int64,
+        unit="dimensionless",
+        description="Minimum of indices_image, computed over the full array at parse time.",
+    )
+    indices_image__max = Quantity(
+        type=np.int64,
+        unit="dimensionless",
+        description="Maximum of indices_image, computed over the full array at parse time.",
+    )
+    indices_image__size = Quantity(
+        type=np.int64,
+        description="Number of elements of indices_image in the HDF5 file.",
+    )
+    indices_image__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of indices_image in the HDF5 file.",
     )
     indices_image__long_name = Quantity(
         type=str,
@@ -1663,12 +2256,10 @@ class ImageStack3d(Data):
         ),
     )
     axis_k = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXimage.html#nximage-stack-3d-axis-k-field"
         ],
-        flexible_unit=True,
-        shape=["*"],
         description=(
             "Point coordinate along the slow dimension. Different NeXus Unit "
             "Category are allowed: * NX_LENGTH for images slicing real space. * "
@@ -1682,6 +2273,24 @@ class ImageStack3d(Data):
             optionality="optional",
             units="NX_ANY",
         ),
+    )
+    axis_k__min = Quantity(
+        type=np.float64,
+        flexible_unit=True,
+        description="Minimum of axis_k, computed over the full array at parse time.",
+    )
+    axis_k__max = Quantity(
+        type=np.float64,
+        flexible_unit=True,
+        description="Maximum of axis_k, computed over the full array at parse time.",
+    )
+    axis_k__size = Quantity(
+        type=np.int64,
+        description="Number of elements of axis_k in the HDF5 file.",
+    )
+    axis_k__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of axis_k in the HDF5 file.",
     )
     axis_k__long_name = Quantity(
         type=str,
@@ -1701,12 +2310,10 @@ class ImageStack3d(Data):
         ),
     )
     axis_j = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXimage.html#nximage-stack-3d-axis-j-field"
         ],
-        flexible_unit=True,
-        shape=["*"],
         description=(
             "Point coordinate along the fast dimension. Different NeXus Unit "
             "Category are allowed: * NX_LENGTH for images slicing real space. * "
@@ -1720,6 +2327,24 @@ class ImageStack3d(Data):
             optionality="optional",
             units="NX_ANY",
         ),
+    )
+    axis_j__min = Quantity(
+        type=np.float64,
+        flexible_unit=True,
+        description="Minimum of axis_j, computed over the full array at parse time.",
+    )
+    axis_j__max = Quantity(
+        type=np.float64,
+        flexible_unit=True,
+        description="Maximum of axis_j, computed over the full array at parse time.",
+    )
+    axis_j__size = Quantity(
+        type=np.int64,
+        description="Number of elements of axis_j in the HDF5 file.",
+    )
+    axis_j__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of axis_j in the HDF5 file.",
     )
     axis_j__long_name = Quantity(
         type=str,
@@ -1739,12 +2364,10 @@ class ImageStack3d(Data):
         ),
     )
     axis_i = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXimage.html#nximage-stack-3d-axis-i-field"
         ],
-        flexible_unit=True,
-        shape=["*"],
         description=(
             "Point coordinate along the fastest dimension. Different NeXus Unit "
             "Category are allowed: * NX_LENGTH for images slicing real space. * "
@@ -1758,6 +2381,24 @@ class ImageStack3d(Data):
             optionality="optional",
             units="NX_ANY",
         ),
+    )
+    axis_i__min = Quantity(
+        type=np.float64,
+        flexible_unit=True,
+        description="Minimum of axis_i, computed over the full array at parse time.",
+    )
+    axis_i__max = Quantity(
+        type=np.float64,
+        flexible_unit=True,
+        description="Maximum of axis_i, computed over the full array at parse time.",
+    )
+    axis_i__size = Quantity(
+        type=np.int64,
+        description="Number of elements of axis_i in the HDF5 file.",
+    )
+    axis_i__ndim = Quantity(
+        type=np.int8,
+        description="Number of dimensions of axis_i in the HDF5 file.",
     )
     axis_i__long_name = Quantity(
         type=str,

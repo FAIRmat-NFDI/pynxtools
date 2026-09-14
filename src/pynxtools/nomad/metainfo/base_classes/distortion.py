@@ -24,6 +24,7 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 
 import numpy as np
+from nomad.datamodel.hdf5 import HDF5Reference
 from nomad.datamodel.metainfo.annotations import (
     ELNAnnotation,
     ELNComponentEnum,
@@ -112,13 +113,10 @@ class Distortion(Process):
         a_display={"unit": "dimensionless"},
     )
     original_centre = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXdistortion.html#nxdistortion-original-centre-field"
         ],
-        dimensionality="dimensionless",
-        unit="dimensionless",
-        shape=[2],
         description=(
             "For symmetry-guided distortion correction. Here we record the "
             "coordinates of the symmetry centre point."
@@ -132,13 +130,10 @@ class Distortion(Process):
         ),
     )
     original_points = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXdistortion.html#nxdistortion-original-points-field"
         ],
-        dimensionality="dimensionless",
-        unit="dimensionless",
-        shape=["*", 2],
         description=(
             "For symmetry-guided distortion correction. Here we record the "
             "coordinates of the relevant symmetry points."
@@ -152,13 +147,10 @@ class Distortion(Process):
         ),
     )
     cdeform_field = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXdistortion.html#nxdistortion-cdeform-field-field"
         ],
-        dimensionality="dimensionless",
-        unit="dimensionless",
-        shape=["*", "*"],
         description=(
             "Column deformation field for general non-rigid distortion "
             "corrections. 2D matrix holding the column information of the "
@@ -173,13 +165,10 @@ class Distortion(Process):
         ),
     )
     rdeform_field = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXdistortion.html#nxdistortion-rdeform-field-field"
         ],
-        dimensionality="dimensionless",
-        unit="dimensionless",
-        shape=["*", "*"],
         description=(
             "Row deformation field for general non-rigid distortion corrections. "
             "2D matrix holding the row information of the mapping of each "

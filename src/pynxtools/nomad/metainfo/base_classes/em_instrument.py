@@ -24,6 +24,7 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 
 import numpy as np
+from nomad.datamodel.hdf5 import HDF5Reference
 from nomad.datamodel.metainfo.annotations import (
     ELNAnnotation,
     ELNComponentEnum,
@@ -541,13 +542,10 @@ class EmInstrumentStageID(Manipulator):
         ),
     )
     position = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXem_instrument.html#nxem_instrument-stageid-position-field"
         ],
-        dimensionality="[length]",
-        unit="m",
-        shape=[3],
         description=(
             "The interpretation of these position values can be contextualized "
             "via the comment attribute. However, it is better to describe the "

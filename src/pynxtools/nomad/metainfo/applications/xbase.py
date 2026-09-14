@@ -24,6 +24,7 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 
 import numpy as np
+from nomad.datamodel.hdf5 import HDF5Reference
 from nomad.datamodel.metainfo.annotations import (
     ELNAnnotation,
     ELNComponentEnum,
@@ -334,12 +335,10 @@ class XbaseInstrumentDetector(Detector):
     )
 
     data_quantity = Quantity(
-        type=np.int64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXxbase.html#nxxbase-entry-instrument-detector-data-field"
         ],
-        flexible_unit=True,
-        shape=["*", "*", "*"],
         description=(
             "The area detector data, the first dimension is always the number of "
             "scan points, the second and third are the number of pixels in x and "
@@ -374,13 +373,10 @@ class XbaseInstrumentDetector(Detector):
         ),
     )
     x_pixel_size = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXxbase.html#nxxbase-entry-instrument-detector-x-pixel-size-field"
         ],
-        dimensionality="[length]",
-        unit="m",
-        shape=["*", "*"],
         a_nexus_field=NeXusField(
             name="x_pixel_size",
             type="NX_FLOAT",
@@ -390,13 +386,10 @@ class XbaseInstrumentDetector(Detector):
         ),
     )
     y_pixel_size = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXxbase.html#nxxbase-entry-instrument-detector-y-pixel-size-field"
         ],
-        dimensionality="[length]",
-        unit="m",
-        shape=["*", "*"],
         a_nexus_field=NeXusField(
             name="y_pixel_size",
             type="NX_FLOAT",
@@ -406,13 +399,10 @@ class XbaseInstrumentDetector(Detector):
         ),
     )
     distance = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXxbase.html#nxxbase-entry-instrument-detector-distance-field"
         ],
-        dimensionality="[length]",
-        unit="m",
-        shape=["*", "*", "*"],
         a_nexus_field=NeXusField(
             name="distance",
             type="NX_FLOAT",
@@ -478,11 +468,10 @@ class XbaseSample(Sample):
         ),
     )
     orientation_matrix = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXxbase.html#nxxbase-entry-sample-orientation-matrix-field"
         ],
-        shape=[3, 3],
         description=(
             "The orientation matrix according to Busing and Levy conventions. "
             "This is not strictly necessary as the UB can always be derived from "
@@ -497,13 +486,10 @@ class XbaseSample(Sample):
         ),
     )
     unit_cell = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXxbase.html#nxxbase-entry-sample-unit-cell-field"
         ],
-        dimensionality="[length]",
-        unit="m",
-        shape=[6],
         description=(
             "The unit cell, a, b, c, alpha, beta, gamma. Again, not strictly "
             "necessary, but normally written."
@@ -517,13 +503,10 @@ class XbaseSample(Sample):
         ),
     )
     temperature = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXxbase.html#nxxbase-entry-sample-temperature-field"
         ],
-        dimensionality="[temperature]",
-        unit="kelvin",
-        shape=["*"],
         description=(
             "The sample temperature or whatever sensor represents this value best"
         ),
@@ -704,12 +687,10 @@ class XbaseData(Data):
     )
 
     data_quantity = Quantity(
-        type=np.int64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXxbase.html#nxxbase-entry-data-data-link"
         ],
-        shape=["*", "*", "*"],
-        flexible_unit=True,
         a_nexus_link=NeXusLink(
             name="data",
             target="/NXentry/NXinstrument/NXdetector/data",

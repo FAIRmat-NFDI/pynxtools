@@ -28,6 +28,7 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 
 import numpy as np
+from nomad.datamodel.hdf5 import HDF5Reference
 from nomad.datamodel.metainfo.annotations import (
     ELNAnnotation,
     ELNComponentEnum,
@@ -554,13 +555,10 @@ class SnseventDaslogsLog(Log):
         ),
     )
     time = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXsnsevent.html#nxsnsevent-entry-daslogs-log-time-field"
         ],
-        dimensionality="[time]",
-        unit="second",
-        shape=["*"],
         a_nexus_field=NeXusField(
             name="time",
             type="NX_FLOAT",
@@ -570,12 +568,10 @@ class SnseventDaslogsLog(Log):
         ),
     )
     value = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXsnsevent.html#nxsnsevent-entry-daslogs-log-value-field"
         ],
-        flexible_unit=True,
-        shape=["*"],
         a_nexus_field=NeXusField(
             name="value",
             type="NX_FLOAT",
@@ -715,11 +711,10 @@ class SnseventDaslogsPositioner(Positioner):
         ),
     )
     time = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXsnsevent.html#nxsnsevent-entry-daslogs-positioner-time-field"
         ],
-        shape=["*"],
         a_nexus_field=NeXusField(
             name="time",
             type="NX_FLOAT",
@@ -728,12 +723,10 @@ class SnseventDaslogsPositioner(Positioner):
         ),
     )
     value = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXsnsevent.html#nxsnsevent-entry-daslogs-positioner-value-field"
         ],
-        flexible_unit=True,
-        shape=["*"],
         a_nexus_field=NeXusField(
             name="value",
             type="NX_FLOAT",
@@ -887,11 +880,10 @@ class SnseventData(Data):
     )
 
     data_x_y = Quantity(
-        type=np.int64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXsnsevent.html#nxsnsevent-entry-data-data-x-y-link"
         ],
-        shape=["*", "*"],
         a_nexus_link=NeXusLink(
             name="data_x_y",
             target="/NXentry/NXinstrument/NXdetector/data_x_y",
@@ -899,13 +891,10 @@ class SnseventData(Data):
         ),
     )
     x_pixel_offset = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXsnsevent.html#nxsnsevent-entry-data-x-pixel-offset-link"
         ],
-        dimensionality="[length]",
-        unit="m",
-        shape=["*"],
         a_nexus_link=NeXusLink(
             name="x_pixel_offset",
             target="/NXentry/NXinstrument/NXdetector/x_pixel_offset",
@@ -913,13 +902,10 @@ class SnseventData(Data):
         ),
     )
     y_pixel_offset = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXsnsevent.html#nxsnsevent-entry-data-y-pixel-offset-link"
         ],
-        dimensionality="[length]",
-        unit="m",
-        shape=["*"],
         a_nexus_link=NeXusLink(
             name="y_pixel_offset",
             target="/NXentry/NXinstrument/NXdetector/y_pixel_offset",
@@ -947,11 +933,10 @@ class SnseventEventData(EventData):
     )
 
     event_index = Quantity(
-        type=np.int64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXsnsevent.html#nxsnsevent-entry-event-data-event-index-link"
         ],
-        shape=["*"],
         a_nexus_link=NeXusLink(
             name="event_index",
             target="/NXentry/NXinstrument/NXdetector/event_index",
@@ -959,11 +944,10 @@ class SnseventEventData(EventData):
         ),
     )
     event_pixel_id = Quantity(
-        type=np.int64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXsnsevent.html#nxsnsevent-entry-event-data-event-pixel-id-link"
         ],
-        shape=["*"],
         a_nexus_link=NeXusLink(
             name="event_pixel_id",
             target="/NXentry/NXinstrument/NXdetector/event_pixel_id",
@@ -971,13 +955,10 @@ class SnseventEventData(EventData):
         ),
     )
     event_time_of_flight = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXsnsevent.html#nxsnsevent-entry-event-data-event-time-of-flight-link"
         ],
-        dimensionality="[time]",
-        unit="second",
-        shape=["*"],
         a_nexus_link=NeXusLink(
             name="event_time_of_flight",
             target="/NXentry/NXinstrument/NXdetector/event_time_of_flight",
@@ -985,13 +966,10 @@ class SnseventEventData(EventData):
         ),
     )
     pulse_time = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXsnsevent.html#nxsnsevent-entry-event-data-pulse-time-link"
         ],
-        dimensionality="[time]",
-        unit="second",
-        shape=["*"],
         a_nexus_link=NeXusLink(
             name="pulse_time",
             target="/NXentry/NXinstrument/NXdetector/pulse_time",
@@ -1282,13 +1260,10 @@ class SnseventInstrumentDetector(Detector):
     )
 
     azimuthal_angle = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXsnsevent.html#nxsnsevent-entry-instrument-detector-azimuthal-angle-field"
         ],
-        dimensionality="[angle]",
-        unit="radian",
-        shape=["*", "*"],
         a_nexus_field=NeXusField(
             name="azimuthal_angle",
             type="NX_FLOAT",
@@ -1298,11 +1273,10 @@ class SnseventInstrumentDetector(Detector):
         ),
     )
     data_x_y = Quantity(
-        type=np.int64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXsnsevent.html#nxsnsevent-entry-instrument-detector-data-x-y-field"
         ],
-        shape=["*", "*"],
         description=('expect ``signal=2 axes="x_pixel_offset,y_pixel_offset``"'),
         a_nexus_field=NeXusField(
             name="data_x_y",
@@ -1312,13 +1286,10 @@ class SnseventInstrumentDetector(Detector):
         ),
     )
     distance = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXsnsevent.html#nxsnsevent-entry-instrument-detector-distance-field"
         ],
-        dimensionality="[length]",
-        unit="m",
-        shape=["*", "*"],
         a_nexus_field=NeXusField(
             name="distance",
             type="NX_FLOAT",
@@ -1328,11 +1299,10 @@ class SnseventInstrumentDetector(Detector):
         ),
     )
     event_index = Quantity(
-        type=np.int64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXsnsevent.html#nxsnsevent-entry-instrument-detector-event-index-field"
         ],
-        shape=["*"],
         a_nexus_field=NeXusField(
             name="event_index",
             type="NX_UINT",
@@ -1341,11 +1311,10 @@ class SnseventInstrumentDetector(Detector):
         ),
     )
     event_pixel_id = Quantity(
-        type=np.int64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXsnsevent.html#nxsnsevent-entry-instrument-detector-event-pixel-id-field"
         ],
-        shape=["*"],
         a_nexus_field=NeXusField(
             name="event_pixel_id",
             type="NX_UINT",
@@ -1354,13 +1323,10 @@ class SnseventInstrumentDetector(Detector):
         ),
     )
     event_time_of_flight = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXsnsevent.html#nxsnsevent-entry-instrument-detector-event-time-of-flight-field"
         ],
-        dimensionality="[time]",
-        unit="second",
-        shape=["*"],
         a_nexus_field=NeXusField(
             name="event_time_of_flight",
             type="NX_FLOAT",
@@ -1370,11 +1336,10 @@ class SnseventInstrumentDetector(Detector):
         ),
     )
     pixel_id = Quantity(
-        type=np.int64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXsnsevent.html#nxsnsevent-entry-instrument-detector-pixel-id-field"
         ],
-        shape=["*", "*"],
         a_nexus_field=NeXusField(
             name="pixel_id",
             type="NX_UINT",
@@ -1383,13 +1348,10 @@ class SnseventInstrumentDetector(Detector):
         ),
     )
     polar_angle = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXsnsevent.html#nxsnsevent-entry-instrument-detector-polar-angle-field"
         ],
-        dimensionality="[angle]",
-        unit="radian",
-        shape=["*", "*"],
         a_nexus_field=NeXusField(
             name="polar_angle",
             type="NX_FLOAT",
@@ -1399,13 +1361,10 @@ class SnseventInstrumentDetector(Detector):
         ),
     )
     pulse_time = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXsnsevent.html#nxsnsevent-entry-instrument-detector-pulse-time-field"
         ],
-        dimensionality="[time]",
-        unit="second",
-        shape=["*"],
         a_nexus_field=NeXusField(
             name="pulse_time",
             type="NX_FLOAT",
@@ -1430,13 +1389,10 @@ class SnseventInstrumentDetector(Detector):
         ),
     )
     x_pixel_offset = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXsnsevent.html#nxsnsevent-entry-instrument-detector-x-pixel-offset-field"
         ],
-        dimensionality="[length]",
-        unit="m",
-        shape=["*"],
         a_nexus_field=NeXusField(
             name="x_pixel_offset",
             type="NX_FLOAT",
@@ -1446,13 +1402,10 @@ class SnseventInstrumentDetector(Detector):
         ),
     )
     y_pixel_offset = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXsnsevent.html#nxsnsevent-entry-instrument-detector-y-pixel-offset-field"
         ],
-        dimensionality="[length]",
-        unit="m",
-        shape=["*"],
         a_nexus_field=NeXusField(
             name="y_pixel_offset",
             type="NX_FLOAT",
@@ -1510,13 +1463,10 @@ class SnseventInstrumentDetectorOriginOrientation(Orientation):
     )
 
     value = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXsnsevent.html#nxsnsevent-entry-instrument-detector-origin-orientation-value-field"
         ],
-        dimensionality="dimensionless",
-        unit="dimensionless",
-        shape=[6],
         description=("Six out of nine rotation parameters."),
         a_nexus_field=NeXusField(
             name="value",
@@ -1598,13 +1548,10 @@ class SnseventInstrumentDetectorOriginShape(Shape):
         ),
     )
     size = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXsnsevent.html#nxsnsevent-entry-instrument-detector-origin-shape-size-field"
         ],
-        dimensionality="[length]",
-        unit="m",
-        shape=[3],
         a_nexus_field=NeXusField(
             name="size",
             type="NX_FLOAT",
@@ -1632,13 +1579,10 @@ class SnseventInstrumentDetectorOriginTranslation(Translation):
     )
 
     distance = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXsnsevent.html#nxsnsevent-entry-instrument-detector-origin-translation-distance-field"
         ],
-        dimensionality="[length]",
-        unit="m",
-        shape=[3],
         a_nexus_field=NeXusField(
             name="distance",
             type="NX_FLOAT",
@@ -1888,13 +1832,10 @@ class SnseventInstrumentApertureOriginOrientation(Orientation):
     )
 
     value = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXsnsevent.html#nxsnsevent-entry-instrument-aperture-origin-orientation-value-field"
         ],
-        dimensionality="dimensionless",
-        unit="dimensionless",
-        shape=[6],
         description=("Six out of nine rotation parameters."),
         a_nexus_field=NeXusField(
             name="value",
@@ -1976,13 +1917,10 @@ class SnseventInstrumentApertureOriginShape(Shape):
         ),
     )
     size = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXsnsevent.html#nxsnsevent-entry-instrument-aperture-origin-shape-size-field"
         ],
-        dimensionality="[length]",
-        unit="m",
-        shape=[3],
         a_nexus_field=NeXusField(
             name="size",
             type="NX_FLOAT",
@@ -2010,13 +1948,10 @@ class SnseventInstrumentApertureOriginTranslation(Translation):
     )
 
     distance = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXsnsevent.html#nxsnsevent-entry-instrument-aperture-origin-translation-distance-field"
         ],
-        dimensionality="[length]",
-        unit="m",
-        shape=[3],
         a_nexus_field=NeXusField(
             name="distance",
             type="NX_FLOAT",
@@ -2105,13 +2040,10 @@ class SnseventInstrumentCrystal(Crystal):
         ),
     )
     wavelength = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXsnsevent.html#nxsnsevent-entry-instrument-crystal-wavelength-field"
         ],
-        dimensionality="[length]",
-        unit="angstrom",
-        shape=["*"],
         a_nexus_field=NeXusField(
             name="wavelength",
             type="NX_FLOAT",
@@ -2185,13 +2117,10 @@ class SnseventInstrumentCrystalOriginOrientation(Orientation):
     )
 
     value = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXsnsevent.html#nxsnsevent-entry-instrument-crystal-origin-orientation-value-field"
         ],
-        dimensionality="dimensionless",
-        unit="dimensionless",
-        shape=[6],
         description=("Six out of nine rotation parameters."),
         a_nexus_field=NeXusField(
             name="value",
@@ -2273,13 +2202,10 @@ class SnseventInstrumentCrystalOriginShape(Shape):
         ),
     )
     size = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXsnsevent.html#nxsnsevent-entry-instrument-crystal-origin-shape-size-field"
         ],
-        dimensionality="[length]",
-        unit="m",
-        shape=["*", "*"],
         a_nexus_field=NeXusField(
             name="size",
             type="NX_FLOAT",
@@ -2307,13 +2233,10 @@ class SnseventInstrumentCrystalOriginTranslation(Translation):
     )
 
     distance = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXsnsevent.html#nxsnsevent-entry-instrument-crystal-origin-translation-distance-field"
         ],
-        dimensionality="[length]",
-        unit="m",
-        shape=[3],
         a_nexus_field=NeXusField(
             name="distance",
             type="NX_FLOAT",
@@ -2343,11 +2266,10 @@ class SnseventMonitor(Monitor):
     )
 
     data_quantity = Quantity(
-        type=np.int64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXsnsevent.html#nxsnsevent-entry-monitor-data-field"
         ],
-        shape=["*"],
         description=('expect ``signal=1 axes="time_of_flight"``'),
         a_nexus_field=NeXusField(
             name="data",
@@ -2392,13 +2314,10 @@ class SnseventMonitor(Monitor):
         ),
     )
     time_of_flight = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXsnsevent.html#nxsnsevent-entry-monitor-time-of-flight-field"
         ],
-        dimensionality="[time]",
-        unit="second",
-        shape=["*"],
         a_nexus_field=NeXusField(
             name="time_of_flight",
             type="NX_FLOAT",

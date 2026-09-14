@@ -24,6 +24,7 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 
 import numpy as np
+from nomad.datamodel.hdf5 import HDF5Reference
 from nomad.datamodel.metainfo.annotations import (
     ELNAnnotation,
     ELNComponentEnum,
@@ -136,13 +137,10 @@ class Beam(Object):
         a_display={"unit": "m"},
     )
     incident_energy = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXbeam.html#nxbeam-incident-energy-field"
         ],
-        dimensionality="[mass] * [length] ** 2 / [time] ** 2",
-        unit="eV",
-        shape=["*"],
         description=(
             "Energy carried by each particle of the beam on entering the given "
             "location. Several use cases are permitted, depending on the "
@@ -207,13 +205,10 @@ class Beam(Object):
         a_display={"unit": "eV"},
     )
     final_energy = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXbeam.html#nxbeam-final-energy-field"
         ],
-        dimensionality="[mass] * [length] ** 2 / [time] ** 2",
-        unit="eV",
-        shape=["*"],
         description=(
             "Energy carried by each particle of the beam on leaving the given location"
         ),
@@ -226,13 +221,10 @@ class Beam(Object):
         ),
     )
     energy_transfer = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXbeam.html#nxbeam-energy-transfer-field"
         ],
-        dimensionality="[mass] * [length] ** 2 / [time] ** 2",
-        unit="eV",
-        shape=["*"],
         description=("Change in particle energy caused by the beamline component"),
         a_nexus_field=NeXusField(
             name="energy_transfer",
@@ -306,13 +298,10 @@ class Beam(Object):
         ),
     )
     incident_wavelength_spread = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXbeam.html#nxbeam-incident-wavelength-spread-field"
         ],
-        dimensionality="[length]",
-        unit="angstrom",
-        shape=["*"],
         description=(
             "The wavelength spread FWHM for the corresponding wavelength(s) in "
             "incident_wavelength. In the case of shot-to-shot variation in the "
@@ -329,13 +318,10 @@ class Beam(Object):
         ),
     )
     incident_beam_divergence = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXbeam.html#nxbeam-incident-beam-divergence-field"
         ],
-        dimensionality="[angle]",
-        unit="radian",
-        shape=["*", "*"],
         description=(
             "Beam crossfire in degrees parallel to the laboratory X axis The "
             "dimension **c** is a series of moments of that represent the "
@@ -354,13 +340,10 @@ class Beam(Object):
         ),
     )
     extent = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXbeam.html#nxbeam-extent-field"
         ],
-        dimensionality="[length]",
-        unit="m",
-        shape=["*", 2],
         description=(
             "Size of the beam entering this component. Note this represents a "
             "rectangular beam aperture, and values represent FWHM. If "
@@ -378,13 +361,10 @@ class Beam(Object):
         ),
     )
     final_wavelength = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXbeam.html#nxbeam-final-wavelength-field"
         ],
-        dimensionality="[length]",
-        unit="angstrom",
-        shape=["*"],
         description=("Wavelength on leaving beamline component"),
         a_nexus_field=NeXusField(
             name="final_wavelength",
@@ -395,12 +375,10 @@ class Beam(Object):
         ),
     )
     incident_polarization = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXbeam.html#nxbeam-incident-polarization-field"
         ],
-        flexible_unit=True,
-        shape=["*", 2],
         description=("Polarization vector on entering beamline component"),
         a_nexus_field=NeXusField(
             name="incident_polarization",
@@ -411,12 +389,10 @@ class Beam(Object):
         ),
     )
     final_polarization = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXbeam.html#nxbeam-final-polarization-field"
         ],
-        flexible_unit=True,
-        shape=["*", 2],
         description=("Polarization vector on leaving beamline component"),
         a_nexus_field=NeXusField(
             name="final_polarization",
@@ -427,12 +403,10 @@ class Beam(Object):
         ),
     )
     incident_polarization_stokes = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXbeam.html#nxbeam-incident-polarization-stokes-field"
         ],
-        flexible_unit=True,
-        shape=["*", 4],
         description=(
             "Polarization vector on entering beamline component using Stokes "
             "notation The Stokes parameters are four components labelled I,Q,U,V "
@@ -461,12 +435,10 @@ class Beam(Object):
         ),
     )
     final_polarization_stokes = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXbeam.html#nxbeam-final-polarization-stokes-field"
         ],
-        flexible_unit=True,
-        shape=["*", 4],
         description=(
             "Polarization vector on leaving beamline component using Stokes "
             "notation (see incident_polarization_stokes)."
@@ -480,13 +452,10 @@ class Beam(Object):
         ),
     )
     final_wavelength_spread = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXbeam.html#nxbeam-final-wavelength-spread-field"
         ],
-        dimensionality="[length]",
-        unit="angstrom",
-        shape=["*"],
         description=("Wavelength spread FWHM of beam leaving this component"),
         a_nexus_field=NeXusField(
             name="final_wavelength_spread",
@@ -497,13 +466,10 @@ class Beam(Object):
         ),
     )
     final_beam_divergence = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXbeam.html#nxbeam-final-beam-divergence-field"
         ],
-        dimensionality="[angle]",
-        unit="radian",
-        shape=["*", 2],
         description=("Divergence FWHM of beam leaving this component"),
         a_nexus_field=NeXusField(
             name="final_beam_divergence",
@@ -514,13 +480,10 @@ class Beam(Object):
         ),
     )
     flux = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXbeam.html#nxbeam-flux-field"
         ],
-        dimensionality="1 / [time] / [length] ** 2",
-        unit="1 / second / cm ** 2",
-        shape=["*"],
         description=("flux incident on beam plane area"),
         a_nexus_field=NeXusField(
             name="flux",
@@ -654,11 +617,10 @@ class Beam(Object):
         ),
     )
     frog_trace = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXbeam.html#nxbeam-frog-trace-field"
         ],
-        shape=["*", "*"],
         description=(
             "FROG (frequency-resolved optical gating) trace of the pulse. This "
             "is to be used for ultrashort laser pulses in a FROG "
@@ -672,13 +634,10 @@ class Beam(Object):
         ),
     )
     frog_delays = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXbeam.html#nxbeam-frog-delays-field"
         ],
-        dimensionality="[time]",
-        unit="second",
-        shape=["*"],
         description=(
             "Horizontal axis of a FROG trace, i.e. delay. This is to be used for "
             "ultrashort laser pulses in a FROG (frequency-resolved optical "
@@ -693,13 +652,10 @@ class Beam(Object):
         ),
     )
     frog_frequencies = Quantity(
-        type=np.float64,
+        type=HDF5Reference,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXbeam.html#nxbeam-frog-frequencies-field"
         ],
-        dimensionality="1 / [time]",
-        unit="hertz",
-        shape=["*"],
         description=(
             "Vertical axis of a FROG trace, i.e. frequency. This is to be used "
             "for ultrashort laser pulses in a FROG (frequency-resolved optical "
