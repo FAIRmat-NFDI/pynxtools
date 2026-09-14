@@ -60,7 +60,7 @@ git submodule update --init --recursive --jobs=4
 
 Note that we are using the NeXus definitions as a [Git submodule](https://git-scm.com/book/en/v2/Git-Tools-Submodules). The last two lines initiate the submodule and upgrade it to match the first used in pynxtools.
 
-For the [ontology service](../learn/pynxtools/ontology-service.md), adding the [NeXusOntology](https://github.com/FAIRmat-NFDI/NeXusOntology/tree/oscars-project) as a git submodule is required. Here, it is recommended to use the sparse checkout:
+For the [ontology service](../learn/pynxtools/ontology-service.md), adding the [NeXusOntology](https://github.com/FAIRmat-NFDI/NeXusOntology/tree/r2025_11) as a git submodule is required. Here, it is recommended to use the sparse checkout:
 
 ```bash
 cd src/pynxtools/NeXusOntology
