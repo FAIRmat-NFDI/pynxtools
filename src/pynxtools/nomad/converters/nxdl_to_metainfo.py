@@ -66,6 +66,14 @@ _METAINFO_PACKAGE_ROOT = "pynxtools.nomad.metainfo"
 # Must match the Quantity/SubSection argument indent in nexus.py.j2.
 _DESCRIPTION_INDENT = 12
 
+# Numeric generated python_types whose array-valued fields are deferred as an
+# HDF5Reference.
+_HDF5_REFERENCE_TYPES = ("np.float64", "np.int64", "np.complex128")
+
+# Numeric python_types for which per-field statistics (__min/__max) are computed at
+# parse time. Complex is excluded: min/max are not defined for complex values.
+_STATISTICS_TYPES = ("np.float64", "np.int64")
+
 _jinja_env = jinja2.Environment(
     loader=jinja2.FileSystemLoader(str(_TEMPLATE_DIR)),
     trim_blocks=True,
@@ -104,10 +112,11 @@ class QuantityContext:
     # Default value for the ELN annotation; set for single-value MEnum only.
     eln_default: str | None
     # True for numeric array fields inside NXdata-derived classes — the generator
-    # emits parallel {name}__mean/__min/__max/__size/__ndim scalar quantities.
+    # emits parallel {name}__min/__max/__size/__ndim scalar quantities (__mean is
+    # computed at parse time but not stored as its own quantity).
     has_statistics: bool = False
-    # True for any shape-ful (array-like) quantity: the generated Quantity itself
-    # is emitted as type=HDF5Reference (a path string into the source .nxs file)
+    # True for numeric array fields: the generated Quantity itself is emitted as
+    # type=HDF5Reference (a path string into the source .nxs file)
     # instead of python_type. python_type/shape/dimensionality/default_unit/
     # flexible_unit are left as the real NXDL-derived values regardless — the
     # __min/__max statistics quantities (which reuse python_type) and
@@ -581,10 +590,15 @@ def _build_quantity_from_node(
     is_effectively_array = bool(shape) or (
         is_nxdata_class and isinstance(node, NXTreeField)
     )
-    # HDF5 attributes aren't independently addressable HDF5 objects, so
-    # HDF5Reference (which points at a group/dataset path) doesn't apply
-    # to them regardless of shape -- only fields become HDF5Reference.
-    is_hdf5_reference = isinstance(node, NXTreeField) and is_effectively_array
+    # HDF5Reference defers reading a potentially large numeric array, storing a
+    # path into the source file instead. It applies only to numeric fields:
+    # str/bool/enum/datetime hold their actual value regardless of shape, and HDF5
+    # attributes are not independently addressable HDF5 objects (only fields are).
+    is_hdf5_reference = (
+        isinstance(node, NXTreeField)
+        and is_effectively_array
+        and python_type in _HDF5_REFERENCE_TYPES
+    )
 
     eln_component, eln_default = _eln_component_for(
         python_type,
@@ -599,7 +613,7 @@ def _build_quantity_from_node(
         is_nxdata_class
         and isinstance(node, NXTreeField)
         and is_effectively_array
-        and python_type in ("np.float64", "np.int64", "np.complex128")
+        and python_type in _STATISTICS_TYPES
     )
 
     return QuantityContext(
@@ -1911,10 +1925,9 @@ def build_context(nx_name: str) -> dict:
                     )
                 )
 
-    needs_m_enum = any(
-        q.python_type.startswith("MEnum")
-        for q in quantities + [q for c in named_concepts for q in c.quantities]
-    )
+    _all_quantities = quantities + [q for c in named_concepts for q in c.quantities]
+    needs_m_enum = any(q.python_type.startswith("MEnum") for q in _all_quantities)
+    needs_hdf5_reference = any(q.is_hdf5_reference for q in _all_quantities)
 
     # Remove concept imports already covered by the main generated-base import.
     if base_is_generated:
@@ -1956,6 +1969,7 @@ def build_context(nx_name: str) -> dict:
         "choices": choices,
         "concept_imports": sorted(concept_imports),
         "needs_m_enum": needs_m_enum,
+        "needs_hdf5_reference": needs_hdf5_reference,
     }
 
 

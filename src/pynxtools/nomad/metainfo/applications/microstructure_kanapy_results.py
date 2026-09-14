@@ -589,7 +589,7 @@ class MicrostructureKanapyResultsMicrostructureIDGridStructure(Data):
         ),
     )
     title = Quantity(
-        type=HDF5Reference,
+        type=str,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXmicrostructure_kanapy_results.html#nxmicrostructure_kanapy_results-entry-microstructureid-grid-structure-title-field"
         ],
@@ -598,6 +598,9 @@ class MicrostructureKanapyResultsMicrostructureIDGridStructure(Data):
             type="NX_CHAR",
             name_type="specified",
             optionality="required",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
     indices_crystal = Quantity(

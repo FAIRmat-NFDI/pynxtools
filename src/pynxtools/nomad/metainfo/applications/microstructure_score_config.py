@@ -1688,7 +1688,7 @@ class MicrostructureScoreConfigDispersoidDragZenerSmithRadiusEvolution(Data):
         ),
     )
     title = Quantity(
-        type=HDF5Reference,
+        type=str,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXmicrostructure_score_config.html#nxmicrostructure_score_config-entry-dispersoid-drag-zener-smith-radius-evolution-title-field"
         ],
@@ -1697,6 +1697,9 @@ class MicrostructureScoreConfigDispersoidDragZenerSmithRadiusEvolution(Data):
             type="NX_CHAR",
             name_type="specified",
             optionality="required",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
     time = Quantity(
@@ -1815,10 +1818,11 @@ class MicrostructureScoreConfigComponentAnalysis(Parameters):
     )
 
     names = Quantity(
-        type=HDF5Reference,
+        type=str,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXmicrostructure_score_config.html#nxmicrostructure_score_config-entry-component-analysis-names-field"
         ],
+        shape=["*"],
         description=("Given name(s) of a texture component."),
         a_nexus_field=NeXusField(
             name="names",
@@ -1945,7 +1949,7 @@ class MicrostructureScoreConfigTimeTemperature(Data):
         ),
     )
     title = Quantity(
-        type=HDF5Reference,
+        type=str,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXmicrostructure_score_config.html#nxmicrostructure_score_config-entry-time-temperature-title-field"
         ],
@@ -1954,6 +1958,9 @@ class MicrostructureScoreConfigTimeTemperature(Data):
             type="NX_CHAR",
             name_type="specified",
             optionality="required",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
     time = Quantity(

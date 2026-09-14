@@ -1858,10 +1858,11 @@ class MpesInstrumentElectronanalyzer(Electronanalyzer):
         a_display={"unit": "eV"},
     )
     fast_axes = Quantity(
-        type=HDF5Reference,
+        type=str,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXmpes.html#nxmpes-entry-instrument-electronanalyzer-fast-axes-field"
         ],
+        shape=["*"],
         a_nexus_field=NeXusField(
             name="fast_axes",
             type="NX_CHAR",
@@ -1870,10 +1871,11 @@ class MpesInstrumentElectronanalyzer(Electronanalyzer):
         ),
     )
     slow_axes = Quantity(
-        type=HDF5Reference,
+        type=str,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXmpes.html#nxmpes-entry-instrument-electronanalyzer-slow-axes-field"
         ],
+        shape=["*"],
         a_nexus_field=NeXusField(
             name="slow_axes",
             type="NX_CHAR",

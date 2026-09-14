@@ -142,10 +142,13 @@ class MicrostructureSlipSystem(Object):
         ),
     )
     is_specific = Quantity(
-        type=HDF5Reference,
+        type=bool,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXmicrostructure_slip_system.html#nxmicrostructure_slip_system-is-specific-field"
         ],
+        dimensionality="dimensionless",
+        unit="dimensionless",
+        shape=["*"],
         description=(
             "For each slip system a marker whether the Miller indices refer to a "
             "specific slip system or to a set of equivalent crystallographic "

@@ -992,7 +992,7 @@ class EmCalorimetryIntegrationResultBACKGROUND(Data):
         ),
     )
     title = Quantity(
-        type=HDF5Reference,
+        type=str,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXem_calorimetry.html#nxem_calorimetry-entry-integration-resultbackground-title-field"
         ],
@@ -1001,6 +1001,9 @@ class EmCalorimetryIntegrationResultBACKGROUND(Data):
             type="NX_CHAR",
             name_type="specified",
             optionality="required",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
     intensity = Quantity(

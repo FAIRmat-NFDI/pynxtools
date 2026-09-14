@@ -24,7 +24,6 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 
 import numpy as np
-from nomad.datamodel.hdf5 import HDF5Reference
 from nomad.datamodel.metainfo.annotations import (
     ELNAnnotation,
     ELNComponentEnum,
@@ -128,10 +127,11 @@ class CgParallelogram(CgPrimitive):
     )
 
     is_rectangle = Quantity(
-        type=HDF5Reference,
+        type=bool,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXcg_parallelogram.html#nxcg_parallelogram-is-rectangle-field"
         ],
+        shape=["*"],
         description=("To specify which parallelogram is a rectangle."),
         a_nexus_field=NeXusField(
             name="is_rectangle",
@@ -141,10 +141,11 @@ class CgParallelogram(CgPrimitive):
         ),
     )
     is_axis_aligned = Quantity(
-        type=HDF5Reference,
+        type=bool,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXcg_parallelogram.html#nxcg_parallelogram-is-axis-aligned-field"
         ],
+        shape=["*"],
         description=(
             "Only to be used if is_rectangle is present. In this case, this "
             "field describes whether parallelograms are rectangles whose primary "

@@ -67,10 +67,11 @@ class Reflections(Object):
     )
 
     experiments = Quantity(
-        type=HDF5Reference,
+        type=str,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXreflections.html#nxreflections-experiments-field"
         ],
+        shape=["*"],
         description=("The experiments from which the reflection data derives"),
         a_nexus_field=NeXusField(
             name="experiments",
@@ -237,10 +238,11 @@ class Reflections(Object):
         ),
     )
     entering = Quantity(
-        type=HDF5Reference,
+        type=bool,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXreflections.html#nxreflections-entering-field"
         ],
+        shape=["*"],
         description=("Is the reflection entering or exiting the Ewald sphere"),
         a_nexus_field=NeXusField(
             name="entering",

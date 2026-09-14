@@ -112,10 +112,11 @@ class CgPoint(CgPrimitive):
         ),
     )
     timestamp = Quantity(
-        type=HDF5Reference,
+        type=Datetime,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXcg_point.html#nxcg_point-timestamp-field"
         ],
+        shape=["*"],
         description=("ISO8601 with local time zone offset for each point."),
         a_nexus_field=NeXusField(
             name="timestamp",

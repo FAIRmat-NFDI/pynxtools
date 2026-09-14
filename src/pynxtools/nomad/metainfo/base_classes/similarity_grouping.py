@@ -204,10 +204,11 @@ class SimilarityGrouping(Object):
         ),
     )
     categorical_label = Quantity(
-        type=HDF5Reference,
+        type=str,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXsimilarity_grouping.html#nxsimilarity_grouping-categorical-label-field"
         ],
+        shape=["*", "*"],
         description=(
             "Matrix of categorical attribute data for each member in the set."
         ),

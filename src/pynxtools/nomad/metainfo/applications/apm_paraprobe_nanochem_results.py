@@ -568,10 +568,11 @@ class ApmParaprobeNanochemResultsDelocalizationIDGridBoundingBox(CgHexahedron):
     )
 
     is_axis_aligned = Quantity(
-        type=HDF5Reference,
+        type=bool,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_nanochem_results.html#nxapm_paraprobe_nanochem_results-entry-delocalizationid-grid-bounding-box-is-axis-aligned-field"
         ],
+        shape=["*"],
         description=("For atom probe should be set to true."),
         a_nexus_field=NeXusField(
             name="is_axis_aligned",
@@ -772,10 +773,11 @@ class ApmParaprobeNanochemResultsDelocalizationIDGridBoundingBoxHexahedron(
         a_display={"unit": "dimensionless"},
     )
     boundaries = Quantity(
-        type=HDF5Reference,
+        type=str,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_nanochem_results.html#nxapm_paraprobe_nanochem_results-entry-delocalizationid-grid-bounding-box-hexahedron-boundaries-field"
         ],
+        shape=[6],
         description=(
             "Name of the boundaries. E.g. left, right, front, back, bottom, top, "
             "The field must have as many entries as there are "
@@ -1697,10 +1699,11 @@ class ApmParaprobeNanochemResultsDelocalizationIDGridIsoSurfaceIDTriangleSoupTri
         ),
     )
     feature_type_dict_value = Quantity(
-        type=HDF5Reference,
+        type=str,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_nanochem_results.html#nxapm_paraprobe_nanochem_results-entry-delocalizationid-grid-iso-surfaceid-triangle-soup-triangles-volumetric-features-feature-type-dict-value-field"
         ],
+        shape=["*"],
         description=(
             "The array of values for each keyword of the feature_type dictionary."
         ),

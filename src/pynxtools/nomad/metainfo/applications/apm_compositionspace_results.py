@@ -958,7 +958,7 @@ class ApmCompositionspaceResultsAutophaseResult(Data):
         ),
     )
     title = Quantity(
-        type=HDF5Reference,
+        type=str,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_compositionspace_results.html#nxapm_compositionspace_results-entry-autophase-result-title-field"
         ],
@@ -967,6 +967,9 @@ class ApmCompositionspaceResultsAutophaseResult(Data):
             type="NX_CHAR",
             name_type="specified",
             optionality="recommended",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
     axis_feature_indices = Quantity(
@@ -1207,7 +1210,7 @@ class ApmCompositionspaceResultsSegmentationPcaResult(Data):
         ),
     )
     title = Quantity(
-        type=HDF5Reference,
+        type=str,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_compositionspace_results.html#nxapm_compositionspace_results-entry-segmentation-pca-result-title-field"
         ],
@@ -1216,6 +1219,9 @@ class ApmCompositionspaceResultsSegmentationPcaResult(Data):
             type="NX_CHAR",
             name_type="specified",
             optionality="recommended",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
     axis_explained_variance = Quantity(
@@ -1452,7 +1458,7 @@ class ApmCompositionspaceResultsSegmentationIcOptResult(Data):
         ),
     )
     title = Quantity(
-        type=HDF5Reference,
+        type=str,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_compositionspace_results.html#nxapm_compositionspace_results-entry-segmentation-ic-opt-result-title-field"
         ],
@@ -1461,6 +1467,9 @@ class ApmCompositionspaceResultsSegmentationIcOptResult(Data):
             type="NX_CHAR",
             name_type="specified",
             optionality="recommended",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
     axis_aic = Quantity(

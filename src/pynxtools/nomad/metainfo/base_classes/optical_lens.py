@@ -144,10 +144,13 @@ class OpticalLens(Component):
         a_display={"unit": "m"},
     )
     reflectance = Quantity(
-        type=HDF5Reference,
+        type=str,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXoptical_lens.html#nxoptical_lens-reflectance-field"
         ],
+        dimensionality="dimensionless",
+        unit="dimensionless",
+        shape=["*"],
         description=("Reflectance of the lens at given spectral values."),
         a_nexus_field=NeXusField(
             name="reflectance",
@@ -158,10 +161,13 @@ class OpticalLens(Component):
         ),
     )
     transmission = Quantity(
-        type=HDF5Reference,
+        type=str,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXoptical_lens.html#nxoptical_lens-transmission-field"
         ],
+        dimensionality="dimensionless",
+        unit="dimensionless",
+        shape=["*"],
         description=("Transmission of the lens at given spectral values."),
         a_nexus_field=NeXusField(
             name="transmission",

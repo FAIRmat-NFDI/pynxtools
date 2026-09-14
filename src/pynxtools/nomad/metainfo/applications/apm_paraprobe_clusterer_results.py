@@ -385,10 +385,11 @@ class ApmParaprobeClustererResultsClusterAnalysisIDDbscanID(SimilarityGrouping):
         ),
     )
     categorical_label = Quantity(
-        type=HDF5Reference,
+        type=str,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_clusterer_results.html#nxapm_paraprobe_clusterer_results-entry-cluster-analysisid-dbscanid-categorical-label-field"
         ],
+        shape=["*"],
         description=(
             "Categorical label(s) for each target (member in the set) aka "
             "cluster name(s)."
@@ -422,10 +423,11 @@ class ApmParaprobeClustererResultsClusterAnalysisIDDbscanID(SimilarityGrouping):
         ),
     )
     is_noise = Quantity(
-        type=HDF5Reference,
+        type=bool,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_clusterer_results.html#nxapm_paraprobe_clusterer_results-entry-cluster-analysisid-dbscanid-is-noise-field"
         ],
+        shape=["*"],
         description=("Are targets assigned to the noise category or not."),
         a_nexus_field=NeXusField(
             name="is_noise",
@@ -435,10 +437,11 @@ class ApmParaprobeClustererResultsClusterAnalysisIDDbscanID(SimilarityGrouping):
         ),
     )
     is_core = Quantity(
-        type=HDF5Reference,
+        type=bool,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm_paraprobe_clusterer_results.html#nxapm_paraprobe_clusterer_results-entry-cluster-analysisid-dbscanid-is-core-field"
         ],
+        shape=["*"],
         description=("Are targets assumed a core point."),
         a_nexus_field=NeXusField(
             name="is_core",

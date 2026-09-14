@@ -1197,7 +1197,7 @@ class EmEbsdIndexingRoi(Data):
     )
 
     descriptor = Quantity(
-        type=HDF5Reference,
+        type=MEnum(["band_contrast", "confidence_index", "mean_angular_deviation"]),
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXem_ebsd.html#nxem_ebsd-indexing-roi-descriptor-field"
         ],
@@ -1209,9 +1209,12 @@ class EmEbsdIndexingRoi(Data):
             optionality="optional",
             enumeration=["band_contrast", "confidence_index", "mean_angular_deviation"],
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.EnumEditQuantity,
+        ),
     )
     title = Quantity(
-        type=HDF5Reference,
+        type=str,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXem_ebsd.html#nxem_ebsd-indexing-roi-title-field"
         ],
@@ -1221,6 +1224,9 @@ class EmEbsdIndexingRoi(Data):
             type="NX_CHAR",
             name_type="specified",
             optionality="optional",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
     data_quantity = Quantity(

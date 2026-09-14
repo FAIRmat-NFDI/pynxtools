@@ -291,10 +291,11 @@ class CgHexahedron(CgPrimitive):
         ),
     )
     is_box = Quantity(
-        type=HDF5Reference,
+        type=bool,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXcg_hexahedron.html#nxcg_hexahedron-is-box-field"
         ],
+        shape=["*"],
         description=(
             "Specifies if the hexahedra represent cuboids or cubes eventually "
             "rotated ones but at least not too exotic six-faced polyhedra."
@@ -307,10 +308,11 @@ class CgHexahedron(CgPrimitive):
         ),
     )
     is_axis_aligned = Quantity(
-        type=HDF5Reference,
+        type=bool,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXcg_hexahedron.html#nxcg_hexahedron-is-axis-aligned-field"
         ],
+        shape=["*"],
         description=(
             "Only to be used if is_box is present. In this case, this field "
             "describes whether hexahedra are boxes whose primary edges are "

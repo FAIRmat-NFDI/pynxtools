@@ -425,22 +425,6 @@ class ImageImage1d(Data):
             units="NX_UNITLESS",
         ),
     )
-    complex__min = Quantity(
-        type=np.complex128,
-        description="Minimum of complex, computed over the full array at parse time.",
-    )
-    complex__max = Quantity(
-        type=np.complex128,
-        description="Maximum of complex, computed over the full array at parse time.",
-    )
-    complex__size = Quantity(
-        type=np.int64,
-        description="Number of elements of complex in the HDF5 file.",
-    )
-    complex__ndim = Quantity(
-        type=np.int8,
-        description="Number of dimensions of complex in the HDF5 file.",
-    )
     axis_i = Quantity(
         type=HDF5Reference,
         links=[
@@ -624,22 +608,6 @@ class ImageImage2d(Data):
             optionality="optional",
             units="NX_UNITLESS",
         ),
-    )
-    complex__min = Quantity(
-        type=np.complex128,
-        description="Minimum of complex, computed over the full array at parse time.",
-    )
-    complex__max = Quantity(
-        type=np.complex128,
-        description="Maximum of complex, computed over the full array at parse time.",
-    )
-    complex__size = Quantity(
-        type=np.int64,
-        description="Number of elements of complex in the HDF5 file.",
-    )
-    complex__ndim = Quantity(
-        type=np.int8,
-        description="Number of dimensions of complex in the HDF5 file.",
     )
     axis_j = Quantity(
         type=HDF5Reference,
@@ -876,22 +844,6 @@ class ImageImage3d(Data):
             optionality="optional",
             units="NX_UNITLESS",
         ),
-    )
-    complex__min = Quantity(
-        type=np.complex128,
-        description="Minimum of complex, computed over the full array at parse time.",
-    )
-    complex__max = Quantity(
-        type=np.complex128,
-        description="Maximum of complex, computed over the full array at parse time.",
-    )
-    complex__size = Quantity(
-        type=np.int64,
-        description="Number of elements of complex in the HDF5 file.",
-    )
-    complex__ndim = Quantity(
-        type=np.int8,
-        description="Number of dimensions of complex in the HDF5 file.",
     )
     axis_k = Quantity(
         type=HDF5Reference,
@@ -1180,22 +1132,6 @@ class ImageImage4d(Data):
             optionality="optional",
             units="NX_UNITLESS",
         ),
-    )
-    complex__min = Quantity(
-        type=np.complex128,
-        description="Minimum of complex, computed over the full array at parse time.",
-    )
-    complex__max = Quantity(
-        type=np.complex128,
-        description="Maximum of complex, computed over the full array at parse time.",
-    )
-    complex__size = Quantity(
-        type=np.int64,
-        description="Number of elements of complex in the HDF5 file.",
-    )
-    complex__ndim = Quantity(
-        type=np.int8,
-        description="Number of dimensions of complex in the HDF5 file.",
     )
     axis_m = Quantity(
         type=HDF5Reference,
@@ -1537,22 +1473,6 @@ class ImageStack1d(Data):
             units="NX_UNITLESS",
         ),
     )
-    complex__min = Quantity(
-        type=np.complex128,
-        description="Minimum of complex, computed over the full array at parse time.",
-    )
-    complex__max = Quantity(
-        type=np.complex128,
-        description="Maximum of complex, computed over the full array at parse time.",
-    )
-    complex__size = Quantity(
-        type=np.int64,
-        description="Number of elements of complex in the HDF5 file.",
-    )
-    complex__ndim = Quantity(
-        type=np.int8,
-        description="Number of dimensions of complex in the HDF5 file.",
-    )
     indices_group = Quantity(
         type=HDF5Reference,
         links=[
@@ -1830,22 +1750,6 @@ class ImageStack2d(Data):
             optionality="optional",
             units="NX_UNITLESS",
         ),
-    )
-    complex__min = Quantity(
-        type=np.complex128,
-        description="Minimum of complex, computed over the full array at parse time.",
-    )
-    complex__max = Quantity(
-        type=np.complex128,
-        description="Maximum of complex, computed over the full array at parse time.",
-    )
-    complex__size = Quantity(
-        type=np.int64,
-        description="Number of elements of complex in the HDF5 file.",
-    )
-    complex__ndim = Quantity(
-        type=np.int8,
-        description="Number of dimensions of complex in the HDF5 file.",
     )
     indices_group = Quantity(
         type=HDF5Reference,
@@ -2176,22 +2080,6 @@ class ImageStack3d(Data):
             optionality="optional",
             units="NX_UNITLESS",
         ),
-    )
-    complex__min = Quantity(
-        type=np.complex128,
-        description="Minimum of complex, computed over the full array at parse time.",
-    )
-    complex__max = Quantity(
-        type=np.complex128,
-        description="Maximum of complex, computed over the full array at parse time.",
-    )
-    complex__size = Quantity(
-        type=np.int64,
-        description="Number of elements of complex in the HDF5 file.",
-    )
-    complex__ndim = Quantity(
-        type=np.int8,
-        description="Number of dimensions of complex in the HDF5 file.",
     )
     indices_group = Quantity(
         type=HDF5Reference,

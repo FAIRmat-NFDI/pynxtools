@@ -373,10 +373,11 @@ class EmEdsIndexingPeakAtom(Atom):
         a_display={"unit": "eV"},
     )
     iupac_line_name = Quantity(
-        type=HDF5Reference,
+        type=str,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXem_eds.html#nxem_eds-indexing-peak-atom-iupac-line-name-field"
         ],
+        shape=["*"],
         description=(
             "IUPAC notation identifier of the line which the peak represents. "
             "This can be a list of IUPAC notations for (the seldom) case that "
@@ -505,10 +506,11 @@ class EmEdsIndexingElementSpecificMapProcess(Process):
     )
 
     peak = Quantity(
-        type=HDF5Reference,
+        type=str,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXem_eds.html#nxem_eds-indexing-element-specific-map-process-peak-field"
         ],
+        shape=["*"],
         description=(
             "A list of :ref:`NXpeak` instance names whose X-ray quanta were "
             "accumulated for each pixel to obtain an element-specific EDS map."

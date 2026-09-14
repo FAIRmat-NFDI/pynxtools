@@ -96,10 +96,11 @@ class BeamTransferMatrixTable(Object):
         ),
     )
     matrix_elements = Quantity(
-        type=HDF5Reference,
+        type=str,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXbeam_transfer_matrix_table.html#nxbeam_transfer_matrix_table-matrix-elements-field"
         ],
+        shape=["*"],
         description=(
             "Please list in this array the column and row names used in your "
             "actual data. That is in the case of aperture ['diameter'] or focal "

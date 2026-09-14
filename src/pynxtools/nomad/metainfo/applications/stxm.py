@@ -582,7 +582,19 @@ class StxmData(Data):
     )
 
     stxm_scan_type = Quantity(
-        type=HDF5Reference,
+        type=MEnum(
+            [
+                "sample point spectrum",
+                "sample line spectrum",
+                "sample image",
+                "sample image stack",
+                "sample focus",
+                "osa image",
+                "osa focus",
+                "detector image",
+                "generic scan",
+            ]
+        ),
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXstxm.html#nxstxm-entry-data-stxm-scan-type-field"
         ],
@@ -614,6 +626,9 @@ class StxmData(Data):
                 "detector image",
                 "generic scan",
             ],
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.EnumEditQuantity,
         ),
     )
     data_quantity = Quantity(

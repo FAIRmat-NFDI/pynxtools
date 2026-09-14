@@ -289,10 +289,11 @@ class OpticalPolarizerShape(Shape):
         ),
     )
     size = Quantity(
-        type=HDF5Reference,
+        type=str,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXoptical_polarizer.html#nxoptical_polarizer-shape-size-field"
         ],
+        shape=["*", "*"],
         description=(
             "Physical extent of the device. The device might be made up of one "
             "or more objects (NX_objects). The meaning and location of the axes "

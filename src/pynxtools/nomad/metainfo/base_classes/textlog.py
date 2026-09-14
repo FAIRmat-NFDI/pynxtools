@@ -148,10 +148,11 @@ class Textlog(Object):
         ),
     )
     value = Quantity(
-        type=HDF5Reference,
+        type=str,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXtextlog.html#nxtextlog-value-field"
         ],
+        shape=["*"],
         description=(
             "String array of logged values, same length and dimensionality as "
             "``time`` array field. If you have stored multiple items here and "

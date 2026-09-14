@@ -4058,7 +4058,7 @@ class ApmMeasurementStandingVoltageTime(Data):
         ),
     )
     title = Quantity(
-        type=HDF5Reference,
+        type=str,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-measurement-standing-voltage-time-title-field"
         ],
@@ -4067,6 +4067,9 @@ class ApmMeasurementStandingVoltageTime(Data):
             type="NX_CHAR",
             name_type="specified",
             optionality="required",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
     elapsed_time = Quantity(
@@ -4261,7 +4264,7 @@ class ApmMeasurementPulseFrequencyTime(Data):
         ),
     )
     title = Quantity(
-        type=HDF5Reference,
+        type=str,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-measurement-pulse-frequency-time-title-field"
         ],
@@ -4270,6 +4273,9 @@ class ApmMeasurementPulseFrequencyTime(Data):
             type="NX_CHAR",
             name_type="specified",
             optionality="required",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
     elapsed_time = Quantity(
@@ -4464,7 +4470,7 @@ class ApmMeasurementDetectionRateTime(Data):
         ),
     )
     title = Quantity(
-        type=HDF5Reference,
+        type=str,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-measurement-detection-rate-time-title-field"
         ],
@@ -4473,6 +4479,9 @@ class ApmMeasurementDetectionRateTime(Data):
             type="NX_CHAR",
             name_type="specified",
             optionality="required",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
     elapsed_time = Quantity(
@@ -4667,7 +4676,7 @@ class ApmMeasurementDetectionRateSetTime(Data):
         ),
     )
     title = Quantity(
-        type=HDF5Reference,
+        type=str,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-measurement-detection-rate-set-time-title-field"
         ],
@@ -4676,6 +4685,9 @@ class ApmMeasurementDetectionRateSetTime(Data):
             type="NX_CHAR",
             name_type="specified",
             optionality="required",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
     elapsed_time = Quantity(
@@ -4870,7 +4882,7 @@ class ApmMeasurementPressureTime(Data):
         ),
     )
     title = Quantity(
-        type=HDF5Reference,
+        type=str,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-measurement-pressure-time-title-field"
         ],
@@ -4879,6 +4891,9 @@ class ApmMeasurementPressureTime(Data):
             type="NX_CHAR",
             name_type="specified",
             optionality="required",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
     elapsed_time = Quantity(
@@ -5073,7 +5088,7 @@ class ApmMeasurementSpecimenVoltageTime(Data):
         ),
     )
     title = Quantity(
-        type=HDF5Reference,
+        type=str,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-measurement-specimen-voltage-time-title-field"
         ],
@@ -5082,6 +5097,9 @@ class ApmMeasurementSpecimenVoltageTime(Data):
             type="NX_CHAR",
             name_type="specified",
             optionality="required",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
     elapsed_time = Quantity(
@@ -5276,7 +5294,7 @@ class ApmMeasurementSpecimenTemperatureTime(Data):
         ),
     )
     title = Quantity(
-        type=HDF5Reference,
+        type=str,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-measurement-specimen-temperature-time-title-field"
         ],
@@ -5285,6 +5303,9 @@ class ApmMeasurementSpecimenTemperatureTime(Data):
             type="NX_CHAR",
             name_type="specified",
             optionality="required",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
     elapsed_time = Quantity(
@@ -5479,7 +5500,7 @@ class ApmMeasurementAmbientTemperatureTime(Data):
         ),
     )
     title = Quantity(
-        type=HDF5Reference,
+        type=str,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-measurement-ambient-temperature-time-title-field"
         ],
@@ -5488,6 +5509,9 @@ class ApmMeasurementAmbientTemperatureTime(Data):
             type="NX_CHAR",
             name_type="specified",
             optionality="required",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
     elapsed_time = Quantity(
@@ -5682,7 +5706,7 @@ class ApmMeasurementReflectronVoltageTime(Data):
         ),
     )
     title = Quantity(
-        type=HDF5Reference,
+        type=str,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-measurement-reflectron-voltage-time-title-field"
         ],
@@ -5691,6 +5715,9 @@ class ApmMeasurementReflectronVoltageTime(Data):
             type="NX_CHAR",
             name_type="specified",
             optionality="required",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
     elapsed_time = Quantity(
@@ -5885,7 +5912,7 @@ class ApmMeasurementXstagePositionTime(Data):
         ),
     )
     title = Quantity(
-        type=HDF5Reference,
+        type=str,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-measurement-xstage-position-time-title-field"
         ],
@@ -5894,6 +5921,9 @@ class ApmMeasurementXstagePositionTime(Data):
             type="NX_CHAR",
             name_type="specified",
             optionality="required",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
     elapsed_time = Quantity(
@@ -6088,7 +6118,7 @@ class ApmMeasurementYstagePositionTime(Data):
         ),
     )
     title = Quantity(
-        type=HDF5Reference,
+        type=str,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-measurement-ystage-position-time-title-field"
         ],
@@ -6097,6 +6127,9 @@ class ApmMeasurementYstagePositionTime(Data):
             type="NX_CHAR",
             name_type="specified",
             optionality="required",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
     elapsed_time = Quantity(
@@ -6291,7 +6324,7 @@ class ApmMeasurementZstagePositionTime(Data):
         ),
     )
     title = Quantity(
-        type=HDF5Reference,
+        type=str,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-measurement-zstage-position-time-title-field"
         ],
@@ -6300,6 +6333,9 @@ class ApmMeasurementZstagePositionTime(Data):
             type="NX_CHAR",
             name_type="specified",
             optionality="required",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
     elapsed_time = Quantity(
@@ -6494,7 +6530,7 @@ class ApmMeasurementStandingVoltageSequence(Data):
         ),
     )
     title = Quantity(
-        type=HDF5Reference,
+        type=str,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-measurement-standing-voltage-sequence-title-field"
         ],
@@ -6503,6 +6539,9 @@ class ApmMeasurementStandingVoltageSequence(Data):
             type="NX_CHAR",
             name_type="specified",
             optionality="required",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
     event_id = Quantity(
@@ -6697,7 +6736,7 @@ class ApmMeasurementPulseFrequencySequence(Data):
         ),
     )
     title = Quantity(
-        type=HDF5Reference,
+        type=str,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-measurement-pulse-frequency-sequence-title-field"
         ],
@@ -6706,6 +6745,9 @@ class ApmMeasurementPulseFrequencySequence(Data):
             type="NX_CHAR",
             name_type="specified",
             optionality="required",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
     event_id = Quantity(
@@ -6900,7 +6942,7 @@ class ApmMeasurementDetectionRateSequence(Data):
         ),
     )
     title = Quantity(
-        type=HDF5Reference,
+        type=str,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-measurement-detection-rate-sequence-title-field"
         ],
@@ -6909,6 +6951,9 @@ class ApmMeasurementDetectionRateSequence(Data):
             type="NX_CHAR",
             name_type="specified",
             optionality="required",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
     event_id = Quantity(
@@ -7103,7 +7148,7 @@ class ApmMeasurementDetectionRateSetSequence(Data):
         ),
     )
     title = Quantity(
-        type=HDF5Reference,
+        type=str,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-measurement-detection-rate-set-sequence-title-field"
         ],
@@ -7112,6 +7157,9 @@ class ApmMeasurementDetectionRateSetSequence(Data):
             type="NX_CHAR",
             name_type="specified",
             optionality="required",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
     event_id = Quantity(
@@ -7306,7 +7354,7 @@ class ApmMeasurementPressureSequence(Data):
         ),
     )
     title = Quantity(
-        type=HDF5Reference,
+        type=str,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-measurement-pressure-sequence-title-field"
         ],
@@ -7315,6 +7363,9 @@ class ApmMeasurementPressureSequence(Data):
             type="NX_CHAR",
             name_type="specified",
             optionality="required",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
     event_id = Quantity(
@@ -7509,7 +7560,7 @@ class ApmMeasurementSpecimenVoltageSequence(Data):
         ),
     )
     title = Quantity(
-        type=HDF5Reference,
+        type=str,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-measurement-specimen-voltage-sequence-title-field"
         ],
@@ -7518,6 +7569,9 @@ class ApmMeasurementSpecimenVoltageSequence(Data):
             type="NX_CHAR",
             name_type="specified",
             optionality="required",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
     event_id = Quantity(
@@ -7712,7 +7766,7 @@ class ApmMeasurementSpecimenTemperatureSequence(Data):
         ),
     )
     title = Quantity(
-        type=HDF5Reference,
+        type=str,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-measurement-specimen-temperature-sequence-title-field"
         ],
@@ -7721,6 +7775,9 @@ class ApmMeasurementSpecimenTemperatureSequence(Data):
             type="NX_CHAR",
             name_type="specified",
             optionality="required",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
     event_id = Quantity(
@@ -7915,7 +7972,7 @@ class ApmMeasurementAmbientTemperatureSequence(Data):
         ),
     )
     title = Quantity(
-        type=HDF5Reference,
+        type=str,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-measurement-ambient-temperature-sequence-title-field"
         ],
@@ -7924,6 +7981,9 @@ class ApmMeasurementAmbientTemperatureSequence(Data):
             type="NX_CHAR",
             name_type="specified",
             optionality="required",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
     event_id = Quantity(
@@ -8118,7 +8178,7 @@ class ApmMeasurementReflectronVoltageSequence(Data):
         ),
     )
     title = Quantity(
-        type=HDF5Reference,
+        type=str,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-measurement-reflectron-voltage-sequence-title-field"
         ],
@@ -8127,6 +8187,9 @@ class ApmMeasurementReflectronVoltageSequence(Data):
             type="NX_CHAR",
             name_type="specified",
             optionality="required",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
     event_id = Quantity(
@@ -8321,7 +8384,7 @@ class ApmMeasurementXstagePositionSequence(Data):
         ),
     )
     title = Quantity(
-        type=HDF5Reference,
+        type=str,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-measurement-xstage-position-sequence-title-field"
         ],
@@ -8330,6 +8393,9 @@ class ApmMeasurementXstagePositionSequence(Data):
             type="NX_CHAR",
             name_type="specified",
             optionality="required",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
     event_id = Quantity(
@@ -8524,7 +8590,7 @@ class ApmMeasurementYstagePositionSequence(Data):
         ),
     )
     title = Quantity(
-        type=HDF5Reference,
+        type=str,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-measurement-ystage-position-sequence-title-field"
         ],
@@ -8533,6 +8599,9 @@ class ApmMeasurementYstagePositionSequence(Data):
             type="NX_CHAR",
             name_type="specified",
             optionality="required",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
     event_id = Quantity(
@@ -8727,7 +8796,7 @@ class ApmMeasurementZstagePositionSequence(Data):
         ),
     )
     title = Quantity(
-        type=HDF5Reference,
+        type=str,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-measurement-zstage-position-sequence-title-field"
         ],
@@ -8736,6 +8805,9 @@ class ApmMeasurementZstagePositionSequence(Data):
             type="NX_CHAR",
             name_type="specified",
             optionality="required",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
     event_id = Quantity(
@@ -9477,10 +9549,11 @@ class ApmAtomProbeIDRawData(Process):
         ),
     )
     dld_wire_names = Quantity(
-        type=HDF5Reference,
+        type=str,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-atom-probeid-raw-data-dld-wire-names-field"
         ],
+        shape=["*", 2],
         description=(
             "Alias tuple, typical for the begin and the end of each DLD wire of "
             "the detector. Order follows arrival_time_pairs. The order of the "
@@ -9883,10 +9956,11 @@ class ApmAtomProbeIDHitFinding(Process):
         a_display={"unit": "dimensionless"},
     )
     hit_quality_type = Quantity(
-        type=HDF5Reference,
+        type=str,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-atom-probeid-hit-finding-hit-quality-type-field"
         ],
+        shape=["*"],
         description=(
             "Hit quality is an integer that specifies which category/type a hit "
             "was assigned to. This field lists the human-readable, possibly "
@@ -11700,7 +11774,7 @@ class ApmAtomProbeIDReconstructionNaiveDiscretizationData(Data):
         ),
     )
     title = Quantity(
-        type=HDF5Reference,
+        type=str,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-atom-probeid-reconstruction-naive-discretization-data-title-field"
         ],
@@ -11709,6 +11783,9 @@ class ApmAtomProbeIDReconstructionNaiveDiscretizationData(Data):
             type="NX_CHAR",
             name_type="specified",
             optionality="recommended",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
     intensity = Quantity(
@@ -12318,7 +12395,7 @@ class ApmAtomProbeIDRangingMassToChargeDistributionMassSpectrum(Data):
         ),
     )
     title = Quantity(
-        type=HDF5Reference,
+        type=str,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm-entry-atom-probeid-ranging-mass-to-charge-distribution-mass-spectrum-title-field"
         ],
@@ -12327,6 +12404,9 @@ class ApmAtomProbeIDRangingMassToChargeDistributionMassSpectrum(Data):
             type="NX_CHAR",
             name_type="specified",
             optionality="recommended",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
     intensity = Quantity(

@@ -831,10 +831,11 @@ class MicrostructureScoreResultsDiscretizationBoundary(CgHexahedron):
         ),
     )
     boundaries = Quantity(
-        type=HDF5Reference,
+        type=str,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXmicrostructure_score_results.html#nxmicrostructure_score_results-entry-discretization-boundary-boundaries-field"
         ],
+        shape=[6],
         description=(
             "Name of the boundaries. Left, right, front, back, bottom, top, The "
             "field must have as many entries as there are number_of_boundaries."
@@ -1036,7 +1037,7 @@ class MicrostructureScoreResultsSpatiotemporalIDSummaryStatisticsKinetics(Data):
         ),
     )
     title = Quantity(
-        type=HDF5Reference,
+        type=str,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXmicrostructure_score_results.html#nxmicrostructure_score_results-entry-spatiotemporalid-summary-statistics-kinetics-title-field"
         ],
@@ -1045,6 +1046,9 @@ class MicrostructureScoreResultsSpatiotemporalIDSummaryStatisticsKinetics(Data):
             type="NX_CHAR",
             name_type="specified",
             optionality="recommended",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
     time = Quantity(
@@ -1189,7 +1193,7 @@ class MicrostructureScoreResultsSpatiotemporalIDSummaryStatisticsStress(Data):
     )
 
     type = Quantity(
-        type=HDF5Reference,
+        type=MEnum(["cauchy"]),
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXmicrostructure_score_results.html#nxmicrostructure_score_results-entry-spatiotemporalid-summary-statistics-stress-type-field"
         ],
@@ -1200,6 +1204,10 @@ class MicrostructureScoreResultsSpatiotemporalIDSummaryStatisticsStress(Data):
             name_type="specified",
             optionality="required",
             enumeration=["cauchy"],
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.EnumEditQuantity,
+            default="cauchy",
         ),
     )
     tensor = Quantity(
@@ -1251,7 +1259,7 @@ class MicrostructureScoreResultsSpatiotemporalIDSummaryStatisticsStrain(Data):
     )
 
     type = Quantity(
-        type=HDF5Reference,
+        type=str,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXmicrostructure_score_results.html#nxmicrostructure_score_results-entry-spatiotemporalid-summary-statistics-strain-type-field"
         ],
@@ -1261,6 +1269,9 @@ class MicrostructureScoreResultsSpatiotemporalIDSummaryStatisticsStrain(Data):
             type="NX_CHAR",
             name_type="specified",
             optionality="required",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
     tensor = Quantity(
@@ -1712,10 +1723,11 @@ class MicrostructureScoreResultsSpatiotemporalIDMicrostructureIDCrystals(
         ),
     )
     is_deformed = Quantity(
-        type=HDF5Reference,
+        type=bool,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXmicrostructure_score_results.html#nxmicrostructure_score_results-entry-spatiotemporalid-microstructureid-crystals-is-deformed-field"
         ],
+        shape=["*"],
         description=("Is the grain deformed."),
         a_nexus_field=NeXusField(
             name="is_deformed",
@@ -1725,10 +1737,11 @@ class MicrostructureScoreResultsSpatiotemporalIDMicrostructureIDCrystals(
         ),
     )
     is_recrystallized = Quantity(
-        type=HDF5Reference,
+        type=bool,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXmicrostructure_score_results.html#nxmicrostructure_score_results-entry-spatiotemporalid-microstructureid-crystals-is-recrystallized-field"
         ],
+        shape=["*"],
         description=("Is the grain recrystallized."),
         a_nexus_field=NeXusField(
             name="is_recrystallized",

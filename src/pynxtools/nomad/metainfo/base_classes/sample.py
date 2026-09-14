@@ -724,10 +724,11 @@ class Sample(Component, basesections.CompositeSystem):
         ),
     )
     component = Quantity(
-        type=HDF5Reference,
+        type=str,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXsample.html#nxsample-component-field"
         ],
+        shape=["*"],
         description=("Details of the component of the sample and/or can"),
         a_nexus_field=NeXusField(
             name="component",
@@ -737,10 +738,11 @@ class Sample(Component, basesections.CompositeSystem):
         ),
     )
     sample_component_quantity = Quantity(
-        type=HDF5Reference,
+        type=MEnum(["sample", "can", "atmosphere", "kit"]),
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXsample.html#nxsample-sample-component-field"
         ],
+        shape=["*"],
         description=("Type of component"),
         a_nexus_field=NeXusField(
             name="sample_component",
@@ -827,10 +829,11 @@ class Sample(Component, basesections.CompositeSystem):
         ),
     )
     space_group = Quantity(
-        type=HDF5Reference,
+        type=str,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXsample.html#nxsample-space-group-field"
         ],
+        shape=["*"],
         description=("Crystallographic space group"),
         a_nexus_field=NeXusField(
             name="space_group",
@@ -840,10 +843,11 @@ class Sample(Component, basesections.CompositeSystem):
         ),
     )
     point_group = Quantity(
-        type=HDF5Reference,
+        type=str,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXsample.html#nxsample-point-group-field"
         ],
+        shape=["*"],
         description=("Crystallographic point group, deprecated if space_group present"),
         a_nexus_field=NeXusField(
             name="point_group",

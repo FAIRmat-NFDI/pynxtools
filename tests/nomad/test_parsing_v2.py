@@ -154,8 +154,9 @@ def test_arpes_example(arpes_archive):
     assert data.energies.endswith("#/entry/data/energies")
     # manual name resolution
     assert data.AXISNAME["angles"] is not None
-    # TODO: reimplement with field statistics
-    # assert data.AXISNAME__max["angles__max"].value == 2.168025463513032
+    # Field statistics are computed at parse time for NXdata numeric arrays; this
+    # covers the variadic MQuantity-wrapped stats path.
+    assert data.AXISNAME__max["angles__max"].value == 2.168025463513032
     assert data.AXISNAME["angles"].value.endswith("#/entry/data/angles")
     assert data.AXISNAME["delays"].value.endswith("#/entry/data/delays")
     assert data.axes == ["angles", "energies", "delays"]

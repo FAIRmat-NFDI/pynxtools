@@ -362,10 +362,11 @@ class DispersionFunctionDispersionRepeatedParameter(DispersionRepeatedParameter)
     )
 
     parameter_units = Quantity(
-        type=HDF5Reference,
+        type=str,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXdispersion_function.html#nxdispersion_function-dispersion-repeated-parameter-parameter-units-field"
         ],
+        shape=["*"],
         a_nexus_field=NeXusField(
             name="parameter_units",
             type="NX_CHAR",

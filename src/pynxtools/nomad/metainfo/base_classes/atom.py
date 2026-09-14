@@ -219,10 +219,11 @@ class Atom(Object):
         a_display={"unit": "m ** 3"},
     )
     indices = Quantity(
-        type=HDF5Reference,
+        type=str,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXatom.html#nxatom-indices-field"
         ],
+        shape=["*"],
         description=(
             "Index for each atom at locations as detailed by position. Indices "
             "can be used as identifier and thus names for individual atoms."

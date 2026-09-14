@@ -5430,7 +5430,7 @@ class EmMeasurementEventIDImageIDImage1d(Data):
         ),
     )
     title = Quantity(
-        type=HDF5Reference,
+        type=str,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXem.html#nxem-entry-measurement-eventid-imageid-image-1d-title-field"
         ],
@@ -5439,6 +5439,9 @@ class EmMeasurementEventIDImageIDImage1d(Data):
             type="NX_CHAR",
             name_type="specified",
             optionality="recommended",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
     real = Quantity(
@@ -5589,22 +5592,6 @@ class EmMeasurementEventIDImageIDImage1d(Data):
             units="NX_UNITLESS",
         ),
     )
-    complex__min = Quantity(
-        type=np.complex128,
-        description="Minimum of complex, computed over the full array at parse time.",
-    )
-    complex__max = Quantity(
-        type=np.complex128,
-        description="Maximum of complex, computed over the full array at parse time.",
-    )
-    complex__size = Quantity(
-        type=np.int64,
-        description="Number of elements of complex in the HDF5 file.",
-    )
-    complex__ndim = Quantity(
-        type=np.int8,
-        description="Number of dimensions of complex in the HDF5 file.",
-    )
     complex__long_name = Quantity(
         type=str,
         links=[
@@ -5726,7 +5713,7 @@ class EmMeasurementEventIDImageIDImage2d(Data):
         ),
     )
     title = Quantity(
-        type=HDF5Reference,
+        type=str,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXem.html#nxem-entry-measurement-eventid-imageid-image-2d-title-field"
         ],
@@ -5735,6 +5722,9 @@ class EmMeasurementEventIDImageIDImage2d(Data):
             type="NX_CHAR",
             name_type="specified",
             optionality="recommended",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
     real = Quantity(
@@ -5883,22 +5873,6 @@ class EmMeasurementEventIDImageIDImage2d(Data):
             name_type="specified",
             optionality="optional",
         ),
-    )
-    magnitude__min = Quantity(
-        type=np.complex128,
-        description="Minimum of magnitude, computed over the full array at parse time.",
-    )
-    magnitude__max = Quantity(
-        type=np.complex128,
-        description="Maximum of magnitude, computed over the full array at parse time.",
-    )
-    magnitude__size = Quantity(
-        type=np.int64,
-        description="Number of elements of magnitude in the HDF5 file.",
-    )
-    magnitude__ndim = Quantity(
-        type=np.int8,
-        description="Number of dimensions of magnitude in the HDF5 file.",
     )
     magnitude__long_name = Quantity(
         type=str,
@@ -6066,7 +6040,7 @@ class EmMeasurementEventIDImageIDImage3d(Data):
         ),
     )
     title = Quantity(
-        type=HDF5Reference,
+        type=str,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXem.html#nxem-entry-measurement-eventid-imageid-image-3d-title-field"
         ],
@@ -6075,6 +6049,9 @@ class EmMeasurementEventIDImageIDImage3d(Data):
             type="NX_CHAR",
             name_type="specified",
             optionality="recommended",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
     real = Quantity(
@@ -6224,22 +6201,6 @@ class EmMeasurementEventIDImageIDImage3d(Data):
             optionality="optional",
             units="NX_UNITLESS",
         ),
-    )
-    complex__min = Quantity(
-        type=np.complex128,
-        description="Minimum of complex, computed over the full array at parse time.",
-    )
-    complex__max = Quantity(
-        type=np.complex128,
-        description="Maximum of complex, computed over the full array at parse time.",
-    )
-    complex__size = Quantity(
-        type=np.int64,
-        description="Number of elements of complex in the HDF5 file.",
-    )
-    complex__ndim = Quantity(
-        type=np.int8,
-        description="Number of dimensions of complex in the HDF5 file.",
     )
     complex__long_name = Quantity(
         type=str,
@@ -6452,7 +6413,7 @@ class EmMeasurementEventIDImageIDImage4d(Data):
         ),
     )
     title = Quantity(
-        type=HDF5Reference,
+        type=str,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXem.html#nxem-entry-measurement-eventid-imageid-image-4d-title-field"
         ],
@@ -6461,6 +6422,9 @@ class EmMeasurementEventIDImageIDImage4d(Data):
             type="NX_CHAR",
             name_type="specified",
             optionality="recommended",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
     real = Quantity(
@@ -6610,22 +6574,6 @@ class EmMeasurementEventIDImageIDImage4d(Data):
             optionality="optional",
             units="NX_UNITLESS",
         ),
-    )
-    complex__min = Quantity(
-        type=np.complex128,
-        description="Minimum of complex, computed over the full array at parse time.",
-    )
-    complex__max = Quantity(
-        type=np.complex128,
-        description="Maximum of complex, computed over the full array at parse time.",
-    )
-    complex__size = Quantity(
-        type=np.int64,
-        description="Number of elements of complex in the HDF5 file.",
-    )
-    complex__ndim = Quantity(
-        type=np.int8,
-        description="Number of dimensions of complex in the HDF5 file.",
     )
     complex__long_name = Quantity(
         type=str,
@@ -6883,7 +6831,7 @@ class EmMeasurementEventIDImageIDStack1d(Data):
         ),
     )
     title = Quantity(
-        type=HDF5Reference,
+        type=str,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXem.html#nxem-entry-measurement-eventid-imageid-stack-1d-title-field"
         ],
@@ -6892,6 +6840,9 @@ class EmMeasurementEventIDImageIDStack1d(Data):
             type="NX_CHAR",
             name_type="specified",
             optionality="recommended",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
     real = Quantity(
@@ -7041,22 +6992,6 @@ class EmMeasurementEventIDImageIDStack1d(Data):
             optionality="optional",
             units="NX_UNITLESS",
         ),
-    )
-    complex__min = Quantity(
-        type=np.complex128,
-        description="Minimum of complex, computed over the full array at parse time.",
-    )
-    complex__max = Quantity(
-        type=np.complex128,
-        description="Maximum of complex, computed over the full array at parse time.",
-    )
-    complex__size = Quantity(
-        type=np.int64,
-        description="Number of elements of complex in the HDF5 file.",
-    )
-    complex__ndim = Quantity(
-        type=np.int8,
-        description="Number of dimensions of complex in the HDF5 file.",
     )
     complex__long_name = Quantity(
         type=str,
@@ -7269,7 +7204,7 @@ class EmMeasurementEventIDImageIDStack2d(Data):
         ),
     )
     title = Quantity(
-        type=HDF5Reference,
+        type=str,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXem.html#nxem-entry-measurement-eventid-imageid-stack-2d-title-field"
         ],
@@ -7278,6 +7213,9 @@ class EmMeasurementEventIDImageIDStack2d(Data):
             type="NX_CHAR",
             name_type="specified",
             optionality="recommended",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
     real = Quantity(
@@ -7427,22 +7365,6 @@ class EmMeasurementEventIDImageIDStack2d(Data):
             optionality="optional",
             units="NX_UNITLESS",
         ),
-    )
-    complex__min = Quantity(
-        type=np.complex128,
-        description="Minimum of complex, computed over the full array at parse time.",
-    )
-    complex__max = Quantity(
-        type=np.complex128,
-        description="Maximum of complex, computed over the full array at parse time.",
-    )
-    complex__size = Quantity(
-        type=np.int64,
-        description="Number of elements of complex in the HDF5 file.",
-    )
-    complex__ndim = Quantity(
-        type=np.int8,
-        description="Number of dimensions of complex in the HDF5 file.",
     )
     complex__long_name = Quantity(
         type=str,
@@ -7700,7 +7622,7 @@ class EmMeasurementEventIDImageIDStack3d(Data):
         ),
     )
     title = Quantity(
-        type=HDF5Reference,
+        type=str,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXem.html#nxem-entry-measurement-eventid-imageid-stack-3d-title-field"
         ],
@@ -7709,6 +7631,9 @@ class EmMeasurementEventIDImageIDStack3d(Data):
             type="NX_CHAR",
             name_type="specified",
             optionality="recommended",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
     real = Quantity(
@@ -7858,22 +7783,6 @@ class EmMeasurementEventIDImageIDStack3d(Data):
             optionality="optional",
             units="NX_UNITLESS",
         ),
-    )
-    complex__min = Quantity(
-        type=np.complex128,
-        description="Minimum of complex, computed over the full array at parse time.",
-    )
-    complex__max = Quantity(
-        type=np.complex128,
-        description="Maximum of complex, computed over the full array at parse time.",
-    )
-    complex__size = Quantity(
-        type=np.int64,
-        description="Number of elements of complex in the HDF5 file.",
-    )
-    complex__ndim = Quantity(
-        type=np.int8,
-        description="Number of dimensions of complex in the HDF5 file.",
     )
     complex__long_name = Quantity(
         type=str,
@@ -8365,7 +8274,7 @@ class EmMeasurementEventIDSpectrumIDSpectrum0d(Data):
         ),
     )
     title = Quantity(
-        type=HDF5Reference,
+        type=str,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXem.html#nxem-entry-measurement-eventid-spectrumid-spectrum-0d-title-field"
         ],
@@ -8374,6 +8283,9 @@ class EmMeasurementEventIDSpectrumIDSpectrum0d(Data):
             type="NX_CHAR",
             name_type="specified",
             optionality="recommended",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
     intensity = Quantity(
@@ -8526,7 +8438,7 @@ class EmMeasurementEventIDSpectrumIDSpectrum1d(Data):
         ),
     )
     title = Quantity(
-        type=HDF5Reference,
+        type=str,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXem.html#nxem-entry-measurement-eventid-spectrumid-spectrum-1d-title-field"
         ],
@@ -8535,6 +8447,9 @@ class EmMeasurementEventIDSpectrumIDSpectrum1d(Data):
             type="NX_CHAR",
             name_type="specified",
             optionality="recommended",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
     intensity = Quantity(
@@ -8732,7 +8647,7 @@ class EmMeasurementEventIDSpectrumIDSpectrum2d(Data):
         ),
     )
     title = Quantity(
-        type=HDF5Reference,
+        type=str,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXem.html#nxem-entry-measurement-eventid-spectrumid-spectrum-2d-title-field"
         ],
@@ -8741,6 +8656,9 @@ class EmMeasurementEventIDSpectrumIDSpectrum2d(Data):
             type="NX_CHAR",
             name_type="specified",
             optionality="recommended",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
     intensity = Quantity(
@@ -8983,7 +8901,7 @@ class EmMeasurementEventIDSpectrumIDSpectrum3d(Data):
         ),
     )
     title = Quantity(
-        type=HDF5Reference,
+        type=str,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXem.html#nxem-entry-measurement-eventid-spectrumid-spectrum-3d-title-field"
         ],
@@ -8992,6 +8910,9 @@ class EmMeasurementEventIDSpectrumIDSpectrum3d(Data):
             type="NX_CHAR",
             name_type="specified",
             optionality="recommended",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
     intensity = Quantity(
@@ -9279,7 +9200,7 @@ class EmMeasurementEventIDSpectrumIDStack0d(Data):
         ),
     )
     title = Quantity(
-        type=HDF5Reference,
+        type=str,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXem.html#nxem-entry-measurement-eventid-spectrumid-stack-0d-title-field"
         ],
@@ -9288,6 +9209,9 @@ class EmMeasurementEventIDSpectrumIDStack0d(Data):
             type="NX_CHAR",
             name_type="specified",
             optionality="recommended",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
     intensity = Quantity(
@@ -9485,7 +9409,7 @@ class EmMeasurementEventIDSpectrumIDStack1d(Data):
         ),
     )
     title = Quantity(
-        type=HDF5Reference,
+        type=str,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXem.html#nxem-entry-measurement-eventid-spectrumid-stack-1d-title-field"
         ],
@@ -9494,6 +9418,9 @@ class EmMeasurementEventIDSpectrumIDStack1d(Data):
             type="NX_CHAR",
             name_type="specified",
             optionality="recommended",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
     intensity = Quantity(
@@ -9732,7 +9659,7 @@ class EmMeasurementEventIDSpectrumIDStack2d(Data):
         ),
     )
     title = Quantity(
-        type=HDF5Reference,
+        type=str,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXem.html#nxem-entry-measurement-eventid-spectrumid-stack-2d-title-field"
         ],
@@ -9741,6 +9668,9 @@ class EmMeasurementEventIDSpectrumIDStack2d(Data):
             type="NX_CHAR",
             name_type="specified",
             optionality="recommended",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
     intensity = Quantity(
@@ -10028,7 +9958,7 @@ class EmMeasurementEventIDSpectrumIDStack3d(Data):
         ),
     )
     title = Quantity(
-        type=HDF5Reference,
+        type=str,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXem.html#nxem-entry-measurement-eventid-spectrumid-stack-3d-title-field"
         ],
@@ -10037,6 +9967,9 @@ class EmMeasurementEventIDSpectrumIDStack3d(Data):
             type="NX_CHAR",
             name_type="specified",
             optionality="recommended",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
     intensity = Quantity(
@@ -15044,7 +14977,7 @@ class EmRoiIDEbsdIndexingPhaseIDIpfIDMap(Data):
         ),
     )
     title = Quantity(
-        type=HDF5Reference,
+        type=str,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXem.html#nxem-entry-roiid-ebsd-indexing-phaseid-ipfid-map-title-field"
         ],
@@ -15053,6 +14986,9 @@ class EmRoiIDEbsdIndexingPhaseIDIpfIDMap(Data):
             type="NX_CHAR",
             name_type="specified",
             optionality="recommended",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
     data_quantity = Quantity(
@@ -15295,7 +15231,7 @@ class EmRoiIDEbsdIndexingPhaseIDIpfIDLegend(Data):
         ),
     )
     title = Quantity(
-        type=HDF5Reference,
+        type=str,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXem.html#nxem-entry-roiid-ebsd-indexing-phaseid-ipfid-legend-title-field"
         ],
@@ -15304,6 +15240,9 @@ class EmRoiIDEbsdIndexingPhaseIDIpfIDLegend(Data):
             type="NX_CHAR",
             name_type="specified",
             optionality="recommended",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
     data_quantity = Quantity(
@@ -15671,7 +15610,7 @@ class EmRoiIDEbsdIndexingPhaseIDOdfIDPhiTwoPlot(Data):
         ),
     )
     title = Quantity(
-        type=HDF5Reference,
+        type=str,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXem.html#nxem-entry-roiid-ebsd-indexing-phaseid-odfid-phi-two-plot-title-field"
         ],
@@ -15680,6 +15619,9 @@ class EmRoiIDEbsdIndexingPhaseIDOdfIDPhiTwoPlot(Data):
             type="NX_CHAR",
             name_type="specified",
             optionality="recommended",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
     intensity = Quantity(
@@ -15922,7 +15864,7 @@ class EmRoiIDEbsdIndexingRoi(Data):
         ),
     )
     title = Quantity(
-        type=HDF5Reference,
+        type=str,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXem.html#nxem-entry-roiid-ebsd-indexing-roi-title-field"
         ],
@@ -15932,9 +15874,12 @@ class EmRoiIDEbsdIndexingRoi(Data):
             name_type="specified",
             optionality="recommended",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     descriptor = Quantity(
-        type=HDF5Reference,
+        type=MEnum(["band_contrast", "confidence_index", "mean_angular_deviation"]),
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXem.html#nxem-entry-roiid-ebsd-indexing-roi-descriptor-field"
         ],
@@ -15944,6 +15889,9 @@ class EmRoiIDEbsdIndexingRoi(Data):
             name_type="specified",
             optionality="recommended",
             enumeration=["band_contrast", "confidence_index", "mean_angular_deviation"],
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.EnumEditQuantity,
         ),
     )
     data_quantity = Quantity(
@@ -16234,7 +16182,7 @@ class EmRoiIDEdsIndexingSummary(Data):
         ),
     )
     title = Quantity(
-        type=HDF5Reference,
+        type=str,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXem.html#nxem-entry-roiid-eds-indexing-summary-title-field"
         ],
@@ -16243,6 +16191,9 @@ class EmRoiIDEdsIndexingSummary(Data):
             type="NX_CHAR",
             name_type="specified",
             optionality="recommended",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
     intensity = Quantity(
@@ -16275,7 +16226,7 @@ class EmRoiIDEdsIndexingSummary(Data):
         description="Number of dimensions of intensity in the HDF5 file.",
     )
     axis_energy = Quantity(
-        type=HDF5Reference,
+        type=str,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXem.html#nxem-entry-roiid-eds-indexing-summary-axis-energy-field"
         ],
@@ -16284,6 +16235,9 @@ class EmRoiIDEdsIndexingSummary(Data):
             type="NX_CHAR",
             name_type="specified",
             optionality="required",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
     axis_energy__long_name = Quantity(
@@ -16416,7 +16370,7 @@ class EmRoiIDEdsIndexingElementSpecificMapImage2d(Data):
         ),
     )
     title = Quantity(
-        type=HDF5Reference,
+        type=str,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXem.html#nxem-entry-roiid-eds-indexing-element-specific-map-image-2d-title-field"
         ],
@@ -16425,6 +16379,9 @@ class EmRoiIDEdsIndexingElementSpecificMapImage2d(Data):
             type="NX_CHAR",
             name_type="specified",
             optionality="recommended",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
     intensity = Quantity(
@@ -16751,7 +16708,7 @@ class EmRoiIDTomoReconstructionIDTomogram(Data):
         ),
     )
     title = Quantity(
-        type=HDF5Reference,
+        type=str,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXem.html#nxem-entry-roiid-tomo-reconstructionid-tomogram-title-field"
         ],
@@ -16760,6 +16717,9 @@ class EmRoiIDTomoReconstructionIDTomogram(Data):
             type="NX_CHAR",
             name_type="specified",
             optionality="recommended",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
         ),
     )
     intensity = Quantity(

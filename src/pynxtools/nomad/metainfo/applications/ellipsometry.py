@@ -639,7 +639,19 @@ class EllipsometryDataCollection(OpticalSpectroscopyData):
         description="Number of dimensions of data_identifier in the HDF5 file.",
     )
     data_type = Quantity(
-        type=HDF5Reference,
+        type=MEnum(
+            [
+                "intensity",
+                "reflectivity",
+                "transmittance",
+                "Psi/Delta",
+                "tan(Psi)/cos(Delta)",
+                "Mueller matrix",
+                "Jones matrix",
+                "N/C/S",
+                "raw data",
+            ]
+        ),
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXellipsometry.html#nxellipsometry-entry-data-collection-data-type-field"
         ],
@@ -665,6 +677,9 @@ class EllipsometryDataCollection(OpticalSpectroscopyData):
                 "N/C/S",
                 "raw data",
             ],
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.EnumEditQuantity,
         ),
     )
     NAME_spectrum = Quantity(

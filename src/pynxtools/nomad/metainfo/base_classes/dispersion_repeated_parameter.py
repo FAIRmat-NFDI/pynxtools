@@ -103,10 +103,11 @@ class DispersionRepeatedParameter(Object):
         ),
     )
     parameter_units = Quantity(
-        type=HDF5Reference,
+        type=str,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXdispersion_repeated_parameter.html#nxdispersion_repeated_parameter-parameter-units-field"
         ],
+        shape=["*"],
         description=(
             "A unit array associating a unit with each parameter. The first "
             "element should be equal to values/@unit. The values should be SI "

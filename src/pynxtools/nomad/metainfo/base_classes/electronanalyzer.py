@@ -320,10 +320,11 @@ class Electronanalyzer(Component):
         a_display={"unit": "volt"},
     )
     fast_axes = Quantity(
-        type=HDF5Reference,
+        type=str,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXelectronanalyzer.html#nxelectronanalyzer-fast-axes-field"
         ],
+        shape=["*"],
         description=(
             "List of the axes that are acquired simultaneously by the detector. "
             "These refer only to the experimental variables recorded by the "
@@ -352,10 +353,11 @@ class Electronanalyzer(Component):
         ),
     )
     slow_axes = Quantity(
-        type=HDF5Reference,
+        type=str,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXelectronanalyzer.html#nxelectronanalyzer-slow-axes-field"
         ],
+        shape=["*"],
         description=(
             "List of the axes that are acquired by scanning a physical "
             "parameter, listed in order of decreasing speed. See fast_axes for "

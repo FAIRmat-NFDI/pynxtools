@@ -423,10 +423,11 @@ class BeamSplitterShape(Shape):
         ),
     )
     size = Quantity(
-        type=HDF5Reference,
+        type=str,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXbeam_splitter.html#nxbeam_splitter-shape-size-field"
         ],
+        shape=["*", "*"],
         description=(
             "Physical extent of the beam splitter device. The beam splitter "
             "might be made up of one or more objects (NX_objects). The meaning "

@@ -215,10 +215,11 @@ class CgGrid(CgPrimitive):
         a_display={"unit": "dimensionless"},
     )
     boundaries = Quantity(
-        type=HDF5Reference,
+        type=str,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXcg_grid.html#nxcg_grid-boundaries-field"
         ],
+        shape=["*"],
         description=(
             "Name of domain boundaries of the simulation box/ROI e.g. left, "
             "right, front, back, bottom, top."

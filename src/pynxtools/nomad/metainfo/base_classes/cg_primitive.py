@@ -225,10 +225,11 @@ class CgPrimitive(Object):
         ),
     )
     is_center_of_mass = Quantity(
-        type=HDF5Reference,
+        type=bool,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXcg_primitive.html#nxcg_primitive-is-center-of-mass-field"
         ],
+        shape=["*"],
         description=("True if the center is a center of mass."),
         a_nexus_field=NeXusField(
             name="is_center_of_mass",
@@ -306,10 +307,11 @@ class CgPrimitive(Object):
         ),
     )
     is_closed = Quantity(
-        type=HDF5Reference,
+        type=bool,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXcg_primitive.html#nxcg_primitive-is-closed-field"
         ],
+        shape=["*"],
         description=(
             "True if primitive is closed such that it has properties like area "
             "or volume."

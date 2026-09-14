@@ -3044,10 +3044,11 @@ class StressPeaks(Reflections):
         ),
     )
     lattice = Quantity(
-        type=HDF5Reference,
+        type=str,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXstress.html#nxstress-entry-peaks-lattice-field"
         ],
+        shape=["*"],
         description=("Crystal lattice systems (*cubic*, *hexagonal*, ...)"),
         a_nexus_field=NeXusField(
             name="lattice",
@@ -3057,10 +3058,11 @@ class StressPeaks(Reflections):
         ),
     )
     space_group = Quantity(
-        type=HDF5Reference,
+        type=str,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXstress.html#nxstress-entry-peaks-space-group-field"
         ],
+        shape=["*"],
         description=(
             "Crystallographic space group :math:`(Fm\\bar{3}m, Im\\bar{3}m, ...)`"
         ),
@@ -3072,10 +3074,11 @@ class StressPeaks(Reflections):
         ),
     )
     phase_name = Quantity(
-        type=HDF5Reference,
+        type=str,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXstress.html#nxstress-entry-peaks-phase-name-field"
         ],
+        shape=["*"],
         description=(
             "Name of the crystallographic phase (hematite, goethite, \\ "
             ":math:`\\alpha`-Al\\ :sub:`2`\\ O\\ :sub:`3`\\ , ...)."

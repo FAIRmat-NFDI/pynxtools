@@ -109,10 +109,11 @@ class Rotations(Object):
         ),
     )
     crystal_symmetry = Quantity(
-        type=HDF5Reference,
+        type=str,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXrotations.html#nxrotations-crystal-symmetry-field"
         ],
+        shape=["*"],
         description=(
             "Point group which defines the symmetry of the crystal. This has to "
             "be at least a single string. If crystal_symmetry is not provided, "
@@ -132,10 +133,11 @@ class Rotations(Object):
         ),
     )
     sample_symmetry = Quantity(
-        type=HDF5Reference,
+        type=str,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXrotations.html#nxrotations-sample-symmetry-field"
         ],
+        shape=["*"],
         description=(
             "Point group which defines an assumed symmetry imprinted upon "
             "processing the material/sample which could give rise to or may "
@@ -199,10 +201,11 @@ class Rotations(Object):
         ),
     )
     is_antipodal = Quantity(
-        type=HDF5Reference,
+        type=bool,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXrotations.html#nxrotations-is-antipodal-field"
         ],
+        shape=["*"],
         description=(
             "True for all those value tuples which have assumed antipodal "
             "symmetry. False for all others."
