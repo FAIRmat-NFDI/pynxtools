@@ -220,14 +220,16 @@ class ApmParaprobeSpatstatConfigSpatialStatisticsID(ApmParaprobeToolConfigTaskco
             "elemental or isotopic details. Each active ion is counted once. The "
             "value resolve_element will set an ion active, and most importantly, "
             "account for each as many times as the (molecular) ion contains "
-            "atoms of elements in the whitelist ion_query_isotope_vector. The "
+            "atoms of elements in the whitelist ion_query_nuclide_source. The "
             "value resolve_isotope will set an ion active, and most importantly, "
             "account for each as many times as the (molecular) ion contains "
-            "isotopes in the whitelist ion_query_isotope_vector. In effect, "
-            "ion_query_isotope_vector acts as a whitelist to filter which ions "
+            "isotopes in the whitelist ion_query_nuclide_source. In effect, "
+            "ion_query_nuclide_source acts as a whitelist to filter which ions "
             "are considered as source ions of the correlation statistics and how "
             "the multiplicity of each ion will be factorized, i.e. how often it "
-            "is accounted for."
+            "is accounted for. The sibling concepts ion_query_nuclide_target and "
+            "ion_query_type_target configure respectively but for the atoms that "
+            "are considered targets."
         ),
         a_nexus_field=NeXusField(
             name="ion_query_type_source",
@@ -259,9 +261,9 @@ class ApmParaprobeSpatstatConfigSpatialStatisticsID(ApmParaprobeToolConfigTaskco
             "for iontypes should be distinguished as possible source iontypes. "
             "In the simplest case, the matrix contains only the proton number of "
             "the element in the row, all other values set to zero. Combined with "
-            "ion_query_type_source set to resolve_element this will recover "
-            "usual spatial correlation statistics like the 1NN C-C spatial "
-            "statistics."
+            "ion_query_type_source set to resolve_element, this configures the "
+            "recovery of usual spatial correlation statistics like the 1NN C-C "
+            "spatial statistics, i.e. k-th nearest neighbor."
         ),
         a_nexus_field=NeXusField(
             name="ion_query_nuclide_source",

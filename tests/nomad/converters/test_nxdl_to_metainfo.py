@@ -226,18 +226,20 @@ def test_build_context_suffixes_field_conflicting_with_subsection(
     unaffected.dtype = "NX_FLOAT"
 
     root = definition_factory("NXtestBase")
-    # The group is declared by this class, so its subsection name lands in
-    # own_sub_names during build_context's pre-scan. nxdl_base must match the
-    # definition's own file or the group is treated as inherited and skipped.
+    # Every member is declared by this class, so its nxdl_base must match the
+    # definition's own file; the ownership rule in build_context skips any member
+    # whose nxdl_base differs (it is inherited and comes via Python inheritance).
+    # Real tree construction sets nxdl_base automatically; synthetic nodes need to set
+    # it here.
     own_conflict_group = NexusGroup(
         nx_class="NXdata",
         name="own_conflict",
         nx_type="group",
         nxdl_base=root.nxdl_base,
     )
-    inherited_conflict.parent = root
-    own_conflict_field.parent = root
-    unaffected.parent = root
+    for member in (inherited_conflict, own_conflict_field, unaffected):
+        member.parent = root
+        member.nxdl_base = root.nxdl_base
     own_conflict_group.parent = root
 
     _patch_isolated_build_context(
@@ -330,6 +332,9 @@ def test_build_context_reserved_quantity_names_are_suffixed(
 
     root = definition_factory("NXtestBase")
     field.parent = root
+    # Declared by this class: nxdl_base must match or the ownership rule skips it
+    # as inherited. Real tree construction sets this automatically.
+    field.nxdl_base = root.nxdl_base
 
     _patch_isolated_build_context(
         monkeypatch, root, ancestor_members=(frozenset(), frozenset())

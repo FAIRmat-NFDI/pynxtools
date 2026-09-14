@@ -2573,9 +2573,10 @@ class EmMeasurementInstrumentEbeamColumn(EbeamColumn):
         repeats=True,
         variable=True,
     )
-    corrector_ax = SubSection(
-        section_def="pynxtools.nomad.metainfo.applications.em.EmMeasurementInstrumentEbeamColumnCorrectorAx",
-        repeats=False,
+    corrector_axID = SubSection(
+        section_def="pynxtools.nomad.metainfo.applications.em.EmMeasurementInstrumentEbeamColumnCorrectorAxID",
+        repeats=True,
+        variable=True,
     )
     biprismID = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.em.EmMeasurementInstrumentEbeamColumnBiprismID",
@@ -3456,23 +3457,23 @@ class EmMeasurementInstrumentEbeamColumnCorrectorCsIDFabrication(Fabrication):
         super().normalize(archive, logger)
 
 
-class EmMeasurementInstrumentEbeamColumnCorrectorAx(Component):
+class EmMeasurementInstrumentEbeamColumnCorrectorAxID(ElectromagneticLens):
     m_def = Section(
         links=[
-            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXem.html#nxem-entry-measurement-instrument-ebeam-column-corrector-ax-group"
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXem.html#nxem-entry-measurement-instrument-ebeam-column-corrector-axid-group"
         ],
+        variable=True,
         a_nexus_group=NeXusGroup(
-            nx_class="NXcomponent",
-            name="corrector_ax",
-            name_type="specified",
+            nx_class="NXelectromagnetic_lens",
+            name="corrector_axID",
+            name_type="partial",
             optionality="optional",
             min_occurs=0,
-            max_occurs=1,
         ),
     )
 
     fabrication = SubSection(
-        section_def="pynxtools.nomad.metainfo.applications.em.EmMeasurementInstrumentEbeamColumnCorrectorAxFabrication",
+        section_def="pynxtools.nomad.metainfo.applications.em.EmMeasurementInstrumentEbeamColumnCorrectorAxIDFabrication",
         repeats=False,
     )
 
@@ -3480,10 +3481,10 @@ class EmMeasurementInstrumentEbeamColumnCorrectorAx(Component):
         super().normalize(archive, logger)
 
 
-class EmMeasurementInstrumentEbeamColumnCorrectorAxFabrication(Fabrication):
+class EmMeasurementInstrumentEbeamColumnCorrectorAxIDFabrication(Fabrication):
     m_def = Section(
         links=[
-            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXem.html#nxem-entry-measurement-instrument-ebeam-column-corrector-ax-fabrication-group"
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXem.html#nxem-entry-measurement-instrument-ebeam-column-corrector-axid-fabrication-group"
         ],
         a_nexus_group=NeXusGroup(
             nx_class="NXfabrication",
@@ -3496,7 +3497,7 @@ class EmMeasurementInstrumentEbeamColumnCorrectorAxFabrication(Fabrication):
     vendor = Quantity(
         type=str,
         links=[
-            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXem.html#nxem-entry-measurement-instrument-ebeam-column-corrector-ax-fabrication-vendor-field"
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXem.html#nxem-entry-measurement-instrument-ebeam-column-corrector-axid-fabrication-vendor-field"
         ],
         a_nexus_field=NeXusField(
             name="vendor",
@@ -3511,7 +3512,7 @@ class EmMeasurementInstrumentEbeamColumnCorrectorAxFabrication(Fabrication):
     model = Quantity(
         type=str,
         links=[
-            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXem.html#nxem-entry-measurement-instrument-ebeam-column-corrector-ax-fabrication-model-field"
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXem.html#nxem-entry-measurement-instrument-ebeam-column-corrector-axid-fabrication-model-field"
         ],
         a_nexus_field=NeXusField(
             name="model",
@@ -3526,7 +3527,7 @@ class EmMeasurementInstrumentEbeamColumnCorrectorAxFabrication(Fabrication):
     serial_number = Quantity(
         type=str,
         links=[
-            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXem.html#nxem-entry-measurement-instrument-ebeam-column-corrector-ax-fabrication-serial-number-field"
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXem.html#nxem-entry-measurement-instrument-ebeam-column-corrector-axid-fabrication-serial-number-field"
         ],
         a_nexus_field=NeXusField(
             name="serial_number",
@@ -9476,9 +9477,10 @@ class EmMeasurementEventIDInstrumentEbeamColumn(EbeamColumn):
         repeats=True,
         variable=True,
     )
-    corrector_ax = SubSection(
-        section_def="pynxtools.nomad.metainfo.applications.em.EmMeasurementEventIDInstrumentEbeamColumnCorrectorAx",
-        repeats=False,
+    corrector_axID = SubSection(
+        section_def="pynxtools.nomad.metainfo.applications.em.EmMeasurementEventIDInstrumentEbeamColumnCorrectorAxID",
+        repeats=True,
+        variable=True,
     )
     biprismID = SubSection(
         section_def="pynxtools.nomad.metainfo.base_classes.component.Component",
@@ -11388,23 +11390,25 @@ class EmMeasurementEventIDInstrumentEbeamColumnCorrectorCsIDTableauIDC56B(Aberra
         super().normalize(archive, logger)
 
 
-class EmMeasurementEventIDInstrumentEbeamColumnCorrectorAx(Component):
+class EmMeasurementEventIDInstrumentEbeamColumnCorrectorAxID(ElectromagneticLens):
     m_def = Section(
         links=[
-            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXem.html#nxem-entry-measurement-eventid-instrument-ebeam-column-corrector-ax-group"
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXem.html#nxem-entry-measurement-eventid-instrument-ebeam-column-corrector-axid-group"
         ],
+        variable=True,
         a_nexus_group=NeXusGroup(
-            nx_class="NXcomponent",
-            name="corrector_ax",
-            name_type="specified",
+            nx_class="NXelectromagnetic_lens",
+            name="corrector_axID",
+            name_type="partial",
             optionality="optional",
+            min_occurs=0,
         ),
     )
 
     applied = Quantity(
         type=bool,
         links=[
-            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXem.html#nxem-entry-measurement-eventid-instrument-ebeam-column-corrector-ax-applied-field"
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXem.html#nxem-entry-measurement-eventid-instrument-ebeam-column-corrector-axid-applied-field"
         ],
         a_nexus_field=NeXusField(
             name="applied",
@@ -11419,15 +11423,13 @@ class EmMeasurementEventIDInstrumentEbeamColumnCorrectorAx(Component):
     value_x = Quantity(
         type=np.float64,
         links=[
-            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXem.html#nxem-entry-measurement-eventid-instrument-ebeam-column-corrector-ax-value-x-field"
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXem.html#nxem-entry-measurement-eventid-instrument-ebeam-column-corrector-axid-value-x-field"
         ],
-        flexible_unit=True,
         a_nexus_field=NeXusField(
             name="value_x",
             type="NX_NUMBER",
             name_type="specified",
             optionality="required",
-            units="NX_ANY",
         ),
         a_eln=ELNAnnotation(
             component=ELNComponentEnum.NumberEditQuantity,
@@ -11436,15 +11438,13 @@ class EmMeasurementEventIDInstrumentEbeamColumnCorrectorAx(Component):
     value_y = Quantity(
         type=np.float64,
         links=[
-            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXem.html#nxem-entry-measurement-eventid-instrument-ebeam-column-corrector-ax-value-y-field"
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXem.html#nxem-entry-measurement-eventid-instrument-ebeam-column-corrector-axid-value-y-field"
         ],
-        flexible_unit=True,
         a_nexus_field=NeXusField(
             name="value_y",
             type="NX_NUMBER",
             name_type="specified",
             optionality="required",
-            units="NX_ANY",
         ),
         a_eln=ELNAnnotation(
             component=ELNComponentEnum.NumberEditQuantity,

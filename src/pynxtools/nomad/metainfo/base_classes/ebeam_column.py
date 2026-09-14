@@ -141,8 +141,8 @@ class EbeamColumn(Component):
             optionality="optional",
         ),
     )
-    corrector_ax = SubSection(
-        section_def="pynxtools.nomad.metainfo.base_classes.ebeam_column.EbeamColumnCorrectorAx",
+    corrector_axID = SubSection(
+        section_def="pynxtools.nomad.metainfo.base_classes.ebeam_column.EbeamColumnCorrectorAxid",
         repeats=False,
     )
     biprismID = SubSection(
@@ -597,7 +597,7 @@ class EbeamColumnMonochromator(Monochromator):
         super().normalize(archive, logger)
 
 
-class EbeamColumnCorrectorAx(Component):
+class EbeamColumnCorrectorAxid(Component):
     """
     Component that reshapes an ellipse-shaped electron beam into a circular
     one.
@@ -608,15 +608,23 @@ class EbeamColumnCorrectorAx(Component):
     <https://www.jeol.com/words/semterms/20201020.111014.php#gsc.tab=0>`_
 
     Stigmator is an exact synonym.
+
+    If the microscope has only one, its name should be `corrector_ax`. If the
+    microscope has multiple such components, start counting from 1, when naming
+    the instances.
+
+    Distinguish the components that correct different types of aberrations by
+    combining the use of `corrector_csID` and `corrector_axID` instances
+    especially for transmission electron microscopes.
     """
 
     m_def = Section(
         links=[
-            "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXebeam_column.html#nxebeam_column-corrector-ax-group"
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXebeam_column.html#nxebeam_column-corrector-axid-group"
         ],
         a_nexus_group=NeXusGroup(
             nx_class="NXcomponent",
-            name="corrector_ax",
+            name="corrector_axID",
             name_type="specified",
             optionality="optional",
         ),
@@ -625,7 +633,7 @@ class EbeamColumnCorrectorAx(Component):
     value_x = Quantity(
         type=np.float64,
         links=[
-            "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXebeam_column.html#nxebeam_column-corrector-ax-value-x-field"
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXebeam_column.html#nxebeam_column-corrector-axid-value-x-field"
         ],
         flexible_unit=True,
         description=(
@@ -648,7 +656,7 @@ class EbeamColumnCorrectorAx(Component):
     value_y = Quantity(
         type=np.float64,
         links=[
-            "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXebeam_column.html#nxebeam_column-corrector-ax-value-y-field"
+            "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXebeam_column.html#nxebeam_column-corrector-axid-value-y-field"
         ],
         flexible_unit=True,
         description=(
