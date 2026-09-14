@@ -16,6 +16,7 @@
 """
 
 import logging
+import math
 import os
 import sys
 from functools import cache, lru_cache
@@ -382,6 +383,95 @@ def _get_inherited_hdf_nodes(
 # TODO: deprecated, remove when NomadVisitor uses NexusNode
 get_inherited_hdf_nodes = _get_inherited_hdf_nodes
 
+
+def safe_str(value, precision: int = 8) -> str:
+    """Return a deterministic string representation of arrays, lists, or scalars.
+
+    Floats are formatted consistently across systems to ensure deterministic
+    output. Special handling is applied to simplify representation:
+      - `0.0` → `'0.0'`
+      - `1.0` → `'1'`
+      - `1.50` → `'1.5'`
+      - Non-integer floats keep up to `precision` decimals with trailing zeros
+        and dots removed.
+
+    Arrays and lists are formatted elementwise using the same rules.
+
+    Args:
+        value: The input value to format. Can be a scalar, list, tuple,
+            NumPy array, or basic type such as int, float, str, or bytes.
+        precision (int): Maximum number of decimal places for non-integer
+            floats. Defaults to 8.
+
+    Returns:
+        str: Deterministic string representation of the input.
+    """
+    # Normalize NumPy scalar and 0D array types
+    if isinstance(value, np.generic):
+        value = value.item()
+    elif isinstance(value, np.ndarray) and value.shape == ():
+        value = value.item()
+
+    def format_float(value: float) -> str:
+        """Format a float deterministically."""
+        if value == 0.0:
+            # Preserve sign of zero
+            if math.copysign(1.0, value) < 0:
+                return "-0.0"
+            return "0.0"
+        if math.isnan(value):
+            return "nan"
+        if math.isinf(value):
+            return "inf" if value > 0 else "-inf"
+        if value.is_integer():
+            return str(int(value))
+        if abs(value) < 10**-precision or abs(value) >= 10 ** (precision + 1):
+            return f"{value:.{precision}e}"
+        return f"{value:.{precision}f}".rstrip("0").rstrip(".")
+
+    # --- Arrays ---
+    if isinstance(value, np.ndarray):
+        flat = value.flatten()
+        formatted = []
+        for v in flat:
+            if isinstance(v, (np.generic, np.ndarray)):
+                v = v.item()
+            if isinstance(v, float):
+                formatted.append(format_float(v))
+            elif isinstance(v, str):
+                formatted.append(v)
+            elif isinstance(v, bytes):
+                formatted.append(v.decode(errors="replace"))
+            else:
+                formatted.append(str(v))
+        reshaped = np.array(formatted, dtype=object).reshape(value.shape)
+        return np.array2string(
+            reshaped,
+            separator=", ",
+            formatter={"all": lambda x: str(x)},
+            max_line_width=1000000,
+            threshold=6,
+        )
+
+    # --- Lists / tuples ---
+    if isinstance(value, list | tuple):
+        formatted = [safe_str(v, precision) for v in value]
+        return f"[{', '.join(formatted)}]"
+
+    # --- Floats ---
+    if isinstance(value, float | np.floating):
+        return format_float(float(value))
+
+    # --- Integers / booleans ---
+    elif isinstance(value, (int, np.integer, bool, np.bool_)):
+        return str(value)
+
+    # --- Strings / bytes ---
+    elif isinstance(value, (bytes, str)):
+        return value if isinstance(value, str) else value.decode(errors="replace")
+
+    # --- Fallback ---
+    return str(value)
 
 def get_all_is_a_rel_from_hdf_node(hdf_node, hdf_path):
     """Return list of NXDL concept paths for a NXDL element which corresponds to
