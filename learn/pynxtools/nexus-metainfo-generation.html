@@ -2009,6 +2009,17 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#field-statistics" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Field statistics
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#additive-only-generation" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -2761,30 +2772,40 @@ attribute (via <code>NexusGroup.occurrence_limits[1]</code>):</p>
 treated as unbounded.</p>
 <hr />
 <h2 id="shape-representation">Shape representation<a class="headerlink" href="#shape-representation" title="Permanent link">&para;</a></h2>
-<p>NXDL <code>&lt;dimensions&gt;</code> elements map to <code>shape</code> on the generated <code>Quantity</code>. Concrete
-integer sizes are preserved as-is. Unbounded or symbolically-named dimensions (e.g.
-<code>nP</code>, <code>nz</code>) become the wildcard <code>"*"</code>. NOMAD does not interpret NeXus symbol names.
-Symbol definitions from the NXDL <code>&lt;symbols&gt;</code> block are preserved in
-<code>NeXusDefinition.symbols</code> on the class <code>m_def</code>.</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-13-1" name="__codelineno-13-1" href="#__codelineno-13-1"></a><span class="c1"># NXDL: &lt;dimensions rank="2"&gt;&lt;dim index="1" value="nP"/&gt;&lt;dim index="2" value="3"/&gt;&lt;/dimensions&gt;</span>
-<a id="__codelineno-13-2" name="__codelineno-13-2" href="#__codelineno-13-2"></a><span class="n">data</span> <span class="o">=</span> <span class="n">Quantity</span><span class="p">(</span>
+<p>NXDL <code>&lt;dimensions&gt;</code> elements map to <code>shape</code> on the generated <code>Quantity</code> —
+for <strong>attributes</strong> only. An attribute is not an addressable HDF5 object, so
+it keeps its array value directly:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-13-1" name="__codelineno-13-1" href="#__codelineno-13-1"></a><span class="c1"># NXDL &lt;attribute&gt; with &lt;dimensions rank="1"&gt;&lt;dim index="1" value="n"/&gt;&lt;/dimensions&gt;</span>
+<a id="__codelineno-13-2" name="__codelineno-13-2" href="#__codelineno-13-2"></a><span class="n">some_attr</span> <span class="o">=</span> <span class="n">Quantity</span><span class="p">(</span>
 <a id="__codelineno-13-3" name="__codelineno-13-3" href="#__codelineno-13-3"></a>    <span class="nb">type</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">,</span>
-<a id="__codelineno-13-4" name="__codelineno-13-4" href="#__codelineno-13-4"></a>    <span class="n">shape</span><span class="o">=</span><span class="p">[</span><span class="s2">"*"</span><span class="p">,</span> <span class="mi">3</span><span class="p">],</span>
+<a id="__codelineno-13-4" name="__codelineno-13-4" href="#__codelineno-13-4"></a>    <span class="n">shape</span><span class="o">=</span><span class="p">[</span><span class="s2">"*"</span><span class="p">],</span>
 <a id="__codelineno-13-5" name="__codelineno-13-5" href="#__codelineno-13-5"></a>    <span class="o">...</span>
 <a id="__codelineno-13-6" name="__codelineno-13-6" href="#__codelineno-13-6"></a><span class="p">)</span>
 </code></pre></div>
+<p><strong>Fields</strong> become <code>HDF5Reference</code>-typed instead, whenever they are array-valued — either because the NXDL declares <code>&lt;dimensions&gt;</code>, or, inside an <code>NXdata</code>-derived class, because rank is only known at parse time (e.g. <code>NXdata</code>'s own <code>DATA</code>/<code>AXISNAME</code> fields, which declare no <code>&lt;dimensions&gt;</code> at all). The array is never copied into the archive. The <code>Quantity</code> instead stores a reference string to the dataset in the source HDF5/NeXus file (<code>&lt;file&gt;#/&lt;hdf5_path&gt;</code>), resolved at parse time in pynxtools's NOMAD parser. <code>shape</code>, <code>unit</code>, <code>dimensionality</code>, and <code>flexible_unit</code> don't apply to a reference and are omitted. No ELN component is attached — there is nothing to edit.</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-14-1" name="__codelineno-14-1" href="#__codelineno-14-1"></a><span class="c1"># NXDL: &lt;field name="data" type="NX_FLOAT" units="NX_ANY"&gt; inside an NXdata group</span>
+<a id="__codelineno-14-2" name="__codelineno-14-2" href="#__codelineno-14-2"></a><span class="n">data</span> <span class="o">=</span> <span class="n">Quantity</span><span class="p">(</span>
+<a id="__codelineno-14-3" name="__codelineno-14-3" href="#__codelineno-14-3"></a>    <span class="nb">type</span><span class="o">=</span><span class="n">HDF5Reference</span><span class="p">,</span>
+<a id="__codelineno-14-4" name="__codelineno-14-4" href="#__codelineno-14-4"></a>    <span class="n">links</span><span class="o">=</span><span class="p">[</span><span class="o">...</span><span class="p">],</span>
+<a id="__codelineno-14-5" name="__codelineno-14-5" href="#__codelineno-14-5"></a>    <span class="o">...</span>
+<a id="__codelineno-14-6" name="__codelineno-14-6" href="#__codelineno-14-6"></a><span class="p">)</span>
+</code></pre></div>
+<p>Concrete integer dimension sizes are preserved as-is on attributes; unbounded
+or symbolically-named dimensions (e.g. <code>nP</code>, <code>nz</code>) become the wildcard <code>"*"</code>.
+NOMAD does not interpret NeXus symbol names. Symbol definitions from the NXDL
+<code>&lt;symbols&gt;</code> block are preserved in <code>NeXusDefinition.symbols</code> on the class
+<code>m_def</code>.</p>
 <hr />
 <h2 id="units">Units<a class="headerlink" href="#units" title="Permanent link">&para;</a></h2>
 <p>A NXDL <code>&lt;field&gt;</code>'s <code>@units</code> category (e.g. <code>NX_ENERGY</code>) maps to <code>dimensionality</code>
 (a pint-parseable dimensionality string) and <code>default_unit</code> on the generated
 <code>Quantity</code>:</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-14-1" name="__codelineno-14-1" href="#__codelineno-14-1"></a><span class="c1"># NXDL: &lt;field name="energy" type="NX_FLOAT" units="NX_ENERGY"&gt;</span>
-<a id="__codelineno-14-2" name="__codelineno-14-2" href="#__codelineno-14-2"></a><span class="n">energy</span> <span class="o">=</span> <span class="n">Quantity</span><span class="p">(</span>
-<a id="__codelineno-14-3" name="__codelineno-14-3" href="#__codelineno-14-3"></a>    <span class="nb">type</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">,</span>
-<a id="__codelineno-14-4" name="__codelineno-14-4" href="#__codelineno-14-4"></a>    <span class="n">dimensionality</span><span class="o">=</span><span class="s2">"[mass] * [length] ** 2 / [time] ** 2"</span><span class="p">,</span>
-<a id="__codelineno-14-5" name="__codelineno-14-5" href="#__codelineno-14-5"></a>    <span class="n">unit</span><span class="o">=</span><span class="s2">"joule"</span><span class="p">,</span>
-<a id="__codelineno-14-6" name="__codelineno-14-6" href="#__codelineno-14-6"></a>    <span class="o">...</span>
-<a id="__codelineno-14-7" name="__codelineno-14-7" href="#__codelineno-14-7"></a><span class="p">)</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-15-1" name="__codelineno-15-1" href="#__codelineno-15-1"></a><span class="c1"># NXDL: &lt;field name="energy" type="NX_FLOAT" units="NX_ENERGY"&gt;</span>
+<a id="__codelineno-15-2" name="__codelineno-15-2" href="#__codelineno-15-2"></a><span class="n">energy</span> <span class="o">=</span> <span class="n">Quantity</span><span class="p">(</span>
+<a id="__codelineno-15-3" name="__codelineno-15-3" href="#__codelineno-15-3"></a>    <span class="nb">type</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">,</span>
+<a id="__codelineno-15-4" name="__codelineno-15-4" href="#__codelineno-15-4"></a>    <span class="n">unit</span><span class="o">=</span><span class="s2">"joule"</span><span class="p">,</span>
+<a id="__codelineno-15-5" name="__codelineno-15-5" href="#__codelineno-15-5"></a>    <span class="o">...</span>
+<a id="__codelineno-15-6" name="__codelineno-15-6" href="#__codelineno-15-6"></a><span class="p">)</span>
 </code></pre></div>
 <p><code>NX_ANY</code> is different: it means the field's unit is <strong>not fixed by the
 schema at all</strong> — the actual unit varies per file/value. There is no
@@ -2793,18 +2814,44 @@ schema at all</strong> — the actual unit varies per file/value. There is no
 this case ("this quantity may have a unit that is not the default unit");
 NOMAD then stores the value in full-storage mode (<code>MQuantity</code>), preserving
 whichever unit was actually written:</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-15-1" name="__codelineno-15-1" href="#__codelineno-15-1"></a><span class="c1"># NXDL: &lt;field name="resolution" type="NX_FLOAT" units="NX_ANY"&gt;</span>
-<a id="__codelineno-15-2" name="__codelineno-15-2" href="#__codelineno-15-2"></a><span class="n">resolution</span> <span class="o">=</span> <span class="n">Quantity</span><span class="p">(</span>
-<a id="__codelineno-15-3" name="__codelineno-15-3" href="#__codelineno-15-3"></a>    <span class="nb">type</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">,</span>
-<a id="__codelineno-15-4" name="__codelineno-15-4" href="#__codelineno-15-4"></a>    <span class="n">flexible_unit</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
-<a id="__codelineno-15-5" name="__codelineno-15-5" href="#__codelineno-15-5"></a>    <span class="o">...</span>
-<a id="__codelineno-15-6" name="__codelineno-15-6" href="#__codelineno-15-6"></a>    <span class="n">a_eln</span><span class="o">=</span><span class="n">ELNAnnotation</span><span class="p">(</span><span class="n">component</span><span class="o">=</span><span class="n">ELNComponentEnum</span><span class="o">.</span><span class="n">NumberEditQuantity</span><span class="p">),</span>
-<a id="__codelineno-15-7" name="__codelineno-15-7" href="#__codelineno-15-7"></a><span class="p">)</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-16-1" name="__codelineno-16-1" href="#__codelineno-16-1"></a><span class="c1"># NXDL: &lt;field name="resolution" type="NX_FLOAT" units="NX_ANY"&gt;</span>
+<a id="__codelineno-16-2" name="__codelineno-16-2" href="#__codelineno-16-2"></a><span class="n">resolution</span> <span class="o">=</span> <span class="n">Quantity</span><span class="p">(</span>
+<a id="__codelineno-16-3" name="__codelineno-16-3" href="#__codelineno-16-3"></a>    <span class="nb">type</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">,</span>
+<a id="__codelineno-16-4" name="__codelineno-16-4" href="#__codelineno-16-4"></a>    <span class="n">flexible_unit</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+<a id="__codelineno-16-5" name="__codelineno-16-5" href="#__codelineno-16-5"></a>    <span class="o">...</span>
+<a id="__codelineno-16-6" name="__codelineno-16-6" href="#__codelineno-16-6"></a>    <span class="n">a_eln</span><span class="o">=</span><span class="n">ELNAnnotation</span><span class="p">(</span><span class="n">component</span><span class="o">=</span><span class="n">ELNComponentEnum</span><span class="o">.</span><span class="n">NumberEditQuantity</span><span class="p">),</span>
+<a id="__codelineno-16-7" name="__codelineno-16-7" href="#__codelineno-16-7"></a><span class="p">)</span>
 </code></pre></div>
 <p>No special ELN handling is needed beyond the usual <code>NumberEditQuantity</code>: its
 GUI implementation already supports typing a value together with any unit
 (and a unit-selection dropdown) when the field has no fixed dimensionality —
 exactly the <code>NX_ANY</code> case.</p>
+<hr />
+<h2 id="field-statistics">Field statistics<a class="headerlink" href="#field-statistics" title="Permanent link">&para;</a></h2>
+<p>Numeric array quantities inside an <code>NXdata</code>-derived class get four parallel
+scalar quantities generated automatically, so the array's summary statistics are searchable even though the array itself is not:</p>
+<p><div class="highlight"><pre><span></span><code><a id="__codelineno-17-1" name="__codelineno-17-1" href="#__codelineno-17-1"></a><span class="c1"># NXDL: &lt;field name="energy" type="NX_FLOAT" units="NX_ENERGY"&gt; inside an NXdata group</span>
+<a id="__codelineno-17-2" name="__codelineno-17-2" href="#__codelineno-17-2"></a><span class="n">energy</span> <span class="o">=</span> <span class="n">Quantity</span><span class="p">(</span><span class="nb">type</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">,</span> <span class="o">...</span><span class="p">)</span>
+<a id="__codelineno-17-3" name="__codelineno-17-3" href="#__codelineno-17-3"></a><span class="n">energy__min</span> <span class="o">=</span> <span class="n">Quantity</span><span class="p">(</span>
+<a id="__codelineno-17-4" name="__codelineno-17-4" href="#__codelineno-17-4"></a>    <span class="nb">type</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">,</span>
+<a id="__codelineno-17-5" name="__codelineno-17-5" href="#__codelineno-17-5"></a>    <span class="n">description</span><span class="o">=</span><span class="s2">"Minimum of energy, computed over the full array at parse time."</span><span class="p">,</span>
+<a id="__codelineno-17-6" name="__codelineno-17-6" href="#__codelineno-17-6"></a><span class="p">)</span>
+<a id="__codelineno-17-7" name="__codelineno-17-7" href="#__codelineno-17-7"></a><span class="n">energy__max</span> <span class="o">=</span> <span class="n">Quantity</span><span class="p">(</span>
+<a id="__codelineno-17-8" name="__codelineno-17-8" href="#__codelineno-17-8"></a>    <span class="nb">type</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">,</span>
+<a id="__codelineno-17-9" name="__codelineno-17-9" href="#__codelineno-17-9"></a>    <span class="n">description</span><span class="o">=</span><span class="s2">"Maximum of energy, computed over the full array at parse time."</span><span class="p">,</span>
+<a id="__codelineno-17-10" name="__codelineno-17-10" href="#__codelineno-17-10"></a><span class="p">)</span>
+<a id="__codelineno-17-11" name="__codelineno-17-11" href="#__codelineno-17-11"></a><span class="n">energy__size</span> <span class="o">=</span> <span class="n">Quantity</span><span class="p">(</span>
+<a id="__codelineno-17-12" name="__codelineno-17-12" href="#__codelineno-17-12"></a>    <span class="nb">type</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">int64</span><span class="p">,</span>
+<a id="__codelineno-17-13" name="__codelineno-17-13" href="#__codelineno-17-13"></a>    <span class="n">description</span><span class="o">=</span><span class="s2">"Number of elements of energy in the HDF5 file."</span><span class="p">,</span>
+<a id="__codelineno-17-14" name="__codelineno-17-14" href="#__codelineno-17-14"></a><span class="p">)</span>
+<a id="__codelineno-17-15" name="__codelineno-17-15" href="#__codelineno-17-15"></a><span class="n">energy__ndim</span> <span class="o">=</span> <span class="n">Quantity</span><span class="p">(</span>
+<a id="__codelineno-17-16" name="__codelineno-17-16" href="#__codelineno-17-16"></a>    <span class="nb">type</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">int8</span><span class="p">,</span>
+<a id="__codelineno-17-17" name="__codelineno-17-17" href="#__codelineno-17-17"></a>    <span class="n">description</span><span class="o">=</span><span class="s2">"Number of dimensions of energy in the HDF5 file."</span><span class="p">,</span>
+<a id="__codelineno-17-18" name="__codelineno-17-18" href="#__codelineno-17-18"></a><span class="p">)</span>
+</code></pre></div>
+Note that this applies only to fields in an <code>NXdata</code> group. Statistics are
+generated exclusively for data arrays, not for arbitrary quantities elsewhere
+in the schema.  Restricting statistics to data arrays keeps the generated schema manageable while covering the primary data intended for searching.</p>
 <hr />
 <h2 id="additive-only-generation">Additive-only generation<a class="headerlink" href="#additive-only-generation" title="Permanent link">&para;</a></h2>
 <p>The generator never removes hand-written additions. When a file already exists:</p>
@@ -2822,42 +2869,42 @@ the set the generator would produce. Any name present in the existing file but a
 the new output is considered user-added.</p>
 <hr />
 <h2 id="cli">CLI<a class="headerlink" href="#cli" title="Permanent link">&para;</a></h2>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-16-1" name="__codelineno-16-1" href="#__codelineno-16-1"></a><span class="c1"># Generate one class (base or application)</span>
-<a id="__codelineno-16-2" name="__codelineno-16-2" href="#__codelineno-16-2"></a>pynx<span class="w"> </span>nomad<span class="w"> </span>generate-metainfo<span class="w"> </span>--nxdl<span class="w"> </span>NXentry
-<a id="__codelineno-16-3" name="__codelineno-16-3" href="#__codelineno-16-3"></a>pynx<span class="w"> </span>nomad<span class="w"> </span>generate-metainfo<span class="w"> </span>--nxdl<span class="w"> </span>NXarpes
-<a id="__codelineno-16-4" name="__codelineno-16-4" href="#__codelineno-16-4"></a>
-<a id="__codelineno-16-5" name="__codelineno-16-5" href="#__codelineno-16-5"></a><span class="c1"># Generate all base classes</span>
-<a id="__codelineno-16-6" name="__codelineno-16-6" href="#__codelineno-16-6"></a>pynx<span class="w"> </span>nomad<span class="w"> </span>generate-metainfo<span class="w"> </span>--all-base
-<a id="__codelineno-16-7" name="__codelineno-16-7" href="#__codelineno-16-7"></a>
-<a id="__codelineno-16-8" name="__codelineno-16-8" href="#__codelineno-16-8"></a><span class="c1"># Generate all application definitions</span>
-<a id="__codelineno-16-9" name="__codelineno-16-9" href="#__codelineno-16-9"></a>pynx<span class="w"> </span>nomad<span class="w"> </span>generate-metainfo<span class="w"> </span>--all-applications
-<a id="__codelineno-16-10" name="__codelineno-16-10" href="#__codelineno-16-10"></a>
-<a id="__codelineno-16-11" name="__codelineno-16-11" href="#__codelineno-16-11"></a><span class="c1"># Generate all categories (apps first, then base --force for cross-refs)</span>
-<a id="__codelineno-16-12" name="__codelineno-16-12" href="#__codelineno-16-12"></a>pynx<span class="w"> </span>nomad<span class="w"> </span>generate-metainfo<span class="w"> </span>--all
-<a id="__codelineno-16-13" name="__codelineno-16-13" href="#__codelineno-16-13"></a>
-<a id="__codelineno-16-14" name="__codelineno-16-14" href="#__codelineno-16-14"></a><span class="c1"># CI check: fail if committed files differ from what the generator would produce</span>
-<a id="__codelineno-16-15" name="__codelineno-16-15" href="#__codelineno-16-15"></a>pynx<span class="w"> </span>nomad<span class="w"> </span>generate-metainfo<span class="w"> </span>--all<span class="w"> </span>--dry-run
-<a id="__codelineno-16-16" name="__codelineno-16-16" href="#__codelineno-16-16"></a>
-<a id="__codelineno-16-17" name="__codelineno-16-17" href="#__codelineno-16-17"></a><span class="c1"># Force regeneration (overwrite existing files)</span>
-<a id="__codelineno-16-18" name="__codelineno-16-18" href="#__codelineno-16-18"></a>pynx<span class="w"> </span>nomad<span class="w"> </span>generate-metainfo<span class="w"> </span>--all<span class="w"> </span>--force
-<a id="__codelineno-16-19" name="__codelineno-16-19" href="#__codelineno-16-19"></a>
-<a id="__codelineno-16-20" name="__codelineno-16-20" href="#__codelineno-16-20"></a><span class="c1"># Generate into a different package (e.g. nomad-measurements)</span>
-<a id="__codelineno-16-21" name="__codelineno-16-21" href="#__codelineno-16-21"></a>pynx<span class="w"> </span>nomad<span class="w"> </span>generate-metainfo<span class="w"> </span>--all<span class="w"> </span>--output-dir<span class="w"> </span>../nomad-measurements/nexus/metainfo/base_classes
+<div class="highlight"><pre><span></span><code><a id="__codelineno-18-1" name="__codelineno-18-1" href="#__codelineno-18-1"></a><span class="c1"># Generate one class (base or application)</span>
+<a id="__codelineno-18-2" name="__codelineno-18-2" href="#__codelineno-18-2"></a>pynx<span class="w"> </span>nomad<span class="w"> </span>generate-metainfo<span class="w"> </span>--nxdl<span class="w"> </span>NXentry
+<a id="__codelineno-18-3" name="__codelineno-18-3" href="#__codelineno-18-3"></a>pynx<span class="w"> </span>nomad<span class="w"> </span>generate-metainfo<span class="w"> </span>--nxdl<span class="w"> </span>NXarpes
+<a id="__codelineno-18-4" name="__codelineno-18-4" href="#__codelineno-18-4"></a>
+<a id="__codelineno-18-5" name="__codelineno-18-5" href="#__codelineno-18-5"></a><span class="c1"># Generate all base classes</span>
+<a id="__codelineno-18-6" name="__codelineno-18-6" href="#__codelineno-18-6"></a>pynx<span class="w"> </span>nomad<span class="w"> </span>generate-metainfo<span class="w"> </span>--all-base
+<a id="__codelineno-18-7" name="__codelineno-18-7" href="#__codelineno-18-7"></a>
+<a id="__codelineno-18-8" name="__codelineno-18-8" href="#__codelineno-18-8"></a><span class="c1"># Generate all application definitions</span>
+<a id="__codelineno-18-9" name="__codelineno-18-9" href="#__codelineno-18-9"></a>pynx<span class="w"> </span>nomad<span class="w"> </span>generate-metainfo<span class="w"> </span>--all-applications
+<a id="__codelineno-18-10" name="__codelineno-18-10" href="#__codelineno-18-10"></a>
+<a id="__codelineno-18-11" name="__codelineno-18-11" href="#__codelineno-18-11"></a><span class="c1"># Generate all categories (apps first, then base --force for cross-refs)</span>
+<a id="__codelineno-18-12" name="__codelineno-18-12" href="#__codelineno-18-12"></a>pynx<span class="w"> </span>nomad<span class="w"> </span>generate-metainfo<span class="w"> </span>--all
+<a id="__codelineno-18-13" name="__codelineno-18-13" href="#__codelineno-18-13"></a>
+<a id="__codelineno-18-14" name="__codelineno-18-14" href="#__codelineno-18-14"></a><span class="c1"># CI check: fail if committed files differ from what the generator would produce</span>
+<a id="__codelineno-18-15" name="__codelineno-18-15" href="#__codelineno-18-15"></a>pynx<span class="w"> </span>nomad<span class="w"> </span>generate-metainfo<span class="w"> </span>--all<span class="w"> </span>--dry-run
+<a id="__codelineno-18-16" name="__codelineno-18-16" href="#__codelineno-18-16"></a>
+<a id="__codelineno-18-17" name="__codelineno-18-17" href="#__codelineno-18-17"></a><span class="c1"># Force regeneration (overwrite existing files)</span>
+<a id="__codelineno-18-18" name="__codelineno-18-18" href="#__codelineno-18-18"></a>pynx<span class="w"> </span>nomad<span class="w"> </span>generate-metainfo<span class="w"> </span>--all<span class="w"> </span>--force
+<a id="__codelineno-18-19" name="__codelineno-18-19" href="#__codelineno-18-19"></a>
+<a id="__codelineno-18-20" name="__codelineno-18-20" href="#__codelineno-18-20"></a><span class="c1"># Generate into a different package (e.g. nomad-measurements)</span>
+<a id="__codelineno-18-21" name="__codelineno-18-21" href="#__codelineno-18-21"></a>pynx<span class="w"> </span>nomad<span class="w"> </span>generate-metainfo<span class="w"> </span>--all<span class="w"> </span>--output-dir<span class="w"> </span>../nomad-measurements/nexus/metainfo/base_classes
 </code></pre></div>
 <hr />
 <h2 id="package-assembly">Package assembly<a class="headerlink" href="#package-assembly" title="Permanent link">&para;</a></h2>
 <p><code>metainfo/_package.py</code> imports all generated modules and assembles NOMAD <code>Package</code> objects:</p>
 <h3 id="base-classes-package">Base classes package<a class="headerlink" href="#base-classes-package" title="Permanent link">&para;</a></h3>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-17-1" name="__codelineno-17-1" href="#__codelineno-17-1"></a><span class="kn">from</span><span class="w"> </span><span class="nn">pynxtools.nomad.metainfo</span><span class="w"> </span><span class="kn">import</span> <span class="n">build_base_classes_package</span>
-<a id="__codelineno-17-2" name="__codelineno-17-2" href="#__codelineno-17-2"></a>
-<a id="__codelineno-17-3" name="__codelineno-17-3" href="#__codelineno-17-3"></a><span class="n">pkg_base</span> <span class="o">=</span> <span class="n">build_base_classes_package</span><span class="p">()</span>
-<a id="__codelineno-17-4" name="__codelineno-17-4" href="#__codelineno-17-4"></a><span class="nb">print</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">pkg_base</span><span class="o">.</span><span class="n">section_definitions</span><span class="p">),</span> <span class="s2">"base sections"</span><span class="p">)</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-19-1" name="__codelineno-19-1" href="#__codelineno-19-1"></a><span class="kn">from</span><span class="w"> </span><span class="nn">pynxtools.nomad.metainfo</span><span class="w"> </span><span class="kn">import</span> <span class="n">build_base_classes_package</span>
+<a id="__codelineno-19-2" name="__codelineno-19-2" href="#__codelineno-19-2"></a>
+<a id="__codelineno-19-3" name="__codelineno-19-3" href="#__codelineno-19-3"></a><span class="n">pkg_base</span> <span class="o">=</span> <span class="n">build_base_classes_package</span><span class="p">()</span>
+<a id="__codelineno-19-4" name="__codelineno-19-4" href="#__codelineno-19-4"></a><span class="nb">print</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">pkg_base</span><span class="o">.</span><span class="n">section_definitions</span><span class="p">),</span> <span class="s2">"base sections"</span><span class="p">)</span>
 </code></pre></div>
 <h3 id="applications-package">Applications package<a class="headerlink" href="#applications-package" title="Permanent link">&para;</a></h3>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-18-1" name="__codelineno-18-1" href="#__codelineno-18-1"></a><span class="kn">from</span><span class="w"> </span><span class="nn">pynxtools.nomad.metainfo</span><span class="w"> </span><span class="kn">import</span> <span class="n">build_applications_package</span>
-<a id="__codelineno-18-2" name="__codelineno-18-2" href="#__codelineno-18-2"></a>
-<a id="__codelineno-18-3" name="__codelineno-18-3" href="#__codelineno-18-3"></a><span class="n">pkg_apps</span> <span class="o">=</span> <span class="n">build_applications_package</span><span class="p">()</span>
-<a id="__codelineno-18-4" name="__codelineno-18-4" href="#__codelineno-18-4"></a><span class="nb">print</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">pkg_apps</span><span class="o">.</span><span class="n">section_definitions</span><span class="p">),</span> <span class="s2">"application sections"</span><span class="p">)</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-20-1" name="__codelineno-20-1" href="#__codelineno-20-1"></a><span class="kn">from</span><span class="w"> </span><span class="nn">pynxtools.nomad.metainfo</span><span class="w"> </span><span class="kn">import</span> <span class="n">build_applications_package</span>
+<a id="__codelineno-20-2" name="__codelineno-20-2" href="#__codelineno-20-2"></a>
+<a id="__codelineno-20-3" name="__codelineno-20-3" href="#__codelineno-20-3"></a><span class="n">pkg_apps</span> <span class="o">=</span> <span class="n">build_applications_package</span><span class="p">()</span>
+<a id="__codelineno-20-4" name="__codelineno-20-4" href="#__codelineno-20-4"></a><span class="nb">print</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">pkg_apps</span><span class="o">.</span><span class="n">section_definitions</span><span class="p">),</span> <span class="s2">"application sections"</span><span class="p">)</span>
 </code></pre></div>
 <p>During package assembly, <code>__init_metainfo__()</code> resolves all <code>SubSection.section_def</code>
 string fully qualified names (FQNs) into live class references.</p>
@@ -2866,11 +2913,11 @@ string fully qualified names (FQNs) into live class references.</p>
 <p>Every generated class extends its <strong>NeXus parent</strong> class (the Python class generated from
 the NXDL <code>extends</code> attribute) and — where a semantic match exists — additionally inherits
 from the corresponding NOMAD base section:</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-19-1" name="__codelineno-19-1" href="#__codelineno-19-1"></a><span class="k">class</span><span class="w"> </span><span class="nc">Object</span><span class="p">(</span><span class="n">BaseSection</span><span class="p">):</span> <span class="o">...</span>            <span class="c1"># NXobject → root</span>
-<a id="__codelineno-19-2" name="__codelineno-19-2" href="#__codelineno-19-2"></a><span class="k">class</span><span class="w"> </span><span class="nc">Entry</span><span class="p">(</span><span class="n">Object</span><span class="p">,</span> <span class="n">basesections</span><span class="o">.</span><span class="n">Measurement</span><span class="p">):</span> <span class="o">...</span>
-<a id="__codelineno-19-3" name="__codelineno-19-3" href="#__codelineno-19-3"></a><span class="k">class</span><span class="w"> </span><span class="nc">Sample</span><span class="p">(</span><span class="n">Component</span><span class="p">,</span> <span class="n">basesections</span><span class="o">.</span><span class="n">CompositeSystem</span><span class="p">):</span> <span class="o">...</span>
-<a id="__codelineno-19-4" name="__codelineno-19-4" href="#__codelineno-19-4"></a><span class="k">class</span><span class="w"> </span><span class="nc">SampleComponent</span><span class="p">(</span><span class="n">Component</span><span class="p">,</span> <span class="n">basesections</span><span class="o">.</span><span class="n">Component</span><span class="p">):</span> <span class="o">...</span>
-<a id="__codelineno-19-5" name="__codelineno-19-5" href="#__codelineno-19-5"></a><span class="o">...</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-21-1" name="__codelineno-21-1" href="#__codelineno-21-1"></a><span class="k">class</span><span class="w"> </span><span class="nc">Object</span><span class="p">(</span><span class="n">BaseSection</span><span class="p">):</span> <span class="o">...</span>            <span class="c1"># NXobject → root</span>
+<a id="__codelineno-21-2" name="__codelineno-21-2" href="#__codelineno-21-2"></a><span class="k">class</span><span class="w"> </span><span class="nc">Entry</span><span class="p">(</span><span class="n">Object</span><span class="p">,</span> <span class="n">basesections</span><span class="o">.</span><span class="n">Measurement</span><span class="p">):</span> <span class="o">...</span>
+<a id="__codelineno-21-3" name="__codelineno-21-3" href="#__codelineno-21-3"></a><span class="k">class</span><span class="w"> </span><span class="nc">Sample</span><span class="p">(</span><span class="n">Component</span><span class="p">,</span> <span class="n">basesections</span><span class="o">.</span><span class="n">CompositeSystem</span><span class="p">):</span> <span class="o">...</span>
+<a id="__codelineno-21-4" name="__codelineno-21-4" href="#__codelineno-21-4"></a><span class="k">class</span><span class="w"> </span><span class="nc">SampleComponent</span><span class="p">(</span><span class="n">Component</span><span class="p">,</span> <span class="n">basesections</span><span class="o">.</span><span class="n">Component</span><span class="p">):</span> <span class="o">...</span>
+<a id="__codelineno-21-5" name="__codelineno-21-5" href="#__codelineno-21-5"></a><span class="o">...</span>
 </code></pre></div>
 <p>The NOMAD base section is imported <strong>as the module</strong> (<code>from nomad.datamodel.metainfo import
 basesections</code>) and used as <code>basesections.Measurement</code> in the class signature. This avoids
@@ -3040,14 +3087,14 @@ renamed. The suffix is local to the named concept and does not propagate.</p>
 <h3 id="field-attribute-quantities">Field-attribute quantities<a class="headerlink" href="#field-attribute-quantities" title="Permanent link">&para;</a></h3>
 <p>Attributes that belong to a specific field (e.g. the <code>units</code> attribute of <code>data</code>) are
 emitted as quantities with a double-underscore-separated name:</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-20-1" name="__codelineno-20-1" href="#__codelineno-20-1"></a><span class="n">data__units</span> <span class="o">=</span> <span class="n">Quantity</span><span class="p">(</span>
-<a id="__codelineno-20-2" name="__codelineno-20-2" href="#__codelineno-20-2"></a>    <span class="o">...</span><span class="p">,</span>
-<a id="__codelineno-20-3" name="__codelineno-20-3" href="#__codelineno-20-3"></a>    <span class="n">a_nexus_attribute</span><span class="o">=</span><span class="n">NeXusAttribute</span><span class="p">(</span>
-<a id="__codelineno-20-4" name="__codelineno-20-4" href="#__codelineno-20-4"></a>        <span class="n">name</span><span class="o">=</span><span class="s2">"units"</span><span class="p">,</span>
-<a id="__codelineno-20-5" name="__codelineno-20-5" href="#__codelineno-20-5"></a>        <span class="n">parent_field</span><span class="o">=</span><span class="s2">"data"</span><span class="p">,</span>
-<a id="__codelineno-20-6" name="__codelineno-20-6" href="#__codelineno-20-6"></a>        <span class="o">...</span>
-<a id="__codelineno-20-7" name="__codelineno-20-7" href="#__codelineno-20-7"></a>    <span class="p">),</span>
-<a id="__codelineno-20-8" name="__codelineno-20-8" href="#__codelineno-20-8"></a><span class="p">)</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-22-1" name="__codelineno-22-1" href="#__codelineno-22-1"></a><span class="n">data__units</span> <span class="o">=</span> <span class="n">Quantity</span><span class="p">(</span>
+<a id="__codelineno-22-2" name="__codelineno-22-2" href="#__codelineno-22-2"></a>    <span class="o">...</span><span class="p">,</span>
+<a id="__codelineno-22-3" name="__codelineno-22-3" href="#__codelineno-22-3"></a>    <span class="n">a_nexus_attribute</span><span class="o">=</span><span class="n">NeXusAttribute</span><span class="p">(</span>
+<a id="__codelineno-22-4" name="__codelineno-22-4" href="#__codelineno-22-4"></a>        <span class="n">name</span><span class="o">=</span><span class="s2">"units"</span><span class="p">,</span>
+<a id="__codelineno-22-5" name="__codelineno-22-5" href="#__codelineno-22-5"></a>        <span class="n">parent_field</span><span class="o">=</span><span class="s2">"data"</span><span class="p">,</span>
+<a id="__codelineno-22-6" name="__codelineno-22-6" href="#__codelineno-22-6"></a>        <span class="o">...</span>
+<a id="__codelineno-22-7" name="__codelineno-22-7" href="#__codelineno-22-7"></a>    <span class="p">),</span>
+<a id="__codelineno-22-8" name="__codelineno-22-8" href="#__codelineno-22-8"></a><span class="p">)</span>
 </code></pre></div>
 <hr />
 <h2 id="relation-to-existing-schema">Relation to existing schema<a class="headerlink" href="#relation-to-existing-schema" title="Permanent link">&para;</a></h2>
