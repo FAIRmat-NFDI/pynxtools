@@ -206,8 +206,9 @@ def ensure_ontology_initialization(ontology_imports: list[str] | None = None) ->
     import logging
     import time
 
+    import owlready2
     import pygit2
-    from owlready2 import get_ontology, sync_reasoner
+    from owlready2 import sync_reasoner
 
     from pynxtools.NeXusOntology.script.generate_ontology import (
         main as generate_ontology,
@@ -262,6 +263,11 @@ def ensure_ontology_initialization(ontology_imports: list[str] | None = None) ->
                     return
                 raise
 
+            # Use a fresh World so generation can't collide with IRIs already
+            # in the shared default_world; get_ontology must be swapped directly.
+            fresh_world = owlready2.World()
+            previous_get_ontology = owlready2.get_ontology
+            owlready2.get_ontology = fresh_world.get_ontology
             try:
                 # Generate ontology with proper parameters
                 generate_ontology(
@@ -276,11 +282,12 @@ def ensure_ontology_initialization(ontology_imports: list[str] | None = None) ->
 
                 # Run reasoner and save inferred version
                 if full_owl_file_path.is_file():
-                    ontology = get_ontology(str(full_owl_file_path)).load()
+                    ontology = fresh_world.get_ontology(str(full_owl_file_path)).load()
                     sync_reasoner(ontology)
                     ontology.save(file=str(inferred_owl_file_path), format="rdfxml")
                     full_owl_file_path.unlink()  # Remove non-inferred version
             finally:
+                owlready2.get_ontology = previous_get_ontology
                 lock_file.unlink(missing_ok=True)
 
         logger.debug(f"Ontology file ready at {inferred_owl_file_path}")
