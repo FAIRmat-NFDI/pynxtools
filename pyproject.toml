@@ -67,6 +67,7 @@ dependencies = [
     "cachetools",
     "structlog",
     "Jinja2",
+    "pygit2", # transitive from NeXusOntology submodule
     "pillow>=9", # TIFF tags in FileProbe; also comes in through ase -> matplotlib
 ]
 
@@ -156,6 +157,7 @@ validate_nexus = "pynxtools.dataconverter.cli:validate"
 
 [tool.setuptools.package-data]
 pynxtools = ["definitions/**/*.xml", "definitions/**/*.xsd"]
+"pynxtools.NeXusOntology.script" = ["*.py"]
 
 [tool.setuptools.packages.find]
 where = [
@@ -171,6 +173,7 @@ local_scheme = "node-and-date"
 include = ["src/**/*.py", "tests/**/*.py"]
 exclude = [
     "src/pynxtools/definitions",
+    "src/pynxtools/NeXusOntology",
 ]
 line-length = 88
 indent-width = 4
@@ -227,7 +230,7 @@ ignore_missing_imports = true
 follow_imports = "silent"
 no_strict_optional = true
 disable_error_code = "import, import-untyped, annotation-unchecked"
-exclude = ["src/pynxtools/definitions/*"]
+exclude = ["src/pynxtools/definitions/*", "src/pynxtools/NeXusOntology/*"]
 
 [tool.uv]
 extra-index-url = [
