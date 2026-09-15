@@ -61,7 +61,18 @@ import click
     "--force",
     is_flag=True,
     default=False,
-    help="Overwrite existing files even if no new members were added.",
+    help="Overwrite existing files, ignoring all hand-written content.",
+)
+@click.option(
+    "--fix",
+    "fix",
+    is_flag=True,
+    default=False,
+    help=(
+        "Fix wrong generator output: also drop now-obsolete generated members from "
+        "accepted NIAC standards (base_classes/applications), not only from contributed "
+        "definitions. Hand-modified and hand-added content is still preserved."
+    ),
 )
 @click.option(
     "--output-dir",
@@ -83,6 +94,7 @@ def generate_metainfo(
     generate_all_applications: bool,
     dry_run: bool,
     force: bool,
+    fix: bool,
     output_dir: Path | None,
 ) -> None:
     """Generate Python NOMAD metainfo classes from NXDL definitions.
@@ -94,8 +106,9 @@ def generate_metainfo(
       pynx nomad generate-metainfo --nxdl NXdetector
       pynx nomad generate-metainfo --all-base
       pynx nomad generate-metainfo --all-applications
-      pynx nomad generate-metainfo --all           # apps first, then base (additive-only unless --force)
+      pynx nomad generate-metainfo --all            # apps first, then base classes
       pynx nomad generate-metainfo --all --dry-run  # CI check
+      pynx nomad generate-metainfo --all --fix      # also drop obsolete accepted-tier members
       pynx nomad generate-metainfo --all \\
           --output-dir ../nomad-measurements/src/nomad_measurements/nexus/metainfo
     """
@@ -130,7 +143,11 @@ def generate_metainfo(
     if nx_class:
         try:
             changed = write_class(
-                nx_class, dry_run=dry_run, force=force, output_dir=output_dir
+                nx_class,
+                dry_run=dry_run,
+                force=force,
+                output_dir=output_dir,
+                fix=fix,
             )
         except Exception as exc:
             raise click.ClickException(str(exc)) from exc
@@ -146,16 +163,26 @@ def generate_metainfo(
     elif generate_all_base:
         _report(
             generate_all_base_classes(
-                dry_run=dry_run, force=force, output_dir=output_dir
+                dry_run=dry_run,
+                force=force,
+                output_dir=output_dir,
+                fix=fix,
             )
         )
 
     elif generate_all_applications:
-        _report(_gen_apps(dry_run=dry_run, force=force, output_dir=output_dir))
+        _report(
+            _gen_apps(
+                dry_run=dry_run,
+                force=force,
+                output_dir=output_dir,
+                fix=fix,
+            )
+        )
 
     else:  # --all: applications first, then base classes.
-        n = _gen_apps(dry_run=dry_run, force=force, output_dir=output_dir)
+        n = _gen_apps(dry_run=dry_run, force=force, output_dir=output_dir, fix=fix)
         n += generate_all_base_classes(
-            dry_run=dry_run, force=force, output_dir=output_dir
+            dry_run=dry_run, force=force, output_dir=output_dir, fix=fix
         )
         _report(n)

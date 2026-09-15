@@ -592,21 +592,76 @@ in the schema.  Restricting statistics to data arrays keeps the generated schema
 
 ---
 
-## Additive-only generation
+## Provenance-tracked regeneration
 
-The generator never removes hand-written additions. When a file already exists:
+Generated files may carry hand-written content: a custom `normalize()`, an added quantity, an extra import. Regeneration must refresh the generated parts without destroying those hand edits. It does this with a sidecar manifest, `generated_manifest.json`, written next to the generated package (alongside `base_classes/` and `applications/`).
 
-- If `force=False` (default): the file is rewritten whenever the generated source differs
-  from the existing file **and** the existing file contains no user-added members (methods
-  or quantities not present in the new output). This means generator-driven changes
-  (descriptions, annotation values, new members) propagate automatically, while files with
-  custom `normalize()` logic are protected.
-- If `force=True`: the file is always overwritten.
-- In `dry_run` mode: returns `True` if the file would differ; no disk write occurs.
+### The manifest
 
-User-added members are detected by comparing the set of names in the existing file against
-the set the generator would produce. Any name present in the existing file but absent from
-the new output is considered user-added.
+For each generated module and class, the manifest records the members and imports
+the **generator creates** and a content fingerprint of each. It is written and
+refreshed automatically on every regeneration and **must never be hand-edited** — keep editing the NXDL or the generated `.py` file exactly as before.
+
+The fingerprint ignores pure formatting (indentation, line wrapping), so a
+`ruff`-only reshaping of an otherwise-unchanged member does not read as a change.
+
+### How a member is classified on regeneration
+
+Using the manifest from the previous run, each member in the existing file falls
+into one of three cases:
+
+| Case | Detection | Result |
+|---|---|---|
+| Untouched generated | generator-owned, fingerprint unchanged | replaced by the fresh template (or dropped if the template no longer emits it — see tiers) |
+| Hand-modified generated | generator-owned, fingerprint changed | **preserved** (manual version kept) |
+| Hand-added | not in the manifest | **preserved** |
+
+Imports are handled the same way: a hand-added import (not generator-owned) is
+preserved; the generated import set is refreshed.
+
+### Tier policy for obsolete members
+
+An *obsolete* member is one the generator used to emit but the current template no
+longer does (e.g. after a generator bug fix, or a member now inherited from a parent class). Whether it is dropped depends on the definition's source tier:
+
+- **`contributed_definitions/`** (volatile): obsolete generated members are always
+  dropped.
+- **accepted NIAC `base_classes/` + `applications/`** (stable standards): add-only
+  by default — a routine regeneration never removes an existing generated member,
+  so a definitions bump does not churn or shrink the stable schema.
+
+Pass **`--fix`** to lift the accepted-tier protection for a *generator-fix* pass:
+obsolete generated members are then dropped across all tiers. Hand-modified and
+hand-added content is preserved regardless of `--fix`.
+
+### Seeding the manifest (one-time bootstrap)
+
+The manifest records information the `.py` files do not have: which members the
+generator owns. A generated `Quantity(...)` and a hand-added one look identical in
+the file, so this must be written down separately, and written down once.
+
+It is seeded **explicitly** by calling `bootstrap_manifest()` once on an already-generated tree — it records `generated_manifest.json` from the
+generator's current output and touches no `.py` file:
+
+```python
+from pynxtools.nomad.converters.nxdl_to_metainfo import bootstrap_manifest
+bootstrap_manifest()  # writes generated_manifest.json; commit it
+```
+
+This is deterministic: the owned set is exactly what the generator produces. A
+hand-added member is absent from that output, so it is simply not recorded as
+owned and is preserved on later runs; a hand-modified generated member is recorded
+with its *generated* fingerprint, so a later run sees the on-disk body differ and
+preserves it. It assumes the committed `.py` content matches current generator
+output (regenerate first if unsure).
+
+There is no auto-bootstrap: until the manifest exists, a regeneration cannot tell a generated member from a hand edit, so it leaves existing files untouched rather than guess. Once the manifest is committed, every ordinary `generate-metainfo` run maintains it automatically.
+
+### `--force` and `--dry-run`
+
+- `--force` overwrites files completely, ignoring the manifest and **all** hand
+  content. Use only to rebuild from scratch; it will delete hand edits.
+- `--dry-run` reports whether files would change and writes nothing.
 
 ---
 
@@ -623,13 +678,17 @@ pynx nomad generate-metainfo --all-base
 # Generate all application definitions
 pynx nomad generate-metainfo --all-applications
 
-# Generate all categories (apps first, then base --force for cross-refs)
+# Generate all categories (applications first, then base classes)
 pynx nomad generate-metainfo --all
 
 # CI check: fail if committed files differ from what the generator would produce
 pynx nomad generate-metainfo --all --dry-run
 
-# Force regeneration (overwrite existing files)
+# Generator-fix pass: also drop now-obsolete generated members from the accepted
+# NIAC standards, not just contributed definitions (hand edits still preserved)
+pynx nomad generate-metainfo --all --fix
+
+# Rebuild from scratch, discarding ALL hand edits (rarely needed)
 pynx nomad generate-metainfo --all --force
 
 # Generate into a different package (e.g. nomad-measurements)

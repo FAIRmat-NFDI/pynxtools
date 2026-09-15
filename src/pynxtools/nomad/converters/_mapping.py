@@ -1,8 +1,8 @@
-# SPDX-FileCopyrightText: The NOMAD Authors
+# SPDX-FileCopyrightText: The pynxtools Authors
+#
+# This file is part of pynxtools.
 #
 # SPDX-License-Identifier: Apache-2.0
-#
-# This file is part of NOMAD. See https://nomad-lab.eu for further info.
 # Full license text: LICENSES/Apache-2.0.txt. See docs/learn/pynxtools/licensing.md
 # for why this package mixes Apache-2.0 and LGPL-3.0-or-later licensed files.
 """

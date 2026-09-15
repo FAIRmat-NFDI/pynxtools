@@ -17,9 +17,10 @@
 #
 # This file is AUTO-GENERATED from the NeXus definitions (NXDL).
 # Run `pynx nomad generate-metainfo --nxdl NXmatch_filter` to regenerate.
-# Additive-only: the generator will not remove or rename existing class members
-# (unless the `--force` flag is used).
-# Add normalize() logic directly; it will be preserved on regeneration.
+# Hand edits are preserved across regeneration via the sidecar
+# generated_manifest.json (add normalize() logic or helper quantities directly).
+# See docs/learn/pynxtools/nexus-metainfo-generation.md (Provenance-tracked
+# regeneration). `--force` overwrites and discards hand edits.
 #
 # NOTE: This class is generated from a community-contributed NXDL definition.
 # The NXDL source may change across versions. Regenerate after updating definitions.
