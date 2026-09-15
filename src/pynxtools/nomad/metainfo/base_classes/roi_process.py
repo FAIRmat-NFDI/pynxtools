@@ -16,9 +16,8 @@
 #
 # This file is AUTO-GENERATED from the NeXus definitions (NXDL).
 # Run `pynx nomad generate-metainfo --nxdl NXroi_process` to regenerate.
-# Additive-only: the generator will not remove or rename existing class members
-# (unless the `--force` flag is used).
-# Add normalize() logic directly; it will be preserved on regeneration.
+# Hand edits are preserved across regeneration via the sidecar
+# generated_manifest.json.
 from __future__ import annotations
 
 from typing import TYPE_CHECKING

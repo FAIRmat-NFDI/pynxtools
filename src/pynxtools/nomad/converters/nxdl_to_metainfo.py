@@ -1,8 +1,8 @@
-# SPDX-FileCopyrightText: The NOMAD Authors
+# SPDX-FileCopyrightText: The pynxtools Authors
+#
+# This file is part of pynxtools.
 #
 # SPDX-License-Identifier: Apache-2.0
-#
-# This file is part of NOMAD. See https://nomad-lab.eu for further info.
 # Full license text: LICENSES/Apache-2.0.txt. See docs/learn/pynxtools/licensing.md
 # for why this package mixes Apache-2.0 and LGPL-3.0-or-later licensed files.
 """
@@ -25,6 +25,8 @@ generate_all_base_classes()     : write all base class .py files
 from __future__ import annotations
 
 import ast
+import hashlib
+import json
 import re
 import subprocess
 import textwrap
@@ -65,6 +67,12 @@ _METAINFO_PACKAGE_ROOT = "pynxtools.nomad.metainfo"
 # Indentation of description= string continuations in generated files.
 # Must match the Quantity/SubSection argument indent in nexus.py.j2.
 _DESCRIPTION_INDENT = 12
+
+# Sidecar manifest recording, per generated module and class, the members the
+# generator owns and a fingerprint of each. Lets regeneration tell an untouched
+# generated member from a hand-modified or hand-added one, so hand edits survive a
+# fix pass. Written and refreshed automatically; never hand-maintained.
+_MANIFEST_NAME = "generated_manifest.json"
 
 # Numeric generated python_types whose array-valued fields are deferred as an
 # HDF5Reference.
@@ -327,6 +335,20 @@ def _nxdl_category(nx_class: str) -> str:
 
     _NXDL_CATEGORY_CACHE[nx_class] = result
     return result
+
+
+def _nxdl_source_tier(nx_class: str) -> str:
+    """Return the stability tier of an NXDL class from its source location.
+
+    ``"contributed"`` for definitions under ``contributed_definitions/`` ,
+    ``"accepted"`` for the  NIAC ``base_classes/`` and ``applications/`` standards.
+    Falls back to ``"contributed"`` when the source path cannot be resolved.
+    """
+    try:
+        _, path = get_nxdl_root_and_path(nx_class)
+    except Exception:
+        return "contributed"
+    return "contributed" if "/contributed_definitions/" in str(path) else "accepted"
 
 
 def _target_module_exists(nx_class: str) -> bool:
@@ -2009,8 +2031,146 @@ def render(context: dict, out_path: Path | None = None) -> str:
 
 
 # ---------------------------------------------------------------------------
-# Additive-only write
+# Provenance-tracked write
 # ---------------------------------------------------------------------------
+#
+# A sidecar manifest records, per generated module and class, the set of members
+# the generator owns and a fingerprint of each. It lets regeneration tell three
+# things apart without any developer bookkeeping:
+#   1. untouched generated member  -> defined by the fresh template.
+#   2. hand-modified generated member (owned, fingerprint changed) -> preserved.
+#   3. hand-added member (not owned) -> preserved.
+# The manifest is written and refreshed by the generator on every write; it is
+# never hand-maintained.
+
+
+def _member_fingerprint(text: str) -> str:
+    """Return a stable fingerprint of a member's source, ignoring formatting.
+
+    Whitespace between tokens (indentation, line wrapping, blank lines) is
+    normalized away so a pure reformatting (e.g., with ruff) of an
+    otherwise-unchanged generated member is not identified as a hand modification.
+    """
+    normalized = " ".join(text.split())
+    return hashlib.sha1(normalized.encode("utf-8")).hexdigest()
+
+
+def _member_line_ranges(source: str) -> dict[str, dict[str, tuple[int, int]]]:
+    """Return ``{class_name: {member_name: (start_line, end_line)}}``, covering
+    each class member (Quantity/SubSection assignment or method) including any
+    decorator lines and contiguous comment lines directly above it, for
+    line-accurate splicing.
+
+    The leading-comment extension keeps a hand-added member's explanatory comment
+    attached to it when preserved. Generated members carry no such comments, so
+    their ranges (and fingerprints) are unaffected.
+    """
+    try:
+        tree = ast.parse(source)
+    except SyntaxError:
+        return {}
+    src_lines = source.splitlines()
+    out: dict[str, dict[str, tuple[int, int]]] = {}
+    for node in ast.walk(tree):
+        if not isinstance(node, ast.ClassDef):
+            continue
+        members: dict[str, tuple[int, int]] = {}
+        for child in node.body:
+            name: str | None = None
+            if isinstance(child, ast.Assign):
+                for target in child.targets:
+                    if isinstance(target, ast.Name):
+                        name = target.id
+            elif isinstance(child, (ast.FunctionDef, ast.AsyncFunctionDef)):
+                name = child.name
+            if name is None:
+                continue
+            start = child.lineno
+            for dec in getattr(child, "decorator_list", []):
+                start = min(start, dec.lineno)
+            # Absorb comment lines directly above (stop at a blank or code line).
+            above = start - 2  # 0-based index of the line just above `start`
+            while above >= 0 and src_lines[above].lstrip().startswith("#"):
+                start = above + 1
+                above -= 1
+            members[name] = (start, child.end_lineno or child.lineno)
+        out[node.name] = members
+    return out
+
+
+def _member_texts_by_class(source: str) -> dict[str, dict[str, str]]:
+    """Return ``{class_name: {member_name: raw_source_lines}}`` using full,
+    indentation-preserving line slices."""
+    lines = source.splitlines(keepends=True)
+    ranges = _member_line_ranges(source)
+    return {
+        cls: {m: "".join(lines[s - 1 : e]) for m, (s, e) in members.items()}
+        for cls, members in ranges.items()
+    }
+
+
+def _class_fingerprints(source: str) -> dict[str, dict[str, str]]:
+    """Return ``{class_name: {member_name: fingerprint}}`` for a generated file —
+    the generator-owned member set recorded in the manifest."""
+    return {
+        cls: {m: _member_fingerprint(text) for m, text in members.items()}
+        for cls, members in _member_texts_by_class(source).items()
+    }
+
+
+def _module_import_texts(source: str) -> dict[str, str]:
+    """Return ``{fingerprint: raw_text}`` for every top-level import statement."""
+    try:
+        tree = ast.parse(source)
+    except SyntaxError:
+        return {}
+    lines = source.splitlines(keepends=True)
+    out: dict[str, str] = {}
+    for node in tree.body:
+        if isinstance(node, (ast.Import, ast.ImportFrom)):
+            text = "".join(lines[node.lineno - 1 : node.end_lineno or node.lineno])
+            out[_member_fingerprint(text)] = text
+    return out
+
+
+def _last_toplevel_import_line(source: str) -> int:
+    """Return the line of the last top-level import, or 0 if none."""
+    try:
+        tree = ast.parse(source)
+    except SyntaxError:
+        return 0
+    last = 0
+    for node in tree.body:
+        if isinstance(node, (ast.Import, ast.ImportFrom)):
+            last = max(last, node.end_lineno or node.lineno)
+    return last
+
+
+def _class_body_end_lines(source: str) -> dict[str, int]:
+    """Return ``{class_name: last_body_line}`` (1-based) — the last line of each
+    class body, used as the insertion point for preserved hand-added members."""
+    try:
+        tree = ast.parse(source)
+    except SyntaxError:
+        return {}
+    out: dict[str, int] = {}
+    for node in ast.walk(tree):
+        if isinstance(node, ast.ClassDef) and node.body:
+            out[node.name] = max((stmt.end_lineno or stmt.lineno) for stmt in node.body)
+    return out
+
+
+def _manifest_key(is_application: bool, module_name: str) -> str:
+    """Manifest key for a module: ``"<subfolder>/<module>"`` (stable, path-like)."""
+    subfolder = "applications" if is_application else "base_classes"
+    return f"{subfolder}/{module_name}"
+
+
+def _load_manifest(manifest_path: Path) -> dict:
+    try:
+        return json.loads(manifest_path.read_text(encoding="utf-8"))
+    except (FileNotFoundError, json.JSONDecodeError):
+        return {}
 
 
 def _class_member_sources(source: str) -> dict[str, str]:
@@ -2044,20 +2204,187 @@ def _class_member_sources(source: str) -> dict[str, str]:
     return members
 
 
+def _class_last_assignment_end_lines(source: str) -> dict[str, int]:
+    """Return ``{class_name: last_line}`` (1-based) of the last assignment member
+    (Quantity/SubSection) in each class — i.e. the end of the quantity block,
+    before any methods. Used to keep hand-added quantities grouped with the
+    generated ones rather than appended after ``normalize()``."""
+    try:
+        tree = ast.parse(source)
+    except SyntaxError:
+        return {}
+    out: dict[str, int] = {}
+    for node in ast.walk(tree):
+        if not isinstance(node, ast.ClassDef):
+            continue
+        ends = [
+            (c.end_lineno or c.lineno) for c in node.body if isinstance(c, ast.Assign)
+        ]
+        if ends:
+            out[node.name] = max(ends)
+    return out
+
+
+def _splice_preserved(
+    new_source: str,
+    preserved_imports: list[str],
+    replace: dict[str, dict[str, str]],
+    append: dict[str, dict[str, str]],
+) -> str:
+    """Splice preserved hand content into freshly generated source.
+
+    ``replace`` swaps a generated member with its hand-modified version (member
+    still emitted by the template); ``append`` adds a hand-only member to a class;
+    ``preserved_imports`` are hand-added import statements. Edits are applied by
+    line range in reverse order so earlier offsets stay valid.
+
+    Hand-added members are inserted after the class's last generated quantity
+    (before any methods), so they stay grouped with the other quantities rather
+    than trailing after ``normalize()``.
+    """
+    lines = new_source.splitlines(keepends=True)
+    ranges = _member_line_ranges(new_source)
+    body_end = _class_body_end_lines(new_source)
+    last_assign = _class_last_assignment_end_lines(new_source)
+
+    def _nl(text: str) -> str:
+        return text if text.endswith("\n") else text + "\n"
+
+    edits: list[tuple[int, int, str]] = []  # (start_idx, end_idx, text)
+
+    for cls, members in replace.items():
+        class_ranges = ranges.get(cls, {})
+        for name, text in members.items():
+            if name not in class_ranges:
+                continue
+            start, end = class_ranges[name]
+            edits.append((start - 1, end, _nl(text)))
+
+    for cls, members in append.items():
+        insert_at = last_assign.get(cls) or body_end.get(cls, len(lines))
+        blob = "".join("\n" + _nl(t) for t in members.values())
+        edits.append((insert_at, insert_at, blob))
+
+    if preserved_imports:
+        insert_at = _last_toplevel_import_line(new_source)
+        blob = "".join(_nl(t) for t in preserved_imports)
+        edits.append((insert_at, insert_at, blob))
+
+    for start_idx, end_idx, text in sorted(edits, key=lambda e: e[:2], reverse=True):
+        lines[start_idx:end_idx] = [text]
+    return "".join(lines)
+
+
+def _merge_with_provenance(
+    existing_source: str,
+    new_source: str,
+    manifest_entry: dict,
+    tier: str,
+    fix: bool,
+) -> tuple[str, dict, dict]:
+    """Merge freshly generated source with an existing file using the manifest.
+
+    Classifies every existing member and import against the generator-owned set
+    recorded in ``manifest_entry``:
+
+    - owned + fingerprint unchanged  -> generated; the fresh template defines it
+      (removed if the template no longer emits it, unless the tier is accepted and
+      this is not a fix pass).
+    - owned + fingerprint changed    -> hand-modified generated member; preserved.
+    - not owned                      -> hand-added member/import; preserved.
+
+    Returns ``(merged_source, new_manifest_entry, report)``. ``new_manifest_entry``
+    records what the generator owns *this* run (the fresh template's members and
+    imports), regardless of which version ended up in the merged output.
+
+    ``manifest_entry`` must be the provenance recorded for this module by a prior
+    generation or by ``bootstrap_manifest``. An empty entry is treated
+    conservatively — nothing is owned, so every existing member/import is kept and
+    none is removed — because without provenance the generator cannot tell a
+    generated member from a hand edit. Callers seed provenance explicitly with
+    ``bootstrap_manifest`` (run once by hand); they do not rely on this fallback
+    for correctness.
+    """
+    existing_members = _member_texts_by_class(existing_source)
+    new_ranges = _member_line_ranges(new_source)
+
+    owned_classes: dict = manifest_entry.get("classes", {})
+    owned_imports: set = set(manifest_entry.get("imports", []))
+
+    replace: dict[str, dict[str, str]] = {}
+    append: dict[str, dict[str, str]] = {}
+    report: dict[str, list[str]] = {
+        "preserved_modified": [],
+        "preserved_added": [],
+        "removed": [],
+        "preserved_imports": [],
+    }
+
+    for cls, members in existing_members.items():
+        owned = owned_classes.get(cls, {})
+        new_members = new_ranges.get(cls, {})
+        for name, text in members.items():
+            fingerprint = _member_fingerprint(text)
+            hand = (name not in owned) or (owned.get(name) != fingerprint)
+            if not hand:
+                if name not in new_members:
+                    if tier == "accepted" and not fix:
+                        append.setdefault(cls, {})[name] = text
+                    else:
+                        report["removed"].append(f"{cls}.{name}")
+                continue
+            if name in new_members:
+                replace.setdefault(cls, {})[name] = text
+                report["preserved_modified"].append(f"{cls}.{name}")
+            else:
+                append.setdefault(cls, {})[name] = text
+                report["preserved_added"].append(f"{cls}.{name}")
+
+    new_import_fps = set(_module_import_texts(new_source).keys())
+    preserved_imports: list[str] = []
+    for fingerprint, text in _module_import_texts(existing_source).items():
+        if fingerprint in new_import_fps:
+            continue
+        owned = fingerprint in owned_imports
+        if owned and not (tier == "accepted" and not fix):
+            continue  # generator dropped an owned import -> remove it
+        preserved_imports.append(text)
+        report["preserved_imports"].append(text.strip())
+
+    merged = _splice_preserved(new_source, preserved_imports, replace, append)
+    new_entry = {
+        "classes": _class_fingerprints(new_source),
+        "imports": sorted(new_import_fps),
+    }
+    return merged, new_entry, report
+
+
 def write_class(
     nx_name: str,
     dry_run: bool = False,
     force: bool = False,
     output_dir: Path | None = None,
+    fix: bool = False,
+    manifest: dict | None = None,
+    reports: list | None = None,
 ) -> bool:
     """Generate and write the Python file for any NXDL class (base or application).
 
     Returns True if the file content changed (or was created), False if unchanged.
     In dry_run mode: returns True if the file would differ, raises nothing.
 
-    Without ``force``, a file is left untouched if it has a member the fresh
-    template doesn't, or a shared member (e.g. ``normalize()``) whose content
-    was hand-edited to differ from the template's own version.
+    Regeneration is provenance-tracked (see the sidecar ``generated_manifest.json``):
+    generated members and imports are refreshed from the template, while
+    hand-modified generated members and hand-added members/imports are preserved.
+    ``fix=True`` lets a generator-fix pass also drop now-obsolete generated
+    members from accepted NIAC standards (base_classes/applications); without it,
+    those tiers are add-only and only contributed definitions drop members. ``force``
+    overwrites wholesale, ignoring all hand content.
+
+    ``manifest`` may be a shared dict (batch mode) that the caller loads once and
+    saves after all files; when omitted, the manifest is loaded and saved per call.
+    ``reports`` collects ``(nx_name, report)`` for files with preserved/removed
+    hand content.
 
     output_dir should be the parent of base_classes/ and applications/ — the generator
     appends the correct subfolder automatically. Defaults to the pynxtools-internal
@@ -2067,48 +2394,56 @@ def write_class(
     module_name = _class_module_name(nx_name)
     is_application = _nxdl_category(nx_name) == "applications"
     subfolder = "applications" if is_application else "base_classes"
-    if output_dir is not None:
-        dest = output_dir / subfolder
-    elif is_application:
-        dest = _DEFAULT_APPLICATIONS_OUTPUT_DIR
-    else:
-        dest = _DEFAULT_BASE_OUTPUT_DIR
+    manifest_root = output_dir if output_dir is not None else _DEFAULT_OUTPUT_DIR
+    dest = manifest_root / subfolder
     out_path = dest / f"{module_name}.py"
+
+    manifest_path = manifest_root / _MANIFEST_NAME
+    own_manifest = manifest is None
+    if own_manifest:
+        manifest = _load_manifest(manifest_path)
+    key = _manifest_key(is_application, module_name)
 
     context = build_context(nx_name)
     new_source = render(context, out_path=out_path)
     out_path.parent.mkdir(parents=True, exist_ok=True)
 
-    if out_path.exists():
+    output = new_source
+    new_entry = {
+        "classes": _class_fingerprints(new_source),
+        "imports": sorted(_module_import_texts(new_source).keys()),
+    }
+    if out_path.exists() and not force:
+        if key not in manifest:
+            # No provenance for this existing file yet. Without it the generator
+            # cannot tell generated members from hand edits, so it refuses to
+            # touch the file rather than risk clobbering hand content. Seed
+            # provenance once by calling `bootstrap_manifest`.
+            if reports is not None:
+                reports.append((nx_name, {"no_manifest": [f"{key}"]}))
+            return False
         existing_source = out_path.read_text(encoding="utf-8")
-
-        if dry_run:
-            return new_source != existing_source
-
-        if force:
-            pass
-        else:
-            if existing_source == new_source:
-                return False
-            existing_members = _class_member_sources(existing_source)
-            new_members = _class_member_sources(new_source)
-            user_added = existing_members.keys() - new_members.keys()
-            user_modified = {
-                name
-                for name in existing_members.keys() & new_members.keys()
-                if existing_members[name] != new_members[name]
-            }
-            if user_added or user_modified:
-                return False
+        tier = _nxdl_source_tier(nx_name)
+        output, new_entry, report = _merge_with_provenance(
+            existing_source, new_source, manifest[key], tier, fix
+        )
+        if reports is not None and any(report.values()):
+            reports.append((nx_name, report))
 
     if dry_run:
-        return True
+        return not out_path.exists() or out_path.read_text(encoding="utf-8") != output
 
-    out_path.write_text(new_source, encoding="utf-8")
-    return True
+    changed = not out_path.exists() or out_path.read_text(encoding="utf-8") != output
+    out_path.write_text(output, encoding="utf-8")
+    manifest[key] = new_entry
+    if own_manifest:
+        manifest_path.write_text(
+            json.dumps(manifest, indent=2, sort_keys=True) + "\n", encoding="utf-8"
+        )
+    return changed
 
 
-# ---------------------------------------------------------------------------
+# ---------------------------------------------------src/pynxtools/nomad/converters/nxdl_to_metainfo.py------------------------
 # Topological sort: generate files in dependency order
 # ---------------------------------------------------------------------------
 
@@ -2177,15 +2512,37 @@ def write_base_class(
     return write_class(nx_name, dry_run=dry_run, force=force, output_dir=output_dir)
 
 
+def _report_summary(reports: list) -> None:
+    """Print a concise summary of preserved/removed hand content across a run."""
+    if not reports:
+        return
+    print("  provenance:")
+    for nx_name, report in reports:
+        parts = []
+        for label in ("preserved_modified", "preserved_added", "preserved_imports"):
+            if report.get(label):
+                parts.append(f"{label.replace('preserved_', 'kept ')}={report[label]}")
+        if report.get("removed"):
+            parts.append(f"removed={report['removed']}")
+        if parts:
+            print(f"    {nx_name}: {'; '.join(parts)}")
+
+
 def _generate_nx_classes(
     nx_names: list[str],
     dry_run: bool = False,
     force: bool = False,
     output_dir: Path | None = None,
+    fix: bool = False,
 ) -> int:
     """Generate Python files for a list of NXDL classes in dependency order."""
     dep_graph = _build_dependency_graph(nx_names)
     ordered = toposort_flatten(dep_graph, sort=True)
+
+    manifest_root = output_dir if output_dir is not None else _DEFAULT_OUTPUT_DIR
+    manifest_path = manifest_root / _MANIFEST_NAME
+    manifest = _load_manifest(manifest_path)
+    reports: list = []
 
     written = 0
     for nx_name in ordered:
@@ -2193,13 +2550,26 @@ def _generate_nx_classes(
             continue
         try:
             changed = write_class(
-                nx_name, dry_run=dry_run, force=force, output_dir=output_dir
+                nx_name,
+                dry_run=dry_run,
+                force=force,
+                output_dir=output_dir,
+                fix=fix,
+                manifest=manifest,
+                reports=reports,
             )
         except Exception as exc:
             print(f"  SKIP {nx_name}: {exc}")
             continue
         if changed:
             written += 1
+
+    _report_summary(reports)
+    if not dry_run:
+        manifest_root.mkdir(parents=True, exist_ok=True)
+        manifest_path.write_text(
+            json.dumps(manifest, indent=2, sort_keys=True) + "\n", encoding="utf-8"
+        )
     return written
 
 
@@ -2207,10 +2577,15 @@ def generate_all_base_classes(
     dry_run: bool = False,
     force: bool = False,
     output_dir: Path | None = None,
+    fix: bool = False,
 ) -> int:
     """Generate Python files for all NXDL base-category classes in dependency order."""
     return _generate_nx_classes(
-        _discover_base_classes(), dry_run=dry_run, force=force, output_dir=output_dir
+        _discover_base_classes(),
+        dry_run=dry_run,
+        force=force,
+        output_dir=output_dir,
+        fix=fix,
     )
 
 
@@ -2218,8 +2593,61 @@ def generate_all_applications(
     dry_run: bool = False,
     force: bool = False,
     output_dir: Path | None = None,
+    fix: bool = False,
 ) -> int:
     """Generate Python files for all NXDL application-category classes in dependency order."""
     return _generate_nx_classes(
-        _discover_applications(), dry_run=dry_run, force=force, output_dir=output_dir
+        _discover_applications(),
+        dry_run=dry_run,
+        force=force,
+        output_dir=output_dir,
+        fix=fix,
     )
+
+
+def bootstrap_manifest(output_dir: Path | None = None) -> int:
+    """Seed the provenance manifest from the generator's current output.
+
+    Writes ``generated_manifest.json`` recording, per module and class, the
+    members and imports the generator emits *right now* (their fingerprints). It
+    does **not** modify any ``.py`` file. Run this once to establish provenance
+    for an existing generated tree; commit the manifest alongside the generated
+    code. Afterwards, ordinary ``generate-metainfo`` runs maintain it and use it
+    to preserve hand edits.
+
+    This is deterministic: the owned set is exactly what the generator produces,
+    with no heuristic guessing. Hand-added members are absent from the generator's
+    output, so they are simply not recorded as owned and are preserved on later
+    runs; a hand-modified generated member is recorded with its *generated*
+    fingerprint, so a later run sees the on-disk body differ and preserves it.
+
+    Assumes the committed ``.py`` generated content matches current generator
+    output (i.e. the tree was regenerated recently); a generated member whose
+    on-disk body has drifted from the template would otherwise be treated as
+    hand-modified on the next run. Returns the number of module entries written.
+    """
+    manifest_root = output_dir if output_dir is not None else _DEFAULT_OUTPUT_DIR
+    manifest_path = manifest_root / _MANIFEST_NAME
+    manifest = _load_manifest(manifest_path)
+
+    all_classes = _discover_base_classes() + _discover_applications()
+    count = 0
+    for nx_name in all_classes:
+        try:
+            module_name = _class_module_name(nx_name)
+            is_application = _nxdl_category(nx_name) == "applications"
+            new_source = render(build_context(nx_name))
+        except Exception as exc:
+            print(f"  SKIP {nx_name}: {exc}")
+            continue
+        manifest[_manifest_key(is_application, module_name)] = {
+            "classes": _class_fingerprints(new_source),
+            "imports": sorted(_module_import_texts(new_source).keys()),
+        }
+        count += 1
+
+    manifest_root.mkdir(parents=True, exist_ok=True)
+    manifest_path.write_text(
+        json.dumps(manifest, indent=2, sort_keys=True) + "\n", encoding="utf-8"
+    )
+    return count
