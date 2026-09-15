@@ -17,9 +17,7 @@
 # This file is AUTO-GENERATED from the NeXus definitions (NXDL).
 # Run `pynx nomad generate-metainfo --nxdl NXvelocity_selector` to regenerate.
 # Hand edits are preserved across regeneration via the sidecar
-# generated_manifest.json (add normalize() logic or helper quantities directly).
-# See docs/learn/pynxtools/nexus-metainfo-generation.md (Provenance-tracked
-# regeneration). `--force` overwrites and discards hand edits.
+# generated_manifest.json.
 from __future__ import annotations
 
 from typing import TYPE_CHECKING

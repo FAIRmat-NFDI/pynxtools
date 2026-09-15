@@ -18,9 +18,7 @@
 # This file is AUTO-GENERATED from the NeXus definitions (NXDL).
 # Run `pynx nomad generate-metainfo --nxdl NXauger_line` to regenerate.
 # Hand edits are preserved across regeneration via the sidecar
-# generated_manifest.json (add normalize() logic or helper quantities directly).
-# See docs/learn/pynxtools/nexus-metainfo-generation.md (Provenance-tracked
-# regeneration). `--force` overwrites and discards hand edits.
+# generated_manifest.json.
 #
 # NOTE: This class is generated from a community-contributed NXDL definition.
 # The NXDL source may change across versions. Regenerate after updating definitions.
