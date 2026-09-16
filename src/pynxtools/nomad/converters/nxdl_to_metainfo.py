@@ -43,7 +43,6 @@ from pynxtools.nexus.nexus_tree import NexusLink as NXTreeLink
 from pynxtools.nexus.nexus_tree import generate_tree_from
 from pynxtools.nexus.utils import get_nexus_definitions_path, strip_nx_prefix
 from pynxtools.nomad.converters._mapping import (
-    _DEFAULT_BASE,
     _MEASUREMENT_FQN,
     APPLICATIONS_WITHOUT_MEASUREMENT,
     BASESECTIONS_MAP,
@@ -1501,7 +1500,7 @@ def _nomad_base_for_nx_class(nx_class: str) -> list[str]:
     NOMAD base sections.
 
     Returns the list of fully-qualified class names from BASESECTIONS_MAP found
-    while walking the chain, or _DEFAULT_BASE if none is found.
+    while walking the chain, or None if none is found.
     """
     visited: set[str] = set()
     current = nx_class
@@ -1513,7 +1512,7 @@ def _nomad_base_for_nx_class(nx_class: str) -> list[str]:
         if parent == current or parent == "NXobject":
             break
         current = parent
-    return _DEFAULT_BASE
+    return None
 
 
 def _split_fqn(fqn: str) -> tuple[str, str]:
@@ -1671,8 +1670,7 @@ def build_context(nx_name: str) -> dict:
             base_is_generated = True
             # Entry itself defaults to basesections.Activity (not every NXentry
             # is a real measurement). Applications not
-            # explicitly reviewed as Activity-only keep mixing in Measurement,
-            # to avoid silently changing semantics for anything unreviewed.
+            # explicitly reviewed as Activity-only keep mixing in Measurement.
             nomad_extra_bases = (
                 []
                 if nx_name in APPLICATIONS_WITHOUT_MEASUREMENT

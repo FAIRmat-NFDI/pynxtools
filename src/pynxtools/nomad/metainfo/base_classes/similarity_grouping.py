@@ -28,7 +28,6 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 
 import numpy as np
-from nomad.datamodel.data import ArchiveSection
 from nomad.datamodel.hdf5 import HDF5Reference
 from nomad.datamodel.metainfo.annotations import (
     ELNAnnotation,
@@ -56,7 +55,7 @@ if TYPE_CHECKING:
 __all__ = ["SimilarityGrouping"]
 
 
-class SimilarityGrouping(Object, ArchiveSection):
+class SimilarityGrouping(Object):
     """
     Base class to store results obtained from applying a similarity grouping
     (clustering) algorithm.

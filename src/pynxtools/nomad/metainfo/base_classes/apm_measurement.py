@@ -49,7 +49,7 @@ if TYPE_CHECKING:
 __all__ = ["ApmMeasurement"]
 
 
-class ApmMeasurement(Object, ArchiveSection):
+class ApmMeasurement(Object):
     """
     Base class for collecting a run with a real or a simulated atom probe or
     field-ion microscope.

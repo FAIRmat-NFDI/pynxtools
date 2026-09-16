@@ -49,7 +49,7 @@ if TYPE_CHECKING:
 __all__ = ["Aberration"]
 
 
-class Aberration(Object, ArchiveSection):
+class Aberration(Object):
     """
     Quantified aberration coefficient in an aberration_model.
 

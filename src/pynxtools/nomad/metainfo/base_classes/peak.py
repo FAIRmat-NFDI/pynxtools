@@ -24,7 +24,6 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 
 import numpy as np
-from nomad.datamodel.data import ArchiveSection
 from nomad.datamodel.hdf5 import HDF5Reference
 from nomad.datamodel.metainfo.annotations import (
     ELNAnnotation,
@@ -52,7 +51,7 @@ if TYPE_CHECKING:
 __all__ = ["Peak"]
 
 
-class Peak(Object, ArchiveSection):
+class Peak(Object):
     """
     Base class for describing a peak, its functional form, and support values
     i.e., the discretization points at which the function has been evaluated.

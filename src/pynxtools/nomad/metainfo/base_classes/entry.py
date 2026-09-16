@@ -25,7 +25,6 @@ from typing import TYPE_CHECKING
 
 import numpy as np
 from nomad.datamodel.data import EntryData
-from nomad.datamodel.metainfo import basesections
 from nomad.datamodel.metainfo.annotations import (
     ELNAnnotation,
     ELNComponentEnum,
@@ -55,7 +54,7 @@ if TYPE_CHECKING:
 __all__ = ["Entry"]
 
 
-class Entry(Object, basesections.Measurement, EntryData):
+class Entry(Object, basesections.Activity, EntryData):
     """
     (**required**) :ref:`NXentry` describes the measurement.
 
