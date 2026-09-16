@@ -193,20 +193,6 @@ APPLICATIONS_WITHOUT_MEASUREMENT: frozenset[str] = frozenset({"NXem", "NXapm"})
 
 _MEASUREMENT_FQN = "nomad.datamodel.metainfo.basesections.v2.Measurement"
 
-_DEFAULT_BASE: list[str] = ["nomad.datamodel.data.ArchiveSection"]
-
-
-def get_base_section(nx_name: str) -> list[str]:
-    """Return list of fully-qualified NOMAD class names for the extra Python bases
-    that a given NXDL top-level class should inherit from.
-
-    Each string is a dotted module.ClassName path. The last component is the
-    class name; everything before it is the import module.
-    Falls back to ["nomad.datamodel.metainfo.basesections.BaseSection"].
-    """
-    return BASESECTIONS_MAP.get(nx_name, _DEFAULT_BASE)
-
-
 # ---------------------------------------------------------------------------
 # NX type → NOMAD type string (as used in generated source code)
 # ---------------------------------------------------------------------------
