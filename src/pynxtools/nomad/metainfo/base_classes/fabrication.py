@@ -29,7 +29,7 @@ from nomad.datamodel.metainfo.annotations import (
     SchemaAnnotation,
 )
 from nomad.datamodel.metainfo.basesections import v2 as basesections
-from nomad.metainfo import Quantity, Section, SubSection
+from nomad.metainfo import MEnum, Quantity, Section, SubSection
 from nomad.metainfo.data_type import Bytes, Datetime
 
 from pynxtools.nomad.annotations import NeXusAttribute, NeXusDefinition, NeXusField
