@@ -2759,13 +2759,16 @@ the field names rather than a fillable JSON skeleton.</p>
 </ul>
 <h4 id="pynx-nomad-generate-metainfo">pynx nomad generate-metainfo<a class="headerlink" href="#pynx-nomad-generate-metainfo" title="Permanent link">&para;</a></h4>
 <p>Generate Python NOMAD metainfo classes from NXDL definitions.</p>
-<p>Exactly one of --nxdl, --all, --all-base, or --all-applications must be given.</p>
+<p>Choose exactly one target: --nxdl for a single class, --all for everything,
+or --all-base / --all-applications for one category. The remaining options
+modify how that target is generated and can be combined freely, except that
+--force and --fix are mutually exclusive: --force overwrites everything and
+discards hand-written content, while --fix is provenance-aware and preserves
+it while still dropping obsolete generated members.</p>
 <p>Examples:
   pynx nomad generate-metainfo --nxdl NXdetector
-  pynx nomad generate-metainfo --all-base
-  pynx nomad generate-metainfo --all-applications
-  pynx nomad generate-metainfo --all           # apps first, then base (additive-only unless --force)
   pynx nomad generate-metainfo --all --dry-run  # CI check
+  pynx nomad generate-metainfo --all --fix      # also drop obsolete accepted-tier members
   pynx nomad generate-metainfo --all \
       --output-dir ../nomad-measurements/src/nomad_measurements/nexus/metainfo</p>
 <p><strong>Usage:</strong></p>
@@ -2785,37 +2788,43 @@ the field names rather than a fillable JSON skeleton.</p>
 <tr>
 <td><code>--nxdl</code></td>
 <td>text</td>
-<td>Generate one NXDL class (e.g. NXdetector).</td>
+<td>Generate a single NXDL class, e.g. NXdetector. Choose exactly one of --nxdl, --all, --all-base, or --all-applications.</td>
 <td>None</td>
 </tr>
 <tr>
 <td><code>--all</code></td>
 <td>boolean</td>
-<td>Generate all categories (applications first, then base classes; additive-only unless --force).</td>
+<td>Generate all categories (applications first, then base classes). Choose exactly one of --nxdl, --all, --all-base, or --all-applications.</td>
 <td><code>False</code></td>
 </tr>
 <tr>
 <td><code>--all-base</code></td>
 <td>boolean</td>
-<td>Generate all base-category classes only.</td>
+<td>Generate all base classes only. Choose exactly one of --nxdl, --all, --all-base, or --all-applications.</td>
 <td><code>False</code></td>
 </tr>
 <tr>
 <td><code>--all-applications</code></td>
 <td>boolean</td>
-<td>Generate all application-category classes only.</td>
+<td>Generate all application definition classes only. Choose exactly one of --nxdl, --all, --all-base, or --all-applications.</td>
 <td><code>False</code></td>
 </tr>
 <tr>
 <td><code>--dry-run</code></td>
 <td>boolean</td>
-<td>Report what would change without writing any files. Exits non-zero if files differ.</td>
+<td>Report what would change without writing any files, and exit with a non-zero status if anything would differ.</td>
 <td><code>False</code></td>
 </tr>
 <tr>
 <td><code>--force</code></td>
 <td>boolean</td>
-<td>Overwrite existing files even if no new members were added.</td>
+<td>Overwrite existing files, discarding all hand-written content. Cannot be combined with --fix, since --fix preserves hand content by design.</td>
+<td><code>False</code></td>
+</tr>
+<tr>
+<td><code>--fix</code></td>
+<td>boolean</td>
+<td>Fix wrong generator output by also dropping now-obsolete generated members from the accepted NIAC standards (base_classes/applications), not only from contributed definitions. Hand-modified and hand-added content is still preserved. Cannot be combined with --force.</td>
 <td><code>False</code></td>
 </tr>
 <tr>
