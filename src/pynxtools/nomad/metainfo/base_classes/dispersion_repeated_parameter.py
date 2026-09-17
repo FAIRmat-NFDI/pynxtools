@@ -17,9 +17,8 @@
 #
 # This file is AUTO-GENERATED from the NeXus definitions (NXDL).
 # Run `pynx nomad generate-metainfo --nxdl NXdispersion_repeated_parameter` to regenerate.
-# Additive-only: the generator will not remove or rename existing class members
-# (unless the `--force` flag is used).
-# Add normalize() logic directly; it will be preserved on regeneration.
+# Hand edits are preserved across regeneration via the sidecar
+# generated_manifest.json.
 #
 # NOTE: This class is generated from a community-contributed NXDL definition.
 # The NXDL source may change across versions. Regenerate after updating definitions.

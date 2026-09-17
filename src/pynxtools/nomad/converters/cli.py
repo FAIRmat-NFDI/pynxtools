@@ -1,8 +1,8 @@
-# SPDX-FileCopyrightText: The NOMAD Authors
+# SPDX-FileCopyrightText: The pynxtools Authors
+#
+# This file is part of pynxtools.
 #
 # SPDX-License-Identifier: Apache-2.0
-#
-# This file is part of NOMAD. See https://nomad-lab.eu for further info.
 # Full license text: LICENSES/Apache-2.0.txt. See docs/learn/pynxtools/licensing.md
 # for why this package mixes Apache-2.0 and LGPL-3.0-or-later licensed files.
 """
@@ -22,46 +22,121 @@ from pathlib import Path
 import click
 
 
+def _flag_name(ctx: click.Context, param_name: str) -> str:
+    """Return the primary ``--option`` string for a parameter name."""
+    for param in ctx.command.params:
+        if param.name == param_name and param.opts:
+            return param.opts[0]
+    return "--" + param_name.replace("_", "-")
+
+
+class MutuallyExclusiveOption(click.Option):
+    """A click option that refuses to be combined with the options it lists.
+
+    The exclusion must be declared on the options themselves via
+    ``cls=MutuallyExclusiveOption, mutually_exclusive=[<other-option>]``.
+    """
+
+    def __init__(self, *args, **kwargs):
+        self.mutually_exclusive: set[str] = set(kwargs.pop("mutually_exclusive", ()))
+        super().__init__(*args, **kwargs)
+
+    def handle_parse_result(self, ctx, opts, args):
+        if opts.get(self.name):
+            conflicts = [name for name in self.mutually_exclusive if opts.get(name)]
+            if conflicts:
+                others = ", ".join(_flag_name(ctx, name) for name in conflicts)
+                raise click.UsageError(
+                    f"{_flag_name(ctx, self.name)} cannot be combined with {others}."
+                )
+
+        return super().handle_parse_result(ctx, opts, args)
+
+
+_GENERATION_OPTIONS = {
+    "nx_class",
+    "generate_all",
+    "generate_all_base",
+    "generate_all_applications",
+}
+
+
+def _mutually_exclusive_with(*, excluding: str) -> list[str]:
+    """Return all other generation options that are mutually exclusive with the given one."""
+    return sorted(_GENERATION_OPTIONS - {excluding})
+
+
+_GENERATION_TARGET_HELP = (
+    "Choose exactly one of --nxdl, --all, --all-base, or --all-applications."
+)
+
+
 @click.command("generate-metainfo")
 @click.option(
     "--nxdl",
     "nx_class",
+    cls=MutuallyExclusiveOption,
+    mutually_exclusive=_mutually_exclusive_with(excluding="nx_class"),
     default=None,
     metavar="NXDL",
-    help="Generate one NXDL class (e.g. NXdetector).",
+    help=f"Generate a single NXDL class, e.g. NXdetector. {_GENERATION_TARGET_HELP}",
 )
 @click.option(
     "--all",
     "generate_all",
+    cls=MutuallyExclusiveOption,
+    mutually_exclusive=_mutually_exclusive_with(excluding="generate_all"),
     is_flag=True,
     default=False,
-    help="Generate all categories (applications first, then base classes; additive-only unless --force).",
+    help="Generate all categories (applications first, then base classes). "
+    f"{_GENERATION_TARGET_HELP}",
 )
 @click.option(
     "--all-base",
     "generate_all_base",
+    cls=MutuallyExclusiveOption,
+    mutually_exclusive=_mutually_exclusive_with(excluding="generate_all_base"),
     is_flag=True,
     default=False,
-    help="Generate all base-category classes only.",
+    help=f"Generate all base classes only. {_GENERATION_TARGET_HELP}",
 )
 @click.option(
     "--all-applications",
     "generate_all_applications",
+    cls=MutuallyExclusiveOption,
+    mutually_exclusive=_mutually_exclusive_with(excluding="generate_all_applications"),
     is_flag=True,
     default=False,
-    help="Generate all application-category classes only.",
+    help=f"Generate all application definition classes only. {_GENERATION_TARGET_HELP}",
 )
 @click.option(
     "--dry-run",
     is_flag=True,
     default=False,
-    help="Report what would change without writing any files. Exits non-zero if files differ.",
+    help="Report what would change without writing any files, and exit with a "
+    "non-zero status if anything would differ.",
 )
 @click.option(
     "--force",
+    "force",
+    cls=MutuallyExclusiveOption,
+    mutually_exclusive=["fix"],
     is_flag=True,
     default=False,
-    help="Overwrite existing files even if no new members were added.",
+    help="Overwrite existing files, discarding all hand-written content. "
+    "Cannot be combined with --fix, since --fix preserves hand content by design.",
+)
+@click.option(
+    "--fix",
+    "fix",
+    cls=MutuallyExclusiveOption,
+    mutually_exclusive=["force"],
+    is_flag=True,
+    default=False,
+    help="Fix wrong generator output by also dropping now-obsolete generated "
+    "members from the accepted NIAC standards (base_classes/applications), not "
+    "only from contributed definitions. Hand-modified and hand-added content is "
+    "still preserved. Cannot be combined with --force.",
 )
 @click.option(
     "--output-dir",
@@ -83,30 +158,30 @@ def generate_metainfo(
     generate_all_applications: bool,
     dry_run: bool,
     force: bool,
+    fix: bool,
     output_dir: Path | None,
 ) -> None:
     """Generate Python NOMAD metainfo classes from NXDL definitions.
 
-    Exactly one of --nxdl, --all, --all-base, or --all-applications must be given.
+    Choose exactly one target: --nxdl for a single class, --all for everything,
+    or --all-base / --all-applications for one category. The remaining options
+    modify how that target is generated and can be combined freely, except that
+    --force and --fix are mutually exclusive: --force overwrites everything and
+    discards hand-written content, while --fix is provenance-aware and preserves
+    it while still dropping obsolete generated members.
 
     \b
     Examples:
       pynx nomad generate-metainfo --nxdl NXdetector
-      pynx nomad generate-metainfo --all-base
-      pynx nomad generate-metainfo --all-applications
-      pynx nomad generate-metainfo --all           # apps first, then base (additive-only unless --force)
       pynx nomad generate-metainfo --all --dry-run  # CI check
+      pynx nomad generate-metainfo --all --fix      # also drop obsolete accepted-tier members
       pynx nomad generate-metainfo --all \\
           --output-dir ../nomad-measurements/src/nomad_measurements/nexus/metainfo
     """
-    flags = [nx_class, generate_all, generate_all_base, generate_all_applications]
-    if sum(bool(f) for f in flags) == 0:
+    if not any((nx_class, generate_all, generate_all_base, generate_all_applications)):
         raise click.UsageError(
-            "Specify one of --nxdl NX_CLASS, --all, --all-base, or --all-applications."
-        )
-    if sum(bool(f) for f in flags) > 1:
-        raise click.UsageError(
-            "--nxdl, --all, --all-base, and --all-applications are mutually exclusive."
+            "Choose exactly one target: --nxdl NXDL, --all, --all-base, "
+            "or --all-applications."
         )
 
     from pynxtools.nomad.converters.nxdl_to_metainfo import (
@@ -130,7 +205,11 @@ def generate_metainfo(
     if nx_class:
         try:
             changed = write_class(
-                nx_class, dry_run=dry_run, force=force, output_dir=output_dir
+                nx_class,
+                dry_run=dry_run,
+                force=force,
+                output_dir=output_dir,
+                fix=fix,
             )
         except Exception as exc:
             raise click.ClickException(str(exc)) from exc
@@ -146,16 +225,26 @@ def generate_metainfo(
     elif generate_all_base:
         _report(
             generate_all_base_classes(
-                dry_run=dry_run, force=force, output_dir=output_dir
+                dry_run=dry_run,
+                force=force,
+                output_dir=output_dir,
+                fix=fix,
             )
         )
 
     elif generate_all_applications:
-        _report(_gen_apps(dry_run=dry_run, force=force, output_dir=output_dir))
+        _report(
+            _gen_apps(
+                dry_run=dry_run,
+                force=force,
+                output_dir=output_dir,
+                fix=fix,
+            )
+        )
 
     else:  # --all: applications first, then base classes.
-        n = _gen_apps(dry_run=dry_run, force=force, output_dir=output_dir)
+        n = _gen_apps(dry_run=dry_run, force=force, output_dir=output_dir, fix=fix)
         n += generate_all_base_classes(
-            dry_run=dry_run, force=force, output_dir=output_dir
+            dry_run=dry_run, force=force, output_dir=output_dir, fix=fix
         )
         _report(n)

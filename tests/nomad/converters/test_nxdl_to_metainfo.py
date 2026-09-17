@@ -25,6 +25,7 @@ Run ``scripts/generate_metainfo_reference_files.py`` to refresh the reference
 files in ``tests/data/nomad/converter/``.
 """
 
+import json
 from collections.abc import Callable
 from pathlib import Path
 
@@ -348,12 +349,19 @@ def test_build_context_reserved_quantity_names_are_suffixed(
 
 @pytest.fixture
 def stub_write_base_class(monkeypatch, tmp_path) -> Callable[[str, str], Path]:
-    """Stub ``build_context``/``render`` for ``write_base_class("NXentry", ...)``.
+    """Stub ``build_context`` and ``render`` for ``write_base_class("NXentry", ...)``.
 
-    Returns a ``seed(existing_content, new_content)`` helper: writes
-    ``existing_content`` to the would-be output file, makes ``render`` return
-    ``new_content``, and returns the file's path. Callers still pass
-    ``output_dir=tmp_path`` to ``write_base_class`` themselves.
+    Returns a ``seed(existing_content, new_content)`` helper that:
+
+    - writes ``existing_content`` to the expected output file,
+    - creates a minimal provenance manifest entry for the file, matching the
+    state of a committed generated file so the merge logic treats it as an
+    existing module,
+    - patches ``render`` to return ``new_content``, and
+    - returns the path to the seeded file.
+
+    Callers are responsible for passing ``output_dir=tmp_path`` to
+    ``write_base_class``.
     """
     out_dir = tmp_path / "base_classes"
     out_dir.mkdir(parents=True)
@@ -365,6 +373,11 @@ def stub_write_base_class(monkeypatch, tmp_path) -> Callable[[str, str], Path]:
         )
         existing = out_dir / "entry.py"
         existing.write_text(existing_content, encoding="utf-8")
+        manifest_path = tmp_path / converter._MANIFEST_NAME
+        manifest_path.write_text(
+            json.dumps({"base_classes/entry": {"classes": {}, "imports": []}}),
+            encoding="utf-8",
+        )
         return existing
 
     return seed
@@ -440,10 +453,10 @@ def test_generate_all_base_classes_counts_only_changed(monkeypatch, tmp_path):
 
     changes = {"NXa": False, "NXb": True}
 
-    # write_base_class is a thin alias; _generate_nx_classes calls write_class,
-    # so that is the seam to replace.
-    def fake_write(nx_name, dry_run=False, force=False, output_dir=None):
-        _ = (dry_run, force, output_dir)
+    # Patch write_class because _generate_nx_classes calls it directly.
+    # Accept **kwargs so the stub remains compatible with its full signature.
+    def fake_write(nx_name, dry_run=False, force=False, output_dir=None, **kwargs):
+        _ = (dry_run, force, output_dir, kwargs)
         return changes[nx_name]
 
     monkeypatch.setattr(converter, "write_class", fake_write)
