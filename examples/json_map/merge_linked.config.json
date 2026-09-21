@@ -1,5 +1,7 @@
 {
     "/@default": "entry",
+    "/ENTRY[entry]/DATA[data]/@signal":"voltage",
+    "/ENTRY[entry]/DATA[data]/@axes":["temperature"],
     "/ENTRY[entry]/DATA[data]/current":"@link:current.nxs:/entry/data/current",
     "/ENTRY[entry]/DATA[data]/current_295C":"@link:current.nxs:/entry/data/current_295C",
     "/ENTRY[entry]/DATA[data]/current_300C":"@link:current.nxs:/entry/data/current_300C",
