@@ -391,19 +391,15 @@ class Writer:
                 else:
                     try:
                         ureg.Unit(units)
-                    except pint.errors.UndefinedUnitError as exc:
-                        message = (
+                    except pint.errors.UndefinedUnitError:
+                        logger.warning(
                             f"Units provided for path: '{path}@units' are not valid."
                             " Please provide a valid unit."
                         )
-                        raise InvalidDictProvided(message) from exc
-
                 if "units" not in dataset.attrs:
                     dataset.attrs["units"] = units
                 elif self.append:
-                    logger.info(
-                        f"Prevented the overwriting of attribute {path}/@units"
-                    )
+                    logger.info(f"Prevented the overwriting of attribute {path}/@units")
 
         for path, value in self.data.items():
             try:
