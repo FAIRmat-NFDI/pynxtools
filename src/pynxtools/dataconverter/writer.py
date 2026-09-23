@@ -19,6 +19,7 @@ import h5py
 import hdf5plugin
 import lxml.etree as ET
 import numpy as np
+import pint
 
 from pynxtools.dataconverter import helpers
 from pynxtools.dataconverter.chunk import (
@@ -36,6 +37,7 @@ from pynxtools.definitions.dev_tools.utils.nxdl_utils import (
     get_node_at_nxdl_path,
     get_nxdl_element_type,
 )
+from pynxtools.units import ureg
 
 logger = logging.getLogger("pynxtools")  # pylint: disable=C0103
 
@@ -382,14 +384,22 @@ class Writer:
 
         def add_units_key(dataset, path):
             units_key = f"{path}/@units"
-            if units_key in self.data.keys() and self.data[units_key] is not None:
-                if "units" not in dataset.attrs:
-                    dataset.attrs["units"] = self.data[units_key]
+            units = self.data.get(units_key)
+            if units is not None:
+                if isinstance(units, pint.Unit):
+                    units = str(units)
                 else:
-                    if self.append:
-                        logger.info(
-                            f"Prevented the overwriting of attribute {path}/@units"
+                    try:
+                        ureg.Unit(units)
+                    except pint.errors.UndefinedUnitError:
+                        logger.warning(
+                            f"Units provided for path: '{path}@units' are not valid."
+                            " Please provide a valid unit."
                         )
+                if "units" not in dataset.attrs:
+                    dataset.attrs["units"] = units
+                elif self.append:
+                    logger.info(f"Prevented the overwriting of attribute {path}/@units")
 
         for path, value in self.data.items():
             try:
