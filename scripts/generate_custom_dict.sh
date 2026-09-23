@@ -25,6 +25,7 @@ if ! cspell --config cspell.json \
   "docs/**/*" \
   "src/pynxtools/**/*.py" \
   "tests/**/*.py" \
+  "paper/paper.md" \
   > "$cspell_output"; then
   :
 fi
