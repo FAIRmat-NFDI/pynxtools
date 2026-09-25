@@ -240,6 +240,23 @@ class NexusActivityResult(ActivityResult):
 
 
 class NexusMeasurement(Measurement, Schema, PlotSection):
+    technique_description = Quantity(
+        type=str,
+        description="""Ontology comment (rdfs:comment) for the resolved NeXus
+            application definition, fetched from nomad-ontology-service.""",
+    )
+    technique_see_also = Quantity(
+        type=str,
+        description="""Ontology see-also link (rdfs:seeAlso) for the resolved
+            NeXus application definition, fetched from nomad-ontology-service.""",
+    )
+    technique_alt_labels = Quantity(
+        type=str,
+        shape=["*"],
+        description="""Alternate labels/synonyms for the resolved NeXus
+            application definition, fetched from nomad-ontology-service.""",
+    )
+
     def normalize(self, archive, logger):
         try:
             app_entry = getattr(self, "ENTRY")
@@ -371,6 +388,30 @@ class NexusMeasurement(Measurement, Schema, PlotSection):
                                     archive.results.eln.methods = []
                                 if class_name not in archive.results.eln.methods:
                                     archive.results.eln.methods.append(class_name)
+
+                            if ontology_info:
+                                try:
+                                    url_class_info = (
+                                        f"http://localhost:8000{ontology_info['base']}"
+                                        f"/{ontology_info['prefix']}/{ontology_info['ontology_name']}"
+                                        f"/class/{class_name}"
+                                    )
+                                    response_class_info = requests.get(url_class_info)
+                                    if response_class_info.status_code == 200:
+                                        class_info = response_class_info.json()
+                                        self.technique_description = class_info.get(
+                                            "comment"
+                                        )
+                                        self.technique_see_also = class_info.get(
+                                            "see_also"
+                                        )
+                                        self.technique_alt_labels = class_info.get(
+                                            "alt_labels", []
+                                        )
+                                except Exception as e:
+                                    logger.warning(
+                                        f"Could not fetch class info for {class_name}: {e}"
+                                    )
                         else:
                             if archive.results.eln.methods is None:
                                 archive.results.eln.methods = []
