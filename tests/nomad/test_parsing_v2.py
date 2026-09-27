@@ -443,3 +443,51 @@ def test_nexus_v2_root_nxroot_attributes(arpes_root_archive):
     assert root.file_name == "/home/tommaso/Desktop/NeXus/Test/201805_WSe2_arpes.nxs"
     assert root.HDF5_Version == "1.10.5"
     assert root.file_time is not None
+
+
+# ---------------------------------------------------------------------------
+# Entry fallback for files with no governing application definition
+# ---------------------------------------------------------------------------
+
+
+def _write_bare_nxentry_with_instrument(path: Path) -> None:
+    """Write an NXentry with no ``definition`` field, holding an NXinstrument
+    composed of NXsource + NXaperture — both legal children of NXinstrument's own
+    NXDL, with no application definition governing the file."""
+    with h5py.File(path, "w") as f:
+        f.attrs["NX_class"] = "NXroot"
+        entry = f.create_group("entry")
+        entry.attrs["NX_class"] = "NXentry"
+        instrument = entry.create_group("instrument")
+        instrument.attrs["NX_class"] = "NXinstrument"
+        source = instrument.create_group("source")
+        source.attrs["NX_class"] = "NXsource"
+        aperture = instrument.create_group("aperture")
+        aperture.attrs["NX_class"] = "NXaperture"
+
+
+def test_nexus_v2_entry_fallback_no_definition(tmp_path):
+    """An NXentry without a ``definition`` field falls back to the generic ``Entry``
+    class, with nested groups resolved by their own ``NX_class`` against the
+    generated base-class package rather than by any application definition."""
+    from pynxtools.nomad.metainfo.base_classes.aperture import Aperture
+    from pynxtools.nomad.metainfo.base_classes.instrument import Instrument
+    from pynxtools.nomad.metainfo.base_classes.source import Source
+
+    nxs_file = tmp_path / "bare_entry.nxs"
+    _write_bare_nxentry_with_instrument(nxs_file)
+
+    archive = EntryArchive()
+    NexusParserV2().parse(str(nxs_file), archive, get_logger(__name__))
+
+    assert type(archive.data) is Entry
+
+    instruments = archive.data.instrument
+    assert len(instruments) == 1
+    assert isinstance(instruments[0], Instrument)
+
+    assert len(instruments[0].source) == 1
+    assert isinstance(instruments[0].source[0], Source)
+
+    assert len(instruments[0].aperture) == 1
+    assert isinstance(instruments[0].aperture[0], Aperture)
