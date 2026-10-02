@@ -34,9 +34,12 @@ try:
     import blosc2
     import hdf5plugin  # noqa: F401
 
-    BLOSC_NTHREADS = blosc2.set_nthreads(
-        min(max(int(os.cpu_count() / 2), 1), int(os.cpu_count()))
-    )
+    BLOSC_NTHREADS = blosc2.set_nthreads(1)
+    # BLOSC_NTHREADS = blosc2.set_nthreads(
+    #     min(max(int(os.cpu_count() / 2), 1), int(os.cpu_count()))
+    # )
+    # TODO: make this a configuration option for the NOMAD plugin, e.g. via the
+    # NOMAD config file (as a plugin option) or environment variable
     # do not oversubscribe, cpu_count counts Intel hyperthreading cores as real cores
     # although these share specific resources, going with at most half the available
     # is also reasonable when inside a NOMAD deployment
