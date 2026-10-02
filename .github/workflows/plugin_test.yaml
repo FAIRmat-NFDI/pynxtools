@@ -41,6 +41,9 @@ jobs:
           - plugin: pynxtools-spm
             branch: main
             tests_to_run: tests/.
+          - plugin: pynxtools-xas
+            branch: main
+            tests_to_run: tests/.
           - plugin: pynxtools-xps
             branch: main
             tests_to_run: tests/.
