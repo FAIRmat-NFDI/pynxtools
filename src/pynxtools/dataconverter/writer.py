@@ -13,6 +13,7 @@ import importlib.util
 import logging
 import os
 import sys
+import tokenize
 
 import blosc2
 import h5py
@@ -390,10 +391,17 @@ class Writer:
                     units = str(units)
                 else:
                     try:
-                        ureg.Unit(units)
-                    except pint.errors.UndefinedUnitError:
+                        ureg.Unit(helpers.decode_if_bytes(units))
+                    except (
+                        pint.errors.PintError,
+                        ValueError,
+                        TypeError,
+                        AssertionError,
+                        tokenize.TokenError,
+                    ):
+                        # Pint raises several exception types for malformed unit strings.
                         logger.warning(
-                            f"Units provided for path: '{path}@units' are not valid."
+                            f"Units provided for path: '{path}/@units' are not valid."
                             " Please provide a valid unit."
                         )
                 if "units" not in dataset.attrs:
