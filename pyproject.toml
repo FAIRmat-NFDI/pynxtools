@@ -103,31 +103,31 @@ convert = [
 ]
 
 apm = [
-    "pynxtools-apm>=0.5.0",
+    "pynxtools-apm>=0.5.3",
 ]
 ellips = [
-    "pynxtools-ellips>=0.1.2",
+    "pynxtools-ellips>=0.1.3",
 ]
 em = [
-    "pynxtools-em>=0.4.3",
+    "pynxtools-em>=0.4.6",
 ]
 igor = [
-    "pynxtools-igor>=0.1.5",
+    "pynxtools-igor>=0.1.6",
 ]
 mpes = [
-    "pynxtools-mpes>=0.2.7",
+    "pynxtools-mpes>=0.2.8",
 ]
 raman = [
-    "pynxtools-raman>=0.1.2",
+    "pynxtools-raman>=0.1.3",
 ]
 spm = [
-    "pynxtools-spm>=0.2.3",
+    "pynxtools-spm>=0.4.0",
 ]
 xas = [
     "pynxtools-xas>=0.1.1",
 ]
 xps = [
-    "pynxtools-xps>=0.6.0",
+    "pynxtools-xps>=0.6.2",
 ]
 xrd = [
     "pynxtools-xrd>=0.0.8",
