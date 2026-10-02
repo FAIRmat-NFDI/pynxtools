@@ -397,4 +397,4 @@ class Root(Object, basesections.Experiment, EntryData):
                 new_steps.append(step)
             self.steps = new_steps
         except Exception as e:
-            logger.warning("Could not resolve NXentry references for Root: %s", e)
+            logger.warning("could not resolve NXentry references for Root", exc_info=e)
