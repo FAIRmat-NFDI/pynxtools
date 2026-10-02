@@ -99,7 +99,7 @@ dev = [
     "debugpy",
 ]
 convert = [
-    "pynxtools[apm,ellips,em,igor,mpes,raman,spm,xps,xrd]",
+    "pynxtools[apm,ellips,em,igor,mpes,raman,spm,xas,xps,xrd]",
 ]
 
 apm = [
@@ -122,6 +122,9 @@ raman = [
 ]
 spm = [
     "pynxtools-spm>=0.2.3",
+]
+xas = [
+    "pynxtools-xas>=0.1.1",
 ]
 xps = [
     "pynxtools-xps>=0.6.0",

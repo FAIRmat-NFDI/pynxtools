@@ -30,6 +30,12 @@ There are a number of plugins available for `pynxtools` that are maintained with
 | [pynxtools-ellips](https://github.com/FAIRmat-NFDI/pynxtools-ellips/) | Reader plugin for ellipsometry data. | [📚](https://fairmat-nfdi.github.io/pynxtools-ellips/) | [📦](https://pypi.org/project/pynxtools-ellips/) |
 | [pynxtools-raman](https://github.com/FAIRmat-NFDI/pynxtools-raman/) | Reader plugin for Raman data. | | [📦](https://pypi.org/project/pynxtools-raman/) |
 
+## X-ray absorption spectroscopy
+
+| Repository  | Description | Docs | PyPI |
+|-----------------|-------------|:----:|:----:|
+| [pynxtools-xas](https://github.com/FAIRmat-NFDI/pynxtools-xas/) | Reader plugin for X-ray absorption spectroscopy (XAS) data. | [📚](https://fairmat-nfdi.github.io/pynxtools-xas/) | [📦](https://pypi.org/project/pynxtools-xas/) |
+
 ## Scanning probe microscopy
 
 | Repository  | Description | Docs | PyPI |

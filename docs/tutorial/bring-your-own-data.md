@@ -372,6 +372,7 @@ and installed `pynxtools` plugins:
 | XPS | `NXxps` | `pynxtools-xps` |
 | ARPES / multi-photon | `NXmpes`, `NXmpes_arpes`, `NXarpes` | `pynxtools-mpes` |
 | Raman | `NXraman` | `pynxtools-raman` |
+| XAS | `NXxas`, `NXxas_tey`, `NXxas_trans` | `pynxtools-xas` |
 | Ellipsometry | `NXellipsometry` | `pynxtools-ellips` |
 | Electron microscopy | `NXem` | `pynxtools-em` |
 | Atom probe | `NXapm` | — |
