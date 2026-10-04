@@ -100,7 +100,7 @@ nx_number = nx_int + nx_float
 nx_bool = (bool, np.bool_)
 
 NEXUS_TO_PYTHON_DATA_TYPES: dict[str, tuple] = {
-    "ISO8601": (str,),
+    "ISO8601": nx_char,
     "NX_BINARY": (bytes, bytearray, np.bytes_),
     "NX_BOOLEAN": nx_bool,
     "NX_CHAR": nx_char,
