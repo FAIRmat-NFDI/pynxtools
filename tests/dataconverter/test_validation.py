@@ -860,6 +860,15 @@ def format_error_message(msg: str) -> str:
             alter_dict(
                 TEMPLATE,
                 "/ENTRY[my_entry]/NXODD_name[nxodd_name]/date_value",
+                np.bytes_("2022-01-22T12:14:12.05018Z"),
+            ),
+            [],
+            id="fixed-length-string-date",
+        ),
+        pytest.param(
+            alter_dict(
+                TEMPLATE,
+                "/ENTRY[my_entry]/NXODD_name[nxodd_name]/date_value",
                 "2022-01-22T12:14:12.05018-00:00",
             ),
             [
@@ -2624,6 +2633,15 @@ def test_validate_data_dict(data_dict, error_messages, caplog, request):
             ),
             [],
             id="UTC-with-Z",
+        ),
+        pytest.param(
+            alter_dict(
+                TEMPLATE,
+                "/ENTRY[my_entry]/NXODD_name[nxodd_name]/date_value",
+                np.bytes_("2022-01-22T12:14:12.05018Z"),
+            ),
+            [],
+            id="fixed-length-string-date",
         ),
         pytest.param(
             alter_dict(
