@@ -104,7 +104,7 @@ NEXUS_TO_PYTHON_DATA_TYPES: dict[str, tuple] = {
     "NX_BINARY": (bytes, bytearray, np.bytes_),
     "NX_BOOLEAN": nx_bool,
     "NX_CHAR": nx_char,
-    "NX_DATE_TIME": (str,),
+    "NX_DATE_TIME": nx_char,
     "NX_FLOAT": nx_float,
     "NX_INT": nx_int,
     "NX_UINT": (np.unsignedinteger,),
