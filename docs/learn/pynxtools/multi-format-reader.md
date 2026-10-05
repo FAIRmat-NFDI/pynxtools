@@ -230,6 +230,8 @@ By default, the MultiFormatReader supports the following special prefixes:
 - `@data`: To get measurement data from the read-in experiment file(s). You need to implement the `get_data` method in the reader.
 - `@eln`: To get metadata from additional ELN files. You need to implement the `get_eln_data` method in the reader.
 - `@link`: To implement a link between two entities in the NeXus file. By default, the link callback returns a dict of the form {"link": value.replace("/entry/", f"/{self.entry_name}/")}, i.e., a generic `/entry/` get replaced by the actual `entry_name`.
+- `@formula`: To calculate values based on the presence of other (meta)data in the NeXus file. By default, the formula callback returns a number (int or float).
+- `@convert_units`: This is only valid for keys that set the units for a field (i.e., those ending on `@units`). The value must be tuple of units (e.g., ("m", "mm)). In this case, it is assumed that the original value of the field is given in "m" and shall be converted to "mm". In the template, the actual field value is converted to "mm" and the key that ends on `@units` gets a value of "mm".
 
 The distinction between data and metadata is somewhat arbitrary here. The reason to have both of these prefixes is to have different methods to access different parts of the read-in data. For example, `@attrs` may just access key-value pairs of a read-in dictionary, whereas `@data` can handle different object types, e.g. xarrays. The implementation in the reader decides how to distinguish data and metadata and what each of the callbacks shall do.
 
@@ -246,22 +248,27 @@ Here, `key` is the config dict key (e.g., `"/ENTRY[my-entry]/data/data"`) and pa
 ### Special rules
 
 - **Lists as config value**: It is possible to write a list of possible configurations of the sort
+
   ```json
   "/ENTRY/title":"['@attrs:my_title', '@eln', 'no title']"
   ```
+
   The value must be a string which can be parsed as a list, with each item being a string itself. This allows to provide different options depending if the data exists for a given callback. For each list item , it is checked if a value can be returned and if so, the value is written. In this example, the converter would check (in order) the `@attrs` (with path `"my_title"`) and `@eln` (with path `""`) tokens and write the respective value if it exists. If not, it defaults to "no title".
   This concept can be particularly useful if the same config file is used for multiple measurement configurations, where for some setup, the same metadata may or may not be available.
 
     Note that if this notation is used, it may be helpful to pass the `suppress_warning` keyword as `True` to the read function. Otherwise, there will be a warning for every non-existent value.
 
 - **Wildcard notation**: There exists a wildcard notation (using `*`)
+
   ```json
   "/ENTRY/data/AXISNAME[*]": "@data:*.data",
   ```
+
   that allows filling multiple fields of the same type from a list of dimensions. This can be particularly helpful for writing `DATA` and `AXISNAME` fields that are all stored under similar paths in the read-in data.
   For this, the `get_data_dims` method needs to be implemented. For a given path, it should return a list of all data axes available to replace the wildcard.
-    
+
     The same wildcard notation can also be used within a name to repeat entries with different names (e.g., field_*{my, name, etc} is converted into three keys with * replaced by my, name, etc, respectively). As an example, for multiple lenses and their voltage readouts, one could write:
+
   ```json
   "ELECTROMAGNETIC_LENS[lens_*{A,B,Foc}]": {
     "name": "*",
@@ -272,6 +279,7 @@ Here, `key` is the config dict key (e.g., `"/ENTRY[my-entry]/data/data"`) and pa
   which would write `NXelectromagnetic_lens` instances named `lens_A`, `lens_B`, and `lens_Foc`.
 
 - **Required fields in optional groups**: There will sometimes be the situation that there is an optional NeXus group in an application definition, that (if implemented) requires some sub-element. As an example, for the instrument's energy resolution, the only value expected to come from a data source is the `resolution`, whereas other fields are hardcoded.
+
   ```json
   "ENTRY/INSTRUMENT[instrument]/energy_resolution": {
     "resolution": "@attrs:metadata/instrument/electronanalyzer/energy_resolution",
@@ -285,7 +293,12 @@ Here, `key` is the config dict key (e.g., `"/ENTRY[my-entry]/data/data"`) and pa
   ```
 
     To circumvent this problem, there exists a notation using the `"!"` prefix. If you write
+
     ```json
     "ENTRY/INSTRUMENT[instrument]/energy_resolution/resolution": "!@attrs:metadata/instrument/electronanalyzer/energy_resolution"
     ```
     the whole parent group `/ENTRY/INSTRUMENT[instrument]/energy_resolution` will _not_ be written in case that there is no value for `@attrs:metadata/instrument/electronanalyzer/energy_resolution"`, thus preventing the aforementioned error.
+
+- **Formulas**: There exists a notation using the `@formula` prefix that allows to calculate values based on the  presence of other (meta)data in the template. By default, values prefixed with `@formula` are evaluated last, after all the other template key-value pairs have been filled. The function that performs the evaluation of the formula uses Python's built-in [`eval()`](https://docs.python.org/3/library/functions.html#eval) function to evaluate formula written as string statements. To prevent malicious use of this feature, the formula that can be written is limited. Standard operators such as +,-,*,/ are supported. Moreover, all functions from [NumPy's API](https://numpy.org/doc/2.1/reference/index.html) that are callable can be used by writing the function's name, e.g.
+to calculate the mean of the energy field in an NXdata group, you should write
+"!@formula:mean(/ENTRY/INSTRUMENT[instrument]/DATA[data]/energy)", which would then call NumPy np.mean function.
