@@ -80,6 +80,11 @@ authors:
     surname: Scheidgen
     orcid: 0000-0002-8038-2277
     affiliation: 1
+    affiliation: 1
+  - given-names: Sandor
+    surname: Brockhauser
+    orcid: 0000-0002-9700-4803
+    affiliation: 1
   - given-names: José Antonio
     surname: Márquez Prieto
     orcid: 0000-0002-8173-2566
@@ -87,11 +92,6 @@ authors:
   - given-names: Claudia
     surname: Draxl
     orcid: 0000-0003-3523-6657
-    affiliation: 1
-  - given-names: Sandor
-    surname: Brockhauser
-    orcid: 0000-0002-9700-4803
-    affiliation: 1
   - given-names: Christoph T.
     surname: Koch
     orcid: 0000-0002-3984-1523
