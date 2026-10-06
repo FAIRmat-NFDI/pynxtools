@@ -256,6 +256,14 @@ class NexusMeasurement(Measurement, Schema, PlotSection):
         description="""Alternate labels/synonyms for the resolved NeXus
             application definition, fetched from nomad-ontology-service.""",
     )
+    technique_properties = Quantity(
+        type=str,
+        shape=["*"],
+        description="""Object-property restriction axioms (e.g. ESRFET's
+            'can_be_used_for_technique') on the resolved NeXus application
+            definition, fetched from nomad-ontology-service, as
+            'property: value' strings.""",
+    )
 
     def normalize(self, archive, logger):
         try:
@@ -408,6 +416,36 @@ class NexusMeasurement(Measurement, Schema, PlotSection):
                                         self.technique_alt_labels = class_info.get(
                                             "alt_labels", []
                                         )
+                                        self.technique_properties = [
+                                            f"{prop}: {value}"
+                                            for prop, values in class_info.get(
+                                                "properties", {}
+                                            ).items()
+                                            for value in values
+                                        ]
+
+                                        # Mirror onto archive.results.eln so these
+                                        # are elasticsearch-indexed, not just visible
+                                        # on this one entry's Data tab: short facts
+                                        # as exact-match tags, the free-text comment
+                                        # as full-text-searchable description.
+                                        if archive.results.eln.tags is None:
+                                            archive.results.eln.tags = []
+                                        for prop_tag in self.technique_properties:
+                                            tag = f"property:{prop_tag}"
+                                            if tag not in archive.results.eln.tags:
+                                                archive.results.eln.tags.append(tag)
+
+                                        if self.technique_description:
+                                            if archive.results.eln.descriptions is None:
+                                                archive.results.eln.descriptions = []
+                                            if (
+                                                self.technique_description
+                                                not in archive.results.eln.descriptions
+                                            ):
+                                                archive.results.eln.descriptions.append(
+                                                    self.technique_description
+                                                )
                                 except Exception as e:
                                     logger.warning(
                                         f"Could not fetch class info for {class_name}: {e}"
@@ -1313,6 +1351,11 @@ def create_metainfo_package():
         if not (str(section).startswith("pynxtools.")):
             continue
         _add_additional_attributes(section, None)
+        # NexusMeasurement's own quantities hold ontology-service metadata, not
+        # NeXus fields; NeXus attributes would force them into full storage,
+        # which the GUI can't render for list quantities.
+        if section is NexusMeasurement.m_def:
+            continue
         for quantity in section.quantities:
             _add_additional_attributes(quantity, section)
 
