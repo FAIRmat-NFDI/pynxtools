@@ -30,7 +30,7 @@ jobs:
         run: |
           TAG="${GITHUB_REF#refs/tags/}"
           if [[ ! "$TAG" =~ ^v[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
-            echo "::error::Publishing requires a 'vX.Y.Z' release tag, got '$TAG'."
+            echo "::error::Publishing requires a 'vX.Y.Z' release tag, optionally with a prerelease suffix (e.g. 'v0.1.2-beta'), got '$TAG' instead."
             exit 1
           fi
           if [[ "$TARGET" != "release/$TAG" ]]; then
