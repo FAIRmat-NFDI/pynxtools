@@ -30,7 +30,7 @@ You will know
 
 | Branch | Role |
 |---|---|
-| `develop` | Default branch. All normal development PRs target this branch. |
+| `develop` | Default branch. All regular development PRs target this branch. |
 | `main` | Released versions only. Only `release/*` branches are merged here, so its history is the release history. |
 | `release/v<version>` | Temporary release branch, created from `develop` and merged into `main`. |
 
