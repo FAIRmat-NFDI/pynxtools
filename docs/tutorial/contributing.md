@@ -212,10 +212,10 @@ AI tools may be used as a supplementary aid during code review, but final review
    New features keep going into `develop`.
 3. Bump `version` in `CITATION.cff` to `X.Y.Z`, including any pre-release suffix (e.g. `0.1.2-rc1` for the tag `v0.1.2-rc1`).
    The publish workflow fails if it differs from the tag.
-4. Open a PR from `release/vX.Y.Z` into `main` and merge it once CI passes and released to PyPI.
-5. Create a GitHub release with the tag `vX.Y.Z` and select `release/vX.Y.Z` as its target branch.
+4. Create a GitHub release with the tag `vX.Y.Z` and select `release/vX.Y.Z` as its target branch.
    The publish workflow refuses to upload to PyPI if the release does not target `release/vX.Y.Z`
    or if the tagged commit is not on that branch.
+5. Once CI passes and the release is published to PyPI, open a PR from `release/vX.Y.Z` into `main` and merge it.
 6. If you fixed anything directly on the release branch, open a PR from `release/vX.Y.Z` into `develop`
    so the fixes are not lost in ongoing development.
 7. Delete the `release/vX.Y.Z` branch.
