@@ -32,7 +32,7 @@ You will know
 |---|---|
 | `develop` | Default branch. All regular development PRs target this branch. |
 | `main` | Released versions only. Only `release/*` branches are merged here, so its history is the release history. |
-| `release/v<version>` | Temporary release branch, created from `develop` and merged into `main`. |
+| `release/vX.Y.Z` | Temporary release branch, created from `develop` and merged into `main`. The version may carry a pre-release suffix, e.g. `release/vX.Y.Z-beta` or `release/vX.Y.Z-rc1`. |
 
 | Activity | Branch |
 |---|---|
@@ -210,7 +210,8 @@ AI tools may be used as a supplementary aid during code review, but final review
 
 2. Commit only release-specific changes on this branch (version bumps, changelog, last-minute bug fixes).
    New features keep going into `develop`.
-3. Bump `version` in `CITATION.cff` to `x.y.z`. The publish workflow fails if it differs from the tag.
+3. Bump `version` in `CITATION.cff` to `x.y.z`, including any pre-release suffix (e.g. `0.1.2-rc1` for the tag `v0.1.2-rc1`).
+   The publish workflow fails if it differs from the tag.
 4. Open a PR from `release/vx.y.z` into `main` and merge it once CI passes and released to PyPI.
 5. Create a GitHub release with the tag `vx.y.z` and select `release/vx.y.z` as its target branch.
    The publish workflow refuses to upload to PyPI if the release does not target `release/vx.y.z`
