@@ -50,7 +50,7 @@ There is also the possibility to fix a _subpart_ of the name using `nameType=par
 
 The validation of names is performed by **namefitting**, i.e., fitting the name that is used by the data provider to the name given in the base class / application definitions.
 
-A python implementation of this process can be found in [this function](https://github.com/FAIRmat-NFDI/nexus_definitions/blob/34aed4a74b8d2a682eb0b9292055dc00e5e0220e/dev_tools/utils/nxdl_utils.py#L112). This function returns twice the length for an exact match, otherwise the number of matching characters (case insensitive) or zero, if `name_any` is set to True, is returned. This is also the function that is used in the [validation](https://github.com/FAIRmat-NFDI/pynxtools/blob/master/src/pynxtools/dataconverter/validation.py) implemented in `pynxtools`.
+A python implementation of this process can be found in [this function](https://github.com/FAIRmat-NFDI/nexus_definitions/blob/34aed4a74b8d2a682eb0b9292055dc00e5e0220e/dev_tools/utils/nxdl_utils.py#L112). This function returns twice the length for an exact match, otherwise the number of matching characters (case insensitive) or zero, if `name_any` is set to True, is returned. This is also the function that is used in the [validation](https://github.com/FAIRmat-NFDI/pynxtools/blob/main/src/pynxtools/dataconverter/validation.py) implemented in `pynxtools`.
 
 ## Special rules for names and namefitting
 

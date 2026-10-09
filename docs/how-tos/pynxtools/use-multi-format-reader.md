@@ -3,13 +3,13 @@
 !!! info
     In this how-to guide, we will focus on an how-to implement a `pynxtools` reader using a the `MultiFormatReader`. If you are interested in the general structure of the `MultiFormatReader`, you can find more information at [Learn > pynxtools > The MultiFormatReader as a reader superclass](../../learn/pynxtools/multi-format-reader.md).
 
-While building on the ```BaseReader``` allows for the most flexibility, in most cases it is desirable to implement a reader that can read in multiple file formats and then populate the template based on the read data. For this purpose, `pynxtools` has the [**`MultiFormatReader`**](https://github.com/FAIRmat-NFDI/pynxtools/blob/master/src/pynxtools/dataconverter/readers/multi/reader.py), which can be readily extended for your own data.
+While building on the ```BaseReader``` allows for the most flexibility, in most cases it is desirable to implement a reader that can read in multiple file formats and then populate the template based on the read data. For this purpose, `pynxtools` has the [**`MultiFormatReader`**](https://github.com/FAIRmat-NFDI/pynxtools/blob/main/src/pynxtools/dataconverter/readers/multi/reader.py), which can be readily extended for your own data.
 
 ## Getting started
 
 **You can find all of the data and the developed Python scripts here**:
 
-[Download](https://download-directory.github.io/?url=https://github.com/FAIRmat-NFDI/pynxtools/tree/master/examples/mock-data-reader){:target="_blank" .md-button }
+[Download](https://download-directory.github.io/?url=https://github.com/FAIRmat-NFDI/pynxtools/tree/main/examples/mock-data-reader){:target="_blank" .md-button }
 
 Here, we will implement a reader called `MyDataReader` that builds on the `MultiFormatReader`. `MyDataReader` is an example for a reader that can read HDF5 data from a specific technology-partner data set, as well as additional metadata from am electronic lab notebook (in YAML format).
 
@@ -123,7 +123,7 @@ Note that here we are adding handlers for three types of data file extensions:
 
 First, we will have a look at the HDF5 file. This mock HDF5 file was generated with `h5py` using a simple script:
 
-[Download create_mock_data.py](https://github.com/FAIRmat-NFDI/pynxtools/tree/master/examples/mock-data-reader/create_mock_data.py){:target="_blank" .md-button }
+[Download create_mock_data.py](https://github.com/FAIRmat-NFDI/pynxtools/tree/main/examples/mock-data-reader/create_mock_data.py){:target="_blank" .md-button }
 
 <img src="../media/mock_data.png" style="width: 50vw; min-width: 330px;" />
 

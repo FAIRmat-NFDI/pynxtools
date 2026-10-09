@@ -13,7 +13,7 @@ In this how-to guide, we will learn how to use different software tools to valid
 !!! info "Dataset"
     You can download the dataset used in this how-to guide here:
 
-    [201805_WSe2_arpes.nxs](https://raw.githubusercontent.com/FAIRmat-NFDI/pynxtools/master/src/pynxtools/data/201805_WSe2_arpes.nxs){:target="_blank" .md-button }
+    [201805_WSe2_arpes.nxs](https://raw.githubusercontent.com/FAIRmat-NFDI/pynxtools/main/src/pynxtools/data/201805_WSe2_arpes.nxs){:target="_blank" .md-button }
 
     This is an angular-resolved photoelectron spectroscopy (ARPES) dataset that is formatted according to the [`NXarpes`](https://manual.nexusformat.org/classes/applications/NXarpes.html#nxarpes) application definition.
 

@@ -22,7 +22,7 @@ You will have
 
 ## Setup
 
-`pynxtools` has a number of [readers](https://github.com/FAIRmat-NFDI/pynxtools/tree/master/src/pynxtools/dataconverter/readers) that support reading and converting multiple file formats. A generic reader is the [JSON Map Reader](https://github.com/FAIRmat-NFDI/pynxtools/tree/master/src/pynxtools/dataconverter/readers/json_map). In addition, we provide multiple [reader plugins](https://github.com/FAIRmat-NFDI/pynxtools/tree/master?tab=readme-ov-file#plugins) for different experimental techniques.
+`pynxtools` has a number of [readers](https://github.com/FAIRmat-NFDI/pynxtools/tree/main/src/pynxtools/dataconverter/readers) that support reading and converting multiple file formats. A generic reader is the [JSON Map Reader](https://github.com/FAIRmat-NFDI/pynxtools/tree/main/src/pynxtools/dataconverter/readers/json_map). In addition, we provide multiple [reader plugins](https://github.com/FAIRmat-NFDI/pynxtools/tree/main?tab=readme-ov-file#plugins) for different experimental techniques.
 
 We will use the [XPS reader plugin](https://github.com/FAIRmat-NFDI/pynxtools-xps) with a [SpecsLabProdigy](https://www.specs-group.com/nc/specs/products/detail/prodigy/) file (file extension: `.sle`) as an example.
 
@@ -38,7 +38,7 @@ We will use the [XPS reader plugin](https://github.com/FAIRmat-NFDI/pynxtools-xp
     pwd
     ```
 
-3. Install [pynxtools](https://github.com/FAIRmat-NFDI/pynxtools/tree/master?tab=readme-ov-file#installation) with the [XPS reader plugin](https://github.com/FAIRmat-NFDI/pynxtools-xps):
+3. Install [pynxtools](https://github.com/FAIRmat-NFDI/pynxtools/tree/main?tab=readme-ov-file#installation) with the [XPS reader plugin](https://github.com/FAIRmat-NFDI/pynxtools-xps):
 
     === "uv"
         ```bash
@@ -79,4 +79,4 @@ Here we use a `params.yaml` parameter file to configure the converter.  This wil
 
 **Congrats! You now have a FAIR NeXus file!**
 
-You can try out [other examples from pynxtools](https://github.com/FAIRmat-NFDI/pynxtools/tree/master/examples).
+You can try out [other examples from pynxtools](https://github.com/FAIRmat-NFDI/pynxtools/tree/main/examples).
