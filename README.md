@@ -22,8 +22,6 @@ Additionally, the software can be used as a plugin in the research data manageme
 
 We welcome contributions! See [contributing](https://fairmat-nfdi.github.io/pynxtools/tutorial/contributing.html) for guidelines on reporting bugs, requesting features, and submitting pull requests.
 
-Create your branch from `develop` and open your pull request against `develop`. Never open a pull request against `main`: it receives only `release/*` branches.
-
 Read more in the [official documentation page](https://fairmat-nfdi.github.io/pynxtools/).
 
 # How to cite this work
