@@ -5,9 +5,9 @@ name: pytest
 
 on:
   push:
-    branches: [master]
+    branches: [main, develop, 'release/**']
   pull_request:
-    branches: [master]
+    branches: [main, develop, 'release/**']
 
 jobs:
   pytest:

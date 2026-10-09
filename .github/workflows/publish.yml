@@ -24,6 +24,16 @@ jobs:
         uses: astral-sh/setup-uv@v5
         with:
           python-version: ${{ env.python-version }}
+      - name: Check that the release is a v*.*.* tag on main
+        run: |
+          if [[ "$GITHUB_REF" != refs/tags/v*.*.* ]]; then
+            echo "::error::Publishing requires a 'v*.*.*' release tag, got '$GITHUB_REF'."
+            exit 1
+          fi
+          if ! git merge-base --is-ancestor "$GITHUB_SHA" origin/main; then
+            echo "::error::The tagged commit is not on main. Merge 'release/<version>' into main and tag the release there."
+            exit 1
+          fi
       - name: Git tag version
         id: git_tag_version
         run: |

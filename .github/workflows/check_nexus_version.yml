@@ -2,9 +2,9 @@ name: nexus version check
 
 on:
   push:
-    branches: [master]
+    branches: [main, develop, 'release/**']
   pull_request:
-    branches: [master]
+    branches: [main, develop, 'release/**']
 
 jobs:
   nexus-version:
