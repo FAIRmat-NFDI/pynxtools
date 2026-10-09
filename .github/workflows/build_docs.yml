@@ -3,7 +3,7 @@ name: build_and_deploy_mkdocs
 on:
   push:
     branches:
-      - master  # Triggers deployment on push to the master branch
+      - main  # Triggers deployment on push to the main branch
 
 env:
   python-version: 3.12

@@ -5,9 +5,9 @@ name: test plugins
 
 on:
   push:
-    branches: [master]
+    branches: [main, develop, 'release/**']
   pull_request:
-    branches: [master]
+    branches: [main, develop, 'release/**']
 
 env:
   python-version: 3.12

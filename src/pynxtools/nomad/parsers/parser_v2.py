@@ -696,7 +696,11 @@ class NomadVisitorV2(NexusVisitor):
             else:
                 stats = get_field_stats_iuf_contiguous(hdf_node)
         except Exception as e:
-            self._logger.debug("Error computing stats for %s: %s", hdf_field_name, e)
+            self._logger.debug(
+                "error computing field statistics",
+                target_name=hdf_field_name,
+                exc_info=e,
+            )
             return
 
         if not np.isfinite(float(stats["__mean"])):
@@ -730,7 +734,9 @@ class NomadVisitorV2(NexusVisitor):
                 current.m_set(stat_qty, value)
             except Exception as e:
                 self._logger.debug(
-                    "Error setting %s__%s: %s", hdf_field_name, suffix, e
+                    "error setting field statistic",
+                    target_name=f"{hdf_field_name}__{suffix}",
+                    exc_info=e,
                 )
 
     def _populate_field(
@@ -753,7 +759,9 @@ class NomadVisitorV2(NexusVisitor):
                     value = MQuantity.wrap(value, hdf_field_name)
                 current.m_set(qty, value)
             except Exception as e:
-                self._logger.debug("Error setting link %s: %s", hdf_field_name, e)
+                self._logger.debug(
+                    "error setting link", target_name=hdf_field_name, exc_info=e
+                )
             return
 
         # Link targets with a resolved numeric/typed Quantity are populated
@@ -770,9 +778,9 @@ class NomadVisitorV2(NexusVisitor):
             and hdf_node.dtype.itemsize > 8
         ):
             self._logger.debug(
-                "Precision %d too high for %s, skipping",
-                hdf_node.dtype.itemsize,
-                hdf_field_name,
+                "precision too high, skipping field",
+                target_name=hdf_field_name,
+                itemsize=hdf_node.dtype.itemsize,
             )
             return
 
@@ -831,7 +839,9 @@ class NomadVisitorV2(NexusVisitor):
                     if value is None:
                         return
             except Exception as e:
-                self._logger.debug("Error reading field %s: %s", hdf_field_name, e)
+                self._logger.debug(
+                    "error reading field", target_name=hdf_field_name, exc_info=e
+                )
                 return
 
             unit = hdf_node.attrs.get("units", None)
@@ -869,7 +879,9 @@ class NomadVisitorV2(NexusVisitor):
         try:
             current.m_set(qty, value)
         except Exception as e:
-            self._logger.debug("Error setting field %s: %s", hdf_field_name, e)
+            self._logger.debug(
+                "error setting field", target_name=hdf_field_name, exc_info=e
+            )
             return
 
         # Record path mapping: archive path -> HDF5 path (entry-relative)
@@ -927,10 +939,10 @@ class NomadVisitorV2(NexusVisitor):
             hdf_node, accepted_types
         ):
             self._logger.warning(
-                "HDF5Reference %s: NXDL declares %s but the dataset dtype is %s",
-                hdf_field_name,
-                field_ann.type,
-                hdf_node.dtype,
+                "HDF5Reference dtype does not match NXDL type",
+                target_name=hdf_field_name,
+                nxdl_type=field_ann.type,
+                dtype=str(hdf_node.dtype),
             )
 
         if field_ann.units:
@@ -942,11 +954,10 @@ class NomadVisitorV2(NexusVisitor):
                 real_unit_str = "1"
             if not NXUnitSet.matches(field_ann.units, real_unit_str):
                 self._logger.warning(
-                    "HDF5Reference %s: NXDL expects unit category %s but the "
-                    "dataset units are %r",
-                    hdf_field_name,
-                    field_ann.units,
-                    real_unit_str,
+                    "HDF5Reference units do not match NXDL unit category",
+                    target_name=hdf_field_name,
+                    nxdl_units=field_ann.units,
+                    units=real_unit_str,
                 )
 
     def _populate_attribute(
@@ -980,7 +991,9 @@ class NomadVisitorV2(NexusVisitor):
 
             current.m_set(qty, attribute)
         except Exception as e:
-            self._logger.debug("Error setting attribute %s: %s", attr_name, e)
+            self._logger.debug(
+                "error setting attribute", target_name=attr_name, exc_info=e
+            )
 
     def _track_sample_refs(self, section: MSection, nx_class: str) -> None:
         if nx_class in self.sample_class_refs:
@@ -1107,7 +1120,7 @@ class NexusParserV2(MatchingParser):
         entry_names = sorted(prescan.entry_definitions.keys())
 
         if not entry_names:
-            logger.warning("No NXentry groups found in %s", nxs_fname)
+            logger.warning("no NXentry groups found", mainfile=nxs_fname)
             if archive.metadata is None:
                 archive.metadata = EntryMetadata()
             archive.metadata.domain = "nexus"

@@ -12,15 +12,42 @@ This tutorial will guide you through on how to set up a working environment for 
 You will know
 
 - how to setup your environment for developing `pynxtools`
+- which branch to use for which kind of change
 - how to make changes to the software
 - how to test the software
 - how to contribute on GitHub
+- how a new version is released
 - how to use pynxtools as a NOMAD plugin
 
 ## Contributing
 
 ??? info "Structure of the `pynxtools` repository"
-    The software tools are located inside [`src/pynxtools`](https://github.com/FAIRmat-NFDI/pynxtools/tree/master/src/pynxtools). They are shipped with unit tests located in [`tests`](https://github.com/FAIRmat-NFDI/pynxtools/tree/master/tests). Some examples from the scientific community are provided in [`examples`](https://github.com/FAIRmat-NFDI/pynxtools/tree/master/examples). They guide you through the process of converting instrument data into the NeXus standard and visualizing the files' content.
+    The software tools are located inside [`src/pynxtools`](https://github.com/FAIRmat-NFDI/pynxtools/tree/develop/src/pynxtools). They are shipped with unit tests located in [`tests`](https://github.com/FAIRmat-NFDI/pynxtools/tree/develop/tests). Some examples from the scientific community are provided in [`examples`](https://github.com/FAIRmat-NFDI/pynxtools/tree/develop/examples). They guide you through the process of converting instrument data into the NeXus standard and visualizing the files' content.
+
+### Branching model
+
+`pynxtools` follows the same branching model as the core NOMAD packages.
+
+| Branch | Role |
+|---|---|
+| `develop` | Default branch. All regular development PRs target this branch. |
+| `main` | Released versions only. Only `release/*` branches are merged here, so its history is the release history. |
+| `release/vX.Y.Z` | Temporary release branch, created from `develop` and merged into `main`. The version may carry a pre-release suffix, e.g. `release/vX.Y.Z-beta` or `release/vX.Y.Z-rc1`. |
+
+| Activity | Branch |
+|---|---|
+| Feature development | `develop` |
+| PR review and integration | `develop` |
+| Selecting changes for a release | `release/vX.Y.Z` |
+| Release-specific bug fixes | `release/vX.Y.Z` |
+| Published release history | `main` |
+| Porting release fixes back to ongoing development | Merge `release/vX.Y.Z` back into `develop` |
+
+The `Check if source is release/*` workflow
+([`.github/workflows/check-source-is-release.yml`](https://github.com/FAIRmat-NFDI/pynxtools/blob/develop/.github/workflows/check-source-is-release.yml))
+allows PRs into `main` only from `release/*` branches. PRs from any other branch, **including `develop`**,
+fail this check. It is enforced by marking it as a required status check in the branch protection rule
+for `main`.
 
 ### Setup
 
@@ -51,7 +78,7 @@ We start by cloning the repository:
 
 ```console
 git clone https://github.com/FAIRmat-NFDI/pynxtools.git \\
-    --branch master \\
+    --branch develop \\
     --recursive pynxtools
 cd pynxtools
 git submodule sync --recursive
@@ -140,7 +167,16 @@ A number of examples exist which document how the tools can be used. For a stand
 
 ### Contributing to the package on Github
 
-Once you are happy with the changes, please commit them on a separate branch and create a pull request on GitHub. We run a number of GitHub actions that check the correct linting, run the tests in an isolated environment, and build the documentation. Once these pass and a peer review of the code has occurred, your code will be accepted.
+Once you are happy with the changes, commit them on a separate branch created from `develop` and open a pull request against `develop`:
+
+```console
+git switch develop && git pull
+git switch -c <short-descriptive-name>
+# commit your changes, then
+git push -u origin <short-descriptive-name>
+```
+
+Never open a pull request against `main`: it receives only `release/*` branches. We run a number of GitHub actions that check the correct linting, run the tests in an isolated environment, and build the documentation. Once these pass and a peer review of the code has occurred, your code will be accepted.
 
 ### Use of AI tools
 
@@ -161,6 +197,28 @@ All AI-generated content must be reviewed, understood, and validated by the cont
 
 **Code review.**
 AI tools may be used as a supplementary aid during code review, but final review decisions must always be made by a human maintainer. Automated or AI-driven review does not substitute for human judgment on design, correctness, or scientific validity.
+
+## Release workflow
+
+1. Create the release branch from `develop`:
+
+    ```console
+    git switch develop && git pull
+    git switch -c release/vX.Y.Z
+    git push -u origin release/vX.Y.Z
+    ```
+
+2. Commit only release-specific changes on this branch (version bumps, changelog, last-minute bug fixes).
+   New features keep going into `develop`.
+3. Bump `version` in `CITATION.cff` to `X.Y.Z`, including any pre-release suffix (e.g. `0.1.2-rc1` for the tag `v0.1.2-rc1`).
+   The publish workflow fails if it differs from the tag.
+4. Create a GitHub release with the tag `vX.Y.Z` and select `release/vX.Y.Z` as its target branch.
+   The publish workflow refuses to upload to PyPI if the release does not target `release/vX.Y.Z`
+   or if the tagged commit is not on that branch.
+5. Once CI passes and the release is published to PyPI, open a PR from `release/vX.Y.Z` into `main` and merge it.
+6. If you fixed anything directly on the release branch, open a PR from `release/vX.Y.Z` into `develop`
+   so the fixes are not lost in ongoing development.
+7. Delete the `release/vX.Y.Z` branch.
 
 ## Developing pynxtools as a NOMAD plugin
 

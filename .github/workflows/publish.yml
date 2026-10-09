@@ -24,6 +24,23 @@ jobs:
         uses: astral-sh/setup-uv@v5
         with:
           python-version: ${{ env.python-version }}
+      - name: Check that the release is created from its release/v*.*.* branch
+        env:
+          TARGET: ${{ github.event.release.target_commitish }}
+        run: |
+          TAG="${GITHUB_REF#refs/tags/}"
+          if [[ ! "$TAG" =~ ^v[0-9]+\.[0-9]+\.[0-9]+(-[A-Za-z0-9.-]+)?$ ]]; then
+            echo "::error::Publishing requires a 'vX.Y.Z' release tag, optionally with a prerelease suffix (e.g. 'v0.1.2-beta'), got '$TAG' instead."
+            exit 1
+          fi
+          if [[ "$TARGET" != "release/$TAG" ]]; then
+            echo "::error::The release must target 'release/$TAG', got '$TARGET'."
+            exit 1
+          fi
+          if ! git merge-base --is-ancestor "$GITHUB_SHA" "origin/release/$TAG"; then
+            echo "::error::The tagged commit is not on 'release/$TAG'."
+            exit 1
+          fi
       - name: Git tag version
         id: git_tag_version
         run: |

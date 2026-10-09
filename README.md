@@ -5,7 +5,7 @@
 ![](https://img.shields.io/pypi/pyversions/pynxtools)
 ![](https://img.shields.io/pypi/l/pynxtools)
 ![](https://img.shields.io/pypi/v/pynxtools)
-[![Coverage Status](https://coveralls.io/repos/github/FAIRmat-NFDI/pynxtools/badge.svg?branch=master&kill_cache=1)](https://coveralls.io/github/FAIRmat-NFDI/pynxtools?branch=master)
+[![Coverage Status](https://coveralls.io/repos/github/FAIRmat-NFDI/pynxtools/badge.svg?branch=main&kill_cache=1)](https://coveralls.io/github/FAIRmat-NFDI/pynxtools?branch=main)
 [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.1323437.svg)](https://doi.org/10.5281/zenodo.13862042)
 [![REUSE status](https://api.reuse.software/badge/github.com/FAIRmat-NFDI/pynxtools)](https://api.reuse.software/info/github.com/FAIRmat-NFDI/pynxtools)
 
