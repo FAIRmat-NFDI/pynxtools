@@ -38,7 +38,7 @@ You will know
 |---|---|
 | Feature development | `develop` |
 | PR review and integration | `develop` |
-| Selecting changes for a release | `release/vx.y.z` |
+| Selecting changes for a release | `release/vX.Y.Z` |
 | Release-specific bug fixes | `release/vx.y.z` |
 | Published release history | `main` |
 | Porting release fixes back to ongoing development | Merge `release/vx.y.z` back into `develop` |
