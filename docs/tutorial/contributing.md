@@ -26,7 +26,7 @@ You will know
 
 ### Branching model
 
-`pynxtools` follows the same branching model as `nomad-FAIR` and `nomad-docs`.
+`pynxtools` follows the same branching model as the core NOMAD packages.
 
 | Branch | Role |
 |---|---|
