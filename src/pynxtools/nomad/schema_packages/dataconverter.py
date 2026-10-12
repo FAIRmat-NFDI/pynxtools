@@ -24,9 +24,7 @@ except ImportError as exc:
 from pynxtools.dataconverter import convert as pynxtools_converter
 from pynxtools.dataconverter import writer as pynxtools_writer
 from pynxtools.dataconverter.template import Template
-from pynxtools.definitions.dev_tools.utils.nxdl_utils import (
-    get_app_defs_names,  # pylint: disable=import-error
-)
+from pynxtools.definitions.dev_tools.utils.nxdl_utils import get_app_defs_names  # pylint: disable=import-error
 
 m_package = Package(name="nexus_data_converter")
 
