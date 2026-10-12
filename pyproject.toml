@@ -68,6 +68,7 @@ dependencies = [
     "cachetools",
     "structlog",
     "Jinja2",
+    "docutils",
 ]
 
 [project.urls]
