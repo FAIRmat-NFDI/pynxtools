@@ -401,8 +401,8 @@ See [How-tos > pynxtools > Validate NeXus files](../how-tos/pynxtools/validate-n
 
 You can find both `NXdouble_slit.yaml` and `NXdouble_slit.nxdl.xml` in the `pynxtools` examples:
 
-- [`NXdouble_slit.yaml`](https://github.com/FAIRmat-NFDI/pynxtools/blob/master/examples/custom-application-definition/NXdouble_slit.yaml)
-- [`NXdouble_slit.nxdl.xml`](https://github.com/FAIRmat-NFDI/pynxtools/blob/master/examples/custom-application-definition/NXdouble_slit.nxdl.xml)
+- [`NXdouble_slit.yaml`](https://github.com/FAIRmat-NFDI/pynxtools/blob/main/examples/custom-application-definition/NXdouble_slit.yaml)
+- [`NXdouble_slit.nxdl.xml`](https://github.com/FAIRmat-NFDI/pynxtools/blob/main/examples/custom-application-definition/NXdouble_slit.nxdl.xml)
 
 ??? success "NXdouble_slit.yaml (full)"
     ```yaml
@@ -459,8 +459,8 @@ Create a new YAML file called `NXlaser.yaml`:
 
 The complete `NXlaser.yaml` and `NXlaser.nxdl.xml` are in the `pynxtools` examples:
 
-- [`NXlaser.yaml`](https://github.com/FAIRmat-NFDI/pynxtools/blob/master/examples/custom-application-definition/NXlaser.yaml)
-- [`NXlaser.nxdl.xml`](https://github.com/FAIRmat-NFDI/pynxtools/blob/master/examples/custom-application-definition/NXlaser.nxdl.xml)
+- [`NXlaser.yaml`](https://github.com/FAIRmat-NFDI/pynxtools/blob/main/examples/custom-application-definition/NXlaser.yaml)
+- [`NXlaser.nxdl.xml`](https://github.com/FAIRmat-NFDI/pynxtools/blob/main/examples/custom-application-definition/NXlaser.nxdl.xml)
 
 You can then use this new base class `NXlaser` in `NXdouble_slit`:
 

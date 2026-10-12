@@ -73,7 +73,7 @@ The superproject (`pynxtools`) therefore defines the authoritative version of th
 
 ## Managing the definitions submodule
 
-The submodule should be managed through [a dedicated script](https://github.com/FAIRmat-NFDI/pynxtools/blob/master/scripts/definitions.sh):
+The submodule should be managed through [a dedicated script](https://github.com/FAIRmat-NFDI/pynxtools/blob/main/scripts/definitions.sh):
 
 ```bash
 scripts/definitions.sh

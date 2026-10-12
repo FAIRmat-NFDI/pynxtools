@@ -1,0 +1,29 @@
+name: Check if source is release/*
+
+# `main` holds released versions only, so only `release/*` branches may be merged into it.
+# Make this job a required status check in the `main` branch protection rule.
+on:
+  pull_request:
+    branches: [main]
+    types: [opened, reopened, synchronize, edited]
+
+jobs:
+  check-source-branch:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Fail if the source branch is not release/*
+        env:
+          HEAD_REF: ${{ github.head_ref }}
+          HEAD_REPO: ${{ github.event.pull_request.head.repo.full_name }}
+          BASE_REPO: ${{ github.repository }}
+        run: |
+          if [[ "$HEAD_REPO" != "$BASE_REPO" ]]; then
+            echo "::error::PRs into main must come from this repository, not from the fork '$HEAD_REPO'."
+            exit 1
+          fi
+          if [[ "$HEAD_REF" =~ ^release/v[0-9]+\.[0-9]+\.[0-9]+(-[A-Za-z0-9.-]+)?$ ]]; then
+            echo "Source branch '$HEAD_REF' is allowed to merge into main."
+          else
+            echo "::error::Source branch '$HEAD_REF' cannot merge into main. Target 'develop' instead; releases go through a 'release/vX.Y.Z' branch created from 'develop'."
+            exit 1
+          fi

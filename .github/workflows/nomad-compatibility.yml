@@ -3,10 +3,14 @@ name: NOMAD compatibility
 on:
   push:
     branches:
-      - master
+      - main
+      - develop
+      - 'release/**'
   pull_request:
     branches:
-      - master
+      - main
+      - develop
+      - 'release/**'
     # Run workflow only when there are changes in pyproject.toml
     # paths:
     #   - 'pyproject.toml'
@@ -41,9 +45,13 @@ jobs:
 
     - name: Add pynxtools dependency in NOMAD test_plugins.txt
       working-directory: ./nomad
+      env:
+        # For PRs from forks, install from the fork repository, not from upstream.
+        SOURCE_REPO: ${{ github.event.pull_request.head.repo.full_name || github.repository }}
+        SOURCE_REF: ${{ github.head_ref || github.ref_name }}
       run: |
         echo "" >> test_plugins.txt
-        echo "pynxtools@git+https://github.com/FAIRmat-NFDI/pynxtools.git@${{ github.head_ref || github.ref_name }}" >> test_plugins.txt
+        echo "pynxtools@git+https://github.com/${SOURCE_REPO}.git@${SOURCE_REF}" >> test_plugins.txt
     - name: Install uv and set the python version to ${{ env.python-version }}
       uses: astral-sh/setup-uv@v5
       with:

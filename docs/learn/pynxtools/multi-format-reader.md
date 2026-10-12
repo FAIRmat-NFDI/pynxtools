@@ -6,12 +6,12 @@
 There are three options for building a new `pynxtools` reader:
 
 1. build the reader from scratch
-2. inherit and extend the [**`BaseReader`**](https://github.com/FAIRmat-NFDI/pynxtools/blob/master/src/pynxtools/dataconverter/readers/base/reader.py)
-3. inherit and extend the [**`MultiFormatReader`**](https://github.com/FAIRmat-NFDI/pynxtools/blob/master/src/pynxtools/dataconverter/readers/multi/reader.py)
+2. inherit and extend the [**`BaseReader`**](https://github.com/FAIRmat-NFDI/pynxtools/blob/main/src/pynxtools/dataconverter/readers/base/reader.py)
+3. inherit and extend the [**`MultiFormatReader`**](https://github.com/FAIRmat-NFDI/pynxtools/blob/main/src/pynxtools/dataconverter/readers/multi/reader.py)
 
 While option 1 is generally not recommended, inheriting and extending the `BaseReader` has traditionally been the default solution for all existing pynxtools readers and reader plugins. The `BaseReader`, which is an abstract base class, has an essentially empty ```read``` function and is  thus only helpful for implementing the correct input/output design of the ```read``` function of any reader which is implemented off of it.
 
-While building on the ```BaseReader``` allows for the most flexibility, in most cases it is desirable to implement a reader that can read in multiple file formats and then populate the NeXus file based on the read data, in compliance with a NeXus application definition. For this purpose, `pynxtools` has the [**`MultiFormatReader`**](https://github.com/FAIRmat-NFDI/pynxtools/blob/master/src/pynxtools/dataconverter/readers/multi/reader.py), which can be readily extended for any new data.
+While building on the ```BaseReader``` allows for the most flexibility, in most cases it is desirable to implement a reader that can read in multiple file formats and then populate the NeXus file based on the read data, in compliance with a NeXus application definition. For this purpose, `pynxtools` has the [**`MultiFormatReader`**](https://github.com/FAIRmat-NFDI/pynxtools/blob/main/src/pynxtools/dataconverter/readers/multi/reader.py), which can be readily extended for any new data.
 
 ## The basic structure
 

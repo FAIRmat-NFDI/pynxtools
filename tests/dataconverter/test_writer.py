@@ -18,11 +18,7 @@ from pynxtools.dataconverter.helpers import add_default_root_attributes
 from pynxtools.dataconverter.template import Template
 from pynxtools.dataconverter.writer import Writer
 
-from .test_helpers import (  # pylint: disable=unused-import
-    alter_dict,
-    fixture_filled_test_data,
-    fixture_template,
-)
+from .test_helpers import alter_dict, fixture_filled_test_data, fixture_template  # pylint: disable=unused-import
 
 
 @pytest.fixture(name="writer")

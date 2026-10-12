@@ -89,7 +89,7 @@ chunk settings should be used when there is clear bias towards one particular vi
 
 Observing that our exclusive relying on the heuristic of `h5py` delivered frequently too small chunks that increased loading and display times
 for HDF5 files that were generated with `pynxtools` using H5Web in the NOMAD research data management system. This motivated adding the
-here described customization option. For technical details we refer to the [implementation](https://github.com/FAIRmat-NFDI/pynxtools/blob/master/src/pynxtools/dataconverter/chunk.py).
+here described customization option. For technical details we refer to the [implementation](https://github.com/FAIRmat-NFDI/pynxtools/blob/main/src/pynxtools/dataconverter/chunk.py).
 
 ## Customizing chunk settings for different file systems
 

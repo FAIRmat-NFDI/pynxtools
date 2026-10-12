@@ -74,7 +74,7 @@ pynx convert --nxdl nxdl partial1.nxs partial2.nxs
 pynx convert --nxdl nxdl any_data.hdf5 --mapping my_custom_map.mapping.json
 ```
 
-You can find actual examples with data files at [`examples/json_map`](https://github.com/FAIRmat-NFDI/pynxtools/tree/master/examples/json_map/).
+You can find actual examples with data files at [`examples/json_map`](https://github.com/FAIRmat-NFDI/pynxtools/tree/main/examples/json_map/).
 
 ## Example data for testing and development purposes
 
