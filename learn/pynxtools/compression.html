@@ -1959,7 +1959,7 @@ read-out in one operation. Such use cases can collide substantiating why the opt
 chunk settings should be used when there is clear bias towards one particular viewing direction.</p>
 <p>Observing that our exclusive relying on the heuristic of <code>h5py</code> delivered frequently too small chunks that increased loading and display times
 for HDF5 files that were generated with <code>pynxtools</code> using H5Web in the NOMAD research data management system. This motivated adding the
-here described customization option. For technical details we refer to the <a href="https://github.com/FAIRmat-NFDI/pynxtools/blob/master/src/pynxtools/dataconverter/chunk.py">implementation</a>.</p>
+here described customization option. For technical details we refer to the <a href="https://github.com/FAIRmat-NFDI/pynxtools/blob/main/src/pynxtools/dataconverter/chunk.py">implementation</a>.</p>
 <h2 id="customizing-chunk-settings-for-different-file-systems">Customizing chunk settings for different file systems<a class="headerlink" href="#customizing-chunk-settings-for-different-file-systems" title="Permanent link">&para;</a></h2>
 <p>The customization of the chunking heuristic has an additional level of hardware-dependent complexity though. Specifically, the actual
 read-out performance of chunked HDF5 content can heavily depend on the file system architecture and its settings. It is important to understand
