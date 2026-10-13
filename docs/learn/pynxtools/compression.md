@@ -4,7 +4,7 @@
 
 Data compression covers methods to effectively reduce the size of a dataset or portions of it. Lossless and lossy methods are distinguished. Given that `pynxtools` writes its content to HDF5 files, we have decided to use compression filters that the HDF5 library provides. Using compression or not in `pynxtools` is optional. The user can decide at the individual dataset level. To preserve the original data, we decided to only support lossless compression algorithms. We also decided to not compress strings and scalar datasets.
 
-Specifically, we use the build-in [`deflate` compression filter](https://support.hdfgroup.org/documentation/hdf5-docs/hdf5_topics/UsingCompressionInHDF5.html) due to its wide support across the most frequently used programming languages. Users should be aware that using `deflate` instead of more modern algorithms has the trade-off that there is as of now no efficient multi-threaded implementation of this compression filter within the HDF5 library. Therefore, compression can take a substantial amount of the total execution time within the `dataconverter` HDF5 file writing part.
+Specifically, we use the built-in [`deflate` compression filter](https://support.hdfgroup.org/documentation/hdf5-docs/hdf5_topics/UsingCompressionInHDF5.html) due to its wide support across the most frequently used programming languages. Users should be aware that using `deflate` instead of more modern algorithms has the trade-off that there is as of now no efficient multi-threaded implementation of this compression filter within the HDF5 library. Therefore, compression can take a substantial amount of the total execution time within the `dataconverter` HDF5 file writing part.
 
 ## How to use compression
 
