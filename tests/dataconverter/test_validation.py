@@ -2280,7 +2280,7 @@ def test_validate_data_dict(data_dict, error_messages, caplog, request):
         assert caplog.text == ""
         if isinstance(original_value, Mapping) and "link" in original_value:
             # A {"link": ...} entry (and any VDS "shape" slice) must survive
-            # validation unchanged - the Writer needs it intact.
+            # validation unchanged.
             assert data_dict["required"][link_path] == original_value
     else:
         if request.node.callspec.id in (
@@ -3750,11 +3750,6 @@ def test_validate_nexus_file(data_dict, error_messages, caplog, tmp_path, reques
     Writer(data=template, nxdl_f_path=nxdl_path, output_path=hdf_file_path).write()
 
     if request.node.callspec.id == "nxdata-signal-link-with-shape-written-as-real-vds":
-        # ValidationVisitor (via validate()) runs on the already-written file, where
-        # links/VDS are real h5py objects - it should see a correctly sliced VDS,
-        # not the full (unsliced) target the writer would fall back to if a bug
-        # upstream (e.g. in validate_dict_against) had corrupted the link/shape
-        # template entry before Writer ever ran.
         with h5py.File(hdf_file_path, "r") as hdf_file:
             dataset = hdf_file["/my_entry/nxodd_name/data"]
             assert dataset.is_virtual

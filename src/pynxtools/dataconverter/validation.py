@@ -1143,7 +1143,7 @@ def validate_dict_against(
         errors = list(map(lambda x: f"{x}_errors", [signal, *aux_signals, *axes]))
 
         # Handle all remaining keys which are not part of NXdata. Field keys may
-        # appear bare ("Psi_50deg") or wrapped ("DATA[Psi_50deg]") - exclude both
+        # appear bare ("data_field") or wrapped ("DATA[data_field]") - exclude both
         # forms, or an already-handled field leaks back in and gets corrupted.
         def _wrapped(names: list, wrapper: str) -> set:
             result = set(names)
@@ -1254,9 +1254,6 @@ def validate_dict_against(
                 continue
 
             if node.nx_class == "NXdata":
-                # Was `if`/`if`/`else`, so this ran alongside the generic branch
-                # below too - reprocessing fields with resolved values and
-                # corrupting any {"link": ...}/VDS "shape" entries.
                 handle_nxdata(node, keys[variant], prev_path=variant_path)
             elif node.nx_class == "NXcollection":
                 return
