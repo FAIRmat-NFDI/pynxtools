@@ -126,25 +126,62 @@ pytest -sv tests
 
 ### Editing the documentation
 
-We are using [`mkdocs](https://www.mkdocs.org/) for the documentation. If you edit the documentation, you can build it locally. For this, you need to install an additional set of dependencies:
+We use [`mkdocs`](https://www.mkdocs.org/) for the documentation. To serve it locally from a standalone clone:
 
 === "uv"
 
     ```bash
-    uv pip install -e ".[docs]"
+    uv run --extra docs mkdocs serve
     ```
 
 === "pip"
 
     ```bash
+    python3 -m venv .venv && source .venv/bin/activate
     pip install -e ".[docs]"
+    python -m mkdocs serve
     ```
-You can then serve the documentation locally by running
 
-```console
-mkdocs serve
-```
+If you develop inside `nomad-distro-dev`, see [Developing inside nomad-distro-dev](#developing-inside-nomad-distro-dev).
 
+### Developing inside `nomad-distro-dev`
+
+When you develop pynxtools as part of [`nomad-distro-dev`](https://github.com/FAIRmat-NFDI/nomad-distro-dev) (set up as described in its README), it lives in `packages/pynxtools` and shares the distro's environment, the `.venv` in the distro root. `uv sync` is exact: it makes that environment match the distro's `pyproject.toml` and lockfile and removes everything else, including extras installed with `uv pip install -e ".[docs]"`.
+
+There are three ways to get the `docs` extra.
+
+1. **Declare the extras in the distro (persistent).** Add them to the distro's `pyproject.toml` so every sync keeps them:
+
+    ```toml
+    dependencies = [
+        ...
+        "pynxtools[dev,docs,nomad]",
+    ]
+    ```
+
+    Then sync and serve:
+
+    ```bash
+    uv sync
+    cd packages/pynxtools
+    uv run mkdocs serve
+    ```
+
+2. **Sync the extra into the environment.** No file changes, but the next plain `uv sync` removes it again:
+
+    ```bash
+    uv sync --inexact --extra docs --all-packages
+    cd packages/pynxtools
+    uv run mkdocs serve
+    ```
+
+    `--inexact` keeps packages you installed before; without it, uv removes them. `uv sync --all-extras --all-packages` also works, but installs every extra of every package, which is large.
+
+3. **Request the extra per command.** From `packages/pynxtools`:
+
+    ```bash
+    uv run --extra docs mkdocs serve
+    ```
 ### Running the examples
 
 A number of examples exist which document how the tools can be used. For a standalone usage, convenient Jupyter notebooks are available for some of the tools. To use these notebooks, Jupyter and related tools have to be installed in the development environment as follows:
