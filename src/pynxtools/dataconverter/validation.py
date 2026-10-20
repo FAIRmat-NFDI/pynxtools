@@ -143,6 +143,7 @@ def is_valid_unit_for_node(
                 "translation": "NX_LENGTH",
                 "rotation": "NX_ANGLE",
             }
+            transformation_type = decode_if_bytes(transformation_type)
             node_unit_category = category_map.get(transformation_type, "NX_UNITLESS")
         else:
             node_unit_category = "NX_UNITLESS"
@@ -570,7 +571,7 @@ class ValidationVisitor(NexusVisitor):
                 return True
             if isinstance(ancestor, h5py.Dataset):
                 continue
-            nx_class = ancestor.attrs.get("NX_class")
+            nx_class = decode_if_bytes(ancestor.attrs.get("NX_class"))
             if nx_class == "NXcollection" or nx_class is None:
                 return True
         return False
@@ -586,7 +587,8 @@ class ValidationVisitor(NexusVisitor):
         full_path = f"{self._entry_name}/{path}"
         check_reserved_prefix(full_path, self._appdef_node.name, "group")
 
-        if not group.attrs.get("NX_class"):
+        nx_class = decode_if_bytes(group.attrs.get("NX_class"))
+        if not nx_class:
             if not self._ignore_undocumented and self._is_canonical_path(path):
                 collector.collect_and_log(
                     full_path, ValidationProblem.MissingNXclass, None
@@ -595,7 +597,9 @@ class ValidationVisitor(NexusVisitor):
 
         try:
             node = self._find_node_for(
-                path, node_type="group", nx_class=group.attrs.get("NX_class")
+                path,
+                node_type="group",
+                nx_class=nx_class,
             )
         except TypeError:
             return
@@ -770,7 +774,7 @@ class ValidationVisitor(NexusVisitor):
             self._data,
         )
 
-        units = dataset.attrs.get("units")
+        units = decode_if_bytes(dataset.attrs.get("units"))
         units_path = f"{full_path}/@units"
         if node.unit is not None:
             self._remove_from_req_entities(f"{path}/@units")
@@ -1115,7 +1119,8 @@ def validate_dict_against(
         keys = _follow_link(keys, prev_path)
         signal = keys.get("@signal")
         aux_signals = keys.get("@auxiliary_signals", [])
-        axes = keys.get("@axes", [])
+        axes = decode_if_bytes(keys.get("@axes", []))
+
         if isinstance(axes, str):
             axes = [axes]
 
