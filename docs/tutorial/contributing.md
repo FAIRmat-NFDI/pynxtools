@@ -57,7 +57,7 @@ You can develop `pynxtools` in two ways:
 
 The sections after that ([Linting and formatting](#linting-and-formatting), [Testing](#testing), [Editing the documentation](#editing-the-documentation), [Running the examples](#running-the-examples)) show the commands for both setups.
 
-It is recommended to use Python 3.11 with a dedicated virtual environment. Learn how to manage [python versions](https://github.com/pyenv/pyenv) and [virtual environments](https://realpython.com/python-virtual-environments-a-primer/). We recommend using [`uv`](https://github.com/astral-sh/uv), an extremely fast Python package and project manager. In this tutorial, you will find paralleled descriptions, using either `uv` or a more classical approach using `venv` and `pip`.
+It is recommended to use Python 3.11+ with a dedicated virtual environment. Learn how to manage [python versions](https://github.com/pyenv/pyenv) and [virtual environments](https://realpython.com/python-virtual-environments-a-primer/). We recommend using [`uv`](https://github.com/astral-sh/uv), an extremely fast Python package and project manager. In this tutorial, you will find paralleled descriptions, using either `uv` or a more classical approach using `venv` and `pip`.
 
 Start by cloning the repository:
 
@@ -195,7 +195,7 @@ There exist unit tests for the software written in [pytest](https://docs.pytest.
     pytest -sv tests
     ```
 
-    The tests in `tests/nomad` need NOMAD. The CI runs them with NOMAD installed. To run them standalone, install the `nomad` extra, e.g. `uv pip install -e ".[dev,nomad]"`, or run them inside `nomad-distro-dev`.
+    The tests in `tests/nomad` need the `nomad-lab` package. The CI runs them with `nomad-lab` installed. To run them standalone, install the `nomad` extra, e.g. `uv pip install -e ".[dev,nomad]"`, or run them inside `nomad-distro-dev`.
 
 === "Inside nomad-distro-dev"
 
