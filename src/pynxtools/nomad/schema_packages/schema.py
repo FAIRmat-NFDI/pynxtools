@@ -226,30 +226,46 @@ class NexusActivityResult(ActivityResult):
     )
 
 
-class NexusMeasurement(Measurement, Schema, PlotSection):
-    technique_description = Quantity(
+class NexusTechnique(ArchiveSection):
+    """Ontology metadata for the NeXus application definition of an entry,
+    fetched from nomad-ontology-service."""
+
+    name = Quantity(
+        type=str,
+        description="""Name of the resolved NeXus application definition
+            (e.g. NXmpes_arpes).""",
+    )
+    description = Quantity(
         type=str,
         description="""Ontology comment (rdfs:comment) for the resolved NeXus
-            application definition, fetched from nomad-ontology-service.""",
+            application definition.""",
     )
-    technique_see_also = Quantity(
+    see_also = Quantity(
         type=str,
         description="""Ontology see-also link (rdfs:seeAlso) for the resolved
-            NeXus application definition, fetched from nomad-ontology-service.""",
+            NeXus application definition.""",
     )
-    technique_alt_labels = Quantity(
+    alt_labels = Quantity(
         type=str,
         shape=["*"],
         description="""Alternate labels/synonyms for the resolved NeXus
-            application definition, fetched from nomad-ontology-service.""",
+            application definition.""",
     )
-    technique_properties = Quantity(
+    properties = Quantity(
         type=str,
         shape=["*"],
         description="""Object-property restriction axioms (e.g. ESRFET's
             'can_be_used_for_technique') on the resolved NeXus application
-            definition, fetched from nomad-ontology-service, as
-            'property: value' strings.""",
+            definition, as 'property: value' strings.""",
+    )
+
+
+class NexusMeasurement(Measurement, Schema, PlotSection):
+    techniques = SubSection(
+        section_def=NexusTechnique,
+        repeats=True,
+        description="""Ontology metadata for the NeXus application definitions
+            used by the entries in this file.""",
     )
 
     def normalize(self, archive, logger):
@@ -258,6 +274,7 @@ class NexusMeasurement(Measurement, Schema, PlotSection):
             if len(app_entry) < 1:
                 raise AttributeError()
             self.steps = []
+            self.techniques = []
 
             ontology_info = None
             if ONTOLOGY_SERVICE_AVAILABLE:
@@ -384,7 +401,10 @@ class NexusMeasurement(Measurement, Schema, PlotSection):
                                 if class_name not in archive.results.eln.methods:
                                     archive.results.eln.methods.append(class_name)
 
-                            if ontology_info:
+                            if ontology_info and not any(
+                                technique.name == class_name
+                                for technique in self.techniques
+                            ):
                                 try:
                                     url_class_info = (
                                         f"http://localhost:8000{ontology_info['base']}"
@@ -394,22 +414,20 @@ class NexusMeasurement(Measurement, Schema, PlotSection):
                                     response_class_info = requests.get(url_class_info)
                                     if response_class_info.status_code == 200:
                                         class_info = response_class_info.json()
-                                        self.technique_description = class_info.get(
-                                            "comment"
+                                        technique = NexusTechnique(
+                                            name=class_name,
+                                            description=class_info.get("comment"),
+                                            see_also=class_info.get("see_also"),
+                                            alt_labels=class_info.get("alt_labels", []),
+                                            properties=[
+                                                f"{prop}: {value}"
+                                                for prop, values in class_info.get(
+                                                    "properties", {}
+                                                ).items()
+                                                for value in values
+                                            ],
                                         )
-                                        self.technique_see_also = class_info.get(
-                                            "see_also"
-                                        )
-                                        self.technique_alt_labels = class_info.get(
-                                            "alt_labels", []
-                                        )
-                                        self.technique_properties = [
-                                            f"{prop}: {value}"
-                                            for prop, values in class_info.get(
-                                                "properties", {}
-                                            ).items()
-                                            for value in values
-                                        ]
+                                        self.techniques.append(technique)
 
                                         # Mirror onto archive.results.eln so these
                                         # are elasticsearch-indexed, not just visible
@@ -418,20 +436,20 @@ class NexusMeasurement(Measurement, Schema, PlotSection):
                                         # as full-text-searchable description.
                                         if archive.results.eln.tags is None:
                                             archive.results.eln.tags = []
-                                        for prop_tag in self.technique_properties:
+                                        for prop_tag in technique.properties:
                                             tag = f"property:{prop_tag}"
                                             if tag not in archive.results.eln.tags:
                                                 archive.results.eln.tags.append(tag)
 
-                                        if self.technique_description:
+                                        if technique.description:
                                             if archive.results.eln.descriptions is None:
                                                 archive.results.eln.descriptions = []
                                             if (
-                                                self.technique_description
+                                                technique.description
                                                 not in archive.results.eln.descriptions
                                             ):
                                                 archive.results.eln.descriptions.append(
-                                                    self.technique_description
+                                                    technique.description
                                                 )
                                 except Exception as e:
                                     logger.warning(
@@ -1291,6 +1309,7 @@ def create_metainfo_package():
     """This creates the package to be saved."""
     nxs_metainfo_package = create_package_from_nxdl_directories()
     nxs_metainfo_package.section_definitions.append(NexusMeasurement.m_def)
+    nxs_metainfo_package.section_definitions.append(NexusTechnique.m_def)
     nxs_metainfo_package.section_definitions.append(NexusActivityStep.m_def)
     nxs_metainfo_package.section_definitions.append(NexusActivityResult.m_def)
     nxs_metainfo_package.section_definitions.append(NexusBaseSection.m_def)
@@ -1312,10 +1331,10 @@ def create_metainfo_package():
         if not (str(section).startswith("pynxtools.")):
             continue
         _add_additional_attributes(section, None)
-        # NexusMeasurement's own quantities hold ontology-service metadata, not
+        # NexusTechnique's quantities hold ontology-service metadata, not
         # NeXus fields; NeXus attributes would force them into full storage,
         # which the GUI can't render for list quantities.
-        if section is NexusMeasurement.m_def:
+        if section is NexusTechnique.m_def:
             continue
         for quantity in section.quantities:
             _add_additional_attributes(quantity, section)
