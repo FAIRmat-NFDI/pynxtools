@@ -854,9 +854,6 @@ class Entry(Object, basesections.Activity, EntryData):
         a_browser=dict(render_value="JsonValue"),
     )
 
-    def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
-        super().normalize(archive, logger)
-
     def to_workflow(self) -> Workflow:
         """Include ``subentry`` (each a nested ``Measurement``) as sub-tasks.
 
@@ -869,6 +866,9 @@ class Entry(Object, basesections.Activity, EntryData):
         workflow = super().to_workflow()
         workflow.tasks = workflow.tasks + [sub.to_workflow() for sub in self.subentry]
         return workflow
+
+    def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
+        super().normalize(archive, logger)
 
 
 # =============================================================================

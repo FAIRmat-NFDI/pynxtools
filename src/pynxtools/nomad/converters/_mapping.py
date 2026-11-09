@@ -136,7 +136,7 @@ def nxdl_to_subsection_name(nxdl_name: str) -> str:
 # Multiple entries produce multiple extra Python bases, e.g.:
 #   "NXentry": ["nomad.datamodel.metainfo.basesections.v2.Activity",
 #               "nomad.datamodel.data.EntryData"]
-#   → class Entry(Object, basesections.Activity, EntryData)
+#   → class Entry(Object, basesections.v2.Activity, EntryData)
 #
 # Targets basesections v2 (nomad.datamodel.metainfo.basesections.v2), not v1.
 # "NXobject" also determines Object's own base (the root of every
@@ -153,16 +153,9 @@ BASESECTIONS_MAP: dict[str, list[str]] = {
         "nomad.datamodel.metainfo.basesections.v2.Experiment",
         "nomad.datamodel.data.EntryData",
     ],
-    # NXsubentry is "virtually identical to NXentry", so it gets the same
-    # default as Entry: Activity, not Measurement. Unlike Entry, Subentry is
-    # a single generic base class (not generated per-application), so it
-    # can't opt into Measurement per app the way Mpes/Xps/... do — a
-    # subentry can just as well hold simulation-only content (e.g. nested
-    # inside an EM entry) as a real measurement.
     "NXsubentry": ["nomad.datamodel.metainfo.basesections.v2.Activity"],
     # NXprocess is data-provenance (program/version/sequence_index/date), not a
-    # physical sample transformation — maps to Analysis, not the physical-
-    # transformation-only basesections.Process.
+    # physical sample transformation — maps to Analysis, basesections.Process.
     "NXprocess": ["nomad.datamodel.metainfo.basesections.v2.Analysis"],
     # NXsample/NXsample_component both extend NXcomponent at the NXDL level and
     # match System's own shape (formula/geometry/entity identity).
@@ -171,14 +164,10 @@ BASESECTIONS_MAP: dict[str, list[str]] = {
     "NXsample": ["nomad.datamodel.metainfo.basesections.v2.System"],
     "NXsample_component": ["nomad.datamodel.metainfo.basesections.v2.System"],
     "NXfabrication": ["nomad.datamodel.metainfo.basesections.v2.InstrumentEntry"],
-    # The in-use, per-activity instrument snapshot — composes a reference to
-    # InstrumentEntry rather than inheriting it.
+    # The in-use, per-activity instrument snapshot — with a reference to InstrumentEntry.
     "NXinstrument": ["nomad.datamodel.metainfo.basesections.v2.Instrument"],
     "NXdata": ["nomad.datamodel.metainfo.basesections.v2.ActivityResult"],
-    # NXactivity's only real usage is inside NXhistory, logging physical
-    # treatments applied to a sample/instrument. That matches Process's
-    # semantics despite its own docstring reading as a generic superclass.
-    "NXactivity": ["nomad.datamodel.metainfo.basesections.v2.Process"],
+    "NXactivity": ["nomad.datamodel.metainfo.basesections.v2.Activity"],
 }
 
 # Application definitions (category="application") default to Entry's own base

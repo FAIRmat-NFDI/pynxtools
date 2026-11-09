@@ -810,18 +810,18 @@ class SnshistoSnshistotool(Note):
         ),
     )
     date = Quantity(
-        type=str,
+        type=Datetime,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXsnshisto.html#nxsnshisto-entry-snshistotool-date-field"
         ],
         a_nexus_field=NeXusField(
             name="date",
-            type="NX_CHAR",
+            type="NX_DATE_TIME",
             name_type="specified",
             optionality="required",
         ),
         a_eln=ELNAnnotation(
-            component=ELNComponentEnum.StringEditQuantity,
+            component=ELNComponentEnum.DateTimeEditQuantity,
         ),
     )
     description = Quantity(

@@ -49,7 +49,7 @@ if TYPE_CHECKING:
 __all__ = ["Activity"]
 
 
-class Activity(Object, basesections.Process):
+class Activity(Object, basesections.Activity):
     """
     A planned or unplanned action that has a temporal extension and for some
     time depends on some entity.
