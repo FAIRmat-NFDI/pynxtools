@@ -33,6 +33,9 @@ import pynxtools.nomad.annotations  # noqa: F401 — registers NeXusGroup / NeXu
 _BASE_CLASSES_DIR = Path(__file__).parent / "base_classes"
 _APPLICATIONS_DIR = Path(__file__).parent / "applications"
 
+# Hand-written (non-generated) modules whose sections join the base classes package.
+_EXTRA_BASE_CLASS_MODULES = ("pynxtools.nomad.metainfo._technique",)
+
 _m_base_package: Package | None = None
 _m_applications_package: Package | None = None
 
@@ -48,15 +51,20 @@ def _is_generated_section(obj: object, module_name: str) -> bool:
     return defining_module == module_name
 
 
-def _build_package_from_dir(category_dir: Path, package_name: str) -> Package:
-    """Import all *.py modules in category_dir and assemble a single Package."""
+def _build_package_from_dir(
+    category_dir: Path, package_name: str, extra_modules: tuple[str, ...] = ()
+) -> Package:
+    """Import all *.py modules in category_dir (plus extra_modules) and assemble
+    a single Package."""
     m_package = Package(name=package_name)
 
     py_files = sorted(category_dir.glob("*.py"))
-    for py_file in py_files:
-        if py_file.stem == "__init__":
-            continue
-        module_name = f"{package_name}.{py_file.stem}"
+    module_names = [
+        f"{package_name}.{py_file.stem}"
+        for py_file in py_files
+        if py_file.stem != "__init__"
+    ]
+    for module_name in [*module_names, *extra_modules]:
         mod = importlib.import_module(module_name)
         setattr(mod, "m_package", m_package)
         for attr_name in dir(mod):
@@ -74,7 +82,9 @@ def build_base_classes_package() -> Package:
     if _m_base_package is not None:
         return _m_base_package
     _m_base_package = _build_package_from_dir(
-        _BASE_CLASSES_DIR, "pynxtools.nomad.metainfo.base_classes"
+        _BASE_CLASSES_DIR,
+        "pynxtools.nomad.metainfo.base_classes",
+        _EXTRA_BASE_CLASS_MODULES,
     )
     return _m_base_package
 

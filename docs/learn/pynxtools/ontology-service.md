@@ -32,7 +32,9 @@ Ontologies are represented as OWL files (e.g., `NeXusOntology_full_<commit>_infe
 - **Main modules**:
     - `nomad_ontology_service.apis.app` (in the [`nomad-ontology-service`](https://github.com/FAIRmat-NFDI/nomad-ontology-service) plugin): FastAPI app, core logic for loading and querying ontologies.
     - `pynxtools.NeXusOntology.script.generate_ontology`: Generates ontology files from NeXus definitions.
-    - `pynxtools.nomad.schema_packages.schema`: Triggers the ontology query during entry normalization (`NexusMeasurement.normalize`) and stores the results in NOMAD Metainfo.
+    - `pynxtools.nomad.ontology`: Client for the service's HTTP API, shared by both NOMAD schemas. Returns nothing if `nomad-ontology-service` is not installed or has no ontology registered, so normalization carries on without it.
+    - `pynxtools.nomad.schema_packages.schema` (old schema): Triggers the ontology query during entry normalization (`NexusMeasurement.normalize`) and stores the results in NOMAD Metainfo (`NexusMeasurement.techniques`).
+    - `pynxtools.nomad.metainfo.base_classes.entry` (new schema): `Entry.normalize` does the same for each NXentry and stores the results in `Entry.techniques` (see `pynxtools.nomad.metainfo._technique`).
 - **Key functions**:
     - `ensure_ontology_initialization(ontology_imports)` (pynxtools): Generates the ontology from the NeXus definitions submodule, merges in the configured `imports` (e.g. ESRFET, PaNET), and runs the reasoner if the inferred file isn't already cached.
     - `_fetch_superclasses(ontology, class_name, cfg)` / `_fetch_descendants(ontology, class_name, cfg)` (nomad-ontology-service): Traverse the loaded ontology for a given class.
