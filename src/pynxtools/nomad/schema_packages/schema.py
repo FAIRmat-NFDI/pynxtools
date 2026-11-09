@@ -18,14 +18,12 @@ from typing import Any, Optional, Union
 import h5py
 import numpy as np
 import orjson
-import requests
 from ase import Atoms
 from ase.data import atomic_numbers
 from scipy.spatial import cKDTree
 from toposort import toposort_flatten
 
 try:
-    from nomad.config import config
     from nomad.datamodel import EntryArchive, EntryMetadata
     from nomad.datamodel.data import ArchiveSection, EntryData, Schema
     from nomad.datamodel.metainfo import basesections
@@ -69,14 +67,6 @@ except ImportError as exc:
         "Could not import nomad package. Please install the package 'nomad-lab'."
     ) from exc
 
-ONTOLOGY_SERVICE_AVAILABLE = True
-# try:
-#     from nomad_ontology_service import * #TODO: we should not import everything here, but we need the ONTOLOGY_SERVICE_AVAILABLE flag and the config for the base path
-#     ONTOLOGY_SERVICE_AVAILABLE = True
-# except ImportError as exc:
-#     ONTOLOGY_SERVICE_AVAILABLE = False
-
-
 from pynxtools import NX_DOC_BASES, get_definitions_url, get_nexus_version
 from pynxtools.definitions.dev_tools.utils.nxdl_utils import get_nexus_definitions_path
 from pynxtools.nomad import (
@@ -84,8 +74,14 @@ from pynxtools.nomad import (
     NX_TYPES,
     REPLACEMENT_FOR_NX,
     _rename_nx_for_nomad,
-    ensure_ontology_initialization,
     get_quantity_base_name,
+)
+from pynxtools.nomad.ontology import (
+    add_technique_to_results_eln,
+    add_to_results_eln,
+    fetch_methods,
+    fetch_technique,
+    get_ontology_service_info,
 )
 from pynxtools.units import NXUnitSet, ureg
 
@@ -276,27 +272,7 @@ class NexusMeasurement(Measurement, Schema, PlotSection):
             self.steps = []
             self.techniques = []
 
-            ontology_info = None
-            if ONTOLOGY_SERVICE_AVAILABLE:
-                try:
-                    ep = config.get_plugin_entry_point(
-                        "nomad_ontology_service:ontology_service"
-                    )
-                    ontology_imports = ep.ontologies[0].imports if ep.ontologies else []
-                    ensure_ontology_initialization(ontology_imports=ontology_imports)
-                    ontology_info = {
-                        "base": config.services.api_base_path.rstrip("/"),
-                        "prefix": ep.prefix.strip("/"),
-                        "ontology_name": ep.ontologies[0].name,
-                        "PaNET_methods_class": ep.ontologies[0].PaNET_methods_class,
-                        "NeXus_application_class": ep.ontologies[
-                            0
-                        ].NeXus_application_class,
-                    }
-                except Exception as e:
-                    logger.warning(
-                        f"Could not initialize ontology for ontology service: {e}"
-                    )
+            ontology_info = get_ontology_service_info(logger)
 
             for entry in app_entry:
                 ref = NexusActivityStep(name=entry.name, reference=entry)
@@ -325,151 +301,32 @@ class NexusMeasurement(Measurement, Schema, PlotSection):
                         # Directly use entry.definition__field as class_name
                         class_name = entry.definition__field.strip()
 
+                        # Fall back to the class name itself if the service is
+                        # unavailable or a request failed.
+                        methods = None
                         if ontology_info:
-                            try:
-                                base = ontology_info["base"]
-                                prefix = ontology_info["prefix"]
-                                ontology_name = ontology_info["ontology_name"]
-                                PaNET_methods_class = ontology_info[
-                                    "PaNET_methods_class"
-                                ]
-                                NeXus_application_class = ontology_info[
-                                    "NeXus_application_class"
-                                ]
+                            methods = fetch_methods(ontology_info, class_name, logger)
+                        add_to_results_eln(
+                            archive,
+                            methods=methods if methods is not None else [class_name],
+                        )
 
-                                url_superclasses = f"http://localhost:8000{base}/{prefix}/{ontology_name}/superclasses/{class_name}"
-                                response_superclasses = requests.get(url_superclasses)
-
-                                url_panet_descendants = f"http://localhost:8000{base}/{prefix}/{ontology_name}/descendants/{PaNET_methods_class}"
-                                response_panet_descendants = requests.get(
-                                    url_panet_descendants
-                                )
-
-                                url_nexus_application = f"http://localhost:8000{base}/{prefix}/{ontology_name}/descendants/{NeXus_application_class}"
-                                response_nexus_application = requests.get(
-                                    url_nexus_application
-                                )
-
-                                # Check that BOTH requests were successful
-                                if (
-                                    response_superclasses.status_code == 200
-                                    and response_panet_descendants.status_code == 200
-                                    and response_nexus_application.status_code == 200
-                                ):
-                                    superclasses = response_superclasses.json().get(
-                                        "superclasses", []
-                                    )
-                                    panet_descendants = (
-                                        response_panet_descendants.json().get(
-                                            "descendants", []
-                                        )
-                                    )
-                                    nexus_application_descendants = (
-                                        response_nexus_application.json().get(
-                                            "descendants", []
-                                        )
-                                    )
-
-                                    # Calculate the intersection
-                                    valid_methods = (
-                                        set(superclasses)
-                                        & set(nexus_application_descendants)
-                                    ) | (set(superclasses) & set(panet_descendants))
-
-                                    if archive.results.eln.methods is None:
-                                        archive.results.eln.methods = []
-
-                                    # Append only the intersection
-                                    for method in valid_methods:
-                                        if method not in archive.results.eln.methods:
-                                            archive.results.eln.methods.append(method)
-                                else:
-                                    logger.warning(
-                                        f"Failed to fetch ontology data. "
-                                        f"Superclasses API: {response_superclasses.status_code}. "
-                                        f"PaNET Descendants API: {response_panet_descendants.status_code}. "
-                                        f"NeXus Application Descendants API: {response_nexus_application.status_code}."
-                                    )
-                                    if archive.results.eln.methods is None:
-                                        archive.results.eln.methods = []
-                                    if class_name not in archive.results.eln.methods:
-                                        archive.results.eln.methods.append(class_name)
-                            except Exception as e:
-                                logger.warning(f"Ontology service error: {e}")
-                                if archive.results.eln.methods is None:
-                                    archive.results.eln.methods = []
-                                if class_name not in archive.results.eln.methods:
-                                    archive.results.eln.methods.append(class_name)
-
-                            if ontology_info and not any(
-                                technique.name == class_name
-                                for technique in self.techniques
-                            ):
-                                try:
-                                    url_class_info = (
-                                        f"http://localhost:8000{ontology_info['base']}"
-                                        f"/{ontology_info['prefix']}/{ontology_info['ontology_name']}"
-                                        f"/class/{class_name}"
-                                    )
-                                    response_class_info = requests.get(url_class_info)
-                                    if response_class_info.status_code == 200:
-                                        class_info = response_class_info.json()
-                                        technique = NexusTechnique(
-                                            name=class_name,
-                                            description=class_info.get("comment"),
-                                            see_also=class_info.get("see_also"),
-                                            alt_labels=class_info.get("alt_labels", []),
-                                            properties=[
-                                                f"{prop}: {value}"
-                                                for prop, values in class_info.get(
-                                                    "properties", {}
-                                                ).items()
-                                                for value in values
-                                            ],
-                                        )
-                                        self.techniques.append(technique)
-
-                                        # Mirror onto archive.results.eln so these
-                                        # are elasticsearch-indexed, not just visible
-                                        # on this one entry's Data tab: short facts
-                                        # as exact-match tags, the free-text comment
-                                        # as full-text-searchable description.
-                                        if archive.results.eln.tags is None:
-                                            archive.results.eln.tags = []
-                                        for prop_tag in technique.properties:
-                                            tag = f"property:{prop_tag}"
-                                            if tag not in archive.results.eln.tags:
-                                                archive.results.eln.tags.append(tag)
-
-                                        if technique.description:
-                                            if archive.results.eln.descriptions is None:
-                                                archive.results.eln.descriptions = []
-                                            if (
-                                                technique.description
-                                                not in archive.results.eln.descriptions
-                                            ):
-                                                archive.results.eln.descriptions.append(
-                                                    technique.description
-                                                )
-                                except Exception as e:
-                                    logger.warning(
-                                        f"Could not fetch class info for {class_name}: {e}"
-                                    )
-                        else:
-                            if archive.results.eln.methods is None:
-                                archive.results.eln.methods = []
-                            if class_name not in archive.results.eln.methods:
-                                archive.results.eln.methods.append(class_name)
+                        if ontology_info and not any(
+                            technique.name == class_name
+                            for technique in self.techniques
+                        ):
+                            technique = fetch_technique(
+                                ontology_info, class_name, logger
+                            )
+                            if technique is not None:
+                                self.techniques.append(NexusTechnique(**technique))
+                                add_technique_to_results_eln(archive, technique)
                     else:
                         logger.warning("entry.definition__field is missing or empty.")
-                        if archive.results.eln.methods is None:
-                            archive.results.eln.methods = []
-                        archive.results.eln.methods.append("Generic Experiment")
+                        add_to_results_eln(archive, methods=["Generic Experiment"])
                 except Exception as e:
                     logger.warning(f"Failed to extract superclasses: {e}")
-                    if archive.results.eln.methods is None:
-                        archive.results.eln.methods = []
-                    archive.results.eln.methods.append("Generic Experiment")
+                    add_to_results_eln(archive, methods=["Generic Experiment"])
             if self.m_def.name == "Root":
                 self.method = "Generic Experiment"
             else:

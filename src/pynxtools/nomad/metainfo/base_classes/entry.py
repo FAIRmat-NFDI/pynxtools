@@ -42,6 +42,7 @@ from pynxtools.nomad.annotations import (
     NeXusLink,
 )
 from pynxtools.nomad.metainfo._category import ExperimentCategory
+from pynxtools.nomad.metainfo._technique import Technique, add_techniques
 from pynxtools.nomad.metainfo.base_classes.note import Note
 from pynxtools.nomad.metainfo.base_classes.object import Object
 
@@ -853,8 +854,19 @@ class Entry(Object, basesections.Measurement, EntryData):
         a_browser=dict(render_value="JsonValue"),
     )
 
+    # Non-NXDL subsection added manually — preserved by additive-only generator.
+    # Ontology metadata for the entry's application definition, filled in
+    # normalize() from nomad-ontology-service (see _technique.py).
+    techniques = SubSection(
+        section_def=Technique,
+        repeats=True,
+        description="""Ontology metadata for the NeXus application definition
+            used by this entry.""",
+    )
+
     def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
         super().normalize(archive, logger)
+        add_techniques(self, archive, logger)
 
 
 # =============================================================================
