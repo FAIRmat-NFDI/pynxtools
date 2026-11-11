@@ -518,11 +518,14 @@ class MultiFormatReader(BaseReader):
             template.update(self.handle_objects(objects))
 
         # 2. Files — dispatch each input file to its registered handler.
+        # Extensions are compared in lower case, like in the dispatch below.
+        processing_order = [ext.lower() for ext in self.processing_order or []]
+
         def get_processing_order(path: str) -> tuple[int, str | int]:
-            ext = os.path.splitext(path)[1]
-            if self.processing_order is None or ext not in self.processing_order:
+            ext = os.path.splitext(path)[1].lower()
+            if ext not in processing_order:
                 return (1, ext)
-            return (0, self.processing_order.index(ext))
+            return (0, processing_order.index(ext))
 
         for file_path in sorted(file_paths or [], key=get_processing_order):
             extension = os.path.splitext(file_path)[1].lower()

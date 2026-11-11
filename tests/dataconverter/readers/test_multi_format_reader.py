@@ -388,3 +388,37 @@ def test_literal_fallback_is_kept(literal, expected):
     )
 
     assert new_entry_dict == {"/ENTRY[entry]/value": expected}
+
+
+@pytest.mark.parametrize(
+    "file_names, processing_order",
+    [
+        pytest.param(
+            ["data.DAT", "eln.YAML"], [".yaml", ".dat"], id="upper-case-files"
+        ),
+        pytest.param(
+            ["data.dat", "eln.yaml"], [".YAML", ".DAT"], id="upper-case-order"
+        ),
+    ],
+)
+def test_processing_order_ignores_extension_case(
+    tmp_path, file_names, processing_order
+):
+    """processing_order is followed no matter if the extensions are upper or lower case."""
+    handled: list[str] = []
+
+    reader = MultiFormatReader()
+    reader.extensions = {
+        ".yaml": lambda path: handled.append(os.path.basename(path)) or {},
+        ".dat": lambda path: handled.append(os.path.basename(path)) or {},
+    }
+    reader.processing_order = processing_order
+
+    file_paths = []
+    for name in file_names:
+        (tmp_path / name).write_text("")
+        file_paths.append(str(tmp_path / name))
+
+    reader.read(template=Template(), file_paths=tuple(file_paths))
+
+    assert [name.lower() for name in handled] == ["eln.yaml", "data.dat"]
