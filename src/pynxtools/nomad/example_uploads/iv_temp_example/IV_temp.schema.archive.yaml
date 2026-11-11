@@ -13,7 +13,7 @@ definitions:
           nxdl: NXiv_temp
           input_files": [
             "IV_temp.mapping.json",
-            "IV_temp.pickle"
+            "IV_temp.h5"
           ]
           output: IV_temp.nxs
           nexus_view: "../upload/archive/mainfile/IV_temp.nxs#/data"
