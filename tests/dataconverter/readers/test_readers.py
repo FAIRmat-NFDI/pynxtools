@@ -300,3 +300,38 @@ def test_json_map_reader_hdf5_file_loads_attributes(tmp_path):
     assert reader.data["entry"]["collection_time@units"] == "s"
     assert reader.data["entry"]["sample@name"] == "my sample"
     assert reader.data["entry"]["sample@NX_class"] == "NXsample"
+
+
+class _WritesMarkerWhenUnpickled:
+    """Unpickling this object creates a marker file, like code hidden in a pickle would."""
+
+    def __init__(self, marker_path):
+        self.marker_path = str(marker_path)
+
+    def __reduce__(self):
+        return (open, (self.marker_path, "w"))
+
+
+def test_json_map_reader_does_not_load_pickle_files(tmp_path, caplog):
+    """JsonMapReader must not unpickle .pickle input files."""
+    import pickle
+
+    from pynxtools.dataconverter.readers.json_map.reader import JsonMapReader
+
+    marker = tmp_path / "code_was_run"
+    pickle_file = tmp_path / "data.pickle"
+    pickle_file.write_bytes(pickle.dumps(_WritesMarkerWhenUnpickled(marker)))
+
+    reader = JsonMapReader()
+    reader.set_config_file(os.path.join(_JSON_MAP_DIR, "data.config.json"))
+    with caplog.at_level(logging.WARNING):
+        reader.read(
+            template=Template(_make_nxdl_template("NXtest")),
+            file_paths=(
+                os.path.join(_JSON_MAP_DIR, "data.json"),
+                str(pickle_file),
+            ),
+        )
+
+    assert not marker.exists()
+    assert "unsupported extension" in caplog.text
