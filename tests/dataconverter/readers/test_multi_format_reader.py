@@ -15,7 +15,11 @@ from typing import Any
 import pytest
 import yaml
 
-from pynxtools.dataconverter.readers.multi.reader import MultiFormatReader
+from pynxtools.dataconverter.readers.multi.reader import (
+    MultiFormatReader,
+    ParseJsonCallbacks,
+    resolve_special_keys,
+)
 from pynxtools.dataconverter.template import Template
 
 # ---------------------------------------------------------------------------
@@ -342,3 +346,45 @@ def test_extensions_are_instance_isolated():
     reader_a.extensions[".extra"] = lambda p: {}
 
     assert ".extra" not in reader_b.extensions
+
+
+@pytest.mark.parametrize(
+    "literal, expected",
+    [
+        ("November sample", "November sample"),
+        ("Offset corrected", "Offset corrected"),
+        ("Notes", "Notes"),
+        ("Yesterday", "Yesterday"),
+        ("eV", "eV"),
+        ("True", True),
+        ("false", False),
+        ("TRUE", True),
+        ("Yes", True),
+        ("no", False),
+        ("On", True),
+        ("off", False),
+        ("  true ", True),
+        ("yes!", "yes!"),
+        ("No.", "No."),
+        ("N/A", "N/A"),
+        ("ON/OFF", "ON/OFF"),
+        ("tru e", "tru e"),
+        ("nö", "nö"),
+        ("ＴＲＵＥ", "ＴＲＵＥ"),
+        ("🦕", "🦕"),
+    ],
+)
+def test_literal_fallback_is_kept(literal, expected):
+    """A literal fallback in a config list is written as is, or as a bool if it is one."""
+    callbacks = ParseJsonCallbacks(eln_callback=lambda key, path: None)
+    new_entry_dict: dict[str, Any] = {}
+
+    resolve_special_keys(
+        new_entry_dict,
+        "/ENTRY[entry]/value",
+        f'["@eln", "{literal}"]',
+        [],
+        callbacks,
+    )
+
+    assert new_entry_dict == {"/ENTRY[entry]/value": expected}
