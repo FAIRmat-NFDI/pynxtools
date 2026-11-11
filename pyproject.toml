@@ -88,7 +88,9 @@ docs = [
 dev = [
     "mypy",
     "ruff>=0.15.0",
-    "pytest",
+    # pytest 9.2 breaks xdist_group with --dist loadgroup (pytest-xdist 3.8.0),
+    # so tests that share files run in parallel and fail randomly.
+    "pytest<9.2",
     "pytest-timeout",
     "pytest-cov",
     "pytest-xdist",
