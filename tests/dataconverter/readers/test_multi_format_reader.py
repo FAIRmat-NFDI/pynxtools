@@ -370,7 +370,7 @@ def test_extensions_are_instance_isolated():
         ("ON/OFF", "ON/OFF"),
         ("tru e", "tru e"),
         ("nö", "nö"),
-        ("ＴＲＵＥ", "ＴＲＵＥ"),
+        ("ＴＲＵＥ", "ＴＲＵＥ"), # full-width letters, cspell:disable-line
         ("🦕", "🦕"),
     ],
 )
