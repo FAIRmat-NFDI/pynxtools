@@ -18,6 +18,7 @@ import yaml
 from pynxtools.dataconverter.readers.multi.reader import (
     MultiFormatReader,
     ParseJsonCallbacks,
+    fill_from_config,
     resolve_special_keys,
 )
 from pynxtools.dataconverter.template import Template
@@ -388,3 +389,31 @@ def test_literal_fallback_is_kept(literal, expected):
     )
 
     assert new_entry_dict == {"/ENTRY[entry]/value": expected}
+
+
+def test_removing_optional_group_keeps_groups_with_same_prefix():
+    """If a required child is missing, only that group is removed,
+    not other groups whose names start the same way."""
+    config = {
+        "/ENTRY/sample/name": "!@eln:sample/name",
+        "/ENTRY/sample/temperature": "@eln:sample/temperature",
+        "/ENTRY/sample_stage/name": "@eln:stage/name",
+        "/ENTRY/sample_stage/position": 3,
+    }
+    eln_data = {"sample": {"temperature": 300}, "stage": {"name": "goniometer"}}
+
+    def eln_callback(key, path):
+        value = eln_data
+        for part in path.split("/"):
+            if not isinstance(value, dict) or part not in value:
+                return None
+            value = value[part]
+        return value
+
+    result = fill_from_config(
+        config, ["entry"], ParseJsonCallbacks(eln_callback=eln_callback)
+    )
+
+    assert "/ENTRY[entry]/sample/temperature" not in result
+    assert result["/ENTRY[entry]/sample_stage/name"] == "goniometer"
+    assert result["/ENTRY[entry]/sample_stage/position"] == 3

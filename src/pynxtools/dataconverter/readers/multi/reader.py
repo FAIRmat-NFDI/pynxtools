@@ -243,7 +243,7 @@ def fill_from_config(
         to be removed because a required child is missing.
         """
         for optional_group in optional_groups_to_remove:
-            if key.startswith(optional_group):
+            if key == optional_group or key.startswith(f"{optional_group}/"):
                 return True
         return False
 
