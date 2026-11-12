@@ -391,6 +391,88 @@ def test_literal_fallback_is_kept(literal, expected):
     assert new_entry_dict == {"/ENTRY[entry]/value": expected}
 
 
+@pytest.mark.parametrize(
+    "file_names, processing_order, expected",
+    [
+        pytest.param(
+            ["data.DAT", "eln.YAML"],
+            [".yaml", ".dat"],
+            ["eln.YAML", "data.DAT"],
+            id="upper-case-files",
+        ),
+        pytest.param(
+            ["data.dat", "eln.yaml"],
+            [".YAML", ".DAT"],
+            ["eln.yaml", "data.dat"],
+            id="upper-case-order",
+        ),
+        pytest.param(
+            ["eln.yaml", "data.dat"],
+            None,
+            ["data.dat", "eln.yaml"],
+            id="no-order-sorted-by-extension",
+        ),
+        pytest.param(
+            ["eln.yaml", "data.dat"],
+            [],
+            ["data.dat", "eln.yaml"],
+            id="empty-order-sorted-by-extension",
+        ),
+        pytest.param(
+            ["notes.txt", "data.dat", "eln.yaml"],
+            [".yaml", ".dat"],
+            ["eln.yaml", "data.dat", "notes.txt"],
+            id="unlisted-files-last",
+        ),
+        pytest.param(
+            ["b.DAT", "a.dat", "eln.yaml"],
+            [".yaml", ".dat"],
+            ["eln.yaml", "b.DAT", "a.dat"],
+            id="same-extension-different-case",
+        ),
+    ],
+)
+def test_processing_order_ignores_extension_case(
+    tmp_path, file_names, processing_order, expected
+):
+    """processing_order is followed no matter if the extensions are upper or lower case."""
+    tracker = _OrderTracker()
+    reader = _TrackedReader(tracker)
+    reader.extensions = {
+        ".yaml": reader._handle_txt,
+        ".dat": reader._handle_txt,
+        ".txt": reader._handle_txt,
+    }
+    reader.processing_order = processing_order
+
+    file_paths = []
+    for name in file_names:
+        (tmp_path / name).write_text("")
+        file_paths.append(str(tmp_path / name))
+
+    reader.read(template=Template(), file_paths=tuple(file_paths))
+
+    file_events = [e for e in tracker.events if e.startswith("file:")]
+    assert file_events == [f"file:{name}" for name in expected]
+
+
+def test_upper_case_extension_keys_are_dispatched(tmp_path):
+    """A handler registered as ".DAT" is used for data.dat and data.DAT."""
+    tracker = _OrderTracker()
+    reader = _TrackedReader(tracker)
+    reader.extensions = {".DAT": reader._handle_txt}
+
+    file_paths = []
+    for name in ["data.dat", "other.DAT"]:
+        (tmp_path / name).write_text("")
+        file_paths.append(str(tmp_path / name))
+
+    reader.read(template=Template(), file_paths=tuple(file_paths))
+
+    file_events = [e for e in tracker.events if e.startswith("file:")]
+    assert file_events == ["file:data.dat", "file:other.DAT"]
+
+
 def test_removing_optional_group_keeps_groups_with_same_prefix():
     """If a required child is missing, only that group is removed,
     not other groups whose names start the same way."""

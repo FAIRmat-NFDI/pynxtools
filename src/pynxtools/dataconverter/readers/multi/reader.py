@@ -371,6 +371,20 @@ class MultiFormatReader(BaseReader):
         self.extensions: dict[str, Callable[[Any], dict]] = {}
         self.processing_order: list[str] | None = None
 
+    # Extensions are compared in lower case. These are properties and not set in
+    # __init__, because subclasses fill extensions and processing_order after
+    # super().__init__() and may still add entries afterwards.
+
+    @property
+    def lower_case_extensions(self) -> dict[str, Callable[[Any], dict]]:
+        """``self.extensions`` with lower-case keys."""
+        return {ext.lower(): handler for ext, handler in self.extensions.items()}
+
+    @property
+    def lower_case_processing_order(self) -> list[str]:
+        """``self.processing_order`` in lower case (empty list if not set)."""
+        return [ext.lower() for ext in self.processing_order or []]
+
     # ------------------------------------------------------------------
     # Built-in file handlers — register in self.extensions to activate.
     # ------------------------------------------------------------------
@@ -518,15 +532,18 @@ class MultiFormatReader(BaseReader):
             template.update(self.handle_objects(objects))
 
         # 2. Files — dispatch each input file to its registered handler.
+        handlers = self.lower_case_extensions
+        processing_order = self.lower_case_processing_order
+
         def get_processing_order(path: str) -> tuple[int, str | int]:
-            ext = os.path.splitext(path)[1]
-            if self.processing_order is None or ext not in self.processing_order:
+            ext = os.path.splitext(path)[1].lower()
+            if ext not in processing_order:
                 return (1, ext)
-            return (0, self.processing_order.index(ext))
+            return (0, processing_order.index(ext))
 
         for file_path in sorted(file_paths or [], key=get_processing_order):
             extension = os.path.splitext(file_path)[1].lower()
-            if extension not in self.extensions:
+            if extension not in handlers:
                 logger.warning(
                     f"File {file_path} has an unsupported extension, ignoring file."
                 )
@@ -534,7 +551,7 @@ class MultiFormatReader(BaseReader):
             if not os.path.exists(file_path):
                 logger.warning(f"File {file_path} does not exist, ignoring entry.")
                 continue
-            template.update(self.extensions.get(extension, lambda _: {})(file_path))
+            template.update(handlers[extension](file_path))
 
         # 3. Static data not derived from input files.
         template.update(self.setup_template())
