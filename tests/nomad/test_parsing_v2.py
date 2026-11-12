@@ -26,7 +26,7 @@ import structlog
 try:
     from nomad.datamodel import EntryArchive
     from nomad.datamodel.data import EntryData
-    from nomad.datamodel.metainfo.basesections import Experiment, Measurement
+    from nomad.datamodel.metainfo.basesections.v2 import Activity, Experiment
     from nomad.units import ureg
     from nomad.utils import get_logger
 except ImportError:
@@ -350,7 +350,10 @@ def test_nexus_string_decode_to_utf8(tmp_path):
 @pytest.mark.parametrize(
     ("cls", "expected_bases"),
     [
-        pytest.param(Entry, (Object, Measurement, EntryData), id="entry"),
+        # Entry defaults to Activity (not Measurement) — not every NXentry is a
+        # real measurement (e.g. simulation-only em/apm entries); application
+        # definitions opt into Measurement explicitly.
+        pytest.param(Entry, (Object, Activity, EntryData), id="entry"),
         pytest.param(Root, (Object, Experiment, EntryData), id="root"),
     ],
 )
@@ -491,3 +494,57 @@ def test_nexus_v2_entry_fallback_no_definition(tmp_path):
 
     assert len(instruments[0].aperture) == 1
     assert isinstance(instruments[0].aperture[0], Aperture)
+
+
+# ---------------------------------------------------------------------------
+# Multi-entry files with subentries
+# ---------------------------------------------------------------------------
+
+
+@pytest.fixture
+def multi_entry_with_subentries(tmp_path):
+    """A file with two top-level NXentry groups, each with one NXsubentry."""
+    nxs_file = tmp_path / "multi_entry_with_subentries.nxs"
+    shutil.copy(ARPES_FILE, nxs_file)
+
+    with h5py.File(nxs_file, "a") as f:
+        f.copy(f["entry"], f, name="entry2")
+        for entry_name in ("entry", "entry2"):
+            sub = f[entry_name].create_group("subentry1")
+            sub.attrs["NX_class"] = "NXsubentry"
+            sub.create_dataset("start_time", data="2020-01-01T00:00:00")
+            sub.create_dataset("end_time", data="2020-01-01T01:00:00")
+            sub.create_dataset("definition", data="NXmpes")
+
+    return str(nxs_file)
+
+
+def test_multi_entry_subentry_normalize(multi_entry_with_subentries):
+    """
+    Each entry's own normalize() must run end-to-end without crashing, and a
+    populated subentry must show up as a nested task in the parent's workflow2.
+    """
+    logger = get_logger(__name__)
+    archive = EntryArchive()
+    entry2_archive = EntryArchive()
+    root_archive = EntryArchive()
+
+    NexusParserV2().parse(
+        multi_entry_with_subentries,
+        archive,
+        logger,
+        child_archives={"entry2": entry2_archive, "root": root_archive},
+    )
+
+    assert root_archive.data.m_entry_paths == ["entry", "entry2"]
+
+    for arch in (archive, entry2_archive):
+        entry_data = arch.data
+        assert len(entry_data.subentry) == 1
+
+        for sub in entry_data.subentry:
+            sub.normalize(arch, logger)
+        entry_data.normalize(arch, logger)
+        assert arch.workflow2 is not None
+        assert len(arch.workflow2.tasks) == 1
+>>>>>>> c51112a2 (bridge Entry.subentry into to_workflow() for nested workflow2 composition)

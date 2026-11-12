@@ -24,12 +24,13 @@ from typing import TYPE_CHECKING
 
 import numpy as np
 from nomad.datamodel.data import EntryData
-from nomad.datamodel.metainfo import basesections
 from nomad.datamodel.metainfo.annotations import (
     ELNAnnotation,
     ELNComponentEnum,
     SchemaAnnotation,
 )
+from nomad.datamodel.metainfo.basesections import v2 as basesections
+from nomad.datamodel.metainfo.workflow import Workflow
 from nomad.metainfo import MEnum, Quantity, Section, SubSection
 from nomad.metainfo.data_type import Bytes, Datetime
 
@@ -52,7 +53,7 @@ if TYPE_CHECKING:
 __all__ = ["Entry"]
 
 
-class Entry(Object, basesections.Measurement, EntryData):
+class Entry(Object, basesections.Activity, EntryData):
     """
     (**required**) :ref:`NXentry` describes the measurement.
 
@@ -852,6 +853,19 @@ class Entry(Object, basesections.Measurement, EntryData):
         description="JSON mapping of HDF5 paths (relative to this NXentry) to archive paths.",
         a_browser=dict(render_value="JsonValue"),
     )
+
+    def to_workflow(self) -> Workflow:
+        """Include ``subentry`` (each a nested ``Measurement``) as sub-tasks.
+
+        ``basesections.Activity.to_workflow()`` only walks ``sub_activities``;
+        ``subentry`` is pynxtools's own NeXus-native containment field for the
+        same "activity nested inside an activity" case (NXsubentry), so it needs
+        its own bridge here, same as ``Sample.normalize()`` bridges ``component``
+        into ``sub_systems``.
+        """
+        workflow = super().to_workflow()
+        workflow.tasks = workflow.tasks + [sub.to_workflow() for sub in self.subentry]
+        return workflow
 
     def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
         super().normalize(archive, logger)

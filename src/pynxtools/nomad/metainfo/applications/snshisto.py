@@ -33,6 +33,7 @@ from nomad.datamodel.metainfo.annotations import (
     ELNComponentEnum,
     SchemaAnnotation,
 )
+from nomad.datamodel.metainfo.basesections import v2 as basesections
 from nomad.metainfo import MEnum, Quantity, Section, SubSection
 from nomad.metainfo.data_type import Bytes, Datetime
 
@@ -75,7 +76,7 @@ if TYPE_CHECKING:
 __all__ = ["Snshisto"]
 
 
-class Snshisto(Entry):
+class Snshisto(Entry, basesections.Measurement):
     """
     This is a definition for histogram data from Spallation Neutron Source
     (SNS) at ORNL.
@@ -809,18 +810,18 @@ class SnshistoSnshistotool(Note):
         ),
     )
     date = Quantity(
-        type=str,
+        type=Datetime,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXsnshisto.html#nxsnshisto-entry-snshistotool-date-field"
         ],
         a_nexus_field=NeXusField(
             name="date",
-            type="NX_CHAR",
+            type="NX_DATE_TIME",
             name_type="specified",
             optionality="required",
         ),
         a_eln=ELNAnnotation(
-            component=ELNComponentEnum.StringEditQuantity,
+            component=ELNComponentEnum.DateTimeEditQuantity,
         ),
     )
     description = Quantity(
