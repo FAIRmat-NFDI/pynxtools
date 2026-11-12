@@ -391,26 +391,56 @@ def test_literal_fallback_is_kept(literal, expected):
 
 
 @pytest.mark.parametrize(
-    "file_names, processing_order",
+    "file_names, processing_order, expected",
     [
         pytest.param(
-            ["data.DAT", "eln.YAML"], [".yaml", ".dat"], id="upper-case-files"
+            ["data.DAT", "eln.YAML"],
+            [".yaml", ".dat"],
+            ["eln.YAML", "data.DAT"],
+            id="upper-case-files",
         ),
         pytest.param(
-            ["data.dat", "eln.yaml"], [".YAML", ".DAT"], id="upper-case-order"
+            ["data.dat", "eln.yaml"],
+            [".YAML", ".DAT"],
+            ["eln.yaml", "data.dat"],
+            id="upper-case-order",
+        ),
+        pytest.param(
+            ["eln.yaml", "data.dat"],
+            None,
+            ["data.dat", "eln.yaml"],
+            id="no-order-sorted-by-extension",
+        ),
+        pytest.param(
+            ["eln.yaml", "data.dat"],
+            [],
+            ["data.dat", "eln.yaml"],
+            id="empty-order-sorted-by-extension",
+        ),
+        pytest.param(
+            ["notes.txt", "data.dat", "eln.yaml"],
+            [".yaml", ".dat"],
+            ["eln.yaml", "data.dat", "notes.txt"],
+            id="unlisted-files-last",
+        ),
+        pytest.param(
+            ["b.DAT", "a.dat", "eln.yaml"],
+            [".yaml", ".dat"],
+            ["eln.yaml", "b.DAT", "a.dat"],
+            id="same-extension-different-case",
         ),
     ],
 )
 def test_processing_order_ignores_extension_case(
-    tmp_path, file_names, processing_order
+    tmp_path, file_names, processing_order, expected
 ):
     """processing_order is followed no matter if the extensions are upper or lower case."""
-    handled: list[str] = []
-
-    reader = MultiFormatReader()
+    tracker = _OrderTracker()
+    reader = _TrackedReader(tracker)
     reader.extensions = {
-        ".yaml": lambda path: handled.append(os.path.basename(path)) or {},
-        ".dat": lambda path: handled.append(os.path.basename(path)) or {},
+        ".yaml": reader._handle_txt,
+        ".dat": reader._handle_txt,
+        ".txt": reader._handle_txt,
     }
     reader.processing_order = processing_order
 
@@ -421,4 +451,22 @@ def test_processing_order_ignores_extension_case(
 
     reader.read(template=Template(), file_paths=tuple(file_paths))
 
-    assert [name.lower() for name in handled] == ["eln.yaml", "data.dat"]
+    file_events = [e for e in tracker.events if e.startswith("file:")]
+    assert file_events == [f"file:{name}" for name in expected]
+
+
+def test_upper_case_extension_keys_are_dispatched(tmp_path):
+    """A handler registered as ".DAT" is used for data.dat and data.DAT."""
+    tracker = _OrderTracker()
+    reader = _TrackedReader(tracker)
+    reader.extensions = {".DAT": reader._handle_txt}
+
+    file_paths = []
+    for name in ["data.dat", "other.DAT"]:
+        (tmp_path / name).write_text("")
+        file_paths.append(str(tmp_path / name))
+
+    reader.read(template=Template(), file_paths=tuple(file_paths))
+
+    file_events = [e for e in tracker.events if e.startswith("file:")]
+    assert file_events == ["file:data.dat", "file:other.DAT"]
