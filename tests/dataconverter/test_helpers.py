@@ -23,6 +23,7 @@ from pynxtools.dataconverter import helpers
 from pynxtools.dataconverter.template import Template
 
 
+
 def alter_dict(data_dict: Template, key: str, value: object):
     """Helper function to alter a single entry in dict for parametrize."""
     if data_dict is not None:
@@ -97,6 +98,8 @@ def fixture_filled_test_data(template, tmp_path):
     return template
 
 
+
+
 @pytest.mark.parametrize(
     "input_data, expected_output",
     [
@@ -138,6 +141,33 @@ def test_path_in_data_dict(nxdl_path, expected, template):
     """Unit test for helper function to check if an NXDL path exists in the reader dictionary."""
     assert helpers.path_in_data_dict(nxdl_path, tuple(template.keys())) == expected
 
+def test_fixed_length_string_dtype(tmp_path):
+    """Fixed-length byte strings should be accepted."""
+    data = np.array([b"hello", b"world"], dtype="S10")
+
+    with h5py.File(tmp_path / "test.h5", "w") as hdf_file:
+        dataset = hdf_file.create_dataset("test_strings", data=data)
+
+        accepted_types = (np.integer, np.floating)
+
+        assert helpers.is_valid_data_type_hdf(
+            dataset, accepted_types
+        ) is True
+
+
+def test_fixed_length_string_compression(tmp_path):
+    """Fixed-length byte strings can be stored with gzip compression."""
+    data = np.array([b"hello", b"world"], dtype="S10")
+
+    with h5py.File(tmp_path / "test.h5", "w") as hdf_file:
+        dataset = hdf_file.create_dataset(
+            "strings",
+            data=data,
+            compression="gzip",
+        )
+
+        assert dataset.compression == "gzip"
+        assert dataset.dtype.kind == "S"
 
 def test_list_hdf5_paths(tmp_path):
     """Test the listing of hdf5 datasets.

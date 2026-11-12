@@ -858,17 +858,29 @@ def is_valid_data_type(value: Any, accepted_types: Sequence) -> bool:
     return any(np.issubdtype(value.dtype, dtype) for dtype in accepted_types)
 
 
-def is_valid_data_type_hdf(hdf_node: h5py.Dataset, accepted_types: Sequence) -> bool:
-    """Checks whether the given value or its children are of an accepted type."""
-    if hdf_node.dtype != np.dtype("O"):
-        # standard numeric / fixed dtypes
-        return any(np.issubdtype(hdf_node.dtype, t) for t in accepted_types)
 
-    # handle 'object' dtype separately (for lists from HDF5 files)
+def is_valid_data_type_hdf(
+    hdf_node: h5py.Dataset,
+    accepted_types: Sequence
+) -> bool:
+    """Checks whether the given value or its children are of an accepted type."""
+
+    if hdf_node.dtype != np.dtype("O"):
+        # Standard numeric / fixed dtypes
+        return hdf_node.dtype.kind == "S" or any(
+            np.issubdtype(hdf_node.dtype, t)
+            for t in accepted_types
+        )
+
+    # Handle object dtype separately
     return all(
-        isinstance(v.decode() if isinstance(v, bytes) else v, tuple(accepted_types))
+        isinstance(
+            v.decode() if isinstance(v, bytes) else v,
+            tuple(accepted_types)
+        )
         for v in np.asarray(hdf_node[...].flat)
     )
+
 
 
 def is_positive_int(value: Any) -> bool:
