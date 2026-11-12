@@ -7,6 +7,7 @@
 """Test cases for readers used for the DataConverter"""
 
 import glob
+import inspect
 import json
 import logging
 import os
@@ -78,6 +79,20 @@ def test_if_readers_are_children_of_base_reader(reader):
         assert isinstance(reader(), BaseReader) or isinstance(
             reader(), MultiFormatReader
         )
+
+
+@pytest.mark.parametrize(
+    "reader_name",
+    sorted(
+        os.path.basename(os.path.dirname(path))
+        for path in glob.glob("src/pynxtools/dataconverter/readers/*/reader.py")
+    ),
+)
+def test_read_accepts_converter_kwargs(reader_name):
+    """read() must accept extra keyword arguments such as config_file (-c)."""
+    reader = get_reader(reader_name)
+    parameters = inspect.signature(reader.read).parameters.values()
+    assert any(p.kind is inspect.Parameter.VAR_KEYWORD for p in parameters)
 
 
 @pytest.mark.parametrize("reader", get_all_readers())
