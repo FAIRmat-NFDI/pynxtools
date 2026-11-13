@@ -26,7 +26,7 @@ import structlog
 try:
     from nomad.datamodel import EntryArchive
     from nomad.datamodel.data import EntryData
-    from nomad.datamodel.metainfo.basesections.v2 import Activity, Experiment
+    from nomad.datamodel.metainfo.basesections.v2 import Activity
     from nomad.units import ureg
     from nomad.utils import get_logger
 except ImportError:
@@ -354,7 +354,7 @@ def test_nexus_string_decode_to_utf8(tmp_path):
         # real measurement (e.g. simulation-only em/apm entries); application
         # definitions opt into Measurement explicitly.
         pytest.param(Entry, (Object, Activity, EntryData), id="entry"),
-        pytest.param(Root, (Object, Experiment, EntryData), id="root"),
+        pytest.param(Root, (Object, Activity, EntryData), id="root"),
     ],
 )
 def test_base_classes(cls, expected_bases):
@@ -408,7 +408,7 @@ def test_nexus_v2_prescan_detects_definition():
 
 
 # ---------------------------------------------------------------------------
-# Root (Experiment) entry
+# Root (Activity) entry
 # ---------------------------------------------------------------------------
 
 
@@ -519,7 +519,11 @@ def multi_entry_with_subentries(tmp_path):
 def test_multi_entry_subentry_normalize(multi_entry_with_subentries):
     """
     Each entry's own normalize() must run end-to-end without crashing, and a
-    populated subentry must show up as a nested task in the parent's workflow2.
+    populated subentry must show up as a nested activity in sub_activities.
+
+    basesections.Activity.normalize() doesn't yet build workflow2 from
+    sub_activities (only from steps), so this only checks the bridge itself,
+    not workflow2.tasks.
     """
     logger = get_logger(__name__)
     archive = EntryArchive()
@@ -542,5 +546,5 @@ def test_multi_entry_subentry_normalize(multi_entry_with_subentries):
         for sub in entry_data.subentry:
             sub.normalize(arch, logger)
         entry_data.normalize(arch, logger)
-        assert arch.workflow2 is not None
-        assert len(arch.workflow2.tasks) == 1
+        assert len(entry_data.sub_activities) == 1
+        assert entry_data.sub_activities[0].nested_activity is entry_data.subentry[0]

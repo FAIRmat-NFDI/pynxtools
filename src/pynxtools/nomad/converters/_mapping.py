@@ -225,7 +225,7 @@ BASESECTIONS_MAP: dict[str, list[str]] = {
         "nomad.datamodel.data.EntryData",
     ],
     "NXroot": [
-        "nomad.datamodel.metainfo.basesections.v2.Experiment",
+        "nomad.datamodel.metainfo.basesections.v2.Activity",
         "nomad.datamodel.data.EntryData",
     ],
     "NXsubentry": ["nomad.datamodel.metainfo.basesections.v2.Activity"],
