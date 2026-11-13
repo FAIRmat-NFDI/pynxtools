@@ -43,7 +43,7 @@ if TYPE_CHECKING:
 __all__ = ["Root"]
 
 
-class Root(Object, basesections.Experiment, EntryData):
+class Root(Object, basesections.Activity, EntryData):
     """
     The root of a NeXus file.
 
@@ -356,7 +356,7 @@ class Root(Object, basesections.Experiment, EntryData):
     )
 
     # Manually added: stores HDF5 NXentry group names at parse time.
-    # normalize() resolves these to ExperimentStep.activity references via m_context.
+    # normalize() resolves these to SubActivity.activity references via m_context.
     m_entry_paths = Quantity(
         type=str,
         shape=["*"],
@@ -368,7 +368,6 @@ class Root(Object, basesections.Experiment, EntryData):
         if not self.m_entry_paths:
             return
         try:
-            from nomad.datamodel.metainfo.basesections import ExperimentStep
             from nomad.utils import generate_entry_id
 
             upload_id = archive.m_context.upload_id
@@ -376,7 +375,11 @@ class Root(Object, basesections.Experiment, EntryData):
             if not upload_id or not mainfile:
                 return
 
-            new_steps = []
+            # Each NXentry group was split into its own NOMAD entry/archive, so
+            # these are cross-archive references, not nested containment — unlike
+            # Entry.subentry (same archive, bridged via sub_activities'
+            # nested_activity in Entry.normalize()).
+            new_sub_activities = []
             for i, entry_name in enumerate(self.m_entry_paths):
                 # entry_names[0] → main archive (no mainfile_key)
                 # entry_names[1:] → child archives (mainfile_key = entry_name)
@@ -384,10 +387,10 @@ class Root(Object, basesections.Experiment, EntryData):
                     entry_id = generate_entry_id(upload_id, mainfile)
                 else:
                     entry_id = generate_entry_id(upload_id, mainfile, entry_name)
-                step = ExperimentStep()
-                step.name = entry_name
-                step.activity = f"../upload/archive/{entry_id}#data"
-                new_steps.append(step)
-            self.steps = new_steps
+                sub_activity = basesections.SubActivity()
+                sub_activity.name = entry_name
+                sub_activity.activity = f"../upload/archive/{entry_id}#data"
+                new_sub_activities.append(sub_activity)
+            self.sub_activities = new_sub_activities
         except Exception as e:
             logger.warning("could not resolve NXentry references for Root", exc_info=e)
