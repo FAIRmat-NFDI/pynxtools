@@ -34,7 +34,7 @@ jobs:
           uv pip install nomad-lab[infrastructure]@git+https://gitlab.mpcdf.mpg.de/nomad-lab/nomad-FAIR.git
       - name: Install pynx
         run: |
-          uv pip install -e ".[dev]"
+          uv sync --all-extras
       - name: Test with pytest
         run: |
           pytest --cov --cov-report xml:cobertura.xml --full-trace --show-capture=no -sv -n auto --dist loadgroup tests/
