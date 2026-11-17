@@ -27,7 +27,6 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 
 import numpy as np
-from nomad.datamodel.data import ArchiveSection
 from nomad.datamodel.metainfo.annotations import (
     ELNAnnotation,
     ELNComponentEnum,
@@ -46,7 +45,7 @@ if TYPE_CHECKING:
 __all__ = ["SpmCantileverOscillator"]
 
 
-class SpmCantileverOscillator(Object, ArchiveSection):
+class SpmCantileverOscillator(Object):
     """
     In generally speaking a cantilever resembles a leaf-spring which can be
     treated as a harmonic oscillator as a first approximation.

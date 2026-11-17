@@ -23,7 +23,6 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 
 import numpy as np
-from nomad.datamodel.data import ArchiveSection
 from nomad.datamodel.metainfo.annotations import (
     ELNAnnotation,
     ELNComponentEnum,
@@ -48,7 +47,7 @@ if TYPE_CHECKING:
 __all__ = ["FitFunction"]
 
 
-class FitFunction(Object, ArchiveSection):
+class FitFunction(Object):
     """
     This describes a fit function that is used to fit data to any functional
     form.

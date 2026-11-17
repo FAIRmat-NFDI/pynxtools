@@ -27,7 +27,6 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 
 import numpy as np
-from nomad.datamodel.data import ArchiveSection
 from nomad.datamodel.metainfo.annotations import (
     ELNAnnotation,
     ELNComponentEnum,
@@ -47,7 +46,7 @@ if TYPE_CHECKING:
 __all__ = ["AbsorptionEdge"]
 
 
-class AbsorptionEdge(Object, ArchiveSection):
+class AbsorptionEdge(Object):
     """
     An absorption edge is a sharp discontinuity in the X-ray absorption
     spectrum of an atom that occurs when the incident photon energy reaches the

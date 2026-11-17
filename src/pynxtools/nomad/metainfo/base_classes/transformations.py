@@ -23,7 +23,6 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 
 import numpy as np
-from nomad.datamodel.data import ArchiveSection
 from nomad.datamodel.metainfo.annotations import (
     ELNAnnotation,
     ELNComponentEnum,
@@ -42,7 +41,7 @@ if TYPE_CHECKING:
 __all__ = ["Transformations"]
 
 
-class Transformations(Object, ArchiveSection):
+class Transformations(Object):
     """
     Collection of axis-based translations and rotations to describe a geometry.
     May also contain axes that do not move and therefore do not have a

@@ -23,7 +23,6 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 
 import numpy as np
-from nomad.datamodel.data import ArchiveSection
 from nomad.datamodel.metainfo.annotations import (
     ELNAnnotation,
     ELNComponentEnum,
@@ -42,7 +41,7 @@ if TYPE_CHECKING:
 __all__ = ["EmEventData"]
 
 
-class EmEventData(Object, ArchiveSection):
+class EmEventData(Object):
     """
     Base class to store state and (meta)data of events for electron microscopy.
 
