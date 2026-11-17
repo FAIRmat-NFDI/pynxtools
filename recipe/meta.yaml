@@ -1,5 +1,7 @@
 {% set name = "pynxtools" %}
 {% set version = "0.16.0" %}
+# Matches requires-python; also lets the recipe render outside conda-forge.
+{% set python_min = "3.10" %}
 
 package:
   name: {{ name|lower }}
@@ -19,8 +21,6 @@ build:
     - dataconverter = pynxtools.dataconverter.cli:convert
     - generate_eln = pynxtools.eln_mapper.cli:generate_eln
     - validate_nexus = pynxtools.dataconverter.cli:validate
-  run_exports:
-    - {{ pin_subpackage(name, max_pin="x.x") }}
 
 requirements:
   host:
