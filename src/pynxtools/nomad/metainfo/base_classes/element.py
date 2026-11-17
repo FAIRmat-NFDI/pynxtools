@@ -27,7 +27,6 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 
 import numpy as np
-from nomad.datamodel.data import ArchiveSection
 from nomad.datamodel.metainfo.annotations import (
     ELNAnnotation,
     ELNComponentEnum,
@@ -46,7 +45,7 @@ if TYPE_CHECKING:
 __all__ = ["Element"]
 
 
-class Element(Object, ArchiveSection):
+class Element(Object):
     """
     A chemical element of the periodic table. It is identified by its atomic
     number, as a species and not as a specific isotope.

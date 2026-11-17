@@ -27,7 +27,6 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 
 import numpy as np
-from nomad.datamodel.data import ArchiveSection
 from nomad.datamodel.metainfo.annotations import (
     ELNAnnotation,
     ELNComponentEnum,
@@ -46,7 +45,7 @@ if TYPE_CHECKING:
 __all__ = ["Dispersion"]
 
 
-class Dispersion(Object, ArchiveSection):
+class Dispersion(Object):
     """
     A dispersion denoting a sum of different dispersions. All
     NXdispersion_table and NXdispersion_function groups will be added together

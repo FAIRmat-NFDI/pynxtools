@@ -23,7 +23,6 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 
 import numpy as np
-from nomad.datamodel.data import ArchiveSection
 from nomad.datamodel.metainfo.annotations import (
     ELNAnnotation,
     ELNComponentEnum,
@@ -42,7 +41,7 @@ if TYPE_CHECKING:
 __all__ = ["User"]
 
 
-class User(Object, ArchiveSection):
+class User(Object):
     """
     Contact information for a user.
 
