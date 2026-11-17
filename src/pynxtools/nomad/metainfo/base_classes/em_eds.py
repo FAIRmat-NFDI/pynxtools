@@ -29,16 +29,14 @@ from nomad.datamodel.metainfo.annotations import (
     ELNComponentEnum,
     SchemaAnnotation,
 )
-from nomad.metainfo import MEnum, Quantity, Section, SubSection
+from nomad.metainfo import Quantity, Section, SubSection
 from nomad.metainfo.data_type import Bytes, Datetime
 
 from pynxtools.nomad.annotations import (
     NeXusAttribute,
-    NeXusChoice,
     NeXusDefinition,
     NeXusField,
     NeXusGroup,
-    NeXusLink,
 )
 from pynxtools.nomad.metainfo.base_classes.atom import Atom
 from pynxtools.nomad.metainfo.base_classes.data import Data
@@ -121,7 +119,7 @@ class EmEdsIndexing(Process):
         ),
     )
 
-    program_group = SubSection(
+    programs = SubSection(
         section_def="pynxtools.nomad.metainfo.base_classes.program.Program",
         repeats=True,
         variable=True,
@@ -137,12 +135,12 @@ class EmEdsIndexing(Process):
         section_def="pynxtools.nomad.metainfo.base_classes.em_eds.EmEdsIndexingSummary",
         repeats=False,
     )
-    peak = SubSection(
+    peaks = SubSection(
         section_def="pynxtools.nomad.metainfo.base_classes.em_eds.EmEdsIndexingPeak",
         repeats=True,
         variable=True,
     )
-    element_specific_map = SubSection(
+    element_specific_maps = SubSection(
         section_def="pynxtools.nomad.metainfo.base_classes.em_eds.EmEdsIndexingElementSpecificMap",
         repeats=True,
         variable=True,
@@ -314,7 +312,7 @@ class EmEdsIndexingPeak(Peak):
         ),
     )
 
-    atom = SubSection(
+    atoms = SubSection(
         section_def="pynxtools.nomad.metainfo.base_classes.em_eds.EmEdsIndexingPeakAtom",
         repeats=True,
         variable=True,
@@ -429,7 +427,7 @@ class EmEdsIndexingElementSpecificMap(Image):
         ),
     )
 
-    process = SubSection(
+    processes = SubSection(
         section_def="pynxtools.nomad.metainfo.base_classes.em_eds.EmEdsIndexingElementSpecificMapProcess",
         repeats=True,
         variable=True,

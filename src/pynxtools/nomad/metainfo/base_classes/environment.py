@@ -28,17 +28,10 @@ from nomad.datamodel.metainfo.annotations import (
     ELNComponentEnum,
     SchemaAnnotation,
 )
-from nomad.metainfo import MEnum, Quantity, Section, SubSection
+from nomad.metainfo import Quantity, Section, SubSection
 from nomad.metainfo.data_type import Bytes, Datetime
 
-from pynxtools.nomad.annotations import (
-    NeXusAttribute,
-    NeXusChoice,
-    NeXusDefinition,
-    NeXusField,
-    NeXusGroup,
-    NeXusLink,
-)
+from pynxtools.nomad.annotations import NeXusDefinition, NeXusField, NeXusGroup
 from pynxtools.nomad.metainfo.base_classes.object import Object
 
 if TYPE_CHECKING:
@@ -95,7 +88,7 @@ class Environment(Object):
             min_occurs=0,
         ),
     )
-    note = SubSection(
+    notes = SubSection(
         section_def="pynxtools.nomad.metainfo.base_classes.note.Note",
         repeats=True,
         variable=True,
@@ -107,7 +100,7 @@ class Environment(Object):
             optionality="optional",
         ),
     )
-    actuator = SubSection(
+    actuators = SubSection(
         section_def="pynxtools.nomad.metainfo.base_classes.actuator.Actuator",
         repeats=True,
         variable=True,
@@ -122,7 +115,7 @@ class Environment(Object):
             optionality="optional",
         ),
     )
-    sensor = SubSection(
+    sensors = SubSection(
         section_def="pynxtools.nomad.metainfo.base_classes.sensor.Sensor",
         repeats=True,
         variable=True,

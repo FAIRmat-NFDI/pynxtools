@@ -34,11 +34,9 @@ from nomad.metainfo.data_type import Bytes, Datetime
 
 from pynxtools.nomad.annotations import (
     NeXusAttribute,
-    NeXusChoice,
     NeXusDefinition,
     NeXusField,
     NeXusGroup,
-    NeXusLink,
 )
 from pynxtools.nomad.metainfo._category import ExperimentCategory
 from pynxtools.nomad.metainfo.base_classes.data import Data
@@ -78,12 +76,12 @@ class Tomoproc(Entry):
         ),
     )
 
-    instrument = SubSection(
+    instruments = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.tomoproc.TomoprocInstrument",
         repeats=True,
         variable=True,
     )
-    sample = SubSection(
+    samples = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.tomoproc.TomoprocSample",
         repeats=True,
         variable=True,
@@ -158,7 +156,7 @@ class TomoprocInstrument(Instrument):
         ),
     )
 
-    source = SubSection(
+    sources = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.tomoproc.TomoprocInstrumentSource",
         repeats=True,
         variable=True,

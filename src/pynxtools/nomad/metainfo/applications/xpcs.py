@@ -38,11 +38,9 @@ from nomad.metainfo.data_type import Bytes, Datetime
 
 from pynxtools.nomad.annotations import (
     NeXusAttribute,
-    NeXusChoice,
     NeXusDefinition,
     NeXusField,
     NeXusGroup,
-    NeXusLink,
 )
 from pynxtools.nomad.metainfo._category import ExperimentCategory
 from pynxtools.nomad.metainfo.base_classes.beam import Beam
@@ -95,11 +93,11 @@ class Xpcs(Entry):
         section_def="pynxtools.nomad.metainfo.applications.xpcs.XpcsTwotime",
         repeats=False,
     )
-    instrument = SubSection(
+    instruments = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.xpcs.XpcsInstrument",
         repeats=False,
     )
-    sample = SubSection(
+    samples = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.xpcs.XpcsSample",
         repeats=False,
     )
@@ -1071,7 +1069,7 @@ class XpcsInstrument(Instrument):
         section_def="pynxtools.nomad.metainfo.applications.xpcs.XpcsInstrumentIncidentBeam",
         repeats=False,
     )
-    detector = SubSection(
+    detectors = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.xpcs.XpcsInstrumentDetector",
         repeats=True,
         variable=True,

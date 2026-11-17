@@ -38,11 +38,9 @@ from nomad.metainfo.data_type import Bytes, Datetime
 
 from pynxtools.nomad.annotations import (
     NeXusAttribute,
-    NeXusChoice,
     NeXusDefinition,
     NeXusField,
     NeXusGroup,
-    NeXusLink,
 )
 from pynxtools.nomad.metainfo._category import ExperimentCategory
 from pynxtools.nomad.metainfo.base_classes.cg_grid import CgGrid
@@ -114,7 +112,7 @@ class MicrostructureScoreConfig(Entry):
             min_occurs=0,
         ),
     )
-    sample = SubSection(
+    samples = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.microstructure_score_config.MicrostructureScoreConfigSample",
         repeats=False,
     )

@@ -29,17 +29,10 @@ from nomad.datamodel.metainfo.annotations import (
     ELNComponentEnum,
     SchemaAnnotation,
 )
-from nomad.metainfo import MEnum, Quantity, Section, SubSection
+from nomad.metainfo import Quantity, Section, SubSection
 from nomad.metainfo.data_type import Bytes, Datetime
 
-from pynxtools.nomad.annotations import (
-    NeXusAttribute,
-    NeXusChoice,
-    NeXusDefinition,
-    NeXusField,
-    NeXusGroup,
-    NeXusLink,
-)
+from pynxtools.nomad.annotations import NeXusDefinition, NeXusField, NeXusGroup
 from pynxtools.nomad.metainfo.base_classes.image import Image
 from pynxtools.nomad.metainfo.base_classes.process import Process
 
@@ -73,7 +66,7 @@ class EmImg(Process):
         ),
     )
 
-    image = SubSection(
+    images = SubSection(
         section_def="pynxtools.nomad.metainfo.base_classes.em_img.EmImgImage",
         repeats=True,
         variable=True,
@@ -106,7 +99,7 @@ class EmImgImage(Image):
         ),
     )
 
-    microstructure = SubSection(
+    microstructures = SubSection(
         section_def="pynxtools.nomad.metainfo.base_classes.microstructure.Microstructure",
         repeats=True,
         variable=True,

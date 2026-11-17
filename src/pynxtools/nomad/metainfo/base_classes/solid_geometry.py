@@ -32,17 +32,10 @@ from nomad.datamodel.metainfo.annotations import (
     ELNComponentEnum,
     SchemaAnnotation,
 )
-from nomad.metainfo import MEnum, Quantity, Section, SubSection
+from nomad.metainfo import Quantity, Section, SubSection
 from nomad.metainfo.data_type import Bytes, Datetime
 
-from pynxtools.nomad.annotations import (
-    NeXusAttribute,
-    NeXusChoice,
-    NeXusDefinition,
-    NeXusField,
-    NeXusGroup,
-    NeXusLink,
-)
+from pynxtools.nomad.annotations import NeXusDefinition, NeXusGroup
 from pynxtools.nomad.metainfo.base_classes.object import Object
 
 if TYPE_CHECKING:
@@ -73,7 +66,7 @@ class SolidGeometry(Object):
         ),
     )
 
-    quadric = SubSection(
+    quadrics = SubSection(
         section_def="pynxtools.nomad.metainfo.base_classes.quadric.Quadric",
         repeats=True,
         variable=True,
@@ -88,7 +81,7 @@ class SolidGeometry(Object):
             min_occurs=0,
         ),
     )
-    off_geometry = SubSection(
+    off_geometries = SubSection(
         section_def="pynxtools.nomad.metainfo.base_classes.off_geometry.OffGeometry",
         repeats=True,
         variable=True,
@@ -103,7 +96,7 @@ class SolidGeometry(Object):
             min_occurs=0,
         ),
     )
-    csg = SubSection(
+    csgs = SubSection(
         section_def="pynxtools.nomad.metainfo.base_classes.csg.Csg",
         repeats=True,
         variable=True,

@@ -34,11 +34,9 @@ from nomad.metainfo.data_type import Bytes, Datetime
 
 from pynxtools.nomad.annotations import (
     NeXusAttribute,
-    NeXusChoice,
     NeXusDefinition,
     NeXusField,
     NeXusGroup,
-    NeXusLink,
 )
 from pynxtools.nomad.metainfo._category import ExperimentCategory
 from pynxtools.nomad.metainfo.base_classes.beam import Beam
@@ -144,7 +142,7 @@ class Stress(Entry):
         section_def="pynxtools.nomad.metainfo.applications.stress.StressExperimentResponsible",
         repeats=False,
     )
-    instrument = SubSection(
+    instruments = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.stress.StressInstrument",
         repeats=False,
     )
@@ -153,7 +151,7 @@ class Stress(Entry):
         repeats=False,
         variable=True,
     )
-    fit = SubSection(
+    fits = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.stress.StressFit",
         repeats=True,
         variable=True,
@@ -482,7 +480,7 @@ class StressInstrument(Instrument):
         repeats=False,
         variable=True,
     )
-    detector = SubSection(
+    detectors = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.stress.StressInstrumentDetector",
         repeats=True,
         variable=True,
@@ -1542,7 +1540,7 @@ class StressFit(Process):
         section_def="pynxtools.nomad.metainfo.applications.stress.StressFitDataReductionResponsible",
         repeats=False,
     )
-    description_group = SubSection(
+    descriptions = SubSection(
         section_def="pynxtools.nomad.metainfo.base_classes.note.Note",
         repeats=True,
         variable=True,
@@ -1567,7 +1565,7 @@ class StressFit(Process):
         section_def="pynxtools.nomad.metainfo.applications.stress.StressFitBackgroundParameters",
         repeats=False,
     )
-    diffractogram = SubSection(
+    diffractograms = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.stress.StressFitDiffractogram",
         repeats=True,
         variable=True,

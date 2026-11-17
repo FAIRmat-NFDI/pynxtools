@@ -28,17 +28,10 @@ from nomad.datamodel.metainfo.annotations import (
     ELNComponentEnum,
     SchemaAnnotation,
 )
-from nomad.metainfo import MEnum, Quantity, Section, SubSection
+from nomad.metainfo import Quantity, Section, SubSection
 from nomad.metainfo.data_type import Bytes, Datetime
 
-from pynxtools.nomad.annotations import (
-    NeXusAttribute,
-    NeXusChoice,
-    NeXusDefinition,
-    NeXusField,
-    NeXusGroup,
-    NeXusLink,
-)
+from pynxtools.nomad.annotations import NeXusDefinition, NeXusField, NeXusGroup
 from pynxtools.nomad.metainfo.base_classes.object import Object
 
 if TYPE_CHECKING:
@@ -63,7 +56,7 @@ class Component(Object):
         ),
     )
 
-    fabrication = SubSection(
+    fabrications = SubSection(
         section_def="pynxtools.nomad.metainfo.base_classes.fabrication.Fabrication",
         repeats=True,
         variable=True,
@@ -74,7 +67,7 @@ class Component(Object):
             optionality="optional",
         ),
     )
-    program = SubSection(
+    programs = SubSection(
         section_def="pynxtools.nomad.metainfo.base_classes.program.Program",
         repeats=True,
         variable=True,

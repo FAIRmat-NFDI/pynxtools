@@ -38,11 +38,9 @@ from nomad.metainfo.data_type import Bytes, Datetime
 
 from pynxtools.nomad.annotations import (
     NeXusAttribute,
-    NeXusChoice,
     NeXusDefinition,
     NeXusField,
     NeXusGroup,
-    NeXusLink,
 )
 from pynxtools.nomad.metainfo._category import ExperimentCategory
 from pynxtools.nomad.metainfo.applications.sensor_scan import (
@@ -89,12 +87,12 @@ class IvTemp(SensorScan):
         ),
     )
 
-    sample = SubSection(
+    samples = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.iv_temp.IvTempSample",
         repeats=True,
         variable=True,
     )
-    instrument = SubSection(
+    instruments = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.iv_temp.IvTempInstrument",
         repeats=True,
         variable=True,
@@ -227,7 +225,7 @@ class IvTempInstrument(SensorScanInstrument):
         ),
     )
 
-    environment = SubSection(
+    environments = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.iv_temp.IvTempInstrumentEnvironment",
         repeats=True,
         variable=True,

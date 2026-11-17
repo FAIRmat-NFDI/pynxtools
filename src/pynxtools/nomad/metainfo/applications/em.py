@@ -34,11 +34,9 @@ from nomad.metainfo.data_type import Bytes, Datetime
 
 from pynxtools.nomad.annotations import (
     NeXusAttribute,
-    NeXusChoice,
     NeXusDefinition,
     NeXusField,
     NeXusGroup,
-    NeXusLink,
 )
 from pynxtools.nomad.metainfo._category import ExperimentCategory
 from pynxtools.nomad.metainfo.base_classes.aberration import Aberration
@@ -5120,7 +5118,7 @@ class EmMeasurementEventID(EmEventData):
         section_def="pynxtools.nomad.metainfo.applications.em.EmMeasurementEventIDInstrument",
         repeats=False,
     )
-    collection = SubSection(
+    collections = SubSection(
         section_def="pynxtools.nomad.metainfo.base_classes.collection.Collection",
         repeats=True,
         variable=True,
@@ -5204,7 +5202,7 @@ class EmMeasurementEventIDImageID(Image):
         ),
     )
 
-    process = SubSection(
+    processes = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.em.EmMeasurementEventIDImageIDProcess",
         repeats=True,
         variable=True,
@@ -8130,7 +8128,7 @@ class EmMeasurementEventIDSpectrumID(Spectrum):
         ),
     )
 
-    process = SubSection(
+    processes = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.em.EmMeasurementEventIDSpectrumIDProcess",
         repeats=True,
         variable=True,
@@ -13287,7 +13285,7 @@ class EmSimulationEnvironment(Collection):
         ),
     )
 
-    program = SubSection(
+    programs = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.em.EmSimulationEnvironmentProgram",
         repeats=True,
         variable=True,
@@ -13365,7 +13363,7 @@ class EmSimulationResults(Process):
         ),
     )
 
-    image = SubSection(
+    images = SubSection(
         section_def="pynxtools.nomad.metainfo.base_classes.image.Image",
         repeats=True,
         variable=True,
@@ -13377,7 +13375,7 @@ class EmSimulationResults(Process):
             min_occurs=0,
         ),
     )
-    spectrum = SubSection(
+    spectrums = SubSection(
         section_def="pynxtools.nomad.metainfo.base_classes.spectrum.Spectrum",
         repeats=True,
         variable=True,
@@ -13425,7 +13423,7 @@ class EmSimulationResultsInteractionVolumeID(EmInteractionVolume):
             optionality="recommended",
         ),
     )
-    process = SubSection(
+    processes = SubSection(
         section_def="pynxtools.nomad.metainfo.base_classes.process.Process",
         repeats=True,
         variable=True,
@@ -16270,7 +16268,7 @@ class EmRoiIDEdsIndexing(Process):
         section_def="pynxtools.nomad.metainfo.applications.em.EmRoiIDEdsIndexingSummary",
         repeats=False,
     )
-    element_specific_map = SubSection(
+    element_specific_maps = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.em.EmRoiIDEdsIndexingElementSpecificMap",
         repeats=True,
         variable=True,

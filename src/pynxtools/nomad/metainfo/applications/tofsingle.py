@@ -33,8 +33,6 @@ from nomad.metainfo import MEnum, Quantity, Section, SubSection
 from nomad.metainfo.data_type import Bytes, Datetime
 
 from pynxtools.nomad.annotations import (
-    NeXusAttribute,
-    NeXusChoice,
     NeXusDefinition,
     NeXusField,
     NeXusGroup,
@@ -78,21 +76,21 @@ class Tofsingle(Entry):
         ),
     )
 
-    user = SubSection(
+    users = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.tofsingle.TofsingleUser",
         repeats=False,
     )
-    instrument = SubSection(
+    instruments = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.tofsingle.TofsingleInstrument",
         repeats=True,
         variable=True,
     )
-    sample = SubSection(
+    samples = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.tofsingle.TofsingleSample",
         repeats=True,
         variable=True,
     )
-    monitor = SubSection(
+    monitors = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.tofsingle.TofsingleMonitor",
         repeats=True,
         variable=True,

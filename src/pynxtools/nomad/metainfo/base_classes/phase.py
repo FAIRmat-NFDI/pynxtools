@@ -28,17 +28,10 @@ from nomad.datamodel.metainfo.annotations import (
     ELNComponentEnum,
     SchemaAnnotation,
 )
-from nomad.metainfo import MEnum, Quantity, Section, SubSection
+from nomad.metainfo import Quantity, Section, SubSection
 from nomad.metainfo.data_type import Bytes, Datetime
 
-from pynxtools.nomad.annotations import (
-    NeXusAttribute,
-    NeXusChoice,
-    NeXusDefinition,
-    NeXusField,
-    NeXusGroup,
-    NeXusLink,
-)
+from pynxtools.nomad.annotations import NeXusDefinition, NeXusField, NeXusGroup
 from pynxtools.nomad.metainfo.base_classes.object import Object
 
 if TYPE_CHECKING:
@@ -66,7 +59,7 @@ class Phase(Object):
         ),
     )
 
-    unit_cell = SubSection(
+    unit_cells = SubSection(
         section_def="pynxtools.nomad.metainfo.base_classes.unit_cell.UnitCell",
         repeats=True,
         variable=True,
@@ -77,7 +70,7 @@ class Phase(Object):
             optionality="optional",
         ),
     )
-    atom = SubSection(
+    atoms = SubSection(
         section_def="pynxtools.nomad.metainfo.base_classes.atom.Atom",
         repeats=True,
         variable=True,
@@ -88,7 +81,7 @@ class Phase(Object):
             optionality="optional",
         ),
     )
-    microstructure_ipf = SubSection(
+    microstructure_ipfs = SubSection(
         section_def="pynxtools.nomad.metainfo.base_classes.microstructure_ipf.MicrostructureIpf",
         repeats=True,
         variable=True,
@@ -99,7 +92,7 @@ class Phase(Object):
             optionality="optional",
         ),
     )
-    microstructure_odf = SubSection(
+    microstructure_odfs = SubSection(
         section_def="pynxtools.nomad.metainfo.base_classes.microstructure_odf.MicrostructureOdf",
         repeats=True,
         variable=True,
@@ -110,7 +103,7 @@ class Phase(Object):
             optionality="optional",
         ),
     )
-    microstructure_pf = SubSection(
+    microstructure_pfs = SubSection(
         section_def="pynxtools.nomad.metainfo.base_classes.microstructure_pf.MicrostructurePf",
         repeats=True,
         variable=True,
@@ -121,7 +114,7 @@ class Phase(Object):
             optionality="optional",
         ),
     )
-    microstructure = SubSection(
+    microstructures = SubSection(
         section_def="pynxtools.nomad.metainfo.base_classes.microstructure.Microstructure",
         repeats=True,
         variable=True,

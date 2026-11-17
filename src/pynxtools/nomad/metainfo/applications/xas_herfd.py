@@ -38,11 +38,9 @@ from nomad.metainfo.data_type import Bytes, Datetime
 
 from pynxtools.nomad.annotations import (
     NeXusAttribute,
-    NeXusChoice,
     NeXusDefinition,
     NeXusField,
     NeXusGroup,
-    NeXusLink,
 )
 from pynxtools.nomad.metainfo._category import ExperimentCategory
 from pynxtools.nomad.metainfo.applications.xas import Xas, XasSample
@@ -115,22 +113,22 @@ class XasHerfd(Xas):
         section_def="pynxtools.nomad.metainfo.applications.xas_herfd.XasHerfdBeamlineCoordinateSystem",
         repeats=False,
     )
-    sample = SubSection(
+    samples = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.xas_herfd.XasHerfdSample",
         repeats=True,
         variable=True,
     )
-    instrument = SubSection(
+    instruments = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.xas_herfd.XasHerfdInstrument",
         repeats=True,
         variable=True,
     )
-    collection = SubSection(
+    collections = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.xas_herfd.XasHerfdCollection",
         repeats=True,
         variable=True,
     )
-    process = SubSection(
+    processes = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.xas_herfd.XasHerfdProcess",
         repeats=True,
         variable=True,
@@ -1693,7 +1691,7 @@ class XasHerfdInstrument(Instrument):
         section_def="pynxtools.nomad.metainfo.applications.xas_herfd.XasHerfdInstrumentBeam",
         repeats=False,
     )
-    source = SubSection(
+    sources = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.xas_herfd.XasHerfdInstrumentSource",
         repeats=True,
         variable=True,
@@ -2882,7 +2880,7 @@ class XasHerfdProcess(Process):
         ),
     )
 
-    note = SubSection(
+    notes = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.xas_herfd.XasHerfdProcessNote",
         repeats=False,
     )

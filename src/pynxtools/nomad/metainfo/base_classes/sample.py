@@ -35,11 +35,9 @@ from nomad.metainfo.data_type import Bytes, Datetime
 
 from pynxtools.nomad.annotations import (
     NeXusAttribute,
-    NeXusChoice,
     NeXusDefinition,
     NeXusField,
     NeXusGroup,
-    NeXusLink,
 )
 from pynxtools.nomad.metainfo.base_classes.component import Component
 
@@ -91,7 +89,7 @@ class Sample(Component, basesections.CompositeSystem):
             deprecated="Use the field `depends_on` and :ref:`NXtransformations` to position the sample and NXoff_geometry to describe its shape instead",
         ),
     )
-    beam = SubSection(
+    beams = SubSection(
         section_def="pynxtools.nomad.metainfo.base_classes.beam.Beam",
         repeats=True,
         variable=True,
@@ -106,7 +104,7 @@ class Sample(Component, basesections.CompositeSystem):
             optionality="optional",
         ),
     )
-    sample_component = SubSection(
+    sample_components = SubSection(
         section_def="pynxtools.nomad.metainfo.base_classes.sample_component.SampleComponent",
         repeats=True,
         variable=True,
@@ -208,7 +206,7 @@ class Sample(Component, basesections.CompositeSystem):
             optionality="optional",
         ),
     )
-    positioner = SubSection(
+    positioners = SubSection(
         section_def="pynxtools.nomad.metainfo.base_classes.positioner.Positioner",
         repeats=True,
         variable=True,
@@ -220,7 +218,7 @@ class Sample(Component, basesections.CompositeSystem):
             optionality="optional",
         ),
     )
-    off_geometry = SubSection(
+    off_geometries = SubSection(
         section_def="pynxtools.nomad.metainfo.base_classes.off_geometry.OffGeometry",
         repeats=True,
         variable=True,
@@ -233,7 +231,7 @@ class Sample(Component, basesections.CompositeSystem):
             min_occurs=0,
         ),
     )
-    environment = SubSection(
+    environments = SubSection(
         section_def="pynxtools.nomad.metainfo.base_classes.environment.Environment",
         repeats=True,
         variable=True,
@@ -736,7 +734,7 @@ class Sample(Component, basesections.CompositeSystem):
             optionality="optional",
         ),
     )
-    sample_component_quantity = Quantity(
+    sample_component = Quantity(
         type=MEnum(["sample", "can", "atmosphere", "kit"]),
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/base_classes/NXsample.html#nxsample-sample-component-field"

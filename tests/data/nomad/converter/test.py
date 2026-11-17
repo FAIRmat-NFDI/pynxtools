@@ -16,9 +16,8 @@
 #
 # This file is AUTO-GENERATED from the NeXus definitions (NXDL).
 # Run `pynx nomad generate-metainfo --nxdl NXtest` to regenerate.
-# Additive-only: the generator will not remove or rename existing class members
-# (unless the `--force` flag is used).
-# Add normalize() logic directly; it will be preserved on regeneration.
+# Hand edits are preserved across regeneration via the sidecar
+# generated_manifest.json.
 from __future__ import annotations
 
 from typing import TYPE_CHECKING
@@ -30,12 +29,12 @@ from nomad.datamodel.metainfo.annotations import (
     ELNComponentEnum,
     SchemaAnnotation,
 )
+from nomad.datamodel.metainfo.basesections import v2 as basesections
 from nomad.metainfo import MEnum, Quantity, Section, SubSection
 from nomad.metainfo.data_type import Bytes, Datetime
 
 from pynxtools.nomad.annotations import (
     NeXusAttribute,
-    NeXusChoice,
     NeXusDefinition,
     NeXusField,
     NeXusGroup,
@@ -55,7 +54,7 @@ if TYPE_CHECKING:
 __all__ = ["Test"]
 
 
-class Test(Entry):
+class Test(Entry, basesections.Measurement):
     """
     This is a dummy NXDL to test out the dataconverter.
     """
@@ -85,7 +84,7 @@ class Test(Entry):
         section_def="pynxtools.nomad.metainfo.applications.test.TestSpecifiedGroup",
         repeats=False,
     )
-    any_groupgroup = SubSection(
+    any_groupgroups = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.test.TestAnyGroupgroup",
         repeats=True,
         variable=True,
@@ -121,7 +120,7 @@ class Test(Entry):
         section_def="pynxtools.nomad.metainfo.applications.test.TestOptionalParent",
         repeats=False,
     )
-    user = SubSection(
+    users = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.test.TestUser",
         repeats=True,
         variable=True,
@@ -394,10 +393,12 @@ class TestSpecifiedGroupWithNoNameType(Data):
     )
     specified_field_with_no_name_type__min = Quantity(
         type=np.float64,
+        flexible_unit=True,
         description="Minimum of specified_field_with_no_name_type, computed over the full array at parse time.",
     )
     specified_field_with_no_name_type__max = Quantity(
         type=np.float64,
+        flexible_unit=True,
         description="Maximum of specified_field_with_no_name_type, computed over the full array at parse time.",
     )
     specified_field_with_no_name_type__size = Quantity(
@@ -476,10 +477,12 @@ class TestSpecifiedGroup(Data):
     )
     specified_field__min = Quantity(
         type=np.float64,
+        flexible_unit=True,
         description="Minimum of specified_field, computed over the full array at parse time.",
     )
     specified_field__max = Quantity(
         type=np.float64,
+        flexible_unit=True,
         description="Maximum of specified_field, computed over the full array at parse time.",
     )
     specified_field__size = Quantity(
@@ -561,11 +564,13 @@ class TestAnyGroupgroup(Data):
     any_fieldFIELD__min = Quantity(
         type=np.float64,
         variable=True,
+        flexible_unit=True,
         description="Minimum of any_fieldFIELD, computed over the full array at parse time.",
     )
     any_fieldFIELD__max = Quantity(
         type=np.float64,
         variable=True,
+        flexible_unit=True,
         description="Maximum of any_fieldFIELD, computed over the full array at parse time.",
     )
     any_fieldFIELD__size = Quantity(
@@ -641,11 +646,13 @@ class TestNXODD_name(Data):
     anamethatRENAMES__min = Quantity(
         type=np.int64,
         variable=True,
+        unit="dimensionless",
         description="Minimum of anamethatRENAMES, computed over the full array at parse time.",
     )
     anamethatRENAMES__max = Quantity(
         type=np.int64,
         variable=True,
+        unit="dimensionless",
         description="Maximum of anamethatRENAMES, computed over the full array at parse time.",
     )
     anamethatRENAMES__size = Quantity(
@@ -674,10 +681,12 @@ class TestNXODD_name(Data):
     )
     float_value__min = Quantity(
         type=np.float64,
+        unit="eV",
         description="Minimum of float_value, computed over the full array at parse time.",
     )
     float_value__max = Quantity(
         type=np.float64,
+        unit="eV",
         description="Maximum of float_value, computed over the full array at parse time.",
     )
     float_value__size = Quantity(
@@ -704,10 +713,12 @@ class TestNXODD_name(Data):
     )
     number_value__min = Quantity(
         type=np.float64,
+        unit="eV",
         description="Minimum of number_value, computed over the full array at parse time.",
     )
     number_value__max = Quantity(
         type=np.float64,
+        unit="eV",
         description="Maximum of number_value, computed over the full array at parse time.",
     )
     number_value__size = Quantity(
@@ -719,10 +730,12 @@ class TestNXODD_name(Data):
         description="Number of dimensions of number_value in the HDF5 file.",
     )
     bool_value = Quantity(
-        type=HDF5Reference,
+        type=bool,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/src/pynxtools/data/NXtest.html#nxtest-entry-nxodd-name-bool-value-field"
         ],
+        dimensionality="dimensionless",
+        unit="dimensionless",
         description=("A dummy entry for a bool value."),
         a_nexus_field=NeXusField(
             name="bool_value",
@@ -730,6 +743,9 @@ class TestNXODD_name(Data):
             name_type="specified",
             optionality="required",
             units="NX_UNITLESS",
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.BoolEditQuantity,
         ),
     )
     int_value = Quantity(
@@ -748,10 +764,12 @@ class TestNXODD_name(Data):
     )
     int_value__min = Quantity(
         type=np.int64,
+        unit="m",
         description="Minimum of int_value, computed over the full array at parse time.",
     )
     int_value__max = Quantity(
         type=np.int64,
+        unit="m",
         description="Maximum of int_value, computed over the full array at parse time.",
     )
     int_value__size = Quantity(
@@ -778,10 +796,12 @@ class TestNXODD_name(Data):
     )
     posint_value__min = Quantity(
         type=np.int64,
+        unit="m",
         description="Minimum of posint_value, computed over the full array at parse time.",
     )
     posint_value__max = Quantity(
         type=np.int64,
+        unit="m",
         description="Maximum of posint_value, computed over the full array at parse time.",
     )
     posint_value__size = Quantity(
@@ -793,10 +813,12 @@ class TestNXODD_name(Data):
         description="Number of dimensions of posint_value in the HDF5 file.",
     )
     char_value = Quantity(
-        type=HDF5Reference,
+        type=str,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/src/pynxtools/data/NXtest.html#nxtest-entry-nxodd-name-char-value-field"
         ],
+        dimensionality="dimensionless",
+        unit="dimensionless",
         description=("A dummy entry for a char value."),
         a_nexus_field=NeXusField(
             name="char_value",
@@ -805,12 +827,17 @@ class TestNXODD_name(Data):
             optionality="required",
             units="NX_UNITLESS",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.StringEditQuantity,
+        ),
     )
     date_value = Quantity(
-        type=HDF5Reference,
+        type=Datetime,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/src/pynxtools/data/NXtest.html#nxtest-entry-nxodd-name-date-value-field"
         ],
+        dimensionality="dimensionless",
+        unit="dimensionless",
         description=("A dummy entry for a date value."),
         a_nexus_field=NeXusField(
             name="date_value",
@@ -819,9 +846,12 @@ class TestNXODD_name(Data):
             optionality="required",
             units="NX_UNITLESS",
         ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.DateTimeEditQuantity,
+        ),
     )
     type = Quantity(
-        type=HDF5Reference,
+        type=MEnum(["1st type", "2nd type", "3rd type", "4th type"]),
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/src/pynxtools/data/NXtest.html#nxtest-entry-nxodd-name-type-field"
         ],
@@ -831,6 +861,9 @@ class TestNXODD_name(Data):
             name_type="specified",
             optionality="required",
             enumeration=["1st type", "2nd type", "3rd type", "4th type"],
+        ),
+        a_eln=ELNAnnotation(
+            component=ELNComponentEnum.EnumEditQuantity,
         ),
     )
     type__array = Quantity(

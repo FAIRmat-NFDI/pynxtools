@@ -38,11 +38,9 @@ from nomad.metainfo.data_type import Bytes, Datetime
 
 from pynxtools.nomad.annotations import (
     NeXusAttribute,
-    NeXusChoice,
     NeXusDefinition,
     NeXusField,
     NeXusGroup,
-    NeXusLink,
 )
 from pynxtools.nomad.metainfo._category import ExperimentCategory
 from pynxtools.nomad.metainfo.base_classes.entry import Entry
@@ -82,17 +80,17 @@ class SensorScan(Entry):
         ),
     )
 
-    process = SubSection(
+    processes = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.sensor_scan.SensorScanProcess",
         repeats=True,
         variable=True,
     )
-    user = SubSection(
+    users = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.sensor_scan.SensorScanUser",
         repeats=True,
         variable=True,
     )
-    note = SubSection(
+    notes = SubSection(
         section_def="pynxtools.nomad.metainfo.base_classes.note.Note",
         repeats=True,
         variable=True,
@@ -107,12 +105,12 @@ class SensorScan(Entry):
             optionality="optional",
         ),
     )
-    instrument = SubSection(
+    instruments = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.sensor_scan.SensorScanInstrument",
         repeats=True,
         variable=True,
     )
-    sample = SubSection(
+    samples = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.sensor_scan.SensorScanSample",
         repeats=True,
         variable=True,
@@ -517,7 +515,7 @@ class SensorScanInstrument(Instrument):
         ),
     )
 
-    environment = SubSection(
+    environments = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.sensor_scan.SensorScanInstrumentEnvironment",
         repeats=True,
         variable=True,
@@ -553,12 +551,12 @@ class SensorScanInstrumentEnvironment(Environment):
         ),
     )
 
-    sensor = SubSection(
+    sensors = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.sensor_scan.SensorScanInstrumentEnvironmentSensor",
         repeats=True,
         variable=True,
     )
-    pid_controller = SubSection(
+    pid_controllers = SubSection(
         section_def="pynxtools.nomad.metainfo.base_classes.pid_controller.PidController",
         repeats=True,
         variable=True,

@@ -683,17 +683,9 @@ def _build_subsection_from_node(
     repeats = _repeats_from_node(node)
     variable = nx_name_type in ("any", "partial")
 
-    if nx_name_type == "any":
-        # NXDL writes variadic group names in uppercase (e.g. "BIAS_SWEEP",
-        # "USER"). Lowercase for a pythonic attribute name.
-        python_name = nxdl_to_subsection_name(node.name.lower())
-    elif nx_name_type == "partial":
-        # Keep the full NXDL name (e.g. "peakPEAK" from NXfit) so the
-        # partial-group marker is visible in code and matches the concept
-        # class name (e.g. FitPeakPEAK).
-        python_name = nxdl_to_subsection_name(node.name)
-    else:
-        python_name = nxdl_to_subsection_name(node.name)
+    # Delegates to _group_python_name for the one, single-sourced naming rule
+    # (including the NXentry-override match) — see its docstring.
+    python_name = _group_python_name(node)
 
     # Record what NXDL actually declares: None for anonymous groups (no
     # name= attribute), the literal name otherwise. An "any" group with an
@@ -1022,22 +1014,74 @@ def _base_class_group_nx_classes(nx_class: str) -> frozenset[str]:
     return result
 
 
-def _group_python_name(node: NXTreeGroup) -> str:
-    """Return the Python attribute name a SubSection for ``node`` would get.
+def _entry_slot_key(node: NXTreeGroup) -> str:
+    """Repeats-independent identity for matching a group against NXentry's own slots."""
+    nx_name_type = node.name_type or "specified"
+    raw_name = node.name.lower() if nx_name_type == "any" else node.name
+    return f"{node.nx_class}:{nxdl_to_subsection_name(raw_name)}"
 
-    Mirrors the naming rule in ``_build_subsection_from_node``: variadic
-    (``name_type="any"``) groups are lowercased; other groups use
-    ``node.name`` as-is.
 
-    For example, a variadic ``NXdetector`` with no explicit name becomes
-    ``"detector"``; one explicitly named ``"BIAS_SWEEP"`` becomes
-    ``"bias_sweep"``; a specified group named ``"analyser"`` stays
-    ``"analyser"``.
+def _local_group_python_name(node: NXTreeGroup) -> str:
+    """Compute a group's Python name from its own declaration alone.
+
+    Variadic (``name_type="any"``) groups are lowercased and, if repeating,
+    pluralized — their name is a plain NeXus class stem, a real English
+    noun. ``partial``/``specified`` groups keep ``node.name`` as-is, never
+    pluralized: that name is an author-chosen compound identifier, not an
+    English noun (e.g. "peakPEAK" from NXfit).
     """
     nx_name_type = node.name_type or "specified"
     if nx_name_type == "any":
-        return nxdl_to_subsection_name(node.name.lower())
+        return nxdl_to_subsection_name(
+            node.name.lower(), repeats=_repeats_from_node(node)
+        )
     return nxdl_to_subsection_name(node.name)
+
+
+_entry_subsection_names_cache: dict[str, str] | None = None
+
+
+def _entry_subsection_names() -> dict[str, str]:
+    """Map NXentry's own top-level group slots to their resolved Python names.
+
+    Keyed by ``_entry_slot_key``. Application definitions are generated as
+    ``Entry`` subclasses (see ADR-006) and routinely narrow one of its
+    slots — e.g. NXtransmission redeclares NXentry's variadic "instrument"
+    as a single, non-repeating, specifically-typed group. NOMAD's SubSection
+    override is purely name-based, so that redeclaration must resolve to
+    the exact same Python name as ``Entry``'s own, independent of its own
+    local ``repeats``/``name_type`` — otherwise the override silently
+    becomes an unrelated, additional field instead of narrowing the
+    inherited one.
+    """
+    global _entry_subsection_names_cache
+    if _entry_subsection_names_cache is None:
+        root = generate_tree_from("NXentry")
+        _entry_subsection_names_cache = {
+            _entry_slot_key(child): _local_group_python_name(child)
+            for child in root.children
+            if isinstance(child, NXTreeGroup)
+        }
+    return _entry_subsection_names_cache
+
+
+def _group_python_name(node: NXTreeGroup) -> str:
+    """Return the Python attribute name a SubSection for ``node`` would get.
+
+    A group narrowing one of NXentry's own slots (matched via
+    ``_entry_slot_key``) reuses Entry's resolved name verbatim — see
+    ``_entry_subsection_names``. Otherwise falls back to
+    ``_local_group_python_name``.
+
+    For example, a variadic ``NXdetector`` with no explicit name becomes
+    ``"detectors"`` (it repeats); one explicitly named ``"BIAS_SWEEP"``
+    becomes ``"bias_sweep"``; a specified group named ``"analyser"`` stays
+    ``"analyser"``.
+    """
+    entry_name = _entry_subsection_names().get(_entry_slot_key(node))
+    if entry_name is not None:
+        return entry_name
+    return _local_group_python_name(node)
 
 
 def _repeats_from_node(node: NXTreeGroup) -> bool:
@@ -1497,11 +1541,7 @@ def _all_ancestor_member_names(nx_class: str) -> tuple[frozenset[str], frozenset
                 if c.nxdl_base != primary:
                     continue
                 if c.nx_type == "group":
-                    nx_name_type = c.name_type or "specified"
-                    if nx_name_type == "any":
-                        sub_names.add(nxdl_to_subsection_name(c.name.lower()))
-                    else:
-                        sub_names.add(nxdl_to_subsection_name(c.name))
+                    sub_names.add(_group_python_name(c))
                 elif c.nx_type in ("field", "attribute"):
                     qty_names.add(nxdl_to_quantity_name(c.name))
         except FileNotFoundError:
@@ -1758,11 +1798,7 @@ def build_context(nx_name: str) -> dict:
             continue
         if child.nxdl_base != primary_nxdl:
             continue
-        nx_nt = child.name_type or "specified"
-        if nx_nt == "any":
-            own_sub_names.add(nxdl_to_subsection_name(child.name.lower()))
-        else:
-            own_sub_names.add(nxdl_to_subsection_name(child.name))
+        own_sub_names.add(_group_python_name(child))
 
     all_sub_names = parent_sub_names | own_sub_names
 
@@ -1900,6 +1936,8 @@ def build_context(nx_name: str) -> dict:
             if sub_section.python_name in seen_subsections:
                 # Two named groups with the same subsection name — disambiguate.
                 if not child.variadic:
+                    # Disambiguating suffix on a non-"any" name — not pluralized,
+                    # same reasoning as _build_subsection_from_node's other branches.
                     sub_section.python_name = nxdl_to_subsection_name(
                         f"{child.name}_{child.nx_class[2:].lower()}"
                     )
@@ -1948,8 +1986,18 @@ def build_context(nx_name: str) -> dict:
                 )
 
     _all_quantities = quantities + [q for c in named_concepts for q in c.quantities]
+    _all_subsections = subsections + [s for c in named_concepts for s in c.subsections]
+    _all_links = links + [lk for c in named_concepts for lk in c.links]
     needs_m_enum = any(q.python_type.startswith("MEnum") for q in _all_quantities)
     needs_hdf5_reference = any(q.is_hdf5_reference for q in _all_quantities)
+    # pynxtools.nomad.annotations imports: only the annotation classes this
+    # file's own quantities/subsections/links/choices actually use.
+    # NeXusDefinition is always needed (every class's m_def carries one).
+    needs_nexus_group = bool(_all_subsections)
+    needs_nexus_field = any(q.node.nx_type == "field" for q in _all_quantities)
+    needs_nexus_attribute = any(q.node.nx_type != "field" for q in _all_quantities)
+    needs_nexus_link = bool(_all_links)
+    needs_nexus_choice = bool(choices)
 
     # Remove concept imports already covered by the main generated-base import.
     if base_is_generated:
@@ -1992,6 +2040,11 @@ def build_context(nx_name: str) -> dict:
         "concept_imports": sorted(concept_imports),
         "needs_m_enum": needs_m_enum,
         "needs_hdf5_reference": needs_hdf5_reference,
+        "needs_nexus_group": needs_nexus_group,
+        "needs_nexus_field": needs_nexus_field,
+        "needs_nexus_attribute": needs_nexus_attribute,
+        "needs_nexus_link": needs_nexus_link,
+        "needs_nexus_choice": needs_nexus_choice,
     }
 
 

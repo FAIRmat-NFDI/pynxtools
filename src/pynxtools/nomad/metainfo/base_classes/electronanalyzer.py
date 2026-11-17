@@ -34,11 +34,9 @@ from nomad.metainfo.data_type import Bytes, Datetime
 
 from pynxtools.nomad.annotations import (
     NeXusAttribute,
-    NeXusChoice,
     NeXusDefinition,
     NeXusField,
     NeXusGroup,
-    NeXusLink,
 )
 from pynxtools.nomad.metainfo.base_classes.component import Component
 from pynxtools.nomad.metainfo.base_classes.data import Data
@@ -96,7 +94,7 @@ class Electronanalyzer(Component):
         section_def="pynxtools.nomad.metainfo.base_classes.electronanalyzer.ElectronanalyzerTransmissionFunction",
         repeats=False,
     )
-    collectioncolumn = SubSection(
+    collectioncolumns = SubSection(
         section_def="pynxtools.nomad.metainfo.base_classes.collectioncolumn.Collectioncolumn",
         repeats=True,
         variable=True,
@@ -110,7 +108,7 @@ class Electronanalyzer(Component):
             optionality="optional",
         ),
     )
-    energydispersion = SubSection(
+    energydispersions = SubSection(
         section_def="pynxtools.nomad.metainfo.base_classes.energydispersion.Energydispersion",
         repeats=True,
         variable=True,
@@ -122,7 +120,7 @@ class Electronanalyzer(Component):
             optionality="optional",
         ),
     )
-    spindispersion = SubSection(
+    spindispersions = SubSection(
         section_def="pynxtools.nomad.metainfo.base_classes.spindispersion.Spindispersion",
         repeats=True,
         variable=True,
@@ -134,7 +132,7 @@ class Electronanalyzer(Component):
             optionality="optional",
         ),
     )
-    detector = SubSection(
+    detectors = SubSection(
         section_def="pynxtools.nomad.metainfo.base_classes.detector.Detector",
         repeats=True,
         variable=True,
@@ -146,7 +144,7 @@ class Electronanalyzer(Component):
             optionality="optional",
         ),
     )
-    deflector = SubSection(
+    deflectors = SubSection(
         section_def="pynxtools.nomad.metainfo.base_classes.deflector.Deflector",
         repeats=True,
         variable=True,
@@ -160,7 +158,7 @@ class Electronanalyzer(Component):
             optionality="optional",
         ),
     )
-    electromagnetic_lens = SubSection(
+    electromagnetic_lenses = SubSection(
         section_def="pynxtools.nomad.metainfo.base_classes.electromagnetic_lens.ElectromagneticLens",
         repeats=True,
         variable=True,
@@ -175,7 +173,7 @@ class Electronanalyzer(Component):
             optionality="optional",
         ),
     )
-    fabrication = SubSection(
+    fabrications = SubSection(
         section_def="pynxtools.nomad.metainfo.base_classes.fabrication.Fabrication",
         repeats=True,
         variable=True,
@@ -186,7 +184,7 @@ class Electronanalyzer(Component):
             optionality="optional",
         ),
     )
-    resolution = SubSection(
+    resolutions = SubSection(
         section_def="pynxtools.nomad.metainfo.base_classes.resolution.Resolution",
         repeats=True,
         variable=True,

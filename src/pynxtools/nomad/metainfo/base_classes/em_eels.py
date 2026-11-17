@@ -28,17 +28,10 @@ from nomad.datamodel.metainfo.annotations import (
     ELNComponentEnum,
     SchemaAnnotation,
 )
-from nomad.metainfo import MEnum, Quantity, Section, SubSection
+from nomad.metainfo import Quantity, Section, SubSection
 from nomad.metainfo.data_type import Bytes, Datetime
 
-from pynxtools.nomad.annotations import (
-    NeXusAttribute,
-    NeXusChoice,
-    NeXusDefinition,
-    NeXusField,
-    NeXusGroup,
-    NeXusLink,
-)
+from pynxtools.nomad.annotations import NeXusDefinition, NeXusGroup
 from pynxtools.nomad.metainfo.base_classes.process import Process
 
 if TYPE_CHECKING:
@@ -102,7 +95,7 @@ class EmEelsZlpCorrection(Process):
         ),
     )
 
-    program_group = SubSection(
+    programs = SubSection(
         section_def="pynxtools.nomad.metainfo.base_classes.program.Program",
         repeats=True,
         variable=True,
@@ -138,7 +131,7 @@ class EmEelsIndexing(Process):
         ),
     )
 
-    program_group = SubSection(
+    programs = SubSection(
         section_def="pynxtools.nomad.metainfo.base_classes.program.Program",
         repeats=True,
         variable=True,
@@ -150,7 +143,7 @@ class EmEelsIndexing(Process):
             optionality="optional",
         ),
     )
-    peak = SubSection(
+    peaks = SubSection(
         section_def="pynxtools.nomad.metainfo.base_classes.peak.Peak",
         repeats=True,
         variable=True,
@@ -165,7 +158,7 @@ class EmEelsIndexing(Process):
             optionality="optional",
         ),
     )
-    spectrum = SubSection(
+    spectrums = SubSection(
         section_def="pynxtools.nomad.metainfo.base_classes.spectrum.Spectrum",
         repeats=True,
         variable=True,

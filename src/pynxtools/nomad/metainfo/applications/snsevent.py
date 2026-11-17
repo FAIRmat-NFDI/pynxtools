@@ -37,8 +37,6 @@ from nomad.metainfo import MEnum, Quantity, Section, SubSection
 from nomad.metainfo.data_type import Bytes, Datetime
 
 from pynxtools.nomad.annotations import (
-    NeXusAttribute,
-    NeXusChoice,
     NeXusDefinition,
     NeXusField,
     NeXusGroup,
@@ -110,20 +108,20 @@ class Snsevent(Entry):
         repeats=True,
         variable=True,
     )
-    instrument = SubSection(
+    instruments = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.snsevent.SnseventInstrument",
         repeats=False,
     )
-    monitor = SubSection(
+    monitors = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.snsevent.SnseventMonitor",
         repeats=True,
         variable=True,
     )
-    sample = SubSection(
+    samples = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.snsevent.SnseventSample",
         repeats=False,
     )
-    user = SubSection(
+    users = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.snsevent.SnseventUser",
         repeats=True,
         variable=True,
@@ -405,12 +403,12 @@ class SnseventDaslogs(Collection):
         ),
     )
 
-    log = SubSection(
+    logs = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.snsevent.SnseventDaslogsLog",
         repeats=True,
         variable=True,
     )
-    positioner = SubSection(
+    positioners = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.snsevent.SnseventDaslogsPositioner",
         repeats=True,
         variable=True,
@@ -814,18 +812,18 @@ class SnseventSnshistotool(Note):
         ),
     )
     date = Quantity(
-        type=str,
+        type=Datetime,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXsnsevent.html#nxsnsevent-entry-snshistotool-date-field"
         ],
         a_nexus_field=NeXusField(
             name="date",
-            type="NX_CHAR",
+            type="NX_DATE_TIME",
             name_type="specified",
             optionality="required",
         ),
         a_eln=ELNAnnotation(
-            component=ELNComponentEnum.StringEditQuantity,
+            component=ELNComponentEnum.DateTimeEditQuantity,
         ),
     )
     description = Quantity(
@@ -997,12 +995,12 @@ class SnseventInstrument(Instrument):
         section_def="pynxtools.nomad.metainfo.applications.snsevent.SnseventInstrumentSns",
         repeats=False,
     )
-    detector = SubSection(
+    detectors = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.snsevent.SnseventInstrumentDetector",
         repeats=True,
         variable=True,
     )
-    disk_chopper = SubSection(
+    disk_choppers = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.snsevent.SnseventInstrumentDiskChopper",
         repeats=True,
         variable=True,
@@ -1011,17 +1009,17 @@ class SnseventInstrument(Instrument):
         section_def="pynxtools.nomad.metainfo.applications.snsevent.SnseventInstrumentModerator",
         repeats=False,
     )
-    aperture = SubSection(
+    apertures = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.snsevent.SnseventInstrumentAperture",
         repeats=True,
         variable=True,
     )
-    attenuator = SubSection(
+    attenuators = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.snsevent.SnseventInstrumentAttenuator",
         repeats=True,
         variable=True,
     )
-    crystal = SubSection(
+    crystals = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.snsevent.SnseventInstrumentCrystal",
         repeats=True,
         variable=True,

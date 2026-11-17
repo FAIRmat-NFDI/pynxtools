@@ -32,17 +32,10 @@ from nomad.datamodel.metainfo.annotations import (
     ELNComponentEnum,
     SchemaAnnotation,
 )
-from nomad.metainfo import MEnum, Quantity, Section, SubSection
+from nomad.metainfo import Quantity, Section, SubSection
 from nomad.metainfo.data_type import Bytes, Datetime
 
-from pynxtools.nomad.annotations import (
-    NeXusAttribute,
-    NeXusChoice,
-    NeXusDefinition,
-    NeXusField,
-    NeXusGroup,
-    NeXusLink,
-)
+from pynxtools.nomad.annotations import NeXusDefinition, NeXusField, NeXusGroup
 from pynxtools.nomad.metainfo.base_classes.sensor import Sensor
 
 if TYPE_CHECKING:
@@ -81,7 +74,7 @@ class SpmPiezoSensor(Sensor):
             optionality="optional",
         ),
     )
-    spm_positioner = SubSection(
+    spm_positioners = SubSection(
         section_def="pynxtools.nomad.metainfo.base_classes.spm_positioner.SpmPositioner",
         repeats=True,
         variable=True,

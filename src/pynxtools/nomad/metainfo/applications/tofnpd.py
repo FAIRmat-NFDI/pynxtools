@@ -33,8 +33,6 @@ from nomad.metainfo import MEnum, Quantity, Section, SubSection
 from nomad.metainfo.data_type import Bytes, Datetime
 
 from pynxtools.nomad.annotations import (
-    NeXusAttribute,
-    NeXusChoice,
     NeXusDefinition,
     NeXusField,
     NeXusGroup,
@@ -77,21 +75,21 @@ class Tofnpd(Entry):
         ),
     )
 
-    user = SubSection(
+    users = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.tofnpd.TofnpdUser",
         repeats=False,
     )
-    instrument = SubSection(
+    instruments = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.tofnpd.TofnpdInstrument",
         repeats=True,
         variable=True,
     )
-    sample = SubSection(
+    samples = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.tofnpd.TofnpdSample",
         repeats=True,
         variable=True,
     )
-    monitor = SubSection(
+    monitors = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.tofnpd.TofnpdMonitor",
         repeats=True,
         variable=True,

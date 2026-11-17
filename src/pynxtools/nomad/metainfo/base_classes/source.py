@@ -34,11 +34,9 @@ from nomad.metainfo.data_type import Bytes, Datetime
 
 from pynxtools.nomad.annotations import (
     NeXusAttribute,
-    NeXusChoice,
     NeXusDefinition,
     NeXusField,
     NeXusGroup,
-    NeXusLink,
 )
 from pynxtools.nomad.metainfo.base_classes.component import Component
 from pynxtools.nomad.metainfo.base_classes.data import Data
@@ -110,7 +108,7 @@ class Source(Component):
             deprecated="Use the field `depends_on` and :ref:`NXtransformations` to position the source and NXoff_geometry to describe its shape instead",
         ),
     )
-    aperture = SubSection(
+    apertures = SubSection(
         section_def="pynxtools.nomad.metainfo.base_classes.aperture.Aperture",
         repeats=True,
         variable=True,
@@ -122,7 +120,7 @@ class Source(Component):
             optionality="optional",
         ),
     )
-    electromagnetic_lens = SubSection(
+    electromagnetic_lenses = SubSection(
         section_def="pynxtools.nomad.metainfo.base_classes.electromagnetic_lens.ElectromagneticLens",
         repeats=True,
         variable=True,
@@ -134,7 +132,7 @@ class Source(Component):
             optionality="optional",
         ),
     )
-    deflector = SubSection(
+    deflectors = SubSection(
         section_def="pynxtools.nomad.metainfo.base_classes.deflector.Deflector",
         repeats=True,
         variable=True,
@@ -146,7 +144,7 @@ class Source(Component):
             optionality="optional",
         ),
     )
-    fabrication = SubSection(
+    fabrications = SubSection(
         section_def="pynxtools.nomad.metainfo.base_classes.fabrication.Fabrication",
         repeats=True,
         variable=True,
@@ -157,7 +155,7 @@ class Source(Component):
             optionality="optional",
         ),
     )
-    off_geometry = SubSection(
+    off_geometries = SubSection(
         section_def="pynxtools.nomad.metainfo.base_classes.off_geometry.OffGeometry",
         repeats=True,
         variable=True,

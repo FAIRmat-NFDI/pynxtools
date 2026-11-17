@@ -36,14 +36,7 @@ from nomad.datamodel.metainfo.annotations import (
 from nomad.metainfo import MEnum, Quantity, Section, SubSection
 from nomad.metainfo.data_type import Bytes, Datetime
 
-from pynxtools.nomad.annotations import (
-    NeXusAttribute,
-    NeXusChoice,
-    NeXusDefinition,
-    NeXusField,
-    NeXusGroup,
-    NeXusLink,
-)
+from pynxtools.nomad.annotations import NeXusDefinition, NeXusField, NeXusGroup
 from pynxtools.nomad.metainfo.base_classes.component import Component
 from pynxtools.nomad.metainfo.base_classes.sample import Sample
 from pynxtools.nomad.metainfo.base_classes.shape import Shape
@@ -77,7 +70,7 @@ class OpticalPolarizer(Component):
         ),
     )
 
-    shape = SubSection(
+    shapes = SubSection(
         section_def="pynxtools.nomad.metainfo.base_classes.optical_polarizer.OpticalPolarizerShape",
         repeats=True,
         variable=True,

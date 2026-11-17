@@ -31,14 +31,7 @@ from nomad.datamodel.metainfo.annotations import (
 from nomad.metainfo import MEnum, Quantity, Section, SubSection
 from nomad.metainfo.data_type import Bytes, Datetime
 
-from pynxtools.nomad.annotations import (
-    NeXusAttribute,
-    NeXusChoice,
-    NeXusDefinition,
-    NeXusField,
-    NeXusGroup,
-    NeXusLink,
-)
+from pynxtools.nomad.annotations import NeXusDefinition, NeXusField, NeXusGroup
 from pynxtools.nomad.metainfo.base_classes.object import Object
 
 if TYPE_CHECKING:
@@ -91,7 +84,7 @@ class ApmMeasurement(Object):
         ),
     )
 
-    apm_instrument = SubSection(
+    apm_instruments = SubSection(
         section_def="pynxtools.nomad.metainfo.base_classes.apm_instrument.ApmInstrument",
         repeats=True,
         variable=True,

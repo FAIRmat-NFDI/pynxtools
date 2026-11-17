@@ -34,11 +34,9 @@ from nomad.metainfo.data_type import Bytes, Datetime
 
 from pynxtools.nomad.annotations import (
     NeXusAttribute,
-    NeXusChoice,
     NeXusDefinition,
     NeXusField,
     NeXusGroup,
-    NeXusLink,
 )
 from pynxtools.nomad.metainfo._category import ExperimentCategory
 from pynxtools.nomad.metainfo.base_classes.attenuator import Attenuator
@@ -89,17 +87,17 @@ class Mx(Entry):
         repeats=True,
         variable=True,
     )
-    sample = SubSection(
+    samples = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.mx.MxSample",
         repeats=True,
         variable=True,
     )
-    instrument = SubSection(
+    instruments = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.mx.MxInstrument",
         repeats=True,
         variable=True,
     )
-    source = SubSection(
+    sources = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.mx.MxSource",
         repeats=True,
         variable=True,
@@ -491,22 +489,22 @@ class MxInstrument(Instrument):
         ),
     )
 
-    attenuator = SubSection(
+    attenuators = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.mx.MxInstrumentAttenuator",
         repeats=True,
         variable=True,
     )
-    detector_group = SubSection(
+    detector_groups = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.mx.MxInstrumentDetectorGroup",
         repeats=True,
         variable=True,
     )
-    detector = SubSection(
+    detectors = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.mx.MxInstrumentDetector",
         repeats=True,
         variable=True,
     )
-    beam = SubSection(
+    beams = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.mx.MxInstrumentBeam",
         repeats=True,
         variable=True,
@@ -746,7 +744,7 @@ class MxInstrumentDetector(Detector):
             min_occurs=0,
         ),
     )
-    collection = SubSection(
+    collections = SubSection(
         section_def="pynxtools.nomad.metainfo.base_classes.collection.Collection",
         repeats=True,
         variable=True,
@@ -762,7 +760,7 @@ class MxInstrumentDetector(Detector):
             min_occurs=0,
         ),
     )
-    detector_module = SubSection(
+    detector_modules = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.mx.MxInstrumentDetectorDetectorModule",
         repeats=True,
         variable=True,
