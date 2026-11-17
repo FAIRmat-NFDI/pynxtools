@@ -124,9 +124,9 @@ def test_build_quantity_from_attribute_uses_dtype_mapping():
         ),
         # An anonymous nameType="any" group carries no name= in the NXDL, so
         # NexusNode fills node.name with the uppercase class stem ("DETECTOR").
-        # python_name lowercases it and nx_name_literal stays None, recording
-        # that NXDL declared no name.
-        ("DETECTOR", "any", True, "detector", "None", True),
+        # python_name lowercases it, pluralizes it (it repeats), and
+        # nx_name_literal stays None, recording that NXDL declared no name.
+        ("DETECTOR", "any", True, "detectors", "None", True),
     ],
 )
 def test_build_subsection_from_node_by_name_type(
@@ -163,6 +163,34 @@ def test_build_subsection_from_node_by_name_type(
     assert section.nx_name_literal == expected_literal
     assert section.variable is expected_variable
     assert section.repeats is variadic
+
+
+@pytest.mark.parametrize(
+    "nxdl_name, repeats, expected",
+    [
+        ("instrument", False, "instrument"),
+        ("instrument", True, "instruments"),
+        ("subentry", True, "subentries"),
+        ("sample_component", True, "sample_components"),
+        ("analysis", True, "analyses"),  # irregular English plural, via inflect
+        ("process", True, "processes"),  # regular, but ends in "s" — not already-plural
+        (
+            "data",
+            True,
+            "data",
+        ),  # override: Measurement.data (ADR-009) needs this exact name
+        ("parameters", True, "parameters"),  # override: already plural NeXus class stem
+        ("transformations", True, "transformations"),  # override: already plural
+        ("xraylens", True, "xraylenses"),  # override: compound inflect can't decompose
+        ("name", False, "name_group"),  # reserved BaseSection quantity name
+        ("name", True, "names"),  # pluralized first, no longer collides, no suffix
+    ],
+)
+def test_nxdl_to_subsection_name_pluralizes_when_repeating(
+    nxdl_name, repeats, expected
+):
+    """A repeating SubSection's Python name is pluralized; a non-repeating one isn't."""
+    assert converter.nxdl_to_subsection_name(nxdl_name, repeats=repeats) == expected
 
 
 def test_base_from_extends_for_direct_child_with_nomad_base():

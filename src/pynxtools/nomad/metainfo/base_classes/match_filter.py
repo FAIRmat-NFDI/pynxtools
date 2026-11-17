@@ -36,14 +36,7 @@ from nomad.datamodel.metainfo.annotations import (
 from nomad.metainfo import MEnum, Quantity, Section, SubSection
 from nomad.metainfo.data_type import Bytes, Datetime
 
-from pynxtools.nomad.annotations import (
-    NeXusAttribute,
-    NeXusChoice,
-    NeXusDefinition,
-    NeXusField,
-    NeXusGroup,
-    NeXusLink,
-)
+from pynxtools.nomad.annotations import NeXusDefinition, NeXusField
 from pynxtools.nomad.metainfo.base_classes.parameters import Parameters
 
 if TYPE_CHECKING:

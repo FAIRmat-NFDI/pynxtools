@@ -38,11 +38,9 @@ from nomad.metainfo.data_type import Bytes, Datetime
 
 from pynxtools.nomad.annotations import (
     NeXusAttribute,
-    NeXusChoice,
     NeXusDefinition,
     NeXusField,
     NeXusGroup,
-    NeXusLink,
 )
 from pynxtools.nomad.metainfo._category import ExperimentCategory
 from pynxtools.nomad.metainfo.base_classes.cite import Cite
@@ -81,11 +79,11 @@ class DispersiveMaterial(Entry):
         ),
     )
 
-    sample = SubSection(
+    samples = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.dispersive_material.DispersiveMaterialSample",
         repeats=False,
     )
-    references = SubSection(
+    referencess = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.dispersive_material.DispersiveMaterialReferences",
         repeats=True,
         variable=True,
@@ -395,12 +393,12 @@ class DispersiveMaterialDispersionX(Dispersion):
         ),
     )
 
-    dispersion_table = SubSection(
+    dispersion_tables = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.dispersive_material.DispersiveMaterialDispersionXDispersionTable",
         repeats=True,
         variable=True,
     )
-    dispersion_function = SubSection(
+    dispersion_functions = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.dispersive_material.DispersiveMaterialDispersionXDispersionFunction",
         repeats=True,
         variable=True,
@@ -540,12 +538,12 @@ class DispersiveMaterialDispersionXDispersionFunction(DispersionFunction):
         ),
     )
 
-    dispersion_single_parameter = SubSection(
+    dispersion_single_parameters = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.dispersive_material.DispersiveMaterialDispersionXDispersionFunctionDispersionSingleParameter",
         repeats=True,
         variable=True,
     )
-    dispersion_repeated_parameter = SubSection(
+    dispersion_repeated_parameters = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.dispersive_material.DispersiveMaterialDispersionXDispersionFunctionDispersionRepeatedParameter",
         repeats=True,
         variable=True,
@@ -806,12 +804,12 @@ class DispersiveMaterialDispersionY(Dispersion):
         ),
     )
 
-    dispersion_table = SubSection(
+    dispersion_tables = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.dispersive_material.DispersiveMaterialDispersionYDispersionTable",
         repeats=True,
         variable=True,
     )
-    dispersion_function = SubSection(
+    dispersion_functions = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.dispersive_material.DispersiveMaterialDispersionYDispersionFunction",
         repeats=True,
         variable=True,
@@ -951,12 +949,12 @@ class DispersiveMaterialDispersionYDispersionFunction(DispersionFunction):
         ),
     )
 
-    dispersion_single_parameter = SubSection(
+    dispersion_single_parameters = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.dispersive_material.DispersiveMaterialDispersionYDispersionFunctionDispersionSingleParameter",
         repeats=True,
         variable=True,
     )
-    dispersion_repeated_parameter = SubSection(
+    dispersion_repeated_parameters = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.dispersive_material.DispersiveMaterialDispersionYDispersionFunctionDispersionRepeatedParameter",
         repeats=True,
         variable=True,
@@ -1219,12 +1217,12 @@ class DispersiveMaterialDispersionZ(Dispersion):
         ),
     )
 
-    dispersion_table = SubSection(
+    dispersion_tables = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.dispersive_material.DispersiveMaterialDispersionZDispersionTable",
         repeats=True,
         variable=True,
     )
-    dispersion_function = SubSection(
+    dispersion_functions = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.dispersive_material.DispersiveMaterialDispersionZDispersionFunction",
         repeats=True,
         variable=True,
@@ -1364,12 +1362,12 @@ class DispersiveMaterialDispersionZDispersionFunction(DispersionFunction):
         ),
     )
 
-    dispersion_single_parameter = SubSection(
+    dispersion_single_parameters = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.dispersive_material.DispersiveMaterialDispersionZDispersionFunctionDispersionSingleParameter",
         repeats=True,
         variable=True,
     )
-    dispersion_repeated_parameter = SubSection(
+    dispersion_repeated_parameters = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.dispersive_material.DispersiveMaterialDispersionZDispersionFunctionDispersionRepeatedParameter",
         repeats=True,
         variable=True,

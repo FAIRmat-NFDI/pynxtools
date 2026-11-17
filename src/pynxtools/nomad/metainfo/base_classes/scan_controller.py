@@ -28,17 +28,10 @@ from nomad.datamodel.metainfo.annotations import (
     ELNComponentEnum,
     SchemaAnnotation,
 )
-from nomad.metainfo import MEnum, Quantity, Section, SubSection
+from nomad.metainfo import Quantity, Section, SubSection
 from nomad.metainfo.data_type import Bytes, Datetime
 
-from pynxtools.nomad.annotations import (
-    NeXusAttribute,
-    NeXusChoice,
-    NeXusDefinition,
-    NeXusField,
-    NeXusGroup,
-    NeXusLink,
-)
+from pynxtools.nomad.annotations import NeXusDefinition, NeXusField, NeXusGroup
 from pynxtools.nomad.metainfo.base_classes.component import Component
 
 if TYPE_CHECKING:
@@ -71,7 +64,7 @@ class ScanController(Component):
         ),
     )
 
-    deflector = SubSection(
+    deflectors = SubSection(
         section_def="pynxtools.nomad.metainfo.base_classes.deflector.Deflector",
         repeats=True,
         variable=True,
@@ -89,7 +82,7 @@ class ScanController(Component):
             optionality="optional",
         ),
     )
-    circuit = SubSection(
+    circuits = SubSection(
         section_def="pynxtools.nomad.metainfo.base_classes.circuit.Circuit",
         repeats=True,
         variable=True,

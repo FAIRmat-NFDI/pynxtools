@@ -35,14 +35,7 @@ from nomad.datamodel.metainfo.annotations import (
 from nomad.metainfo import MEnum, Quantity, Section, SubSection
 from nomad.metainfo.data_type import Bytes, Datetime
 
-from pynxtools.nomad.annotations import (
-    NeXusAttribute,
-    NeXusChoice,
-    NeXusDefinition,
-    NeXusField,
-    NeXusGroup,
-    NeXusLink,
-)
+from pynxtools.nomad.annotations import NeXusDefinition, NeXusField, NeXusGroup
 from pynxtools.nomad.metainfo.base_classes.parameters import Parameters
 
 if TYPE_CHECKING:
@@ -77,7 +70,7 @@ class SpatialFilter(Parameters):
         ),
     )
 
-    cg_hexahedron = SubSection(
+    cg_hexahedrons = SubSection(
         section_def="pynxtools.nomad.metainfo.base_classes.cg_hexahedron.CgHexahedron",
         repeats=True,
         variable=True,
@@ -88,7 +81,7 @@ class SpatialFilter(Parameters):
             optionality="optional",
         ),
     )
-    cg_cylinder = SubSection(
+    cg_cylinders = SubSection(
         section_def="pynxtools.nomad.metainfo.base_classes.cg_cylinder.CgCylinder",
         repeats=True,
         variable=True,
@@ -99,7 +92,7 @@ class SpatialFilter(Parameters):
             optionality="optional",
         ),
     )
-    cg_ellipsoid = SubSection(
+    cg_ellipsoids = SubSection(
         section_def="pynxtools.nomad.metainfo.base_classes.cg_ellipsoid.CgEllipsoid",
         repeats=True,
         variable=True,
@@ -110,7 +103,7 @@ class SpatialFilter(Parameters):
             optionality="optional",
         ),
     )
-    cg_polyhedron = SubSection(
+    cg_polyhedrons = SubSection(
         section_def="pynxtools.nomad.metainfo.base_classes.cg_polyhedron.CgPolyhedron",
         repeats=True,
         variable=True,
@@ -121,7 +114,7 @@ class SpatialFilter(Parameters):
             optionality="optional",
         ),
     )
-    cs_filter_boolean_mask = SubSection(
+    cs_filter_boolean_masks = SubSection(
         section_def="pynxtools.nomad.metainfo.base_classes.cs_filter_boolean_mask.CsFilterBooleanMask",
         repeats=True,
         variable=True,

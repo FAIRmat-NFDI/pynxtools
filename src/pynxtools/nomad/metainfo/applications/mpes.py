@@ -34,11 +34,9 @@ from nomad.metainfo.data_type import Bytes, Datetime
 
 from pynxtools.nomad.annotations import (
     NeXusAttribute,
-    NeXusChoice,
     NeXusDefinition,
     NeXusField,
     NeXusGroup,
-    NeXusLink,
 )
 from pynxtools.nomad.metainfo._category import ExperimentCategory
 from pynxtools.nomad.metainfo.base_classes.activity import Activity
@@ -98,7 +96,7 @@ class Mpes(Entry):
         ),
     )
 
-    coordinate_system = SubSection(
+    coordinate_systems = SubSection(
         section_def="pynxtools.nomad.metainfo.base_classes.coordinate_system.CoordinateSystem",
         repeats=True,
         variable=True,
@@ -114,12 +112,12 @@ class Mpes(Entry):
             optionality="optional",
         ),
     )
-    user = SubSection(
+    users = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.mpes.MpesUser",
         repeats=True,
         variable=True,
     )
-    instrument = SubSection(
+    instruments = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.mpes.MpesInstrument",
         repeats=True,
         variable=True,
@@ -141,7 +139,7 @@ class Mpes(Entry):
         section_def="pynxtools.nomad.metainfo.applications.mpes.MpesTransmissionCorrection",
         repeats=False,
     )
-    registration = SubSection(
+    registrations = SubSection(
         section_def="pynxtools.nomad.metainfo.base_classes.registration.Registration",
         repeats=True,
         variable=True,
@@ -156,7 +154,7 @@ class Mpes(Entry):
             optionality="optional",
         ),
     )
-    distortion = SubSection(
+    distortions = SubSection(
         section_def="pynxtools.nomad.metainfo.base_classes.distortion.Distortion",
         repeats=True,
         variable=True,
@@ -168,7 +166,7 @@ class Mpes(Entry):
             optionality="optional",
         ),
     )
-    calibration = SubSection(
+    calibrations = SubSection(
         section_def="pynxtools.nomad.metainfo.base_classes.calibration.Calibration",
         repeats=True,
         variable=True,
@@ -184,7 +182,7 @@ class Mpes(Entry):
             optionality="optional",
         ),
     )
-    fit = SubSection(
+    fits = SubSection(
         section_def="pynxtools.nomad.metainfo.base_classes.fit.Fit",
         repeats=True,
         variable=True,
@@ -196,7 +194,7 @@ class Mpes(Entry):
             optionality="optional",
         ),
     )
-    sample = SubSection(
+    samples = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.mpes.MpesSample",
         repeats=True,
         variable=True,
@@ -474,7 +472,7 @@ class MpesInstrument(Instrument):
         section_def="pynxtools.nomad.metainfo.applications.mpes.MpesInstrumentEnergyResolution",
         repeats=False,
     )
-    resolution = SubSection(
+    resolutions = SubSection(
         section_def="pynxtools.nomad.metainfo.base_classes.resolution.Resolution",
         repeats=True,
         variable=True,
@@ -520,12 +518,12 @@ class MpesInstrument(Instrument):
         repeats=True,
         variable=True,
     )
-    electronanalyzer = SubSection(
+    electronanalyzers = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.mpes.MpesInstrumentElectronanalyzer",
         repeats=True,
         variable=True,
     )
-    manipulator = SubSection(
+    manipulators = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.mpes.MpesInstrumentManipulator",
         repeats=True,
         variable=True,
@@ -543,7 +541,7 @@ class MpesInstrument(Instrument):
         repeats=True,
         variable=True,
     )
-    insertion_device = SubSection(
+    insertion_devices = SubSection(
         section_def="pynxtools.nomad.metainfo.base_classes.insertion_device.InsertionDevice",
         repeats=True,
         variable=True,
@@ -1806,17 +1804,17 @@ class MpesInstrumentElectronanalyzer(Electronanalyzer):
             optionality="optional",
         ),
     )
-    collectioncolumn = SubSection(
+    collectioncolumns = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.mpes.MpesInstrumentElectronanalyzerCollectioncolumn",
         repeats=True,
         variable=True,
     )
-    energydispersion = SubSection(
+    energydispersions = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.mpes.MpesInstrumentElectronanalyzerEnergydispersion",
         repeats=True,
         variable=True,
     )
-    electron_detector = SubSection(
+    electron_detectors = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.mpes.MpesInstrumentElectronanalyzerElectronDetector",
         repeats=True,
         variable=True,
@@ -3401,7 +3399,7 @@ class MpesInstrumentManipulatorSampleHeater(Actuator):
         ),
     )
 
-    pid_controller = SubSection(
+    pid_controllers = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.mpes.MpesInstrumentManipulatorSampleHeaterPidController",
         repeats=True,
         variable=True,
@@ -3529,7 +3527,7 @@ class MpesInstrumentManipulatorCryostat(Actuator):
         ),
     )
 
-    pid_controller = SubSection(
+    pid_controllers = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.mpes.MpesInstrumentManipulatorCryostatPidController",
         repeats=True,
         variable=True,
@@ -3794,7 +3792,7 @@ class MpesInstrumentManipulatorSampleBiasPotentiostat(Actuator):
         ),
     )
 
-    pid_controller = SubSection(
+    pid_controllers = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.mpes.MpesInstrumentManipulatorSampleBiasPotentiostatPidController",
         repeats=True,
         variable=True,

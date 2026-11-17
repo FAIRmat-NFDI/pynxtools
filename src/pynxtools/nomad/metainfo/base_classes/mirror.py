@@ -31,14 +31,7 @@ from nomad.datamodel.metainfo.annotations import (
 from nomad.metainfo import MEnum, Quantity, Section, SubSection
 from nomad.metainfo.data_type import Bytes, Datetime
 
-from pynxtools.nomad.annotations import (
-    NeXusAttribute,
-    NeXusChoice,
-    NeXusDefinition,
-    NeXusField,
-    NeXusGroup,
-    NeXusLink,
-)
+from pynxtools.nomad.annotations import NeXusDefinition, NeXusField, NeXusGroup
 from pynxtools.nomad.metainfo.base_classes.component import Component
 
 if TYPE_CHECKING:
@@ -63,7 +56,7 @@ class Mirror(Component):
         ),
     )
 
-    geometry = SubSection(
+    geometries = SubSection(
         section_def="pynxtools.nomad.metainfo.base_classes.geometry.Geometry",
         repeats=True,
         variable=True,
@@ -109,7 +102,7 @@ class Mirror(Component):
             optionality="optional",
         ),
     )
-    off_geometry = SubSection(
+    off_geometries = SubSection(
         section_def="pynxtools.nomad.metainfo.base_classes.off_geometry.OffGeometry",
         repeats=True,
         variable=True,

@@ -38,11 +38,9 @@ from nomad.metainfo.data_type import Bytes, Datetime
 
 from pynxtools.nomad.annotations import (
     NeXusAttribute,
-    NeXusChoice,
     NeXusDefinition,
     NeXusField,
     NeXusGroup,
-    NeXusLink,
 )
 from pynxtools.nomad.metainfo.base_classes.microstructure_feature import (
     MicrostructureFeature,
@@ -203,7 +201,7 @@ class Microstructure(Object):
         section_def="pynxtools.nomad.metainfo.base_classes.microstructure.MicrostructureConfiguration",
         repeats=False,
     )
-    cg_grid = SubSection(
+    cg_grids = SubSection(
         section_def="pynxtools.nomad.metainfo.base_classes.cg_grid.CgGrid",
         repeats=True,
         variable=True,
@@ -214,7 +212,7 @@ class Microstructure(Object):
             optionality="optional",
         ),
     )
-    cg_point = SubSection(
+    cg_points = SubSection(
         section_def="pynxtools.nomad.metainfo.base_classes.cg_point.CgPoint",
         repeats=True,
         variable=True,
@@ -225,7 +223,7 @@ class Microstructure(Object):
             optionality="optional",
         ),
     )
-    cg_polyline = SubSection(
+    cg_polylines = SubSection(
         section_def="pynxtools.nomad.metainfo.base_classes.cg_polyline.CgPolyline",
         repeats=True,
         variable=True,
@@ -236,7 +234,7 @@ class Microstructure(Object):
             optionality="optional",
         ),
     )
-    cg_triangle = SubSection(
+    cg_triangles = SubSection(
         section_def="pynxtools.nomad.metainfo.base_classes.cg_triangle.CgTriangle",
         repeats=True,
         variable=True,
@@ -247,7 +245,7 @@ class Microstructure(Object):
             optionality="optional",
         ),
     )
-    cg_polygon = SubSection(
+    cg_polygons = SubSection(
         section_def="pynxtools.nomad.metainfo.base_classes.cg_polygon.CgPolygon",
         repeats=True,
         variable=True,
@@ -258,7 +256,7 @@ class Microstructure(Object):
             optionality="optional",
         ),
     )
-    cg_polyhedron = SubSection(
+    cg_polyhedrons = SubSection(
         section_def="pynxtools.nomad.metainfo.base_classes.cg_polyhedron.CgPolyhedron",
         repeats=True,
         variable=True,
@@ -412,7 +410,7 @@ class MicrostructureConfiguration(Process):
         ),
     )
 
-    program_group = SubSection(
+    programs = SubSection(
         section_def="pynxtools.nomad.metainfo.base_classes.program.Program",
         repeats=True,
         variable=True,
@@ -535,7 +533,7 @@ class MicrostructurePhases(MicrostructureFeature):
         ),
     )
 
-    phase = SubSection(
+    phases = SubSection(
         section_def="pynxtools.nomad.metainfo.base_classes.phase.Phase",
         repeats=True,
         variable=True,

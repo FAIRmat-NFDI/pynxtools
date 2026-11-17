@@ -16,15 +16,13 @@
 #
 # This file is AUTO-GENERATED from the NeXus definitions (NXDL).
 # Run `pynx nomad generate-metainfo --nxdl NXtest_extended` to regenerate.
-# Additive-only: the generator will not remove or rename existing class members
-# (unless the `--force` flag is used).
-# Add normalize() logic directly; it will be preserved on regeneration.
+# Hand edits are preserved across regeneration via the sidecar
+# generated_manifest.json.
 from __future__ import annotations
 
 from typing import TYPE_CHECKING
 
 import numpy as np
-from nomad.datamodel.hdf5 import HDF5Reference
 from nomad.datamodel.metainfo.annotations import (
     ELNAnnotation,
     ELNComponentEnum,
@@ -33,14 +31,7 @@ from nomad.datamodel.metainfo.annotations import (
 from nomad.metainfo import MEnum, Quantity, Section, SubSection
 from nomad.metainfo.data_type import Bytes, Datetime
 
-from pynxtools.nomad.annotations import (
-    NeXusAttribute,
-    NeXusChoice,
-    NeXusDefinition,
-    NeXusField,
-    NeXusGroup,
-    NeXusLink,
-)
+from pynxtools.nomad.annotations import NeXusAttribute, NeXusDefinition, NeXusField
 from pynxtools.nomad.metainfo._category import ExperimentCategory
 from pynxtools.nomad.metainfo.applications.test import Test
 

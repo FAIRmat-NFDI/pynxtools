@@ -28,17 +28,10 @@ from nomad.datamodel.metainfo.annotations import (
     ELNComponentEnum,
     SchemaAnnotation,
 )
-from nomad.metainfo import MEnum, Quantity, Section, SubSection
+from nomad.metainfo import Quantity, Section, SubSection
 from nomad.metainfo.data_type import Bytes, Datetime
 
-from pynxtools.nomad.annotations import (
-    NeXusAttribute,
-    NeXusChoice,
-    NeXusDefinition,
-    NeXusField,
-    NeXusGroup,
-    NeXusLink,
-)
+from pynxtools.nomad.annotations import NeXusDefinition, NeXusField, NeXusGroup
 from pynxtools.nomad.metainfo.base_classes.component import Component
 
 if TYPE_CHECKING:
@@ -74,7 +67,7 @@ class VelocitySelector(Component):
             deprecated="Use the field `depends_on` and :ref:`NXtransformations` to position the velocity selector and NXoff_geometry to describe its shape instead",
         ),
     )
-    off_geometry = SubSection(
+    off_geometries = SubSection(
         section_def="pynxtools.nomad.metainfo.base_classes.off_geometry.OffGeometry",
         repeats=True,
         variable=True,

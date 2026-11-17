@@ -34,11 +34,9 @@ from nomad.metainfo.data_type import Bytes, Datetime
 
 from pynxtools.nomad.annotations import (
     NeXusAttribute,
-    NeXusChoice,
     NeXusDefinition,
     NeXusField,
     NeXusGroup,
-    NeXusLink,
 )
 from pynxtools.nomad.metainfo._category import ExperimentCategory
 from pynxtools.nomad.metainfo.applications.mpes import (
@@ -83,12 +81,12 @@ class MpesArpes(Mpes):
         section_def="pynxtools.nomad.metainfo.applications.mpes_arpes.MpesArpesArpesGeometry",
         repeats=False,
     )
-    instrument = SubSection(
+    instruments = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.mpes_arpes.MpesArpesInstrument",
         repeats=True,
         variable=True,
     )
-    sample = SubSection(
+    samples = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.mpes_arpes.MpesArpesSample",
         repeats=True,
         variable=True,
@@ -244,7 +242,7 @@ class MpesArpesInstrument(MpesInstrument):
         repeats=True,
         variable=True,
     )
-    electronanalyzer = SubSection(
+    electronanalyzers = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.mpes_arpes.MpesArpesInstrumentElectronanalyzer",
         repeats=True,
         variable=True,
@@ -356,12 +354,12 @@ class MpesArpesInstrumentElectronanalyzer(MpesInstrumentElectronanalyzer):
         section_def="pynxtools.nomad.metainfo.applications.mpes_arpes.MpesArpesInstrumentElectronanalyzerTransformations",
         repeats=False,
     )
-    collectioncolumn = SubSection(
+    collectioncolumns = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.mpes_arpes.MpesArpesInstrumentElectronanalyzerCollectioncolumn",
         repeats=True,
         variable=True,
     )
-    energydispersion = SubSection(
+    energydispersions = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.mpes_arpes.MpesArpesInstrumentElectronanalyzerEnergydispersion",
         repeats=True,
         variable=True,

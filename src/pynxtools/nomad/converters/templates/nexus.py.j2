@@ -35,19 +35,31 @@ import numpy as np
 {% endif %}{% if needs_hdf5_reference %}from nomad.datamodel.hdf5 import HDF5Reference
 {% endif %}from nomad.datamodel.metainfo.annotations import ELNAnnotation, ELNComponentEnum, SchemaAnnotation
 from nomad.metainfo import (
+{% if needs_m_enum %}
     MEnum,
+{% endif %}
     Quantity,
     Section,
     SubSection,
 )
 from nomad.metainfo.data_type import Bytes, Datetime
 from pynxtools.nomad.annotations import (
+{% if needs_nexus_attribute %}
     NeXusAttribute,
+{% endif %}
+{% if needs_nexus_choice %}
     NeXusChoice,
+{% endif %}
     NeXusDefinition,
+{% if needs_nexus_field %}
     NeXusField,
+{% endif %}
+{% if needs_nexus_group %}
     NeXusGroup,
+{% endif %}
+{% if needs_nexus_link %}
     NeXusLink,
+{% endif %}
 )
 {% if nx_category == "application" or nx_name == "NXentry" %}
 from pynxtools.nomad.metainfo._category import ExperimentCategory

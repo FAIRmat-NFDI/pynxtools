@@ -35,11 +35,9 @@ from nomad.metainfo.data_type import Bytes, Datetime
 
 from pynxtools.nomad.annotations import (
     NeXusAttribute,
-    NeXusChoice,
     NeXusDefinition,
     NeXusField,
     NeXusGroup,
-    NeXusLink,
 )
 from pynxtools.nomad.metainfo._category import ExperimentCategory
 from pynxtools.nomad.metainfo.base_classes.note import Note
@@ -130,7 +128,7 @@ class Entry(Object, basesections.Measurement, EntryData):
         section_def="pynxtools.nomad.metainfo.base_classes.entry.EntryThumbnail",
         repeats=False,
     )
-    user = SubSection(
+    users = SubSection(
         section_def="pynxtools.nomad.metainfo.base_classes.user.User",
         repeats=True,
         variable=True,
@@ -141,7 +139,7 @@ class Entry(Object, basesections.Measurement, EntryData):
             optionality="optional",
         ),
     )
-    sample = SubSection(
+    samples = SubSection(
         section_def="pynxtools.nomad.metainfo.base_classes.sample.Sample",
         repeats=True,
         variable=True,
@@ -152,7 +150,7 @@ class Entry(Object, basesections.Measurement, EntryData):
             optionality="optional",
         ),
     )
-    instrument = SubSection(
+    instruments = SubSection(
         section_def="pynxtools.nomad.metainfo.base_classes.instrument.Instrument",
         repeats=True,
         variable=True,
@@ -163,7 +161,7 @@ class Entry(Object, basesections.Measurement, EntryData):
             optionality="optional",
         ),
     )
-    collection = SubSection(
+    collections = SubSection(
         section_def="pynxtools.nomad.metainfo.base_classes.collection.Collection",
         repeats=True,
         variable=True,
@@ -174,7 +172,7 @@ class Entry(Object, basesections.Measurement, EntryData):
             optionality="optional",
         ),
     )
-    monitor = SubSection(
+    monitors = SubSection(
         section_def="pynxtools.nomad.metainfo.base_classes.monitor.Monitor",
         repeats=True,
         variable=True,
@@ -196,7 +194,7 @@ class Entry(Object, basesections.Measurement, EntryData):
             optionality="optional",
         ),
     )
-    process = SubSection(
+    processes = SubSection(
         section_def="pynxtools.nomad.metainfo.base_classes.process.Process",
         repeats=True,
         variable=True,
@@ -207,7 +205,7 @@ class Entry(Object, basesections.Measurement, EntryData):
             optionality="optional",
         ),
     )
-    subentry = SubSection(
+    subentries = SubSection(
         section_def="pynxtools.nomad.metainfo.base_classes.subentry.Subentry",
         repeats=True,
         variable=True,

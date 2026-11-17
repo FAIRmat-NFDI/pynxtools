@@ -34,7 +34,6 @@ from nomad.metainfo.data_type import Bytes, Datetime
 
 from pynxtools.nomad.annotations import (
     NeXusAttribute,
-    NeXusChoice,
     NeXusDefinition,
     NeXusField,
     NeXusGroup,
@@ -91,17 +90,17 @@ class Sas(Entry):
         ),
     )
 
-    instrument = SubSection(
+    instruments = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.sas.SasInstrument",
         repeats=True,
         variable=True,
     )
-    sample = SubSection(
+    samples = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.sas.SasSample",
         repeats=True,
         variable=True,
     )
-    monitor = SubSection(
+    monitors = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.sas.SasMonitor",
         repeats=True,
         variable=True,
@@ -203,22 +202,22 @@ class SasInstrument(Instrument):
         ),
     )
 
-    source = SubSection(
+    sources = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.sas.SasInstrumentSource",
         repeats=True,
         variable=True,
     )
-    monochromator = SubSection(
+    monochromators = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.sas.SasInstrumentMonochromator",
         repeats=True,
         variable=True,
     )
-    collimator = SubSection(
+    collimators = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.sas.SasInstrumentCollimator",
         repeats=True,
         variable=True,
     )
-    detector = SubSection(
+    detectors = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.sas.SasInstrumentDetector",
         repeats=True,
         variable=True,
@@ -413,7 +412,7 @@ class SasInstrumentCollimator(Collimator):
         ),
     )
 
-    geometry = SubSection(
+    geometries = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.sas.SasInstrumentCollimatorGeometry",
         repeats=True,
         variable=True,
@@ -437,7 +436,7 @@ class SasInstrumentCollimatorGeometry(Geometry):
         ),
     )
 
-    shape = SubSection(
+    shapes = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.sas.SasInstrumentCollimatorGeometryShape",
         repeats=True,
         variable=True,

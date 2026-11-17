@@ -38,11 +38,9 @@ from nomad.metainfo.data_type import Bytes, Datetime
 
 from pynxtools.nomad.annotations import (
     NeXusAttribute,
-    NeXusChoice,
     NeXusDefinition,
     NeXusField,
     NeXusGroup,
-    NeXusLink,
 )
 from pynxtools.nomad.metainfo._category import ExperimentCategory
 from pynxtools.nomad.metainfo.base_classes.attenuator import Attenuator
@@ -90,16 +88,16 @@ class Transmission(Entry):
         section_def="pynxtools.nomad.metainfo.applications.transmission.TransmissionAcquisitionProgram",
         repeats=False,
     )
-    user = SubSection(
+    users = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.transmission.TransmissionUser",
         repeats=True,
         variable=True,
     )
-    instrument = SubSection(
+    instruments = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.transmission.TransmissionInstrument",
         repeats=False,
     )
-    sample = SubSection(
+    samples = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.transmission.TransmissionSample",
         repeats=True,
         variable=True,
@@ -411,12 +409,12 @@ class TransmissionInstrument(Instrument):
         section_def="pynxtools.nomad.metainfo.applications.transmission.TransmissionInstrumentSpectrometer",
         repeats=False,
     )
-    detector = SubSection(
+    detectors = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.transmission.TransmissionInstrumentDetector",
         repeats=True,
         variable=True,
     )
-    source = SubSection(
+    sources = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.transmission.TransmissionInstrumentSource",
         repeats=True,
         variable=True,
@@ -438,7 +436,7 @@ class TransmissionInstrument(Instrument):
             component=ELNComponentEnum.BoolEditQuantity,
         ),
     )
-    polarizer_quantity = Quantity(
+    polarizer = Quantity(
         type=np.float64,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXtransmission.html#nxtransmission-entry-instrument-polarizer-field"
@@ -635,7 +633,7 @@ class TransmissionInstrumentSpectrometer(Monochromator):
         section_def="pynxtools.nomad.metainfo.applications.transmission.TransmissionInstrumentSpectrometerSpectralResolution",
         repeats=False,
     )
-    grating = SubSection(
+    gratings = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.transmission.TransmissionInstrumentSpectrometerGrating",
         repeats=True,
         variable=True,

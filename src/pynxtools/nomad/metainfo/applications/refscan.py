@@ -33,8 +33,6 @@ from nomad.metainfo import MEnum, Quantity, Section, SubSection
 from nomad.metainfo.data_type import Bytes, Datetime
 
 from pynxtools.nomad.annotations import (
-    NeXusAttribute,
-    NeXusChoice,
     NeXusDefinition,
     NeXusField,
     NeXusGroup,
@@ -78,11 +76,11 @@ class Refscan(Entry):
         ),
     )
 
-    instrument = SubSection(
+    instruments = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.refscan.RefscanInstrument",
         repeats=False,
     )
-    sample = SubSection(
+    samples = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.refscan.RefscanSample",
         repeats=False,
     )
@@ -185,7 +183,7 @@ class RefscanInstrument(Instrument):
         ),
     )
 
-    source = SubSection(
+    sources = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.refscan.RefscanInstrumentSource",
         repeats=True,
         variable=True,
@@ -194,7 +192,7 @@ class RefscanInstrument(Instrument):
         section_def="pynxtools.nomad.metainfo.applications.refscan.RefscanInstrumentMonochromator",
         repeats=False,
     )
-    detector = SubSection(
+    detectors = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.refscan.RefscanInstrumentDetector",
         repeats=True,
         variable=True,

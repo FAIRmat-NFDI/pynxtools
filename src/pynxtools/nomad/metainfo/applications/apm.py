@@ -34,11 +34,9 @@ from nomad.metainfo.data_type import Bytes, Datetime
 
 from pynxtools.nomad.annotations import (
     NeXusAttribute,
-    NeXusChoice,
     NeXusDefinition,
     NeXusField,
     NeXusGroup,
-    NeXusLink,
 )
 from pynxtools.nomad.metainfo._category import ExperimentCategory
 from pynxtools.nomad.metainfo.base_classes.apm_charge_state_analysis import (
@@ -359,7 +357,7 @@ class Apm(Entry):
         repeats=True,
         variable=True,
     )
-    sample = SubSection(
+    samples = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.apm.ApmSample",
         repeats=False,
     )
@@ -753,7 +751,7 @@ class ApmProfilingEnvironment(Collection):
         ),
     )
 
-    program = SubSection(
+    programs = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.apm.ApmProfilingEnvironmentProgram",
         repeats=True,
         variable=True,
@@ -1353,7 +1351,7 @@ class ApmSampleChemicalComposition(ChemicalComposition):
         ),
     )
 
-    element = SubSection(
+    elements = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.apm.ApmSampleChemicalCompositionElement",
         repeats=True,
         variable=True,

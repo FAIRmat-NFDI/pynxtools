@@ -32,14 +32,7 @@ from nomad.datamodel.metainfo.annotations import (
 from nomad.metainfo import MEnum, Quantity, Section, SubSection
 from nomad.metainfo.data_type import Bytes, Datetime
 
-from pynxtools.nomad.annotations import (
-    NeXusAttribute,
-    NeXusChoice,
-    NeXusDefinition,
-    NeXusField,
-    NeXusGroup,
-    NeXusLink,
-)
+from pynxtools.nomad.annotations import NeXusDefinition, NeXusField, NeXusGroup
 from pynxtools.nomad.metainfo._category import ExperimentCategory
 from pynxtools.nomad.metainfo.base_classes.data import Data
 from pynxtools.nomad.metainfo.base_classes.detector import Detector
@@ -92,12 +85,12 @@ class Stxm(Entry):
         ),
     )
 
-    instrument = SubSection(
+    instruments = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.stxm.StxmInstrument",
         repeats=False,
         variable=True,
     )
-    sample = SubSection(
+    samples = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.stxm.StxmSample",
         repeats=True,
         variable=True,
@@ -214,7 +207,7 @@ class StxmInstrument(Instrument):
         section_def="pynxtools.nomad.metainfo.applications.stxm.StxmInstrumentMonochromator",
         repeats=False,
     )
-    detector = SubSection(
+    detectors = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.stxm.StxmInstrumentDetector",
         repeats=True,
         variable=True,

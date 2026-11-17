@@ -16,14 +16,14 @@
 #
 # This file is AUTO-GENERATED from the NeXus definitions (NXDL).
 # Run `pynx nomad generate-metainfo --nxdl NXtestBase` to regenerate.
-# Additive-only: the generator will not remove or rename existing class members
-# (unless the `--force` flag is used).
-# Add normalize() logic directly; it will be preserved on regeneration.
+# Hand edits are preserved across regeneration via the sidecar
+# generated_manifest.json.
 from __future__ import annotations
 
 from typing import TYPE_CHECKING
 
 import numpy as np
+from nomad.datamodel.data import ArchiveSection
 from nomad.datamodel.hdf5 import HDF5Reference
 from nomad.datamodel.metainfo.annotations import (
     ELNAnnotation,
@@ -35,7 +35,6 @@ from nomad.metainfo.data_type import Bytes, Datetime
 
 from pynxtools.nomad.annotations import (
     NeXusAttribute,
-    NeXusChoice,
     NeXusDefinition,
     NeXusField,
     NeXusGroup,
@@ -50,7 +49,7 @@ if TYPE_CHECKING:
 __all__ = ["Testbase"]
 
 
-class Testbase(Object):
+class Testbase(Object, ArchiveSection):
     """
     Minimal base class used as a controlled fixture in converter unit tests.
     Not part of the NeXus standard definitions. Covers: NX_CHAR, NX_FLOAT with
@@ -83,7 +82,7 @@ class Testbase(Object):
             optionality="optional",
         ),
     )
-    instrument = SubSection(
+    instruments = SubSection(
         section_def="pynxtools.nomad.metainfo.base_classes.instrument.Instrument",
         repeats=True,
         variable=True,
@@ -278,7 +277,7 @@ class Testbase(Object):
             component=ELNComponentEnum.NumberEditQuantity,
         ),
     )
-    collection_quantity = Quantity(
+    collection = Quantity(
         type=str,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/src/pynxtools/data/NXtestBase.html#nxtestbase-collection-field"

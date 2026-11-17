@@ -37,8 +37,6 @@ from nomad.metainfo import MEnum, Quantity, Section, SubSection
 from nomad.metainfo.data_type import Bytes, Datetime
 
 from pynxtools.nomad.annotations import (
-    NeXusAttribute,
-    NeXusChoice,
     NeXusDefinition,
     NeXusField,
     NeXusGroup,
@@ -99,7 +97,7 @@ class Xas(Entry):
             optionality="required",
         ),
     )
-    sample = SubSection(
+    samples = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.xas.XasSample",
         repeats=True,
         variable=True,

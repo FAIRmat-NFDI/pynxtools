@@ -38,11 +38,9 @@ from nomad.metainfo.data_type import Bytes, Datetime
 
 from pynxtools.nomad.annotations import (
     NeXusAttribute,
-    NeXusChoice,
     NeXusDefinition,
     NeXusField,
     NeXusGroup,
-    NeXusLink,
 )
 from pynxtools.nomad.metainfo._category import ExperimentCategory
 from pynxtools.nomad.metainfo.applications.xas import Xas, XasSample
@@ -117,22 +115,22 @@ class XasPfy(Xas):
         section_def="pynxtools.nomad.metainfo.applications.xas_pfy.XasPfyBeamlineCoordinateSystem",
         repeats=False,
     )
-    sample = SubSection(
+    samples = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.xas_pfy.XasPfySample",
         repeats=True,
         variable=True,
     )
-    instrument = SubSection(
+    instruments = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.xas_pfy.XasPfyInstrument",
         repeats=True,
         variable=True,
     )
-    collection = SubSection(
+    collections = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.xas_pfy.XasPfyCollection",
         repeats=True,
         variable=True,
     )
-    process = SubSection(
+    processes = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.xas_pfy.XasPfyProcess",
         repeats=True,
         variable=True,

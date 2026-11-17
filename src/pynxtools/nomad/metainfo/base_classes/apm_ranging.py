@@ -28,17 +28,10 @@ from nomad.datamodel.metainfo.annotations import (
     ELNComponentEnum,
     SchemaAnnotation,
 )
-from nomad.metainfo import MEnum, Quantity, Section, SubSection
+from nomad.metainfo import Quantity, Section, SubSection
 from nomad.metainfo.data_type import Bytes, Datetime
 
-from pynxtools.nomad.annotations import (
-    NeXusAttribute,
-    NeXusChoice,
-    NeXusDefinition,
-    NeXusField,
-    NeXusGroup,
-    NeXusLink,
-)
+from pynxtools.nomad.annotations import NeXusDefinition, NeXusField, NeXusGroup
 from pynxtools.nomad.metainfo.base_classes.process import Process
 
 if TYPE_CHECKING:
@@ -73,7 +66,7 @@ class ApmRanging(Process):
         ),
     )
 
-    program_group = SubSection(
+    programs = SubSection(
         section_def="pynxtools.nomad.metainfo.base_classes.program.Program",
         repeats=True,
         variable=True,
@@ -84,7 +77,7 @@ class ApmRanging(Process):
             optionality="optional",
         ),
     )
-    note = SubSection(
+    notes = SubSection(
         section_def="pynxtools.nomad.metainfo.base_classes.note.Note",
         repeats=True,
         variable=True,
@@ -142,7 +135,7 @@ class ApmRangingMassToChargeDistribution(Process):
         ),
     )
 
-    program_group = SubSection(
+    programs = SubSection(
         section_def="pynxtools.nomad.metainfo.base_classes.program.Program",
         repeats=True,
         variable=True,
@@ -258,7 +251,7 @@ class ApmRangingBackgroundQuantification(Process):
         ),
     )
 
-    program_group = SubSection(
+    programs = SubSection(
         section_def="pynxtools.nomad.metainfo.base_classes.program.Program",
         repeats=True,
         variable=True,
@@ -312,7 +305,7 @@ class ApmRangingPeakSearchAndDeconvolution(Process):
         ),
     )
 
-    program_group = SubSection(
+    programs = SubSection(
         section_def="pynxtools.nomad.metainfo.base_classes.program.Program",
         repeats=True,
         variable=True,
@@ -323,7 +316,7 @@ class ApmRangingPeakSearchAndDeconvolution(Process):
             optionality="optional",
         ),
     )
-    peak = SubSection(
+    peaks = SubSection(
         section_def="pynxtools.nomad.metainfo.base_classes.peak.Peak",
         repeats=True,
         variable=True,
@@ -357,7 +350,7 @@ class ApmRangingPeakIdentification(Process):
         ),
     )
 
-    program_group = SubSection(
+    programs = SubSection(
         section_def="pynxtools.nomad.metainfo.base_classes.program.Program",
         repeats=True,
         variable=True,
@@ -368,7 +361,7 @@ class ApmRangingPeakIdentification(Process):
             optionality="optional",
         ),
     )
-    atom = SubSection(
+    atoms = SubSection(
         section_def="pynxtools.nomad.metainfo.base_classes.atom.Atom",
         repeats=True,
         variable=True,

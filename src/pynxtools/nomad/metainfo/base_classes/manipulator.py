@@ -32,14 +32,7 @@ from nomad.datamodel.metainfo.annotations import (
 from nomad.metainfo import MEnum, Quantity, Section, SubSection
 from nomad.metainfo.data_type import Bytes, Datetime
 
-from pynxtools.nomad.annotations import (
-    NeXusAttribute,
-    NeXusChoice,
-    NeXusDefinition,
-    NeXusField,
-    NeXusGroup,
-    NeXusLink,
-)
+from pynxtools.nomad.annotations import NeXusDefinition, NeXusField, NeXusGroup
 from pynxtools.nomad.metainfo.base_classes.actuator import Actuator
 from pynxtools.nomad.metainfo.base_classes.component import Component
 from pynxtools.nomad.metainfo.base_classes.log import Log
@@ -92,7 +85,7 @@ class Manipulator(Component):
         section_def="pynxtools.nomad.metainfo.base_classes.manipulator.ManipulatorSampleBiasVoltmeter",
         repeats=False,
     )
-    actuator = SubSection(
+    actuators = SubSection(
         section_def="pynxtools.nomad.metainfo.base_classes.actuator.Actuator",
         repeats=True,
         variable=True,
@@ -107,7 +100,7 @@ class Manipulator(Component):
             optionality="optional",
         ),
     )
-    sensor = SubSection(
+    sensors = SubSection(
         section_def="pynxtools.nomad.metainfo.base_classes.sensor.Sensor",
         repeats=True,
         variable=True,
@@ -122,7 +115,7 @@ class Manipulator(Component):
             optionality="optional",
         ),
     )
-    positioner = SubSection(
+    positioners = SubSection(
         section_def="pynxtools.nomad.metainfo.base_classes.positioner.Positioner",
         repeats=True,
         variable=True,
@@ -214,7 +207,7 @@ class ManipulatorCryostat(Actuator):
         ),
     )
 
-    pid_controller = SubSection(
+    pid_controllers = SubSection(
         section_def="pynxtools.nomad.metainfo.base_classes.manipulator.ManipulatorCryostatPidController",
         repeats=True,
         variable=True,
@@ -458,7 +451,7 @@ class ManipulatorSampleHeater(Actuator):
         section_def="pynxtools.nomad.metainfo.base_classes.manipulator.ManipulatorSampleHeaterOutputHeaterPowerLog",
         repeats=False,
     )
-    pid_controller = SubSection(
+    pid_controllers = SubSection(
         section_def="pynxtools.nomad.metainfo.base_classes.manipulator.ManipulatorSampleHeaterPidController",
         repeats=True,
         variable=True,
@@ -764,7 +757,7 @@ class ManipulatorSampleBiasPotentiostat(Actuator):
         ),
     )
 
-    pid_controller = SubSection(
+    pid_controllers = SubSection(
         section_def="pynxtools.nomad.metainfo.base_classes.manipulator.ManipulatorSampleBiasPotentiostatPidController",
         repeats=True,
         variable=True,

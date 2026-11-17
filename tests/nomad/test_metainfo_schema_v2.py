@@ -30,6 +30,7 @@ except ImportError:
     pytest.skip("nomad not installed", allow_module_level=True)
 
 from pynxtools.nexus.nexus_tree import NexusField, NexusGroup, generate_tree_from
+from pynxtools.nomad.converters._mapping import nxdl_to_subsection_name
 from pynxtools.nomad.metainfo.applications.apm_paraprobe_clusterer_config import (
     ApmParaprobeClustererConfigCamecaToNexusReconstruction,
 )
@@ -119,21 +120,33 @@ def _entry_child_group(app_name: str, *path: str | tuple[str, str]) -> NexusGrou
 
 
 def _own_child_names(elem, tag: str) -> set[str]:
-    """Return the names of an XML element's direct ``<tag>`` children.
+    """Return the Python names of an XML element's direct ``<tag>`` children.
 
     Named children use their explicit name; anonymous ones (only ``<group>``
     goes unnamed in this corpus) use the lowercased NXDL type name with any
-    ``NX`` prefix removed — matching the generator, so an anonymous and an
-    identically-named explicit group collide here too.
+    ``NX`` prefix removed, pluralized via ``nxdl_to_subsection_name`` unless
+    ``maxOccurs="1"`` — matching the generator's rule for an anonymous
+    ("any" name_type) group, so an anonymous and an identically-named
+    explicit group collide here too.
+
+    A named group whose name equals its own type's bare class stem (e.g.
+    ``name="sample"`` on a ``NXsample`` group) narrows NXentry's own generic,
+    anonymous slot for that class — the generator's entry-slot override
+    (``_entry_slot_key``/``_entry_subsection_names``) makes it reuse that
+    slot's pluralized name regardless of its own local ``maxOccurs``.
     """
     names = set()
     for child in elem:
         if child.tag.split("}")[-1] != tag:
             continue
         name = child.attrib.get("name")
+        nx_type = child.attrib.get("type", "")
+        class_stem = (nx_type[2:] if nx_type.startswith("NX") else nx_type).lower()
         if name is None:
-            nx_type = child.attrib.get("type", "")
-            name = (nx_type[2:] if nx_type.startswith("NX") else nx_type).lower()
+            repeats = child.attrib.get("maxOccurs") != "1"
+            name = nxdl_to_subsection_name(class_stem, repeats=repeats)
+        elif tag == "group" and name.lower() == class_stem:
+            name = nxdl_to_subsection_name(name, repeats=True)
         names.add(name)
     return names
 

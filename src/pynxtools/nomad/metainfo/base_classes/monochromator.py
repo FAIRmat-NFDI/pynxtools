@@ -28,17 +28,10 @@ from nomad.datamodel.metainfo.annotations import (
     ELNComponentEnum,
     SchemaAnnotation,
 )
-from nomad.metainfo import MEnum, Quantity, Section, SubSection
+from nomad.metainfo import Quantity, Section, SubSection
 from nomad.metainfo.data_type import Bytes, Datetime
 
-from pynxtools.nomad.annotations import (
-    NeXusAttribute,
-    NeXusChoice,
-    NeXusDefinition,
-    NeXusField,
-    NeXusGroup,
-    NeXusLink,
-)
+from pynxtools.nomad.annotations import NeXusDefinition, NeXusField, NeXusGroup
 from pynxtools.nomad.metainfo.base_classes.component import Component
 
 if TYPE_CHECKING:
@@ -116,7 +109,7 @@ class Monochromator(Component):
             deprecated="Use the field `depends_on` and :ref:`NXtransformations` to position the monochromator and NXoff_geometry to describe its shape instead",
         ),
     )
-    off_geometry = SubSection(
+    off_geometries = SubSection(
         section_def="pynxtools.nomad.metainfo.base_classes.off_geometry.OffGeometry",
         repeats=True,
         variable=True,
@@ -129,7 +122,7 @@ class Monochromator(Component):
             min_occurs=0,
         ),
     )
-    crystal = SubSection(
+    crystals = SubSection(
         section_def="pynxtools.nomad.metainfo.base_classes.crystal.Crystal",
         repeats=True,
         variable=True,
@@ -141,7 +134,7 @@ class Monochromator(Component):
             optionality="optional",
         ),
     )
-    velocity_selector = SubSection(
+    velocity_selectors = SubSection(
         section_def="pynxtools.nomad.metainfo.base_classes.velocity_selector.VelocitySelector",
         repeats=True,
         variable=True,
@@ -152,7 +145,7 @@ class Monochromator(Component):
             optionality="optional",
         ),
     )
-    grating = SubSection(
+    gratings = SubSection(
         section_def="pynxtools.nomad.metainfo.base_classes.grating.Grating",
         repeats=True,
         variable=True,

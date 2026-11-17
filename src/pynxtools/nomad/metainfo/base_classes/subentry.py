@@ -33,11 +33,9 @@ from nomad.metainfo.data_type import Bytes, Datetime
 
 from pynxtools.nomad.annotations import (
     NeXusAttribute,
-    NeXusChoice,
     NeXusDefinition,
     NeXusField,
     NeXusGroup,
-    NeXusLink,
 )
 from pynxtools.nomad.metainfo.base_classes.note import Note
 from pynxtools.nomad.metainfo.base_classes.object import Object
@@ -112,7 +110,7 @@ class Subentry(Object):
         section_def="pynxtools.nomad.metainfo.base_classes.subentry.SubentryThumbnail",
         repeats=False,
     )
-    user = SubSection(
+    users = SubSection(
         section_def="pynxtools.nomad.metainfo.base_classes.user.User",
         repeats=True,
         variable=True,
@@ -123,7 +121,7 @@ class Subentry(Object):
             optionality="optional",
         ),
     )
-    sample = SubSection(
+    samples = SubSection(
         section_def="pynxtools.nomad.metainfo.base_classes.sample.Sample",
         repeats=True,
         variable=True,
@@ -134,7 +132,7 @@ class Subentry(Object):
             optionality="optional",
         ),
     )
-    instrument = SubSection(
+    instruments = SubSection(
         section_def="pynxtools.nomad.metainfo.base_classes.instrument.Instrument",
         repeats=True,
         variable=True,
@@ -145,7 +143,7 @@ class Subentry(Object):
             optionality="optional",
         ),
     )
-    collection = SubSection(
+    collections = SubSection(
         section_def="pynxtools.nomad.metainfo.base_classes.collection.Collection",
         repeats=True,
         variable=True,
@@ -156,7 +154,7 @@ class Subentry(Object):
             optionality="optional",
         ),
     )
-    monitor = SubSection(
+    monitors = SubSection(
         section_def="pynxtools.nomad.metainfo.base_classes.monitor.Monitor",
         repeats=True,
         variable=True,
@@ -189,7 +187,7 @@ class Subentry(Object):
             optionality="optional",
         ),
     )
-    process = SubSection(
+    processes = SubSection(
         section_def="pynxtools.nomad.metainfo.base_classes.process.Process",
         repeats=True,
         variable=True,

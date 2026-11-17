@@ -34,11 +34,9 @@ from nomad.metainfo.data_type import Bytes, Datetime
 
 from pynxtools.nomad.annotations import (
     NeXusAttribute,
-    NeXusChoice,
     NeXusDefinition,
     NeXusField,
     NeXusGroup,
-    NeXusLink,
 )
 from pynxtools.nomad.metainfo._category import ExperimentCategory
 from pynxtools.nomad.metainfo.base_classes.data import Data
@@ -82,7 +80,7 @@ class Azint1d(Entry):
         ),
     )
 
-    instrument = SubSection(
+    instruments = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.azint1d.Azint1dInstrument",
         repeats=True,
         variable=True,
@@ -91,7 +89,7 @@ class Azint1d(Entry):
         section_def="pynxtools.nomad.metainfo.applications.azint1d.Azint1dReduction",
         repeats=False,
     )
-    monitor = SubSection(
+    monitors = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.azint1d.Azint1dMonitor",
         repeats=True,
         variable=True,
@@ -245,12 +243,12 @@ class Azint1dInstrument(Instrument):
         ),
     )
 
-    monochromator = SubSection(
+    monochromators = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.azint1d.Azint1dInstrumentMonochromator",
         repeats=True,
         variable=True,
     )
-    source = SubSection(
+    sources = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.azint1d.Azint1dInstrumentSource",
         repeats=True,
         variable=True,
@@ -546,7 +544,7 @@ class Azint1dReduction(Process):
             component=ELNComponentEnum.StringEditQuantity,
         ),
     )
-    note_quantity = Quantity(
+    note = Quantity(
         type=str,
         links=[
             "https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXazint1d.html#nxazint1d-entry-reduction-note-field"

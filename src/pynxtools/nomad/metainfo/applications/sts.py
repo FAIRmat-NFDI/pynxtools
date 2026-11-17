@@ -37,11 +37,9 @@ from nomad.metainfo.data_type import Bytes, Datetime
 
 from pynxtools.nomad.annotations import (
     NeXusAttribute,
-    NeXusChoice,
     NeXusDefinition,
     NeXusField,
     NeXusGroup,
-    NeXusLink,
 )
 from pynxtools.nomad.metainfo._category import ExperimentCategory
 from pynxtools.nomad.metainfo.applications.spm import (
@@ -80,7 +78,7 @@ class Sts(Spm):
         ),
     )
 
-    instrument = SubSection(
+    instruments = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.sts.StsInstrument",
         repeats=True,
         variable=True,
@@ -246,7 +244,7 @@ class StsInstrumentBiasSpectroscopyEnvironment(
         ),
     )
 
-    spm_bias_spectroscopy = SubSection(
+    spm_bias_spectroscopies = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.sts.StsInstrumentBiasSpectroscopyEnvironmentSpmBiasSpectroscopy",
         repeats=True,
         variable=True,
@@ -277,7 +275,7 @@ class StsInstrumentBiasSpectroscopyEnvironmentSpmBiasSpectroscopy(
         ),
     )
 
-    spm_positioner = SubSection(
+    spm_positioners = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.sts.StsInstrumentBiasSpectroscopyEnvironmentSpmBiasSpectroscopySpmPositioner",
         repeats=True,
         variable=True,
@@ -336,7 +334,7 @@ class StsReproducibilityIndicators(SpmReproducibilityIndicators):
         ),
     )
 
-    bias_sweep = SubSection(
+    bias_sweeps = SubSection(
         section_def="pynxtools.nomad.metainfo.base_classes.spm_scan_control.SpmScanControl",
         repeats=True,
         variable=True,
@@ -495,7 +493,7 @@ class StsResolutionIndicators(SpmResolutionIndicators):
         ),
     )
 
-    bias_sweep = SubSection(
+    bias_sweeps = SubSection(
         section_def="pynxtools.nomad.metainfo.base_classes.spm_scan_control.SpmScanControl",
         repeats=True,
         variable=True,

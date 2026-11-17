@@ -28,17 +28,10 @@ from nomad.datamodel.metainfo.annotations import (
     ELNComponentEnum,
     SchemaAnnotation,
 )
-from nomad.metainfo import MEnum, Quantity, Section, SubSection
+from nomad.metainfo import Quantity, Section, SubSection
 from nomad.metainfo.data_type import Bytes, Datetime
 
-from pynxtools.nomad.annotations import (
-    NeXusAttribute,
-    NeXusChoice,
-    NeXusDefinition,
-    NeXusField,
-    NeXusGroup,
-    NeXusLink,
-)
+from pynxtools.nomad.annotations import NeXusDefinition, NeXusField, NeXusGroup
 from pynxtools.nomad.metainfo.base_classes.object import Object
 
 if TYPE_CHECKING:
@@ -140,7 +133,7 @@ class EmEventData(Object):
         ),
     )
 
-    user = SubSection(
+    users = SubSection(
         section_def="pynxtools.nomad.metainfo.base_classes.user.User",
         repeats=True,
         variable=True,
@@ -151,7 +144,7 @@ class EmEventData(Object):
             optionality="optional",
         ),
     )
-    em_instrument = SubSection(
+    em_instruments = SubSection(
         section_def="pynxtools.nomad.metainfo.base_classes.em_instrument.EmInstrument",
         repeats=True,
         variable=True,
@@ -162,7 +155,7 @@ class EmEventData(Object):
             optionality="optional",
         ),
     )
-    image = SubSection(
+    images = SubSection(
         section_def="pynxtools.nomad.metainfo.base_classes.image.Image",
         repeats=True,
         variable=True,
@@ -173,7 +166,7 @@ class EmEventData(Object):
             optionality="optional",
         ),
     )
-    spectrum = SubSection(
+    spectrums = SubSection(
         section_def="pynxtools.nomad.metainfo.base_classes.spectrum.Spectrum",
         repeats=True,
         variable=True,

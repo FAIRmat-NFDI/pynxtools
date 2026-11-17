@@ -28,17 +28,10 @@ from nomad.datamodel.metainfo.annotations import (
     ELNComponentEnum,
     SchemaAnnotation,
 )
-from nomad.metainfo import MEnum, Quantity, Section, SubSection
+from nomad.metainfo import Quantity, Section, SubSection
 from nomad.metainfo.data_type import Bytes, Datetime
 
-from pynxtools.nomad.annotations import (
-    NeXusAttribute,
-    NeXusChoice,
-    NeXusDefinition,
-    NeXusField,
-    NeXusGroup,
-    NeXusLink,
-)
+from pynxtools.nomad.annotations import NeXusDefinition, NeXusField, NeXusGroup
 from pynxtools.nomad.metainfo.base_classes.object import Object
 
 if TYPE_CHECKING:
@@ -68,7 +61,7 @@ class History(Object):
         ),
     )
 
-    activity = SubSection(
+    activities = SubSection(
         section_def="pynxtools.nomad.metainfo.base_classes.activity.Activity",
         repeats=True,
         variable=True,
@@ -84,7 +77,7 @@ class History(Object):
             min_occurs=1,
         ),
     )
-    note = SubSection(
+    notes = SubSection(
         section_def="pynxtools.nomad.metainfo.base_classes.note.Note",
         repeats=True,
         variable=True,

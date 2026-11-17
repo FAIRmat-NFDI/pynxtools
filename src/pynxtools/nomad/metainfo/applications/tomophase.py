@@ -33,8 +33,6 @@ from nomad.metainfo import MEnum, Quantity, Section, SubSection
 from nomad.metainfo.data_type import Bytes, Datetime
 
 from pynxtools.nomad.annotations import (
-    NeXusAttribute,
-    NeXusChoice,
     NeXusDefinition,
     NeXusField,
     NeXusGroup,
@@ -85,11 +83,11 @@ class Tomophase(Entry):
         ),
     )
 
-    instrument = SubSection(
+    instruments = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.tomophase.TomophaseInstrument",
         repeats=False,
     )
-    sample = SubSection(
+    samples = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.tomophase.TomophaseSample",
         repeats=False,
     )
@@ -192,7 +190,7 @@ class TomophaseInstrument(Instrument):
         ),
     )
 
-    source = SubSection(
+    sources = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.tomophase.TomophaseInstrumentSource",
         repeats=True,
         variable=True,
