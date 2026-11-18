@@ -6,8 +6,11 @@
 
 """Tests for the shared version helpers of reader parsers."""
 
+import logging
+
 import pytest
 
+from pynxtools import logger as pynx_logger
 from pynxtools.dataconverter.readers.parsers.versioning import (
     format_version,
     is_version_supported,
@@ -147,3 +150,51 @@ MIXED_RANGES = (
 def test_separate_ranges_for_numeric_and_lettered_versions(raw, expected):
     """The example from the docs: one range per kind of version."""
     assert is_version_supported(normalize_version(raw), MIXED_RANGES) == expected
+
+
+@pytest.fixture
+def pynx_caplog(caplog):
+    """caplog that also sees the pynxtools logger, which does not propagate."""
+    pynx_logger.addHandler(caplog.handler)
+    caplog.set_level(logging.INFO, logger="pynxtools")
+    try:
+        yield caplog
+    finally:
+        pynx_logger.removeHandler(caplog.handler)
+
+
+@pytest.mark.parametrize(
+    "version, supported, expected",
+    [
+        ((2019, "R", 2), [((2019, 1), None)], True),  # accepted by the fallback
+        ((2019, "R", 2), [((2019, 1), (2019, 9))], False),  # rejected by it
+    ],
+)
+def test_fallback_order_is_logged(pynx_caplog, version, supported, expected):
+    assert is_version_supported(version, supported) == expected
+    messages = [record.getMessage() for record in pynx_caplog.records]
+    assert len(messages) == 1
+    assert "numbers sort before letters" in messages[0]
+    assert "2019.R.2 vs. 2019.1" in messages[0]
+
+
+@pytest.mark.parametrize(
+    "raw", ["2019.3", "2019R2"]
+)  # each kind matches its own range of MIXED_RANGES
+def test_separate_ranges_log_nothing_when_a_version_matches(pynx_caplog, raw):
+    assert is_version_supported(normalize_version(raw), MIXED_RANGES)
+    assert pynx_caplog.records == []
+
+
+def test_overlap_by_the_fallback_order_is_logged(pynx_caplog):
+    assert version_ranges_overlap([((2019, 1), None)], [((2019, "R", 1), None)])
+    assert len(pynx_caplog.records) == 0  # both unbounded: no bounds compared
+    assert (
+        version_ranges_overlap(
+            [((2019, "R", 1), (2019, "R", 5))], [((2019, 1), (2019, 9))]
+        )
+        is False
+    )
+    messages = [record.getMessage() for record in pynx_caplog.records]
+    assert len(messages) == 1
+    assert "numbers sort before letters" in messages[0]

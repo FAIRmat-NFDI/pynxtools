@@ -8,6 +8,8 @@ The helpers for this live in `pynxtools.dataconverter.readers.parsers.versioning
 
 Declaring supported versions is recommended: it makes clear which files a parser supports. Only declare ranges if you know how the format's versioning scheme works and which versions you have actually seen. If you are unsure, leave the ranges empty. Then every file is accepted, including files without a version.
 
+Keep in mind that this can lead to unexpected failures: a file in a version the parser was never tested with is parsed anyway and may fail later or give wrong results. Log an info message in that case, see [below](#telling-the-user-what-was-decided).
+
 ## From version string to version tuple
 
 `normalize_version` turns a version string into a tuple that can be compared:
@@ -47,7 +49,7 @@ Check a file's version with `is_version_supported(version, supported_versions)`:
 ## How versions are compared
 
 - **Trailing zeros don't matter.** `4`, `4.0` and `4.0.0` are the same version. A file that says `4` is therefore *not* inside `[1.1, 4.0)`, but it is inside `[4.0, 5.0)`.
-- **Numbers sort before letters.** Numbers and letters at the same position can't be compared in a meaningful way, so pynxtools uses a fixed order instead of failing: `(3,) < ("V", 3)` and `(2019, 1) < (2019, "R", 2)`. This order is a fallback, not a statement about which version is newer. If a format mixes both kinds of versions, for example `2019.1` and `2019R2`, declare separate ranges for each kind rather than one range that spans both:
+- **Numbers sort before letters.** Numbers and letters at the same position can't be compared in a meaningful way, so pynxtools uses a fixed order instead of failing: `(3,) < ("V", 3)` and `(2019, 1) < (2019, "R", 2)`. This order is a fallback, not a statement about which version is newer. Whenever this fallback decides a version check, pynxtools logs an info message. If a format mixes both kinds of versions, for example `2019.1` and `2019R2`, declare separate ranges for each kind rather than one range that spans both:
 
   ```python
   supported_versions = (
@@ -60,6 +62,21 @@ Check a file's version with `is_version_supported(version, supported_versions)`:
 
 If a separate parser only works together with certain versions of a primary parser, `version_ranges_overlap(primary_ranges, required_ranges)` tells you whether two sets of ranges share at least one version. It uses the same comparison rules as above.
 
-## Showing the user why a file was rejected
+## Telling the user what was decided
 
 `format_version` turns a tuple back into a readable string, e.g. `(2019, "R", 2)` → `"2019.R.2"`. Use it in error and log messages so users see which version their file has and which ranges are supported.
+
+
+If the parser declares no ranges, every file is accepted without a version check. Log an info message in that case, so that a later failure can be traced back to an untested version:
+
+```python
+from pynxtools import logger
+
+if not supported_versions:
+    logger.info(
+        f"{parser_name} declares no supported versions, so the version of "
+        f"'{file_name}' was not checked."
+    )
+```
+
+Comparisons that rely on the numbers-before-letters fallback are logged by `is_version_supported` and `version_ranges_overlap` themselves.

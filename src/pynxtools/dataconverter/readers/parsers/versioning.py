@@ -8,10 +8,10 @@
 
 A parser declares the file-format versions it supports as half-open ranges
 ``(lower_inclusive, upper_exclusive_or_None)`` of version tuples, and checks a
-file's version against them. Moved here from pynxtools-xps, where the same
-code was also copied into pynxtools-xas and pynxtools-raman.
+file's version against them.
 """
 
+import logging
 import re
 from collections.abc import Iterable
 from typing import TypeAlias
@@ -20,6 +20,7 @@ VersionTuple: TypeAlias = tuple[int | str, ...]
 VersionRange: TypeAlias = tuple[VersionTuple, VersionTuple | None]
 
 _TOKEN_RE = re.compile(r"\d+|[A-Za-z]+")
+logger = logging.getLogger("pynxtools")
 
 
 def format_version(version: VersionTuple) -> str:
@@ -73,6 +74,41 @@ def _sort_key(version: VersionTuple) -> tuple[tuple[int, int | str], ...]:
     return tuple((0, part) if isinstance(part, int) else (1, part) for part in parts)
 
 
+def _mixes_numbers_and_letters(first: VersionTuple, second: VersionTuple) -> bool:
+    """Whether ordering the two versions needs the numbers-before-letters rule.
+
+    True if, at the first position where they differ, one has a number and the
+    other has letters, e.g. ``(2019, 1)`` and ``(2019, "R", 2)``.
+    """
+    for first_part, second_part in zip(_sort_key(first), _sort_key(second)):
+        if first_part != second_part:
+            return first_part[0] != second_part[0]
+    return False
+
+
+def _log_fallback_order(
+    pairs: Iterable[tuple[VersionTuple, VersionTuple]], accepted: bool
+) -> None:
+    """Log an info message if a decision relied on the numbers-before-letters rule.
+
+    ``pairs`` are the version pairs whose order decided the result: the bounds
+    of the accepting range, or all compared bounds if nothing was accepted.
+    Only pairs with a number and letters at the deciding position are reported.
+    """
+    mixed = [
+        f"{format_version(first)} vs. {format_version(second)}"
+        for first, second in pairs
+        if _mixes_numbers_and_letters(first, second)
+    ]
+    if mixed:
+        logger.info(
+            f"Version check {'passed' if accepted else 'failed'}; these versions "
+            "were compared by the fallback rule that numbers sort before letters: "
+            f"{', '.join(mixed)}. If the file format uses both kinds of versions, "
+            "declare separate version ranges for each kind."
+        )
+
+
 def is_version_supported(
     version: VersionTuple | None,
     supported_versions: Iterable[VersionRange],
@@ -102,12 +138,17 @@ def is_version_supported(
 
     if version is None:
         return False
-
     key = _sort_key(version)
-    for lower, upper in ranges:
-        if _sort_key(lower) <= key and (upper is None or key < _sort_key(upper)):
-            return True
+    compared: list[tuple[VersionTuple, VersionTuple]] = []
 
+    for lower, upper in ranges:
+        bounds = [(version, lower)] + ([] if upper is None else [(version, upper)])
+        if _sort_key(lower) <= key and (upper is None or key < _sort_key(upper)):
+            _log_fallback_order(bounds, accepted=True)
+            return True
+        compared.extend(bounds)
+
+    _log_fallback_order(compared, accepted=False)
     return False
 
 
@@ -126,8 +167,14 @@ def version_ranges_overlap(
     is compatible with a primary parser's ``supported_versions``.
     """
     required = tuple(required_parser_versions)
+    compared: list[tuple[VersionTuple, VersionTuple]] = []
     for primary_lower, primary_upper in primary_parser_versions:
         for required_lower, required_upper in required:
+            bounds: list[tuple[VersionTuple, VersionTuple]] = []
+            if required_upper is not None:
+                bounds.append((primary_lower, required_upper))
+            if primary_upper is not None:
+                bounds.append((required_lower, primary_upper))
             primary_starts_before_required_ends = required_upper is None or (
                 _sort_key(primary_lower) < _sort_key(required_upper)
             )
@@ -138,5 +185,8 @@ def version_ranges_overlap(
                 primary_starts_before_required_ends
                 and required_starts_before_primary_ends
             ):
+                _log_fallback_order(bounds, accepted=True)
                 return True
+            compared.extend(bounds)
+    _log_fallback_order(compared, accepted=False)
     return False
