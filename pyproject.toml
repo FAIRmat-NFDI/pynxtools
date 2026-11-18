@@ -148,7 +148,7 @@ nexus_app_v2 = "pynxtools.nomad.apps.app_v2:nexus_app_v2"
 
 [project.scripts]
 pynx           = "pynxtools.cli:pynx"
-read_nexus     = "pynxtools.nexus.cli:read"
+read_nexus     = "pynxtools.annotator.cli:read"
 dataconverter  = "pynxtools.dataconverter.cli:convert"
 generate_eln   = "pynxtools.eln_mapper.cli:generate_eln"
 validate_nexus = "pynxtools.dataconverter.cli:validate"
