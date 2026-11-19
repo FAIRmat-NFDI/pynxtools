@@ -20,14 +20,33 @@ import datetime
 from collections.abc import Iterable
 from dataclasses import dataclass, field
 from pathlib import Path
-from typing import Any
+from typing import Any, TypeAlias
+
+import numpy as np
+import xarray as xr
 
 
-def _is_empty(value: Any) -> bool:
-    """Whether a metadata value carries no information."""
-    if value is None or str(value) in {"None", ""}:
-        return True
-    return isinstance(value, list) and all(item == "" for item in value)
+@dataclass(frozen=True)
+class HDF5Reference:
+    """
+    A dataset that stays in a source HDF5 file instead of being loaded.
+
+    Input files are not kept open between reading, validation and writing, so
+    a live ``h5py.Dataset`` can't be passed on. A reference names the file and
+    the dataset path instead; whoever needs the data opens the file briefly.
+
+    Attributes:
+        file: The HDF5 file.
+        path: The path of the dataset inside the file, e.g. ``"/entry/data"``.
+    """
+
+    file: Path
+    path: str
+
+
+#: What ``ParsedData.data`` may hold. ``np.memmap`` is an ``np.ndarray``
+#: subclass, so raw binary files can be mapped instead of loaded.
+DataValue: TypeAlias = np.ndarray | xr.DataArray | HDF5Reference
 
 
 @dataclass
@@ -36,7 +55,9 @@ class ParsedData:
     What a parser read for one NeXus entry.
 
     Attributes:
-        data: Arrays (numpy or xarray), addressed by ``@data:<path>``.
+        data: Arrays addressed by ``@data:<path>``: a numpy array (also
+            ``np.memmap``), an ``xarray.DataArray``, or an ``HDF5Reference``
+            to a dataset that stays in its source file.
         metadata: Flat key-value metadata with ``/``-separated keys,
             addressed by ``@attrs:<path>``.
         dims: Dimension names per data path, used for ``*`` expansion in
@@ -44,7 +65,7 @@ class ParsedData:
         source: The file this entry was read from, if any.
     """
 
-    data: dict[str, Any] = field(default_factory=dict)
+    data: dict[str, DataValue] = field(default_factory=dict)
     metadata: dict[str, Any] = field(default_factory=dict)
     dims: dict[str, list[str]] = field(default_factory=dict)
     source: Path | None = None
@@ -56,32 +77,42 @@ class ParsedData:
         """
         Look up a metadata value, as for an ``@attrs:<path>`` token.
 
-        An exact key wins. Otherwise the first key that ends with
-        ``"/" + path`` is used, so ``"energy/@units"`` also finds
-        ``"instrument/analyser/energy/@units"``. Empty values (``None``,
-        ``""``, ``"None"``, a list of empty strings) give ``None``, and a
-        ``datetime`` is returned as an ISO 8601 string.
-
-        The key that was found counts as used, see ``unused_metadata``.
+        Empty values give ``None``, and a ``datetime`` is returned as an
+        ISO 8601 string. The key that was found counts as used, see
+        ``unused_metadata``.
         """
-        key = self._find_metadata_key(path)
+
+        def find_key() -> str | None:
+            """
+            The key for ``path``: an exact key wins. Otherwise the first key
+            that ends with ``"/" + path`` is used, so ``"energy/@units"`` also
+            finds ``"instrument/analyser/energy/@units"``.
+            """
+            if path in self.metadata:
+                return path
+            return next(
+                (key for key in self.metadata if key.endswith(f"/{path}")), None
+            )
+
+        def is_empty(value: Any) -> bool:
+            """``None``, ``""``, ``"None"`` and a list of empty strings."""
+            if value is None or str(value) in {"None", ""}:
+                return True
+            return isinstance(value, list) and all(item == "" for item in value)
+
+        key = find_key()
         if key is None:
             return None
         self._used_metadata.add(key)
         value = self.metadata[key]
-        if _is_empty(value):
+        if is_empty(value):
             return None
         if isinstance(value, datetime.datetime):
             return value.isoformat()
         return value
 
-    def _find_metadata_key(self, path: str) -> str | None:
-        if path in self.metadata:
-            return path
-        return next((key for key in self.metadata if key.endswith(f"/{path}")), None)
-
-    def get_data(self, path: str) -> Any:
-        """Return the array stored under ``path`` (``@data:<path>``), or ``None``."""
+    def get_data(self, path: str) -> DataValue | None:
+        """Return the data stored under ``path`` (``@data:<path>``), or ``None``."""
         return self.data.get(path)
 
     def get_dims(self, path: str) -> list[str]:

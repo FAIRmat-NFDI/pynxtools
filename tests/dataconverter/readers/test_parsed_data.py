@@ -6,13 +6,18 @@
 
 """Tests for ParsedData, the common container of parser results."""
 
+import dataclasses
 import datetime
 from pathlib import Path
 
 import numpy as np
 import pytest
+import xarray as xr
 
-from pynxtools.dataconverter.readers.parsers.parsed_data import ParsedData
+from pynxtools.dataconverter.readers.parsers.parsed_data import (
+    HDF5Reference,
+    ParsedData,
+)
 
 
 @pytest.fixture
@@ -112,3 +117,30 @@ def test_plugins_can_subclass_it():
 
     spectrum = ParsedSpectrum(data={"intensity": np.array([1.0, 3.0])})
     assert spectrum.average() == 2.0
+
+
+def test_data_can_hold_xarray_memmap_and_hdf5_references(tmp_path):
+    raw = tmp_path / "detector.raw"
+    np.arange(6, dtype=np.uint16).tofile(raw)
+    reference = HDF5Reference(file=tmp_path / "source.h5", path="/entry/image")
+    parsed = ParsedData(
+        data={
+            "spectrum": xr.DataArray(np.ones(3), dims=["energy"]),
+            "image": np.memmap(raw, dtype=np.uint16, mode="r", shape=(2, 3)),
+            "external": reference,
+        }
+    )
+    assert isinstance(parsed.get_data("spectrum"), xr.DataArray)
+    image = parsed.get_data("image")
+    assert isinstance(image, np.memmap) and image.dtype == np.uint16
+    assert parsed.get_data("external") is reference
+
+
+def test_get_data_returns_the_stored_object_without_copying(parsed):
+    assert parsed.get_data("intensity") is parsed.data["intensity"]
+
+
+def test_hdf5_references_are_immutable(tmp_path):
+    reference = HDF5Reference(file=tmp_path / "source.h5", path="/entry/image")
+    with pytest.raises(dataclasses.FrozenInstanceError):
+        reference.path = "/other"  # type: ignore[misc]

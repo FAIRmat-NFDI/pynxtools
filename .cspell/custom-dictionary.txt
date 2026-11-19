@@ -220,6 +220,7 @@ loadgroup
 lukaspie
 mainfile
 mbar
+memmap
 metainfo
 mkuehbach
 monochromator
