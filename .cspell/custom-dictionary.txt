@@ -8,6 +8,7 @@ BASESECTION
 BASESECTIONS
 Beaulieu
 Behnel
+bigtiff
 Brockhauser
 CSMB
 Cameca

@@ -6,6 +6,9 @@
 
 """Tests for the FileProbe that parsers use to recognize their files."""
 
+import struct
+import subprocess
+import sys
 import zipfile
 
 import h5py
@@ -101,6 +104,32 @@ def test_hdf5_is_recognized_with_and_without_a_user_block(tmp_path, userblock_si
     assert probe.hdf5_root_attrs["vendor"] == "Some Vendor"
 
 
+def test_hdf5_keys_are_read_while_another_program_writes_the_file(tmp_path):
+    path = tmp_path / "busy.h5"
+    writer = subprocess.Popen(
+        [
+            sys.executable,
+            "-c",
+            "import sys, h5py\n"
+            "hdf = h5py.File(sys.argv[1], 'w')\n"
+            "hdf.create_group('entry')\n"
+            "hdf.flush()\n"
+            "print('open', flush=True)\n"
+            "sys.stdin.read()\n",
+            str(path),
+        ],
+        stdin=subprocess.PIPE,
+        stdout=subprocess.PIPE,
+        text=True,
+    )
+    try:
+        assert writer.stdout.readline().strip() == "open"
+        probe = FileProbe.from_path(path)
+        assert probe.hdf5_root_keys == {"entry"}
+    finally:
+        writer.communicate(input="")
+
+
 def test_a_corrupt_hdf5_file_gives_no_keys(tmp_path):
     path = tmp_path / "broken.h5"
     path.write_bytes(b"\x89HDF\r\n\x1a\n" + b"garbage" * 100)
@@ -136,6 +165,45 @@ def test_tiff_tags_are_read(tmp_path):
     assert probe.is_tiff
     assert probe.tiff_tags[image_description] == "my microscope"
     assert not probe.is_zip
+
+
+def write_tiff_header(path, width, height):
+    """Write a classic TIFF with tags for a ``width`` x ``height`` image but no pixels."""
+    tags = [  # (tag, type, value); type 3: SHORT, 4: LONG
+        (256, 4, width),
+        (257, 4, height),
+        (258, 3, 8),
+        (259, 3, 1),
+        (262, 3, 1),
+        (273, 4, 0),
+        (277, 3, 1),
+        (278, 4, height),
+        (279, 4, width * height),
+    ]
+    directory = struct.pack("<H", len(tags))
+    for tag, kind, value in tags:
+        packed = struct.pack("<HH", value, 0) if kind == 3 else struct.pack("<I", value)
+        directory += struct.pack("<HHI", tag, kind, 1) + packed
+    path.write_bytes(b"II*\x00" + struct.pack("<I", 8) + directory + b"\x00" * 4)
+
+
+def test_tiff_tags_are_read_for_images_too_large_for_pillow(tmp_path):
+    path = tmp_path / "large_map.tif"
+    write_tiff_header(path, 20000, 20000)  # 400 million pixels
+    probe = FileProbe.from_path(path)
+    assert probe.tiff_tags[256] == 20000
+    assert probe.tiff_tags[257] == 20000
+
+
+def test_bigtiff_tags_are_read(tmp_path):
+    path = tmp_path / "image.tif"
+    try:
+        Image.new("L", (4, 3)).save(path, big_tiff=True)
+    except (TypeError, ValueError):
+        pytest.skip("this Pillow version cannot write BigTIFF")
+    probe = FileProbe.from_path(path)
+    assert probe.is_tiff
+    assert probe.tiff_tags[256] == 4
 
 
 def test_a_non_tiff_file_has_no_tiff_tags(tmp_path):

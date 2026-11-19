@@ -127,7 +127,9 @@ class FileProbe:
         if not self.is_hdf5:
             return frozenset(), MappingProxyType({})
         try:
-            with h5py.File(self.path, "r") as hdf:
+            # No file lock: the probe only reads, and locking fails on some
+            # network drives and while another program writes the file.
+            with h5py.File(self.path, "r", locking=False) as hdf:
                 keys = frozenset(hdf.keys())
                 attrs = dict(hdf.attrs.items())
         except Exception:  # corrupt or unsupported content: no keys, no raise
@@ -159,18 +161,24 @@ class FileProbe:
         """
         The tags of the first TIFF page, keyed by tag number.
 
-        Only the header and the tags are read, not the pixel data. A broken
+        Only the header and the tag directory are read, not the image, so
+        this also works for images too large for Pillow to open. A broken
         TIFF gives no tags and no warning.
         """
         if not self.is_tiff:
             return MappingProxyType({})
-        from PIL import Image
+        from PIL import TiffImagePlugin
 
+        is_bigtiff = self.head[2:4] in (b"+\x00", b"\x00+")
+        header = self.head[: 16 if is_bigtiff else 8]
         try:
             with warnings.catch_warnings():  # Pillow warns about broken tags
                 warnings.simplefilter("ignore")
-                with Image.open(self.path) as image:
-                    tags = dict(image.tag_v2)  # type: ignore[attr-defined]
+                directory = TiffImagePlugin.ImageFileDirectory_v2(header)
+                with self.path.open("rb") as file:
+                    file.seek(directory.next)
+                    directory.load(file)
+                tags = dict(directory)
         except Exception:  # broken TIFF: no tags, no raise
             return MappingProxyType({})
         return MappingProxyType(tags)
