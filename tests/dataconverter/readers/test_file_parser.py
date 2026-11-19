@@ -210,3 +210,34 @@ def test_only_metadata_parsers_accept_primary_parsers():
     assert "not a metadata parser" in primary_result.reason
     assert not empty_result
     assert "no compatible primary parsers" in empty_result.reason
+
+
+def test_match_rejects_a_version_that_is_not_a_tuple(tmp_path):
+    class TextVersionParser(VersionedToyParser):
+        @classmethod
+        def detect_version(cls, probe):
+            return "1.2"
+
+    result = TextVersionParser.match(probe_of(tmp_path / "scan.toy", "TOY 1.2\n"))
+    assert not result
+    assert "'1.2'" in result.reason
+    assert "normalize_version" in result.reason
+
+
+@pytest.mark.parametrize("name", ["matches_file", "detect_version"])
+def test_checks_must_be_class_methods(name):
+    def instance_check(self, file):
+        return True
+
+    with pytest.raises(TypeError, match=f"{name} must be a classmethod"):
+        type("OldStyleParser", (ToyParser,), {name: instance_check})
+
+
+@pytest.mark.parametrize("extensions", [".toy", ("",), (".toy", None)])
+def test_extensions_must_be_a_tuple_of_non_empty_strings(extensions):
+    with pytest.raises(TypeError, match="tuple of non-empty strings"):
+        type(
+            "BadExtensionParser",
+            (ToyParser,),
+            {"supported_file_extensions": extensions},
+        )
