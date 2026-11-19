@@ -220,12 +220,14 @@ loadgroup
 lukaspie
 mainfile
 mbar
+memmap
 metainfo
 mkuehbach
 monochromator
 monoclinic
 monopd
 mpes
+mtex
 mydatareader
 myext
 mynxdl
@@ -297,6 +299,7 @@ straße
 submoduled
 superproject
 testbase
+tiffinfo
 threed
 tnxdl
 tofile
@@ -311,6 +314,7 @@ unlazying
 unsignedinteger
 ureg
 usefixtures
+userblock
 vamas
 vectorizable
 visititems
