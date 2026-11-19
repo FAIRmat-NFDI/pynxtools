@@ -60,7 +60,7 @@ Check a file's version with `is_version_supported(version, supported_versions)`:
 
 ## Metadata parsers
 
-If a separate parser only works together with certain versions of a primary parser, `version_ranges_overlap(primary_ranges, required_ranges)` tells you whether two sets of ranges share at least one version. It uses the same comparison rules as above.
+If a separate parser only works together with certain versions of a primary parser, `version_ranges_overlap(primary_ranges, required_ranges)` tells you whether two sets of ranges share at least one version. It uses the same comparison rules as above. This only tells you that the two parsers work together for some files. To check one primary file, compare that file's version with `is_version_supported(version, required_ranges)`, or use `FileParser.accepts_primary(primary, version=version)`, see [Write a file parser for your plugin](write-a-file-parser.md).
 
 ## Telling the user what was decided
 
