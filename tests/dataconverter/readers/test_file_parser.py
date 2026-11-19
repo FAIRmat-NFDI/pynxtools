@@ -241,3 +241,36 @@ def test_extensions_must_be_a_tuple_of_non_empty_strings(extensions):
             (ToyParser,),
             {"supported_file_extensions": extensions},
         )
+
+
+def test_a_file_of_another_format_is_rejected_for_its_format(tmp_path):
+    class StrictVersionParser(VersionedToyParser):
+        @classmethod
+        def detect_version(cls, probe):
+            raise AssertionError("detect_version must not read other formats")
+
+    result = StrictVersionParser.match(probe_of(tmp_path / "scan.toy", "OTHER 1.0\n"))
+    assert not result
+    assert "does not match the expected format" in result.reason
+
+
+@pytest.mark.parametrize(
+    "version, accepted",
+    [((1, 2), False), ((1, 5), True), ((1, 9, 3), True)],
+)
+def test_metadata_parser_checks_the_version_of_the_primary_file(version, accepted):
+    class AnyVersionPrimary(VersionedToyParser):
+        supported_versions = (((1, 0), (2, 0)),)
+
+    result = ToyMetadataParser.accepts_primary(AnyVersionPrimary, version=version)
+    assert bool(result) is accepted
+    if not accepted:
+        assert "version 1.2" in result.reason
+        assert ">= 1.5" in result.reason
+
+
+def test_without_a_file_version_overlapping_ranges_are_enough():
+    class AnyVersionPrimary(VersionedToyParser):
+        supported_versions = (((1, 0), (2, 0)),)
+
+    assert ToyMetadataParser.accepts_primary(AnyVersionPrimary)
