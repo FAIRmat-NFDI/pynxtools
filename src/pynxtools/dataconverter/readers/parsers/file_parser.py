@@ -154,8 +154,10 @@ class FileParser(ABC):
         Whether this parser reads the file of ``probe``, and why not if it
         doesn't.
 
-        Checks the extension, then the version, then ``matches_file``. It
-        never raises: an error in ``detect_version`` or ``matches_file``
+        Checks the extension, then ``matches_file``, then the version. So a
+        file of another format with the same extension is rejected for its
+        format, and ``detect_version`` only reads files of this format. It
+        never raises: an error in ``matches_file`` or ``detect_version``
         becomes the reason of the result.
         """
         name = probe.path.name
@@ -164,6 +166,15 @@ class FileParser(ABC):
             return MatchResult(
                 f"File '{name}' does not have an extension that {cls.__name__} "
                 f"supports. Supported extensions: {allowed}."
+            )
+
+        try:
+            matches = cls.matches_file(probe)
+        except Exception as error:
+            return MatchResult(f"{cls.__name__} could not check '{name}': {error}")
+        if not matches:
+            return MatchResult(
+                f"File '{name}' does not match the expected format of {cls.__name__}."
             )
 
         try:
@@ -188,26 +199,27 @@ class FileParser(ABC):
                 f"File '{name}' has version {format_version(version)}, which "
                 f"{cls.__name__} does not support. Supported versions: {supported}."
             )
-
-        try:
-            matches = cls.matches_file(probe)
-        except Exception as error:
-            return MatchResult(f"{cls.__name__} could not check '{name}': {error}")
-        if not matches:
-            return MatchResult(
-                f"File '{name}' does not match the expected format of {cls.__name__}."
-            )
         return MatchResult()
 
     @classmethod
-    def accepts_primary(cls, primary: type["FileParser"]) -> MatchResult:
+    def accepts_primary(
+        cls, primary: type["FileParser"], version: VersionTuple | None = None
+    ) -> MatchResult:
         """
         Whether this metadata parser can add to the entries of ``primary``,
         and why not if it can't.
 
         ``primary`` must be one of ``compatible_primary`` or a subclass of
-        one. If ``supported_primary_versions`` is set, it must overlap with
-        the ``supported_versions`` of ``primary``.
+        one. If ``supported_primary_versions`` is set, the version is checked
+        as well:
+
+        - with ``version``, the version of the primary file that was read
+          (from ``primary.detect_version``), that version must be within
+          ``supported_primary_versions``;
+        - without it, ``supported_primary_versions`` must overlap with the
+          ``supported_versions`` of ``primary``. That only says that the two
+          parsers work together for some files, so pass ``version`` whenever
+          a primary file is known.
         """
         if cls.role != "metadata":
             return MatchResult(f"{cls.__name__} is not a metadata parser.")
@@ -221,18 +233,24 @@ class FileParser(ABC):
                 f"{cls.__name__} does not work with {primary.__name__}. "
                 f"Compatible primary parsers: {expected}."
             )
-        if (
-            cls.supported_primary_versions
-            and primary.supported_versions
-            and not version_ranges_overlap(
-                primary.supported_versions, cls.supported_primary_versions
-            )
+        if not cls.supported_primary_versions:
+            return MatchResult()
+        supported = _format_ranges(cls.supported_primary_versions)
+        if version is not None:
+            if not is_version_supported(version, cls.supported_primary_versions):
+                return MatchResult(
+                    f"{cls.__name__} does not work with {primary.__name__} files "
+                    f"of version {format_version(version)}. Supported versions "
+                    f"of {primary.__name__}: {supported}."
+                )
+            return MatchResult()
+        if primary.supported_versions and not version_ranges_overlap(
+            primary.supported_versions, cls.supported_primary_versions
         ):
             return MatchResult(
                 f"{cls.__name__} does not work with {primary.__name__}: no overlap "
                 f"between its versions {_format_ranges(primary.supported_versions)} "
-                f"and the supported versions "
-                f"{_format_ranges(cls.supported_primary_versions)}."
+                f"and the supported versions {supported}."
             )
         return MatchResult()
 
