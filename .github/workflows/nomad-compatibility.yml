@@ -63,7 +63,6 @@ jobs:
         UV_CONSTRAINT: ci-constraints.txt
       run: |
         echo "blosc2!=4.16.0" > ci-constraints.txt
-        uv pip compile --universal ...
         uv pip compile --universal -p ${{ env.python-version }} --annotation-style=line --extra=infrastructure --extra=parsing --output-file=requirements.txt pyproject.toml
         uv pip compile --universal -p ${{ env.python-version }} --annotation-style=line --extra=dev --extra=infrastructure --extra=parsing --output-file=requirements-dev.txt requirements.txt pyproject.toml
         uv pip compile --universal -p ${{ env.python-version }} --annotation-style=line --output-file=requirements-plugins.txt --unsafe-package nomad-lab -c requirements-dev.txt test_plugins.txt
