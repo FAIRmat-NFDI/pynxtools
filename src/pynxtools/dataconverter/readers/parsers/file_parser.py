@@ -17,6 +17,7 @@ primary parser, e.g. a quantification export next to the spectra. It names
 the primary parsers it works with in ``compatible_primary``.
 """
 
+import inspect
 from abc import ABC, abstractmethod
 from dataclasses import dataclass
 from typing import Any, ClassVar, Literal
@@ -91,6 +92,33 @@ class FileParser(ABC):
     compatible_primary: ClassVar[tuple[type["FileParser"], ...]] = ()
     supported_primary_versions: ClassVar[tuple[VersionRange, ...]] = ()
 
+    def __init_subclass__(cls, **kwargs: Any) -> None:
+        """
+        Check the declarations of a parser class when it is defined, so that
+        mistakes show up at import instead of as rejected files.
+
+        Raises:
+            TypeError: If ``matches_file`` or ``detect_version`` is not a
+                classmethod, or ``supported_file_extensions`` is not a tuple
+                of non-empty strings.
+        """
+        super().__init_subclass__(**kwargs)
+        for name in ("matches_file", "detect_version"):
+            if not isinstance(inspect.getattr_static(cls, name), classmethod):
+                raise TypeError(
+                    f"{cls.__name__}.{name} must be a classmethod that takes a "
+                    "FileProbe, e.g. `@classmethod def "
+                    f"{name}(cls, probe): ...`."
+                )
+        extensions = cls.supported_file_extensions
+        if not isinstance(extensions, tuple) or not all(
+            isinstance(ext, str) and ext for ext in extensions
+        ):
+            raise TypeError(
+                f"{cls.__name__}.supported_file_extensions must be a tuple of "
+                f"non-empty strings, e.g. ('.sle',), not {extensions!r}."
+            )
+
     def __init__(self) -> None:
         self._data: dict[str, ParsedData] = {}
 
@@ -143,6 +171,11 @@ class FileParser(ABC):
         except Exception as error:
             return MatchResult(
                 f"{cls.__name__} could not read the version of '{name}': {error}"
+            )
+        if version is not None and not isinstance(version, tuple):
+            return MatchResult(
+                f"{cls.__name__}.detect_version returned {version!r} for '{name}' "
+                "instead of a version tuple; use normalize_version to convert it."
             )
         if not is_version_supported(version, cls.supported_versions):
             supported = _format_ranges(cls.supported_versions)
