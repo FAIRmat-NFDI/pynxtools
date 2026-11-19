@@ -17,6 +17,7 @@ example averaging over scans.
 """
 
 import datetime
+import logging
 from collections.abc import Iterable
 from dataclasses import dataclass, field
 from pathlib import Path
@@ -24,6 +25,8 @@ from typing import Any, TypeAlias
 
 import numpy as np
 import xarray as xr
+
+logger = logging.getLogger("pynxtools")
 
 
 @dataclass(frozen=True)
@@ -86,13 +89,19 @@ class ParsedData:
             """
             The key for ``path``: an exact key wins. Otherwise the first key
             that ends with ``"/" + path`` is used, so ``"energy/@units"`` also
-            finds ``"instrument/analyser/energy/@units"``.
+            finds ``"instrument/analyser/energy/@units"``. If several keys end
+            with it, a warning names them all.
             """
             if path in self.metadata:
                 return path
-            return next(
-                (key for key in self.metadata if key.endswith(f"/{path}")), None
-            )
+            matches = [key for key in self.metadata if key.endswith(f"/{path}")]
+            if len(matches) > 1:
+                logger.warning(
+                    f"Several metadata keys end with '{path}': "
+                    f"{', '.join(matches)}. Using '{matches[0]}'; write the full "
+                    "key in the config file to choose another one."
+                )
+            return matches[0] if matches else None
 
         def is_empty(value: Any) -> bool:
             """``None``, ``""``, ``"None"`` and a list of empty strings."""

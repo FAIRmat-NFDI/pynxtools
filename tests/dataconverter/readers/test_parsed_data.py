@@ -8,12 +8,14 @@
 
 import dataclasses
 import datetime
+import logging
 from pathlib import Path
 
 import numpy as np
 import pytest
 import xarray as xr
 
+from pynxtools import logger as pynx_logger
 from pynxtools.dataconverter.readers.parsers.parsed_data import (
     HDF5Reference,
     ParsedData,
@@ -144,3 +146,33 @@ def test_hdf5_references_are_immutable(tmp_path):
     reference = HDF5Reference(file=tmp_path / "source.h5", path="/entry/image")
     with pytest.raises(dataclasses.FrozenInstanceError):
         reference.path = "/other"  # type: ignore[misc]
+
+
+@pytest.fixture
+def pynx_caplog(caplog):
+    """caplog that also sees the pynxtools logger, which does not propagate."""
+    pynx_logger.addHandler(caplog.handler)
+    caplog.set_level(logging.INFO, logger="pynxtools")
+    try:
+        yield caplog
+    finally:
+        pynx_logger.removeHandler(caplog.handler)
+
+
+def test_several_keys_with_the_same_ending_give_the_first_and_a_warning(pynx_caplog):
+    parsed = ParsedData(
+        metadata={"analyser/energy/@units": "eV", "source/energy/@units": "keV"}
+    )
+    assert parsed.get_metadata("energy/@units") == "eV"
+    [record] = pynx_caplog.records
+    assert record.levelno == logging.WARNING
+    assert "analyser/energy/@units, source/energy/@units" in record.getMessage()
+
+
+def test_a_unique_key_ending_logs_nothing(pynx_caplog):
+    parsed = ParsedData(
+        metadata={"analyser/energy/@units": "eV", "source/power/@units": "W"}
+    )
+    assert parsed.get_metadata("energy/@units") == "eV"
+    assert parsed.get_metadata("source/energy/@units") is None
+    assert pynx_caplog.records == []
