@@ -230,4 +230,6 @@ exclude = ["src/pynxtools/definitions/*"]
 extra-index-url = [
 "https://gitlab.mpcdf.mpg.de/api/v4/projects/2187/packages/pypi/simple",
 ]
-
+# Only for uv (CI and development), not part of the published requirements.
+# blosc2 4.16.0 has no Linux wheels (#890); remove once a fixed release is out.
+constraint-dependencies = ["blosc2!=4.16.0"]
