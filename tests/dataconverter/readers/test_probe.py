@@ -29,6 +29,7 @@ def write_hdf5(path, userblock_size=0):
 
 
 def test_suffixes_are_lower_case_and_keep_the_whole_chain(tmp_path):
+    """Suffixes are lower-cased and compound suffixes are kept as a chain."""
     path = tmp_path / "scan.MTEX.H5"
     path.write_bytes(b"")
     probe = FileProbe.from_path(path)
@@ -49,12 +50,14 @@ def test_suffixes_are_lower_case_and_keep_the_whole_chain(tmp_path):
     ],
 )
 def test_has_suffix_handles_compound_endings(tmp_path, name, suffix, expected):
+    """has_suffix matches compound and non-dotted endings, ignoring case."""
     path = tmp_path / name
     path.write_bytes(b"")
     assert FileProbe.from_path(path).has_suffix(suffix) is expected
 
 
 def test_head_is_limited_to_the_head_size(tmp_path):
+    """Only the first head_size bytes of a file are read into head."""
     path = tmp_path / "large.bin"
     path.write_bytes(b"a" * (DEFAULT_HEAD_SIZE + 100))
     assert len(FileProbe.from_path(path).head) == DEFAULT_HEAD_SIZE
@@ -62,11 +65,13 @@ def test_head_is_limited_to_the_head_size(tmp_path):
 
 
 def test_a_directory_cannot_be_probed(tmp_path):
+    """Probing a directory raises an OSError."""
     with pytest.raises(OSError):
         FileProbe.from_path(tmp_path)
 
 
 def test_text_head_decodes_text(tmp_path):
+    """text_head decodes a UTF-8 text file."""
     path = tmp_path / "spectrum.xy"
     path.write_text("# Created by: SpecsLab Prodigy\n1.0 2.0\n", encoding="utf-8")
     probe = FileProbe.from_path(path)
@@ -75,18 +80,21 @@ def test_text_head_decodes_text(tmp_path):
 
 
 def test_text_head_drops_a_byte_order_mark(tmp_path):
+    """text_head drops a leading UTF-8 byte order mark."""
     path = tmp_path / "with_bom.txt"
     path.write_bytes(b"\xef\xbb\xbfVAMAS Surface Chemical Analysis")
     assert FileProbe.from_path(path).text_head == "VAMAS Surface Chemical Analysis"
 
 
 def test_text_head_is_none_for_binary_files(tmp_path):
+    """text_head is None for a file with NUL bytes."""
     path = tmp_path / "data.bin"
     path.write_bytes(b"\x00\x01\x02\x03")
     assert FileProbe.from_path(path).text_head is None
 
 
 def test_checks_are_computed_once(tmp_path):
+    """A check is computed once and then cached."""
     path = tmp_path / "spectrum.txt"
     path.write_text("some text")
     probe = FileProbe.from_path(path)
@@ -95,7 +103,8 @@ def test_checks_are_computed_once(tmp_path):
 
 @pytest.mark.parametrize("userblock_size", [0, 512, 128 * 1024])
 def test_hdf5_is_recognized_with_and_without_a_user_block(tmp_path, userblock_size):
-    # 128 KiB puts the signature beyond the head, so it has to be looked up.
+    """HDF5 files are recognized and their root read, also after a user block."""
+    # 128 KiB puts the signature beyond the head.
     path = tmp_path / "data.h5"
     write_hdf5(path, userblock_size=userblock_size)
     probe = FileProbe.from_path(path)
@@ -105,6 +114,7 @@ def test_hdf5_is_recognized_with_and_without_a_user_block(tmp_path, userblock_si
 
 
 def test_hdf5_keys_are_read_while_another_program_writes_the_file(tmp_path):
+    """Root keys are read while another process holds the file open for writing."""
     path = tmp_path / "busy.h5"
     writer = subprocess.Popen(
         [
@@ -131,6 +141,7 @@ def test_hdf5_keys_are_read_while_another_program_writes_the_file(tmp_path):
 
 
 def test_a_corrupt_hdf5_file_gives_no_keys(tmp_path):
+    """A file with the HDF5 signature but corrupt content gives no keys."""
     path = tmp_path / "broken.h5"
     path.write_bytes(b"\x89HDF\r\n\x1a\n" + b"garbage" * 100)
     probe = FileProbe.from_path(path)
@@ -139,7 +150,20 @@ def test_a_corrupt_hdf5_file_gives_no_keys(tmp_path):
     assert dict(probe.hdf5_root_attrs) == {}
 
 
+def test_an_hdf5_file_with_a_broken_group_index_gives_no_keys(tmp_path):
+    """A broken group index makes h5py raise a RuntimeError; the probe gives no keys."""
+    path = tmp_path / "broken_index.h5"
+    write_hdf5(path)
+    content = path.read_bytes()
+    path.write_bytes(content.replace(b"TREE", b"XXXX", 1))  # root group B-tree
+    probe = FileProbe.from_path(path)
+    assert probe.is_hdf5
+    assert probe.hdf5_root_keys == frozenset()
+    assert dict(probe.hdf5_root_attrs) == {}
+
+
 def test_a_text_file_is_not_hdf5(tmp_path):
+    """A text file with an .h5 extension is not HDF5."""
     path = tmp_path / "notes.h5"
     path.write_text("not an HDF5 file")
     probe = FileProbe.from_path(path)
@@ -148,6 +172,7 @@ def test_a_text_file_is_not_hdf5(tmp_path):
 
 
 def test_zip_is_recognized(tmp_path):
+    """A zip archive is recognized and is neither HDF5 nor TIFF."""
     path = tmp_path / "archive.zip"
     with zipfile.ZipFile(path, "w") as archive:
         archive.writestr("inside.txt", "hello")
@@ -157,7 +182,28 @@ def test_zip_is_recognized(tmp_path):
     assert not probe.is_tiff
 
 
+def test_a_truncated_zip_is_not_a_zip(tmp_path):
+    """A file that starts like a zip but has no archive index is not a zip."""
+    path = tmp_path / "truncated.zip"
+    with zipfile.ZipFile(path, "w") as archive:
+        archive.writestr("inside.txt", "hello")
+    content = path.read_bytes()
+    path.write_bytes(content[: len(content) // 2])
+    assert not FileProbe.from_path(path).is_zip
+
+
+def test_a_zip_with_data_in_front_is_a_zip(tmp_path):
+    """A zip with other data before it, e.g. a self-extracting archive, is a zip."""
+    archive_path = tmp_path / "archive.zip"
+    with zipfile.ZipFile(archive_path, "w") as archive:
+        archive.writestr("inside.txt", "hello")
+    path = tmp_path / "self_extracting.exe"
+    path.write_bytes(b"MZ" + b"\x00" * 100 + archive_path.read_bytes())
+    assert FileProbe.from_path(path).is_zip
+
+
 def test_tiff_tags_are_read(tmp_path):
+    """The tags of a TIFF image are read."""
     path = tmp_path / "image.tif"
     image_description = 270
     Image.new("L", (4, 4)).save(path, tiffinfo={image_description: "my microscope"})
@@ -165,6 +211,19 @@ def test_tiff_tags_are_read(tmp_path):
     assert probe.is_tiff
     assert probe.tiff_tags[image_description] == "my microscope"
     assert not probe.is_zip
+
+
+def test_a_tiff_with_a_nonstandard_header_is_recognized(tmp_path):
+    """A TIFF with a nonstandard header that Pillow still reads is recognized."""
+    path = tmp_path / "image.tif"
+    image_description = 270
+    Image.new("L", (4, 4)).save(path, tiffinfo={image_description: "my microscope"})
+    content = path.read_bytes()
+    assert content.startswith(b"II*\x00")
+    path.write_bytes(b"II\x00*" + content[4:])
+    probe = FileProbe.from_path(path)
+    assert probe.is_tiff
+    assert probe.tiff_tags[image_description] == "my microscope"
 
 
 def write_tiff_header(path, width, height):
@@ -188,6 +247,7 @@ def write_tiff_header(path, width, height):
 
 
 def test_tiff_tags_are_read_for_images_too_large_for_pillow(tmp_path):
+    """Tags are read for a TIFF that Pillow refuses to open as a decompression bomb."""
     path = tmp_path / "large_map.tif"
     write_tiff_header(path, 20000, 20000)  # 400 million pixels
     probe = FileProbe.from_path(path)
@@ -196,6 +256,7 @@ def test_tiff_tags_are_read_for_images_too_large_for_pillow(tmp_path):
 
 
 def test_bigtiff_tags_are_read(tmp_path):
+    """The tags of a BigTIFF image are read."""
     path = tmp_path / "image.tif"
     try:
         Image.new("L", (4, 3)).save(path, big_tiff=True)
@@ -207,6 +268,7 @@ def test_bigtiff_tags_are_read(tmp_path):
 
 
 def test_a_non_tiff_file_has_no_tiff_tags(tmp_path):
+    """A file with a .tif extension but no TIFF signature has no tags."""
     path = tmp_path / "image.tif"
     path.write_text("not a TIFF")
     probe = FileProbe.from_path(path)
@@ -215,6 +277,7 @@ def test_a_non_tiff_file_has_no_tiff_tags(tmp_path):
 
 
 def test_a_broken_tiff_gives_no_tags(tmp_path):
+    """A TIFF with a broken tag directory gives no tags and does not raise."""
     path = tmp_path / "broken.tif"
     path.write_bytes(b"II*\x00" + b"\xff" * 20)
     probe = FileProbe.from_path(path)
@@ -223,6 +286,7 @@ def test_a_broken_tiff_gives_no_tags(tmp_path):
 
 
 def test_probing_a_5_gb_file_reads_only_a_little(tmp_path, monkeypatch):
+    """The probe itself reads less than 1 MiB of a 5 GB file."""
     path = tmp_path / "huge.raw"
     with path.open("wb") as file:
         file.truncate(5 * 1024**3)  # sparse: takes no real disk space

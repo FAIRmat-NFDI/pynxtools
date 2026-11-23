@@ -15,6 +15,7 @@ of a file, so probing stays cheap even for files of several GB.
 
 import os
 import warnings
+import zipfile
 from collections.abc import Mapping
 from dataclasses import dataclass, field
 from functools import cached_property
@@ -23,16 +24,10 @@ from types import MappingProxyType
 from typing import Any
 
 import h5py
+from PIL import TiffImagePlugin
 
 #: Number of bytes read from the start of every file.
 DEFAULT_HEAD_SIZE = 64 * 1024
-
-_HDF5_SIGNATURE = b"\x89HDF\r\n\x1a\n"
-# The HDF5 signature sits at offset 0, or after a user block of 512, 1024,
-# 2048, ... bytes.
-_HDF5_FIRST_USER_BLOCK = 512
-_ZIP_SIGNATURES = (b"PK\x03\x04", b"PK\x05\x06")  # the second one: empty archive
-_TIFF_SIGNATURES = (b"II*\x00", b"MM\x00*", b"II+\x00", b"MM\x00+")  # + BigTIFF
 
 
 def _read_bytes(path: Path, offset: int, size: int) -> bytes:
@@ -102,6 +97,10 @@ class FileProbe:
         A head with a NUL byte counts as binary (so UTF-16 text is binary
         here). Bytes that are not valid UTF-8 are replaced, and a leading
         UTF-8 byte order mark is dropped.
+
+        It covers only the first ``head_size`` bytes of the file (64 KiB by
+        default). A parser that needs content further in reads ``path``
+        itself.
         """
         if b"\x00" in self.head:
             return None
@@ -110,16 +109,7 @@ class FileProbe:
     @cached_property
     def is_hdf5(self) -> bool:
         """Whether the file carries the HDF5 signature, also after a user block."""
-        offset = 0
-        while offset + len(_HDF5_SIGNATURE) <= self.size:
-            if offset + len(_HDF5_SIGNATURE) <= len(self.head):
-                candidate = self.head[offset : offset + len(_HDF5_SIGNATURE)]
-            else:
-                candidate = _read_bytes(self.path, offset, len(_HDF5_SIGNATURE))
-            if candidate == _HDF5_SIGNATURE:
-                return True
-            offset = _HDF5_FIRST_USER_BLOCK if offset == 0 else offset * 2
-        return False
+        return h5py.is_hdf5(self.path)
 
     @cached_property
     def _hdf5_root(self) -> tuple[frozenset[str], Mapping[str, Any]]:
@@ -132,7 +122,10 @@ class FileProbe:
             with h5py.File(self.path, "r", locking=False) as hdf:
                 keys = frozenset(hdf.keys())
                 attrs = dict(hdf.attrs.items())
-        except Exception:  # corrupt or unsupported content: no keys, no raise
+        except (OSError, RuntimeError, KeyError, ValueError):
+            # Corrupt or unsupported content: no keys, no raise. h5py raises
+            # OSError if it cannot open the file, RuntimeError or KeyError
+            # for a broken group index, and ValueError for unsupported options.
             return frozenset(), MappingProxyType({})
         return keys, MappingProxyType(attrs)
 
@@ -148,13 +141,13 @@ class FileProbe:
 
     @cached_property
     def is_zip(self) -> bool:
-        """Whether the file starts like a zip archive."""
-        return self.head.startswith(_ZIP_SIGNATURES)
+        """Whether the file is a zip archive (checked by its index at the end)."""
+        return zipfile.is_zipfile(self.path)
 
     @cached_property
     def is_tiff(self) -> bool:
-        """Whether the file starts like a TIFF (classic or BigTIFF)."""
-        return self.head.startswith(_TIFF_SIGNATURES)
+        """Whether the file starts with a TIFF header that Pillow can read."""
+        return self.head.startswith(tuple(TiffImagePlugin.PREFIXES))
 
     @cached_property
     def tiff_tags(self) -> Mapping[int, Any]:
@@ -167,8 +160,6 @@ class FileProbe:
         """
         if not self.is_tiff:
             return MappingProxyType({})
-        from PIL import TiffImagePlugin
-
         is_bigtiff = self.head[2:4] in (b"+\x00", b"\x00+")
         header = self.head[: 16 if is_bigtiff else 8]
         try:

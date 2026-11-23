@@ -8,7 +8,6 @@ BASESECTION
 BASESECTIONS
 Beaulieu
 Behnel
-bigtiff
 Brockhauser
 CSMB
 Cameca
@@ -56,6 +55,7 @@ Lukas
 MONOCHROMATOR
 MPES
 MSYS
+MTEX
 Maklar
 Markus
 Metainfo
@@ -135,6 +135,7 @@ backgroundcolor
 baseclass
 basenames
 basesections
+bigtiff
 blosc
 bulletpoint
 callspec
@@ -299,8 +300,8 @@ straße
 submoduled
 superproject
 testbase
-tiffinfo
 threed
+tiffinfo
 tnxdl
 tofile
 tommaso
