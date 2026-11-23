@@ -64,8 +64,7 @@ If a separate parser only works together with certain versions of a primary pars
 
 ## Telling the user what was decided
 
-`format_version` turns a tuple back into a readable string, e.g. `(2019, "R", 2)` → `"2019.R.2"`. Use it in error and log messages so users see which version their file has and which ranges are supported.
-
+`format_version` turns a tuple back into a readable string, e.g. `(2019, "R", 2)` → `"2019.R.2"`, and `format_version_ranges` does the same for a set of ranges, e.g. `(((1, 0), (2, 0)),)` → `">= 1.0 and < 2.0"`. Use them in error and log messages so users see which version their file has and which ranges are supported. `FileParser.match` already does this in its reasons.
 
 If the parser declares no ranges, every file is accepted without a version check. Log an info message in that case, so that a later failure can be traced back to an untested version:
 
