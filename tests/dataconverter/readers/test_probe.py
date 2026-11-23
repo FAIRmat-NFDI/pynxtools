@@ -46,6 +46,7 @@ def test_suffixes_are_lower_case_and_keep_the_whole_chain(tmp_path):
         ("SCAN.MTEX.H5", ".mtex.h5", True),
         ("001.range_.h5", "range_.h5", True),
         ("scan.h5", ".mtex.h5", False),
+        ("001.range_.h5", ".mtex.h5", False),
         ("scan.h5.txt", ".h5", False),
     ],
 )

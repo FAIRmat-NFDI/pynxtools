@@ -82,10 +82,9 @@ class FileProbe:
         """
         Whether the file name ends with ``suffix``, ignoring case.
 
-        Works for compound suffixes and name endings that are not suffixes in
-        the ``pathlib`` sense: ``has_suffix(".mtex.h5")`` and
-        ``has_suffix("range_.h5")`` both match ``"001.range_.h5"``-like names.
-        A plain ``".h5"`` also matches ``"scan.mtex.h5"``.
+        Unlike ``pathlib`` suffixes, ``suffix`` can be any ending of the file
+        name: ``".mtex.h5"`` matches ``"scan.mtex.h5"``, ``"range_.h5"``
+        matches ``"001.range_.h5"``, and ``".h5"`` matches both.
         """
         return self.path.name.lower().endswith(suffix.lower())
 
