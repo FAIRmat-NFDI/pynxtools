@@ -10,11 +10,12 @@ A parser declares which files it reads (extensions, versions, vendor) and
 recognizes them from a ``FileProbe``, without creating a parser or opening
 the file again. ``match`` says whether a file belongs to the parser, and why
 not if it doesn't, so a reader can explain a file that no parser accepted.
-``parse`` then reads the file into one ``ParsedData`` per NeXus entry.
+``parse`` then reads the file into one ``ParsedData`` objects.
 
-A metadata parser reads a file that only adds metadata to the entries of a
-primary parser, e.g. a quantification export next to the spectra. It names
-the primary parsers it works with in ``compatible_primary``.
+A parser can also add metadata to the entries of another parser, e.g. a
+quantification export next to the spectra. It names those primary parsers
+in ``compatible_primary``. A metadata parser only does that, while a primary
+parser with ``compatible_primary`` can also create entries on its own.
 """
 
 import inspect
@@ -28,7 +29,9 @@ from pynxtools.dataconverter.readers.parsers.versioning import (
     VersionRange,
     VersionTuple,
     format_version,
+    format_version_ranges,
     is_version_supported,
+    normalize_version,
     version_ranges_overlap,
 )
 
@@ -48,15 +51,22 @@ class MatchResult:
         return self.reason is None
 
 
-def _format_ranges(ranges: tuple[VersionRange, ...]) -> str:
-    """``"1.0 – 2.0, >= 3"`` for the half-open ranges ``ranges``."""
-    formatted = [
-        f">= {format_version(lower)}"
-        if upper is None
-        else f"{format_version(lower)} – {format_version(upper)}"
-        for lower, upper in ranges
-    ]
-    return ", ".join(formatted) or "<none>"
+def _as_version_tuple(version: Any) -> VersionTuple | None:
+    """
+    ``version`` as a version tuple: a string goes through
+    ``normalize_version``, a tuple or ``None`` is kept.
+
+    Raises:
+        TypeError: If ``version`` is of another type.
+        ValueError: If a string has no version in it.
+    """
+    if version is None or isinstance(version, tuple):
+        return version
+    if isinstance(version, str):
+        return normalize_version(version)
+    raise TypeError(
+        f"got {version!r} instead of a version tuple or a string, e.g. '1.2'."
+    )
 
 
 class FileParser(ABC):
@@ -69,7 +79,8 @@ class FileParser(ABC):
 
     Attributes:
         supported_file_extensions: The file name endings this parser reads,
-            compared without case, e.g. ``(".sle",)`` or ``(".mtex.h5",)``.
+            e.g. ``(".sle",)`` or ``(".mtex.h5",)``. Upper and lower case
+            are treated alike, so ``.sle`` also matches ``scan.SLE``.
             A parser without extensions matches no file.
         supported_versions: Half-open version ranges
             ``(lower_inclusive, upper_exclusive_or_None)``. Empty means any
@@ -77,12 +88,14 @@ class FileParser(ABC):
             version within one of the ranges.
         supported_vendor: The instrument or software vendor, for
             documentation. It is not checked.
-        role: ``"primary"`` for a parser that creates entries, ``"metadata"``
-            for one that adds metadata to the entries of a primary parser.
-        compatible_primary: For a metadata parser, the primary parsers
-            (including their subclasses) whose entries it can add to.
-        supported_primary_versions: For a metadata parser, the versions of
-            the primary parser it works with. Empty means any version.
+        role: ``"primary"`` for a parser that can create entries on its own,
+            ``"metadata"`` for one that only adds metadata to the entries of
+            the parsers in ``compatible_primary``.
+        compatible_primary: The primary parsers (including their subclasses)
+            whose entries this parser can add metadata to, whatever its
+            ``role``. Empty means none.
+        supported_primary_versions: The versions of those primary parsers
+            this parser works with. Empty means any version.
     """
 
     supported_file_extensions: ClassVar[tuple[str, ...]] = ()
@@ -124,13 +137,17 @@ class FileParser(ABC):
 
     @property
     def data(self) -> dict[str, ParsedData]:
-        """What the last ``parse`` call read, keyed by NeXus entry name."""
+        """What the last ``parse`` call read, keyed by a name the parser chooses."""
         return self._data
 
     @classmethod
-    def detect_version(cls, probe: FileProbe) -> VersionTuple | None:
+    def detect_version(cls, probe: FileProbe) -> VersionTuple | str | None:
         """
         The version of the file format, or ``None`` if the file has none.
+
+        Return a version tuple, or the version string as it is written in
+        the file, e.g. ``"4.75"``; ``match`` converts a string with
+        ``normalize_version``.
 
         Override this in version-aware parsers, e.g. to read a version from
         the file header in ``probe.head``.
@@ -167,29 +184,31 @@ class FileParser(ABC):
                 f"File '{name}' does not have an extension that {cls.__name__} "
                 f"supports. Supported extensions: {allowed}."
             )
-
+        # matches_file and detect_version are plugin code, so any error is
+        # possible (e.g. sqlite3.DatabaseError, zipfile.BadZipFile). It
+        # becomes the reason, so one parser failing on another format's file
+        # does not stop the other parsers from being checked.
         try:
             matches = cls.matches_file(probe)
         except Exception as error:
-            return MatchResult(f"{cls.__name__} could not check '{name}': {error}")
+            return MatchResult(
+                f"{cls.__name__} could not check '{name}': "
+                f"{type(error).__name__}: {error}"
+            )
         if not matches:
             return MatchResult(
                 f"File '{name}' does not match the expected format of {cls.__name__}."
             )
 
         try:
-            version = cls.detect_version(probe)
+            version = _as_version_tuple(cls.detect_version(probe))
         except Exception as error:
             return MatchResult(
-                f"{cls.__name__} could not read the version of '{name}': {error}"
-            )
-        if version is not None and not isinstance(version, tuple):
-            return MatchResult(
-                f"{cls.__name__}.detect_version returned {version!r} for '{name}' "
-                "instead of a version tuple; use normalize_version to convert it."
+                f"{cls.__name__} could not read the version of '{name}': "
+                f"{type(error).__name__}: {error}"
             )
         if not is_version_supported(version, cls.supported_versions):
-            supported = _format_ranges(cls.supported_versions)
+            supported = format_version_ranges(cls.supported_versions)
             if version is None:
                 return MatchResult(
                     f"File '{name}' does not specify a version, but "
@@ -203,11 +222,14 @@ class FileParser(ABC):
 
     @classmethod
     def accepts_primary(
-        cls, primary: type["FileParser"], version: VersionTuple | None = None
+        cls,
+        primary: type["FileParser"],
+        version: VersionTuple | str | None = None,
     ) -> MatchResult:
         """
-        Whether this metadata parser can add to the entries of ``primary``,
-        and why not if it can't.
+        Whether this parser can add metadata to the entries of ``primary``,
+        and why not if it can't. This works for any ``role``: what counts is
+        ``compatible_primary``.
 
         ``primary`` must be one of ``compatible_primary`` or a subclass of
         one. If ``supported_primary_versions`` is set, the version is checked
@@ -221,8 +243,6 @@ class FileParser(ABC):
           parsers work together for some files, so pass ``version`` whenever
           a primary file is known.
         """
-        if cls.role != "metadata":
-            return MatchResult(f"{cls.__name__} is not a metadata parser.")
         if not cls.compatible_primary:
             return MatchResult(
                 f"{cls.__name__} declares no compatible primary parsers."
@@ -235,7 +255,11 @@ class FileParser(ABC):
             )
         if not cls.supported_primary_versions:
             return MatchResult()
-        supported = _format_ranges(cls.supported_primary_versions)
+        supported = format_version_ranges(cls.supported_primary_versions)
+        try:
+            version = _as_version_tuple(version)
+        except (TypeError, ValueError) as error:
+            return MatchResult(f"{cls.__name__} could not use the version: {error}")
         if version is not None:
             if not is_version_supported(version, cls.supported_primary_versions):
                 return MatchResult(
@@ -247,9 +271,10 @@ class FileParser(ABC):
         if primary.supported_versions and not version_ranges_overlap(
             primary.supported_versions, cls.supported_primary_versions
         ):
+            primary_versions = format_version_ranges(primary.supported_versions)
             return MatchResult(
                 f"{cls.__name__} does not work with {primary.__name__}: no overlap "
-                f"between its versions {_format_ranges(primary.supported_versions)} "
+                f"between its versions {primary_versions} "
                 f"and the supported versions {supported}."
             )
         return MatchResult()
@@ -265,13 +290,24 @@ class FileParser(ABC):
         Args:
             probe: The file to read.
             **options: Options of this parser, passed on to ``_parse``.
+
+        Raises:
+            TypeError: If ``_parse`` does not return a dict of ``ParsedData``.
         """
-        self._data = {}
-        self._parse(probe, **options)
-        for entry in self._data.values():
+        self._data = {}  # a failed _parse leaves no entries of an earlier file
+        data = self._parse(probe, **options)
+        if not isinstance(data, dict) or not all(
+            isinstance(entry, ParsedData) for entry in data.values()
+        ):
+            raise TypeError(
+                f"{type(self).__name__}._parse must return a dict of ParsedData, "
+                f"not {data!r:.80}."
+            )
+        for entry in data.values():
             if entry.source is None:
                 entry.source = probe.path
+        self._data = data
 
     @abstractmethod
-    def _parse(self, probe: FileProbe, **options: Any) -> None:
-        """Read the file of ``probe`` and fill ``self._data``."""
+    def _parse(self, probe: FileProbe, **options: Any) -> dict[str, ParsedData]:
+        """Read the file of ``probe`` and return what it holds, by name."""
