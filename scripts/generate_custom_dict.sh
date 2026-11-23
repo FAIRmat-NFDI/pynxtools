@@ -7,6 +7,9 @@
 # SPDX-License-Identifier: Apache-2.0
 
 set -euo pipefail
+# Sort in C order (upper case first) on every machine, as the dictionary is
+# sorted that way; other locales would re-sort the whole file.
+export LC_ALL=C
 
 project_dir=$(dirname "$(dirname "$(realpath "$0")")")
 cd "$project_dir"
