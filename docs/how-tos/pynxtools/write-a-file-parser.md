@@ -25,6 +25,7 @@ class SpectrumTextParser(FileParser):
 
     @classmethod
     def matches_file(cls, probe):
+        # Every file of this example format starts with "SPECTRUM <version>".
         return (probe.text_head or "").startswith("SPECTRUM")
 
     @classmethod
@@ -89,15 +90,26 @@ A parser with `role = "primary"` can set `compatible_primary` as well, if its fi
 
 ## 4. Call the parsers from your reader
 
-In a reader based on the `MultiFormatReader`, register a handler for the file extensions, let it run the parser that matches the file, and let `get_data`, `get_attr` and `get_data_dims` return the parsed values. The config file then addresses them with `@data:counts` and `@attrs:instrument/vendor`:
+Put your parsers into a `ParserRegistry`. For each input file, `identify` returns the one parser that reads it:
+
+```python
+from pynxtools.dataconverter.readers.parsers.probe import FileProbe
+from pynxtools.dataconverter.readers.parsers.registry import ParserRegistry
+
+REGISTRY = ParserRegistry([SpectrumTextParser, SpectrumResultsParser])
+
+probe = FileProbe.from_path("spectrum.txt")
+parser = REGISTRY.identify(probe)  # SpectrumTextParser
+```
+
+If no parser accepts the file, `identify` raises an `UnsupportedFileError` that lists every parser's reason, so the user sees why their file was rejected. If two parsers accept it, it raises an `AmbiguousFormatError`; see [Learn > pynxtools > File parsers](../../learn/pynxtools/file-parsers.md#choosing-a-parser-parserregistry) for how the registry decides.
+
+In a reader based on the `MultiFormatReader`, call the registry from a handler for your file extensions, and let `get_data`, `get_attr` and `get_data_dims` return the parsed values. The config file then addresses them with `@data:counts` and `@attrs:instrument/vendor`:
 
 ```python
 from typing import Any
 
 from pynxtools.dataconverter.readers.multi.reader import MultiFormatReader
-from pynxtools.dataconverter.readers.parsers.probe import FileProbe
-
-PARSERS = (SpectrumTextParser, SpectrumResultsParser)
 
 
 class SpectrumReader(MultiFormatReader):
@@ -115,15 +127,7 @@ class SpectrumReader(MultiFormatReader):
 
     def handle_parser_file(self, file_path: str) -> dict[str, Any]:
         probe = FileProbe.from_path(file_path)
-        results = {parser: parser.match(probe) for parser in PARSERS}
-        matching = [parser for parser, result in results.items() if result]
-        if len(matching) != 1:
-            reasons = "\n".join(
-                f"  - {parser.__name__}: {result.reason}"
-                for parser, result in results.items()
-            )
-            raise ValueError(f"No single parser reads '{probe.path.name}':\n{reasons}")
-        parser = matching[0]()
+        parser = REGISTRY.identify(probe)()
         parser.parse(probe)
         self.parsed[parser.role] = parser.data["entry"]
         return {}
@@ -142,10 +146,25 @@ class SpectrumReader(MultiFormatReader):
         return self.parsed["primary"].get_dims(path)
 ```
 
-When no parser or more than one accepts a file, the error lists every parser's reason, so the user sees why their file was rejected.
+To find the parsers that can add metadata to a primary file, ask the registry with that file's version:
+
+```python
+REGISTRY.metadata_parsers_for(SpectrumTextParser, version="1.6")  # [SpectrumResultsParser]
+REGISTRY.metadata_parsers_for(SpectrumTextParser, version="1.2")  # []
+```
 
 ## 5. Test your parsers
 
-- For each example file, check that `match` accepts it for its own parser and rejects it for all the others, so no two parsers claim the same file.
+- Check that no two parsers claim the same example file. `ambiguities` returns every file that more than one parser accepts, so for your example files it should return nothing:
+
+    ```python
+    from pathlib import Path
+
+
+    def test_no_two_parsers_claim_the_same_file():
+        assert REGISTRY.ambiguities(Path("tests/data").rglob("*")) == {}
+    ```
+
+- For each example file, check that `REGISTRY.identify` returns its own parser.
 - Check the reasons for typical wrong files, for example an unsupported version.
 - Check `parse` against the values you expect in `data` and `metadata`.
