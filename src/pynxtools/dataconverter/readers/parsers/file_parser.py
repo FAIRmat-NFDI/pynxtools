@@ -110,10 +110,13 @@ class FileParser(ABC):
         Check the declarations of a parser class when it is defined, so that
         mistakes show up at import instead of as rejected files.
 
-        Raises:
-            TypeError: If ``matches_file`` or ``detect_version`` is not a
-                classmethod, or ``supported_file_extensions`` is not a tuple
-                of non-empty strings.
+        TypeError: If a declaration is wrong:
+            - ``matches_file`` or ``detect_version`` is not a classmethod;
+            - ``supported_file_extensions`` is not a tuple of non-empty
+                strings;
+            - ``role`` is not ``"primary"`` or ``"metadata"``;
+            - ``role`` is ``"metadata"``, but ``compatible_primary`` is
+                empty.
         """
         super().__init_subclass__(**kwargs)
         for name in ("matches_file", "detect_version"):
@@ -130,6 +133,16 @@ class FileParser(ABC):
             raise TypeError(
                 f"{cls.__name__}.supported_file_extensions must be a tuple of "
                 f"non-empty strings, e.g. ('.sle',), not {extensions!r}."
+            )
+        if cls.role not in ("primary", "metadata"):
+            raise TypeError(
+                f"{cls.__name__}.role must be 'primary' or 'metadata', "
+                f"not {cls.role!r}."
+            )
+        if cls.role == "metadata" and not cls.compatible_primary:
+            raise TypeError(
+                f"{cls.__name__} is a metadata parser, so it must name the "
+                "parsers whose entries it adds to in compatible_primary."
             )
 
     def __init__(self) -> None:

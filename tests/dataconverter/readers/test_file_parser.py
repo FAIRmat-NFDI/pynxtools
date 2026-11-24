@@ -295,6 +295,18 @@ def test_extensions_must_be_a_tuple_of_non_empty_strings(extensions):
         )
 
 
+def test_role_must_be_primary_or_metadata():
+    """A typo in role raises a TypeError when the parser is defined."""
+    with pytest.raises(TypeError, match="role must be 'primary' or 'metadata'"):
+        type("TypoRoleParser", (ToyParser,), {"role": "meta"})
+
+
+def test_a_metadata_parser_must_name_its_primary_parsers():
+    """A metadata parser without compatible_primary could never be used."""
+    with pytest.raises(TypeError, match="must name the parsers"):
+        type("OrphanMetadataParser", (ToyParser,), {"role": "metadata"})
+
+
 def test_a_file_of_another_format_is_rejected_for_its_format(tmp_path):
     """A file of another format is rejected before its version is read."""
 
