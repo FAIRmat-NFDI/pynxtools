@@ -3,15 +3,104 @@
 !!! info
     This guide shows the steps to write a parser for one file format and to call it from your reader. How file parsers work, what a `FileProbe` offers and how `ParsedData` looks up metadata is explained in [Learn > pynxtools > File parsers](../../learn/pynxtools/file-parsers.md).
 
-    You need a reader plugin to start from, see [Build your own `pynxtools` plugin](build-a-plugin.md). Step 4 uses a reader based on the `MultiFormatReader`, see [Use the `MultiFormatReader`](use-multi-format-reader.md).
+    You need a reader plugin to start from, see [Build your own `pynxtools` plugin](build-a-plugin.md). Step 3 uses a reader based on the `MultiFormatReader`, see [Use the `MultiFormatReader`](use-multi-format-reader.md).
 
 The example parser reads text files that start with a line like `SPECTRUM 1.2`, followed by one number per line.
 
 ## 1. Write the parser
 
-Subclass `FileParser`, set the extensions it reads, and implement `matches_file` and `_parse`:
+You build the parser in small steps: first an empty class, then you fill in its attributes and methods one by one. The full class is shown at the end.
 
-```python
+### Start with an empty parser
+
+Subclass `FileParser`. The class attributes say which files the parser reads, and three methods do the work: `matches_file` recognizes the format, `detect_version` reads the format version, and `_parse` reads the file. For now, they return nothing useful:
+
+```python title="parser.py"
+import numpy as np
+
+from pynxtools.dataconverter.readers.parsers.file_parser import FileParser
+from pynxtools.dataconverter.readers.parsers.parsed_data import ParsedData
+
+
+class SpectrumTextParser(FileParser):
+    supported_file_extensions = ()
+    supported_versions = ()
+    supported_vendor = None
+
+    @classmethod
+    def matches_file(cls, probe):
+        return False
+
+    @classmethod
+    def detect_version(cls, probe):
+        return None
+
+    def _parse(self, probe, **options):
+        return {}
+```
+
+`matches_file` and `detect_version` must be class methods that take a `FileProbe`, because they run before the parser is created. A mistake there raises a `TypeError` as soon as the plugin is imported.
+
+### Say which files it reads
+
+Set the file extensions, the versions of the format the parser supports, and the vendor:
+
+```python title="parser.py"
+class SpectrumTextParser(FileParser):
+    supported_file_extensions = (".txt", ".dat")
+    supported_versions = (((1, 0), (2, 0)),)  # 1.0 up to, but not including, 2.0
+    supported_vendor = "My Instruments"
+```
+
+`supported_file_extensions` must be a tuple of non-empty strings. Upper and lower case are treated alike. If your format has no version, leave `supported_versions` empty. How to choose the ranges is described in [Declare which file-format versions a parser supports](declare-file-format-versions.md).
+
+### Recognize the file
+
+`matches_file` checks whether a file is in your format. Recognize it from its content, not only from the file name. Here, the first line is enough:
+
+```python title="parser.py"
+    @classmethod
+    def matches_file(cls, probe):
+        # Every file of this example format starts with "SPECTRUM <version>".
+        return (probe.text_head or "").startswith("SPECTRUM")
+```
+
+`probe.text_head` is the beginning of the file as text, or `None` if the file looks binary. For other formats, use `probe.head` (the first bytes), `probe.hdf5_root_keys` or `probe.tiff_tags`. `matches_file` runs for every input file and every parser, so keep it cheap.
+
+### Read the version
+
+`detect_version` returns the version as it is written in the file, here `"1.2"` from the line `SPECTRUM 1.2`, or `None` if the file has none:
+
+```python title="parser.py"
+    @classmethod
+    def detect_version(cls, probe):
+        words = probe.text_head.splitlines()[0].split()
+        return words[1] if len(words) > 1 else None
+```
+
+The parser converts the string with `normalize_version` and compares it with `supported_versions`. You can also return a version tuple, e.g. `(1, 2)`. If your format has no version, leave out `detect_version`.
+
+### Read the file
+
+`_parse` reads the whole file and returns a dict of `ParsedData`, one per entry, keyed by a name you choose:
+
+```python title="parser.py"
+    def _parse(self, probe, **options):
+        lines = probe.path.read_text().splitlines()[1:]
+        return {
+            "entry": ParsedData(
+                data={"counts": np.array([float(line) for line in lines])},
+                metadata={"instrument/vendor": self.supported_vendor},
+                dims={"counts": ["channel"]},
+            )
+        }
+```
+
+Arrays go into `data`, flat metadata with `/`-separated keys into `metadata`, and dimension names into `dims`.
+
+### Putting it all together
+
+```python title="parser.py"
 import numpy as np
 
 from pynxtools.dataconverter.readers.parsers.file_parser import FileParser
@@ -44,17 +133,7 @@ class SpectrumTextParser(FileParser):
         }
 ```
 
-- `matches_file` and `detect_version` must be class methods that take a `FileProbe`. `supported_file_extensions` must be a tuple of non-empty strings. A mistake raises a `TypeError` as soon as the plugin is imported.
-- In `matches_file`, recognize the format from its content, for example a header line in `probe.text_head`, `probe.hdf5_root_keys` or `probe.tiff_tags`, not only from the file name. It runs for every input file and every parser, so keep it cheap.
-- `_parse` returns a dict of `ParsedData`, one per entry, keyed by a name you choose. Arrays go into `data`, flat metadata with `/`-separated keys into `metadata`, and dimension names into `dims`.
-
-## 2. Declare the supported versions
-
-If your format carries a version, set `supported_versions` and implement `detect_version`, as above. `detect_version` returns the version as written in the file (here `"1.2"`), a version tuple, or `None` if the file has none. A string is converted with `normalize_version`.
-
-How to choose `supported_versions` is described in [Declare which file-format versions a parser supports](declare-file-format-versions.md).
-
-## 3. Add a parser for metadata files (optional)
+## 2. Add a parser for metadata files (optional)
 
 If a file only adds metadata to the entries of another file, for example a quantification export next to the spectra, write a second parser for it and name the parsers whose entries it adds to:
 
@@ -88,7 +167,7 @@ if not result:
 
 A parser with `role = "primary"` can set `compatible_primary` as well, if its files can also add metadata to another parser's entries.
 
-## 4. Call the parsers from your reader
+## 3. Call the parsers from your reader
 
 Put your parsers into a `ParserRegistry`. For each input file, `identify` returns the one parser that reads it:
 
@@ -153,7 +232,7 @@ REGISTRY.metadata_parsers_for(SpectrumTextParser, version="1.6")  # [SpectrumRes
 REGISTRY.metadata_parsers_for(SpectrumTextParser, version="1.2")  # []
 ```
 
-## 5. Test your parsers
+## 4. Test your parsers
 
 - Check that no two parsers claim the same example file. `ambiguities` returns every file that more than one parser accepts, so for your example files it should return nothing:
 

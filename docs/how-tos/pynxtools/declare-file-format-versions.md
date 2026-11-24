@@ -101,7 +101,7 @@ is_version_supported((1, 7), required_versions)  # True
 - `version_ranges_overlap` answers "can the two parsers work together for some files?". Here they can, for the primary files of version 1.5 up to 2.0.
 - `is_version_supported` answers "does this one primary file work?". A file of version 1.2 doesn't, a file of version 1.7 does.
 
-`FileParser.accepts_primary(primary, version=version)` picks the right check for you: with the version of a primary file it checks that file, without one it checks the overlap. See [Write a file parser for your plugin](write-a-file-parser.md#3-add-a-parser-for-metadata-files-optional).
+`FileParser.accepts_primary(primary, version=version)` picks the right check for you: with the version of a primary file it checks that file, without one it checks the overlap. See [Write a file parser for your plugin](write-a-file-parser.md#2-add-a-parser-for-metadata-files-optional).
 
 ## Telling the user what was decided
 
