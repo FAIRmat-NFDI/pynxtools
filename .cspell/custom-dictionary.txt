@@ -55,6 +55,7 @@ Lukas
 MONOCHROMATOR
 MPES
 MSYS
+MTEX
 Maklar
 Markus
 Metainfo
@@ -134,6 +135,7 @@ backgroundcolor
 baseclass
 basenames
 basesections
+bigtiff
 blosc
 bulletpoint
 callspec
@@ -226,6 +228,7 @@ monochromator
 monoclinic
 monopd
 mpes
+mtex
 mydatareader
 myext
 mynxdl
@@ -298,6 +301,7 @@ submoduled
 superproject
 testbase
 threed
+tiffinfo
 tnxdl
 tofile
 tommaso
@@ -311,6 +315,7 @@ unlazying
 unsignedinteger
 ureg
 usefixtures
+userblock
 vamas
 vectorizable
 visititems
