@@ -28,7 +28,7 @@ class HeaderParser(FileParser):
         return probe.head.split(b"\n")[0].decode() == cls.header
 
     def _parse(self, probe, **options):
-        pass
+        return {}
 
 
 class SpectrumParser(HeaderParser):
@@ -61,6 +61,12 @@ class ImageNotesParser(HeaderParser):
     header = "IMAGE NOTES"
 
 
+class NewResultsParser(ResultsParser):
+    """Only works with spectrum files of version 2.0 and newer."""
+
+    supported_primary_versions = (((2, 0), None),)
+
+
 class GenericTextParser(FileParser):
     """Accepts every ``.txt`` file."""
 
@@ -71,7 +77,7 @@ class GenericTextParser(FileParser):
         return True
 
     def _parse(self, probe, **options):
-        pass
+        return {}
 
 
 class CalibrationParser(GenericTextParser):
@@ -209,17 +215,37 @@ def test_ambiguities_skips_directories_and_files_won_by_a_longer_extension(
     assert registry.ambiguities(paths) == {}
 
 
-def test_metadata_parsers_for_checks_the_version_of_the_primary_file():
-    class NewResultsParser(ResultsParser):
-        supported_primary_versions = (((2, 0), None),)
-
+@pytest.mark.parametrize(
+    "old_version, new_version",
+    [((1, 4), (2, 1)), ("1.4", "2.1")],
+    ids=["tuple", "string"],
+)
+def test_metadata_parsers_for_checks_the_version_of_the_primary_file(
+    old_version, new_version
+):
+    """The version of the primary file decides, given as a tuple or a string."""
     registry = ParserRegistry([SpectrumParser, ResultsParser, NewResultsParser])
-    assert registry.metadata_parsers_for(SpectrumParser, version=(1, 4)) == [
+    assert registry.metadata_parsers_for(SpectrumParser, version=old_version) == [
         ResultsParser
     ]
-    assert registry.metadata_parsers_for(SpectrumParser, version=(2, 1)) == [
+    assert registry.metadata_parsers_for(SpectrumParser, version=new_version) == [
         ResultsParser,
         NewResultsParser,
+    ]
+
+
+def test_a_primary_parser_can_also_add_metadata_to_another_primary_parser():
+    """A primary parser that names another primary parser is listed, too."""
+
+    class SpectrumExportParser(HeaderParser):
+        compatible_primary = (SpectrumParser,)
+        header = "EXPORT"
+
+    registry = ParserRegistry([SpectrumParser, ResultsParser, SpectrumExportParser])
+    assert SpectrumExportParser.role == "primary"
+    assert registry.metadata_parsers_for(SpectrumParser) == [
+        ResultsParser,
+        SpectrumExportParser,
     ]
 
 

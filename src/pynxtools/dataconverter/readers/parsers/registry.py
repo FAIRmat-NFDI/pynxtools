@@ -156,20 +156,24 @@ class ParserRegistry:
         return candidates[0]
 
     def metadata_parsers_for(
-        self, primary: type[FileParser], version: VersionTuple | None = None
+        self, primary: type[FileParser], version: VersionTuple | str | None = None
     ) -> list[type[FileParser]]:
         """
-        The registered metadata parsers that can add to the entries of
+        The registered parsers that can add metadata to the entries of
         ``primary``.
 
-        Pass ``version``, the version of the primary file that was read, to
-        check it against each metadata parser's ``supported_primary_versions``
-        (see ``FileParser.accepts_primary``).
+        These are the parsers that name ``primary`` in ``compatible_primary``,
+        whatever their ``role``: a primary parser can add metadata to another
+        primary parser's entries, too (see ``FileParser.accepts_primary``).
+
+        Pass ``version``, the version of the primary file that was read (a
+        tuple or a string such as ``"1.2"``), to check it against each
+        parser's ``supported_primary_versions``.
         """
         return [
             parser
             for parser in self.parsers
-            if parser.role == "metadata" and parser.accepts_primary(primary, version)
+            if parser.accepts_primary(primary, version)
         ]
 
     def ambiguities(
