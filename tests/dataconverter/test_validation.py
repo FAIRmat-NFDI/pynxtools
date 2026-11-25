@@ -2154,7 +2154,7 @@ def format_error_message(msg: str) -> str:
             ),
             [
                 "Compression strength for /ENTRY[my_entry]/NXODD_name[nxodd_name]/int_value = "
-                "{'compress': 2, 'strength': 10} should be between 0 and 9.",
+                "{'compress': 2, 'strength': 10} should be an integer between 0 and 9.",
             ],
             id="appdef-compressed-strength-invalid-upper",
         ),
@@ -2166,9 +2166,42 @@ def format_error_message(msg: str) -> str:
             ),
             [
                 "Compression strength for /ENTRY[my_entry]/NXODD_name[nxodd_name]/int_value = "
-                "{'compress': 2, 'strength': -1} should be between 0 and 9.",
+                "{'compress': 2, 'strength': -1} should be an integer between 0 and 9.",
             ],
             id="appdef-compressed-strength-invalid-lower",
+        ),
+        pytest.param(
+            alter_dict(
+                TEMPLATE,
+                "/ENTRY[my_entry]/NXODD_name[nxodd_name]/int_value",
+                {"compress": 2, "strength": 5.0},
+            ),
+            [
+                "Compression strength for /ENTRY[my_entry]/NXODD_name[nxodd_name]/int_value = "
+                "{'compress': 2, 'strength': 5.0} should be an integer between 0 and 9.",
+            ],
+            id="appdef-compressed-strength-float",
+        ),
+        pytest.param(
+            alter_dict(
+                TEMPLATE,
+                "/ENTRY[my_entry]/NXODD_name[nxodd_name]/int_value",
+                {"compress": 2, "strength": "5"},
+            ),
+            [
+                "Compression strength for /ENTRY[my_entry]/NXODD_name[nxodd_name]/int_value = "
+                "{'compress': 2, 'strength': '5'} should be an integer between 0 and 9.",
+            ],
+            id="appdef-compressed-strength-string",
+        ),
+        pytest.param(
+            alter_dict(
+                TEMPLATE,
+                "/ENTRY[my_entry]/NXODD_name[nxodd_name]/int_value",
+                {"compress": 2, "strength": np.int64(5)},
+            ),
+            [],
+            id="appdef-compressed-strength-numpy-integer",
         ),
         pytest.param(
             alter_dict(

@@ -12,7 +12,6 @@ import copy
 import importlib.util
 import logging
 import os
-import sys
 import tokenize
 
 import blosc2
@@ -24,13 +23,10 @@ import pint
 
 from pynxtools.dataconverter import helpers
 from pynxtools.dataconverter.chunk import (
-    BLOSC_NTHREADS,
     CHUNK_CONFIG_DEFAULT,
-    COMPRESSION_FILTERS,
-    DEFAULT_COMPRESSION_FILTER,
-    DEFAULT_COMPRESSION_STRENGTH,
     PERFORMANT_COMPRESSION_FILTER,
     chunking_strategy,
+    compression_settings,
 )
 from pynxtools.dataconverter.exceptions import InvalidDictProvided
 from pynxtools.definitions.dev_tools.utils.nxdl_utils import (
@@ -157,24 +153,9 @@ def handle_dicts_entries(data, grp, entry_name, output_path, path, append):
                 path = "/" + path
             grp[entry_name] = h5py.ExternalLink(file, path)  # external link
     elif "compress" in data.keys():
-        if not (isinstance(data["compress"], str) or np.isscalar(data["compress"])):
-            if (
-                BLOSC_NTHREADS > 0
-                and "filter" in data.keys()
-                and data["filter"] == PERFORMANT_COMPRESSION_FILTER
-            ):
-                compression_filter = PERFORMANT_COMPRESSION_FILTER
-            else:  # fall-back to default
-                compression_filter = DEFAULT_COMPRESSION_FILTER
-
-            if (
-                ("strength" in data.keys())
-                and (isinstance(data["strength"], int))
-                and (0 <= data["strength"] <= 9)
-            ):
-                compression_strength = data["strength"]
-            else:
-                compression_strength = DEFAULT_COMPRESSION_STRENGTH
+        settings = compression_settings(data)
+        if settings is not None:
+            compression_filter, compression_strength = settings
 
             if entry_name not in grp:
                 try:
@@ -185,7 +166,7 @@ def handle_dicts_entries(data, grp, entry_name, output_path, path, append):
                         )
                     else:  # by virtue of construction blosc
                         compression_config = hdf5plugin.Blosc2(
-                            cname="zstd", clevel=DEFAULT_COMPRESSION_STRENGTH
+                            cname="zstd", clevel=compression_strength
                         )
                     grp.create_dataset(
                         entry_name,
@@ -271,19 +252,16 @@ class Writer:
         self.nxs_namespace = get_namespace(self.nxdl_data)
         self.append = append
 
-    def has_content_cued_for_compression(self) -> str:
-        """Check if template has some data that require blosc storage."""
-        for value in self.data.values():
-            if isinstance(value, dict):
-                if "compress" in value:
-                    if (
-                        "filter" in value
-                        and value["filter"] == PERFORMANT_COMPRESSION_FILTER
-                    ):
-                        return PERFORMANT_COMPRESSION_FILTER
-                    else:
-                        return DEFAULT_COMPRESSION_FILTER
-        return "no_compression"
+    def get_compression_filters(self) -> set[str]:
+        """Return all compression filters that the entries of the template use."""
+        # Template.values() does not cover the entries, only items() does.
+        return {
+            settings[0]
+            for _, value in self.data.items()
+            if isinstance(value, dict)
+            and "compress" in value
+            and (settings := compression_settings(value)) is not None
+        }
 
     def __nxdl_to_attrs(self, path: str = "/") -> tuple[str | None, dict | None]:
         """
@@ -530,15 +508,13 @@ class Writer:
 
     def write(self):
         """Writes the NeXus file with previously validated data from the reader with NXDL attrs."""
-        compression = self.has_content_cued_for_compression()
-        if compression in COMPRESSION_FILTERS:
-            logger.info(f"Compression filters supported {COMPRESSION_FILTERS}")
-        if compression == PERFORMANT_COMPRESSION_FILTER:
-            if not any("pytest" in arg for arg in sys.argv):
-                logger.info(
-                    f"blosc2 is configured to use {blosc2.nthreads} threads on host with {blosc2.ncores} cores"
-                )
-                logger.info(blosc2.print_versions())
+        compression_filters = self.get_compression_filters()
+        if compression_filters:
+            logger.info(f"Compression filters used: {sorted(compression_filters)}")
+        if PERFORMANT_COMPRESSION_FILTER in compression_filters:
+            logger.info(
+                f"blosc2 {blosc2.__version__} is configured to use {blosc2.nthreads} threads on host with {blosc2.ncores} cores"
+            )
 
         try:
             self._put_data_into_hdf5()

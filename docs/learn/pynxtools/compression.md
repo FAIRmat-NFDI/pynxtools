@@ -33,8 +33,29 @@ template["/ENTRY[entry1]/array"] = {
 ```
 
 Wrapping the `array` here into a dictionary instructs the `dataconverter` to store a lossless compressed version of the same dataset.
-The dictionary has one mandatory keyword `compress`. An additional, optional keyword `strength` exists which can be used to overwrite the
-default compression strength to trade-off processing time with file size reduction at the granularity of an individual dataset.
+The dictionary has one mandatory keyword, `compress`, and these optional keywords:
+
+| Keyword    | Values                                        | Default  |
+| ---------- | --------------------------------------------- | -------- |
+| `filter`   | `"gzip"` or `"blosc"`                         | `"gzip"` |
+| `strength` | Integer from 0 (no compression) to 9 (strong) | 9        |
+
+Use `strength` to trade off processing time against file size. It applies to both filters.
+
+These settings apply to each dataset individually. You can use different filters and strengths in the same file:
+
+```
+template["/ENTRY[entry1]/small_array"] = {
+  "compress": small_array,
+}
+template["/ENTRY[entry1]/image_stack"] = {
+  "compress": image_stack,
+  "filter": "blosc",
+  "strength": 5,
+}
+```
+
+The `dataconverter` logs which filters it uses in the file. See [Judicious choices when using custom compression filters](#judicious-choices-when-using-custom-compression-filters) before you use `blosc`.
 
 Using compression internally forces the HDF5 library to use a different, so-called chunked data storage layout.
 A chunked data layout can be understood as an internal splitting of the dataset into chunks, pieces that get compressed individually;
