@@ -39,9 +39,8 @@ description = "Extend NeXus for experiments and characterization in Materials Sc
 readme = "README.md"
 license = "Apache-2.0 AND LGPL-3.0-or-later AND MIT"
 license-files = ["LICENSES/*.txt"]
-requires-python = ">=3.10"
+requires-python = ">=3.11"
 classifiers = [
-    "Programming Language :: Python :: 3.10",
     "Programming Language :: Python :: 3.11",
     "Programming Language :: Python :: 3.12",
     "Programming Language :: Python :: 3.13",
