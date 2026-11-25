@@ -103,6 +103,7 @@ class ValidationProblem(Enum):
     UnitWithoutField = auto()
     AttributeForNonExistingConcept = auto()
     BrokenLink = auto()
+    InvalidLinkShape = auto()
     MissingTargetAttribute = auto()
     TargetAttributeMismatch = auto()
     FailedNamefitting = auto()
@@ -222,6 +223,11 @@ class Collector:
             )
         elif log_type == ValidationProblem.BrokenLink:
             logger.warning(f"Broken link at {path} to {value}.")
+        elif log_type == ValidationProblem.InvalidLinkShape:
+            logger.warning(
+                f"The shape {value} of the link at {path} does not fit the linked "
+                f"field {args[0]}."
+            )
         elif log_type == ValidationProblem.MissingTargetAttribute:
             log_text = (
                 f"A link was used for {path}, but no '@target' attribute was found."

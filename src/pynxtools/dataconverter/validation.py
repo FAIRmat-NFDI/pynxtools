@@ -1042,9 +1042,9 @@ def validate_dict_against(
     def handle_nxdata(node: NexusGroup, keys: Mapping[str, Any], prev_path: str):
         def check_nxdata():
             data = (
-                keys.get(f"DATA[{signal}]")
-                if f"DATA[{signal}]" in keys
-                else keys.get(signal)
+                resolved_keys.get(f"DATA[{signal}]")
+                if f"DATA[{signal}]" in resolved_keys
+                else resolved_keys.get(signal)
             )
             if data is None:
                 collector.collect_and_log(
@@ -1063,28 +1063,18 @@ def validate_dict_against(
                 for child in data_node.get_all_direct_children_names():
                     data_node.search_add_child_for(child)
 
-                handle_field(
-                    node.search_add_child_for_multiple((signal, "DATA")),
-                    keys,
-                    prev_path=prev_path,
-                )
-
-            # check NXdata attributes
+            # Add the NXdata attributes to the tree
             for attr in ("signal", "auxiliary_signals", "axes"):
-                handle_attribute(
-                    node.search_add_child_for(attr),
-                    keys,
-                    prev_path=prev_path,
-                )
+                node.search_add_child_for(attr)
 
             for i, axis in enumerate(axes):
                 if axis == ".":
                     continue
-                index = keys.get(f"{axis}_indices", i)
+                index = resolved_keys.get(f"{axis}_indices", i)
 
-                if f"AXISNAME[{axis}]" in keys:
+                if f"AXISNAME[{axis}]" in resolved_keys:
                     axis = f"AXISNAME[{axis}]"
-                axis_data = _follow_link(keys.get(axis), prev_path)
+                axis_data = resolved_keys.get(axis)
                 if axis_data is None:
                     collector.collect_and_log(
                         f"{prev_path}/{axis}",
@@ -1102,12 +1092,9 @@ def validate_dict_against(
                     axis_node.inheritance.append(axis_bc_node.inheritance[0])
                     for child in axis_node.get_all_direct_children_names():
                         axis_node.search_add_child_for(child)
-
-                    handle_field(
-                        node.search_add_child_for_multiple((axis, "AXISNAME")),
-                        keys,
-                        prev_path=prev_path,
-                    )
+                if isinstance(axis_data, Mapping):
+                    # A compressed or multi-source axis has no realized value here.
+                    continue
                 if isinstance(data, np.ndarray) and data.shape[index] != len(axis_data):
                     collector.collect_and_log(
                         f"{prev_path}/{axis}",
@@ -1116,45 +1103,23 @@ def validate_dict_against(
                         index,
                     )
 
-        keys = _follow_link(keys, prev_path)
-        signal = keys.get("@signal")
-        aux_signals = keys.get("@auxiliary_signals", [])
-        axes = decode_if_bytes(keys.get("@axes", []))
-
+        resolved_keys = _follow_link(keys, prev_path)
+        signal = resolved_keys.get("@signal")
+        axes = decode_if_bytes(resolved_keys.get("@axes", []))
         if isinstance(axes, str):
             axes = [axes]
 
         if signal is not None:
             check_nxdata()
 
-        indices = map(lambda x: f"{x}_indices", axes)
-        errors = map(lambda x: f"{x}_errors", [signal, *aux_signals, *axes])
-
-        # Handle all remaining keys which are not part of NXdata
-        remaining_keys = {
-            x: keys[x]
-            for x in keys
-            if x not in [signal, *axes, *indices, *errors, *aux_signals]
-        }
-        remaining_keys = _follow_link(remaining_keys, prev_path)
+        # `handle_group` expects group links to be resolved, `handle_field` does not.
         recurse_tree(
             node,
-            remaining_keys,
+            {
+                key: keys[key] if _is_field_link(keys.get(key), value) else value
+                for key, value in resolved_keys.items()
+            },
             prev_path=prev_path,
-            ignore_names=[
-                "DATA",
-                "AXISNAME",
-                "AXISNAME_indices",
-                "FIELDNAME_errors",
-                "signal",
-                "auxiliary_signals",
-                "axes",
-                signal,
-                *axes,
-                *indices,
-                *errors,
-                *aux_signals,
-            ],
         )
 
     def handle_group(node: NexusGroup, keys: Mapping[str, Any], prev_path: str):
@@ -1234,7 +1199,7 @@ def validate_dict_against(
 
             if node.nx_class == "NXdata":
                 handle_nxdata(node, keys[variant], prev_path=variant_path)
-            if node.nx_class == "NXcollection":
+            elif node.nx_class == "NXcollection":
                 return
             else:
                 variant_keys = _follow_link(keys[variant], variant_path)
@@ -1245,10 +1210,34 @@ def validate_dict_against(
             not_visited.remove(path)
         return path
 
+    def _is_field_link(value: Any, resolved_value: Any) -> bool:
+        """Return True if `value` is a link entry that points to a field."""
+        if not isinstance(value, Mapping) or "link" not in value:
+            return False
+        return (
+            not isinstance(resolved_value, Mapping)
+            or "compress" in resolved_value
+            or "link" in resolved_value
+        )
+
+    def _apply_link_shape(value: Any, shape: Any) -> Any:
+        """
+        Select `shape` from a linked field value, as the writer does for a
+        virtual dataset.
+
+        Raises:
+            IndexError: If `shape` does not fit the linked field.
+        """
+        if isinstance(value, Mapping):
+            return value
+        # The writer stores a selection without dimensions with shape (1,).
+        return np.atleast_1d(np.asarray(value)[shape])
+
     def _follow_link(keys: Mapping[str, Any] | None, prev_path: str) -> Any | None:
         """
         Resolves internal dictionary "links" by replacing any keys containing a
         {"link": "/path/to/target"} structure with the actual referenced content.
+        If the structure has a "shape", only that selection of the content is used.
 
         Note that the keys are only replaced in copies of the incoming keys, NOT in
         the global mapping. That is, links are resolved for checking, but we still write
@@ -1256,7 +1245,8 @@ def validate_dict_against(
 
         This function traverses the mapping and recursively resolves any keys that
         contain a "link" to another path (relative to the global template).
-        If the link cannot be resolved, the issue is logged.
+        If the link cannot be resolved or its "shape" does not fit the target, the
+        issue is logged and the key is removed.
 
         Args:
             keys (Optional[Mapping[str, Any]]): The dictionary structure to process.
@@ -1355,6 +1345,28 @@ def validate_dict_against(
                     if not file_path:  # exclude external link
                         resolved_keys[key] = current_keys
 
+                    if "shape" in value:
+                        try:
+                            resolved_keys[key] = _apply_link_shape(
+                                resolved_keys[key], value["shape"]
+                            )
+                        except IndexError:
+                            collector.collect_and_log(
+                                key_path,
+                                ValidationProblem.InvalidLinkShape,
+                                value["shape"],
+                                value["link"],
+                            )
+                            collector.collect_and_log(
+                                key_path,
+                                ValidationProblem.KeyToBeRemoved,
+                                "key",
+                            )
+                            keys_to_remove.append(key_path)
+                            keys_to_remove.append(f"{key_path}/@target")
+                            del resolved_keys[key]
+                            continue
+
                     if f"{key_path}/@target" not in mapping:
                         # Target attribute added automatically
                         mapping[f"{key_path}/@target"] = value["link"]
@@ -1390,7 +1402,10 @@ def validate_dict_against(
             variant_path = remove_from_not_visited(f"{prev_path}/{variant}")
 
             variant_value = keys[variant]
-            if isinstance(variant_value, Mapping) and "link" in variant_value:
+            is_link_value = (
+                isinstance(variant_value, Mapping) and "link" in variant_value
+            )
+            if is_link_value:
                 resolved_link = _follow_link({variant: variant_value}, prev_path)
                 if (
                     not isinstance(resolved_link, Mapping)
@@ -1398,6 +1413,11 @@ def validate_dict_against(
                 ):
                     continue
                 variant_value = resolved_link[variant]
+
+            if isinstance(variant_value, Mapping) and "link" in variant_value:
+                # Multi-source VDS link (list) - _follow_link deliberately leaves it
+                # unresolved, so accept it rather than flag it as an invalid struct.
+                continue
 
             if (
                 isinstance(variant_value, Mapping)
@@ -1489,14 +1509,17 @@ def validate_dict_against(
                     )
                 continue
 
-            # Check general validity
-            mapping[variant_path] = is_valid_data_field(
+            # Check general validity - for a link, `mapping` must keep the original
+            # {"link": ...} entry, not the resolved value used for this check.
+            checked_value = is_valid_data_field(
                 variant_value,
                 node.dtype,
                 variant_path,
             )
+            if not is_link_value:
+                mapping[variant_path] = checked_value
             is_valid_enum(
-                mapping[variant_path],
+                checked_value,
                 node.items,
                 node.open_enum,
                 variant_path,
@@ -1872,11 +1895,8 @@ def validate_dict_against(
         node: NexusNode,
         keys: Mapping[str, Any],
         prev_path: str = "",
-        ignore_names: list[str] | None = None,
     ):
         for child in node.children:
-            if ignore_names is not None and child.name in ignore_names:
-                continue
             if keys is None:
                 return
 

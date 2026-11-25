@@ -6,6 +6,7 @@
 
 import logging
 import os
+from collections.abc import Mapping
 
 import h5py
 import numpy as np
@@ -107,6 +108,28 @@ def listify_template(data_dict: Template):
                 listified_template[optionality][path] = [data_dict[optionality][path]]
     return listified_template
 
+
+def alter_nxodd_group(values: dict, remove: tuple[str, ...] = ()) -> Template:
+    """Helper function to set and remove entries of the nxodd_name group"""
+    group = "/ENTRY[my_entry]/NXODD_name[nxodd_name]"
+    internal_dict = Template(TEMPLATE)
+    for name, value in values.items():
+        internal_dict[f"{group}/{name}"] = value
+    for name in remove:
+        internal_dict = remove_from_dict(internal_dict, f"{group}/{name}", "required")
+    return internal_dict
+
+
+def link_to_posint_value(*shape) -> dict:
+    """Helper function to create a link entry, with a "shape" if one is given"""
+    link = {"link": "/my_entry/nxodd_name/posint_value"}
+    return {**link, "shape": shape} if shape else link
+
+
+WL_AXIS = {
+    "@axes": ["wl"],
+    "@AXISNAME_indices[@wl_indices]": np.uint32(0),
+}
 
 TEMPLATE = Template()
 TEMPLATE["required"]["/ENTRY[my_entry]/definition"] = "NXtest"  # pylint: disable=E1126
@@ -2245,15 +2268,136 @@ def format_error_message(msg: str) -> str:
             ],
             id="missing-required-variadic-axisname-indices-attribute",
         ),
+        pytest.param(
+            alter_dict(
+                TEMPLATE,
+                "/ENTRY[my_entry]/NXODD_name[nxodd_name]/DATA[data]",
+                {
+                    "link": "/my_entry/nxodd_name/posint_value",
+                    "shape": (slice(0, 2),),
+                },
+            ),
+            "",
+            id="nxdata-signal-link-with-shape-not-mutated",
+        ),
+        pytest.param(
+            alter_dict(
+                TEMPLATE,
+                "/ENTRY[my_entry]/NXODD_name[nxodd_name]/DATA[data]",
+                {"link": ["file1.h5:/data", "file2.h5:/data"]},
+            ),
+            "",
+            id="list-form-vds-link-not-misclassified",
+        ),
+        pytest.param(
+            alter_nxodd_group(
+                {
+                    **WL_AXIS,
+                    "DATA[data]": link_to_posint_value(slice(0, 2)),
+                    "AXISNAME[wl]": link_to_posint_value(slice(1, 3)),
+                }
+            ),
+            "",
+            id="nxdata-signal-and-axis-link-with-shape",
+        ),
+        pytest.param(
+            alter_nxodd_group(
+                {
+                    **WL_AXIS,
+                    "DATA[data]": np.array([1, 2]),
+                    "AXISNAME[wl]": link_to_posint_value(slice(0, 2)),
+                }
+            ),
+            "",
+            id="nxdata-axis-link-with-shape",
+        ),
+        pytest.param(
+            alter_nxodd_group(
+                {
+                    **WL_AXIS,
+                    "DATA[data]": np.array([1]),
+                    "AXISNAME[wl]": link_to_posint_value(2),
+                }
+            ),
+            "",
+            id="nxdata-axis-link-with-scalar-shape",
+        ),
+        pytest.param(
+            alter_nxodd_group(
+                {
+                    **WL_AXIS,
+                    "DATA[data]": np.array([1, 2, 3]),
+                    "AXISNAME[wl]": link_to_posint_value(slice(0, 2)),
+                }
+            ),
+            [
+                "Length of axis /ENTRY[my_entry]/NXODD_name[nxodd_name]/AXISNAME[wl] does not match to "
+                "/ENTRY[my_entry]/NXODD_name[nxodd_name]/data in dimension 0"
+            ],
+            id="nxdata-axis-link-with-mismatching-shape",
+        ),
+        pytest.param(
+            alter_nxodd_group(
+                {
+                    **WL_AXIS,
+                    "DATA[data]": np.array([1, 2]),
+                    "AXISNAME[wl]": {"link": ["file1.h5:/data", "file2.h5:/data"]},
+                }
+            ),
+            "",
+            id="nxdata-axis-list-form-vds-link",
+        ),
+        pytest.param(
+            alter_nxodd_group({"DATA[data]": link_to_posint_value(slice(0, 2), 0)}),
+            [
+                "The shape (slice(0, 2, None), 0) of the link at /ENTRY[my_entry]/NXODD_name[nxodd_name]/DATA[data] "
+                "does not fit the linked field /my_entry/nxodd_name/posint_value.",
+                "The key /ENTRY[my_entry]/NXODD_name[nxodd_name]/DATA[data] will not be written.",
+                "Missing data for signal in /ENTRY[my_entry]/NXODD_name[nxodd_name]/data.",
+            ],
+            id="nxdata-signal-link-with-invalid-shape",
+        ),
+        pytest.param(
+            alter_nxodd_group(
+                {
+                    "@auxiliary_signals": ["aux"],
+                    "DATA[aux]": link_to_posint_value(slice(0, 2)),
+                    "FIELDNAME_errors[data_errors]": link_to_posint_value(slice(0, 2)),
+                    "number_value": link_to_posint_value(slice(0, 2)),
+                }
+            ),
+            "",
+            id="nxdata-non-signal-link-with-shape-not-mutated",
+        ),
+        pytest.param(
+            alter_nxodd_group(
+                {**WL_AXIS, "AXISNAME[wl]": np.array([1])}, remove=("@signal",)
+            ),
+            [
+                "The required attribute /ENTRY[my_entry]/NXODD_name[nxodd_name]/@signal hasn't been supplied."
+            ],
+            id="nxdata-missing-required-signal-attribute",
+        ),
     ],
 )
 def test_validate_data_dict(data_dict, error_messages, caplog, request):
     """Unit test for the data validation routine on the template."""
 
     if not error_messages:
+        original_links = {
+            path: dict(value)
+            for path, value in data_dict.items()
+            if path.startswith("/ENTRY[my_entry]/NXODD_name[nxodd_name]/")
+            and isinstance(value, Mapping)
+            and "link" in value
+        }
         with caplog.at_level(logging.WARNING):
             assert validate_dict_against("NXtest", data_dict)
         assert caplog.text == ""
+        # A {"link": ...} entry (and any VDS "shape" slice) must survive
+        # validation unchanged.
+        for path, original_link in original_links.items():
+            assert data_dict[path] == original_link
     else:
         if request.node.callspec.id in (
             "field-with-illegal-unit",
@@ -2274,6 +2418,25 @@ def test_validate_data_dict(data_dict, error_messages, caplog, request):
             assert len(caplog.records) == len(error_messages)
             for expected_message, rec in zip(error_messages, caplog.records):
                 assert expected_message == format_error_message(rec.message)
+
+
+def test_missing_required_indices_of_named_axis(caplog):
+    """A required @<axis>_indices attribute is checked if the axis is in @axes."""
+    data_group = "/ENTRY[entry]/DATA[data]"
+    template = Template()
+    template["/ENTRY[entry]/definition"] = "NXxps"
+    template[f"{data_group}/@signal"] = "data"
+    template[f"{data_group}/@axes"] = ["energy"]
+    template[f"{data_group}/DATA[data]"] = np.arange(3.0)
+    template[f"{data_group}/energy"] = np.arange(3.0)
+    template[f"{data_group}/energy/@units"] = "eV"
+
+    with caplog.at_level(logging.WARNING):
+        assert not validate_dict_against("NXxps", template)
+    assert (
+        f"The required attribute {data_group}/@energy_indices hasn't been supplied."
+        in caplog.text
+    )
 
 
 @pytest.mark.parametrize(
@@ -3695,6 +3858,29 @@ def test_validate_data_dict(data_dict, error_messages, caplog, request):
             ],
             id="missing-required-variadic-axisname-indices-attribute",
         ),
+        pytest.param(
+            alter_dict(
+                TEMPLATE,
+                "/ENTRY[my_entry]/NXODD_name[nxodd_name]/DATA[data]",
+                {
+                    "link": "/my_entry/nxodd_name/posint_value",
+                    "shape": (slice(0, 2),),
+                },
+            ),
+            "",
+            id="nxdata-signal-link-with-shape-written-as-real-vds",
+        ),
+        pytest.param(
+            alter_nxodd_group(
+                {
+                    **WL_AXIS,
+                    "DATA[data]": link_to_posint_value(slice(0, 2)),
+                    "AXISNAME[wl]": link_to_posint_value(slice(1, 3)),
+                }
+            ),
+            "",
+            id="nxdata-signal-and-axis-link-with-shape-written-as-real-vds",
+        ),
     ],
 )
 def test_validate_nexus_file(data_dict, error_messages, caplog, tmp_path, request):
@@ -3708,6 +3894,16 @@ def test_validate_nexus_file(data_dict, error_messages, caplog, tmp_path, reques
     _, nxdl_path = get_nxdl_root_and_path(nxdl=nxdl_name)
     hdf_file_path = tmp_path / f"hdf5_validator_test_{request.node.callspec.id}.nxs"
     Writer(data=template, nxdl_f_path=nxdl_path, output_path=hdf_file_path).write()
+
+    expected_vds = {
+        "nxdata-signal-link-with-shape-written-as-real-vds": ("data",),
+        "nxdata-signal-and-axis-link-with-shape-written-as-real-vds": ("data", "wl"),
+    }
+    for name in expected_vds.get(request.node.callspec.id, ()):
+        with h5py.File(hdf_file_path, "r") as hdf_file:
+            dataset = hdf_file[f"/my_entry/nxodd_name/{name}"]
+            assert dataset.is_virtual
+            assert dataset.shape == (2,)
 
     if not error_messages:
         with caplog.at_level(logging.WARNING):
