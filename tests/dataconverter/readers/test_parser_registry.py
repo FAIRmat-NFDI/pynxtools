@@ -6,6 +6,8 @@
 
 """Tests for the ParserRegistry that finds the parser for each input file."""
 
+from pathlib import Path
+
 import pytest
 
 from pynxtools.dataconverter.readers.parsers.file_parser import FileParser
@@ -109,6 +111,14 @@ def test_identify_returns_the_one_matching_parser(registry, write):
         registry.identify(FileProbe.from_path(write("b.txt", "RESULTS")))
         is ResultsParser
     )
+
+
+@pytest.mark.parametrize("as_path", [str, Path], ids=["str", "Path"])
+def test_identify_and_claims_also_take_a_path(registry, write, as_path):
+    """A path works like a FileProbe: the registry probes the file itself."""
+    path = as_path(write("a.txt", "IMAGE"))
+    assert registry.identify(path) is ImageParser
+    assert registry.claims(path) == [ImageParser]
 
 
 def test_identify_without_match_lists_every_parser_and_its_reason(registry, write):

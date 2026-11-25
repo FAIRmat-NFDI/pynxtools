@@ -63,6 +63,11 @@ class AmbiguousFormatError(ValueError):
         )
 
 
+def _as_probe(file: FileProbe | str | os.PathLike) -> FileProbe:
+    """Returns ``file`` as a ``FileProbe``. A path is probed first."""
+    return file if isinstance(file, FileProbe) else FileProbe.from_path(file)
+
+
 def _most_specific(
     probe: FileProbe, parsers: list[type[FileParser]]
 ) -> list[type[FileParser]]:
@@ -123,13 +128,24 @@ class ParserRegistry:
     def _match_all(self, probe: FileProbe) -> dict[type[FileParser], MatchResult]:
         return {parser: parser.match(probe) for parser in self.parsers}
 
-    def claims(self, probe: FileProbe) -> list[type[FileParser]]:
-        """All parsers that accept the file of ``probe``, in registration order."""
+    def claims(self, file: FileProbe | str | os.PathLike) -> list[type[FileParser]]:
+        """
+        Returns every parser that accepts ``file``, in the order they were
+        registered.
+
+        ``file`` can be a path, e.g. ``"spectrum.txt"``, or a ``FileProbe``.
+        """
+        probe = _as_probe(file)
         return [parser for parser, result in self._match_all(probe).items() if result]
 
-    def identify(self, probe: FileProbe) -> type[FileParser]:
+    def identify(self, file: FileProbe | str | os.PathLike) -> type[FileParser]:
         """
-        The one parser that accepts the file of ``probe``.
+        Returns the one parser that reads ``file``.
+
+        ``file`` can be a path, e.g. ``"spectrum.txt"``, or a ``FileProbe``.
+        If you also parse the file afterwards, create the ``FileProbe``
+        yourself and pass it both here and to ``parse``, so the file is
+        probed only once.
 
         If several parsers accept the file, the one with the longest matching
         extension wins, so a ``.mtex.h5`` parser is chosen over a generic
@@ -142,6 +158,7 @@ class ParserRegistry:
             AmbiguousFormatError: If more than one parser accepts it with
                 equally long extensions.
         """
+        probe = _as_probe(file)
         results = self._match_all(probe)
         accepted = [parser for parser, result in results.items() if result]
         if not accepted:
