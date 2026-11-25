@@ -11,7 +11,7 @@ import logging
 import os
 import re
 from collections.abc import Mapping, MutableMapping, Sequence
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from enum import Enum, auto
 from functools import cache
 from typing import Any, Literal, Optional, Union, cast
@@ -1526,7 +1526,7 @@ def add_default_root_attributes(data, filename, append: bool = False):
 
     update_and_warn("/@NX_class", "NXroot")
     update_and_warn("/@file_name", filename)
-    update_and_warn("/@file_time", str(datetime.now(timezone.utc).astimezone()))
+    update_and_warn("/@file_time", str(datetime.now(UTC).astimezone()))
     update_and_warn("/@file_update_time", data["/@file_time"])
     update_and_warn(
         "/@NeXus_repository",
