@@ -230,4 +230,6 @@ exclude = ["src/pynxtools/definitions/*"]
 extra-index-url = [
 "https://gitlab.mpcdf.mpg.de/api/v4/projects/2187/packages/pypi/simple",
 ]
-
+constraint-dependencies = [
+    "fonttools<4.69.0",  # 4.69.0 has only cp311 wheels, see #902
+]
