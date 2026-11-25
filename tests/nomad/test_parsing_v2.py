@@ -18,6 +18,7 @@ import shutil
 from collections.abc import Mapping
 from pathlib import Path
 from typing import Any
+from unittest.mock import MagicMock
 
 import h5py
 import pytest
@@ -464,6 +465,9 @@ def _write_bare_nxentry_with_instrument(path: Path) -> None:
         source.attrs["NX_class"] = "NXsource"
         aperture = instrument.create_group("aperture")
         aperture.attrs["NX_class"] = "NXaperture"
+        sample = entry.create_group("sample")
+        sample.attrs["NX_class"] = "NXsample"
+        sample["name"] = "test sample"
 
 
 def test_nexus_v2_entry_fallback_no_definition(tmp_path):
@@ -491,3 +495,86 @@ def test_nexus_v2_entry_fallback_no_definition(tmp_path):
 
     assert len(instruments[0].apertures) == 1
     assert isinstance(instruments[0].apertures[0], Aperture)
+
+    assert len(archive.data.samples) == 1
+
+
+def test_nexus_v2_entry_fallback_normalize_does_not_crash(tmp_path):
+    """Entry.normalize() must not call basesections v1 Measurement.normalize():
+    that method assumes `samples` holds CompositeSystemReference entries with a
+    `.reference` quantity, but Entry.samples embeds NeXus sample data directly
+    and has no such quantity."""
+    # TODO: revisit once the schema moves to basesections v2, which will have a
+    # Measurement.normalize() that works with Entry.samples as-is.
+    nxs_file = tmp_path / "bare_entry_with_sample.nxs"
+    _write_bare_nxentry_with_instrument(nxs_file)
+
+    archive = EntryArchive()
+    NexusParserV2().parse(str(nxs_file), archive, get_logger(__name__))
+
+    archive.data.normalize(archive, get_logger(__name__))
+
+    assert "Entry" in archive.results.eln.sections
+
+
+# ---------------------------------------------------------------------------
+# Entry-point loading (cold, i.e., without NOMAD plugin running before)
+# ---------------------------------------------------------------------------
+
+
+def test_build_nx_class_index_loads_only_configured_entry_points_when_cold(
+    monkeypatch,
+):
+    """A worker process can reach the parser before NOMAD's own plugin loading
+    has run in that process. In that case _build_nx_class_index() must load
+    exactly the pynxtools entry points nomad.yaml configures, not every
+    technique — otherwise a disabled technique loads anyway, just because this
+    particular process hadn't loaded anything yet."""
+    import nomad.config
+
+    from pynxtools.nomad import metainfo as nxs_metainfo
+    from pynxtools.nomad.parsers import parser_v2
+
+    monkeypatch.setattr(nxs_metainfo, "any_entry_point_loaded", lambda: False)
+    load_all_mock = MagicMock()
+    monkeypatch.setattr(nxs_metainfo, "load_all_packages", load_all_mock)
+
+    enabled_ep = MagicMock(id="pynxtools.nomad.metainfo:apm")
+    unrelated_ep = MagicMock(id="some_other_plugin.schema_packages:thing")
+    fake_entry_points = MagicMock()
+    fake_entry_points.filtered_values.return_value = [enabled_ep, unrelated_ep]
+    fake_config = MagicMock(plugins=MagicMock(entry_points=fake_entry_points))
+    # `_build_nx_class_index()` re-imports `nomad.config.config` on every call,
+    # so replacing the module attribute (rather than the real config object's
+    # fields, which pydantic's __setattr__ rejects for a non-field like
+    # load_plugins) is picked up without fighting pydantic validation.
+    monkeypatch.setattr(nomad.config, "config", fake_config)
+
+    parser_v2._build_nx_class_index()
+
+    enabled_ep.load.assert_called_once()
+    unrelated_ep.load.assert_not_called()
+    load_all_mock.assert_not_called()
+
+
+def test_build_nx_class_index_self_bootstraps_when_nothing_configured(monkeypatch):
+    """If no pynxtools entry point is configured at all (e.g. a bare standalone
+    script with no nomad.yaml plugin section), check that the parser falls back to
+    loading every technique."""
+    import nomad.config
+
+    from pynxtools.nomad import metainfo as nxs_metainfo
+    from pynxtools.nomad.parsers import parser_v2
+
+    monkeypatch.setattr(nxs_metainfo, "any_entry_point_loaded", lambda: False)
+    load_all_mock = MagicMock()
+    monkeypatch.setattr(nxs_metainfo, "load_all_packages", load_all_mock)
+
+    fake_entry_points = MagicMock()
+    fake_entry_points.filtered_values.return_value = []
+    fake_config = MagicMock(plugins=MagicMock(entry_points=fake_entry_points))
+    monkeypatch.setattr(nomad.config, "config", fake_config)
+
+    parser_v2._build_nx_class_index()
+
+    load_all_mock.assert_called_once()
