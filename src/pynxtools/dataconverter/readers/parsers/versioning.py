@@ -28,6 +28,22 @@ def format_version(version: VersionTuple) -> str:
     return ".".join(str(x) for x in version)
 
 
+def format_version_ranges(ranges: tuple[VersionRange, ...]) -> str:
+    """
+    Describe half-open version ranges for messages, e.g.
+    ``">= 1.0 and < 2.0, or >= 3"`` for ``(((1, 0), (2, 0)), ((3,), None))``.
+
+    No ranges means any version, as in ``is_version_supported``.
+    """
+    formatted = [
+        f">= {format_version(lower)}"
+        if upper is None
+        else f">= {format_version(lower)} and < {format_version(upper)}"
+        for lower, upper in ranges
+    ]
+    return ", or ".join(formatted) or "any"
+
+
 def normalize_version(raw: str) -> VersionTuple:
     """
     Normalize a vendor version string into a comparable tuple.

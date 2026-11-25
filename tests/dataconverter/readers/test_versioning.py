@@ -13,6 +13,7 @@ import pytest
 from pynxtools import logger as pynx_logger
 from pynxtools.dataconverter.readers.parsers.versioning import (
     format_version,
+    format_version_ranges,
     is_version_supported,
     normalize_version,
     version_ranges_overlap,
@@ -60,6 +61,20 @@ def test_normalize_version_invalid(raw, exc):
 )
 def test_format_version(version, expected):
     assert format_version(version) == expected
+
+
+@pytest.mark.parametrize(
+    "ranges, expected",
+    [
+        ((((1, 0), (2, 0)),), ">= 1.0 and < 2.0"),
+        ((((3,), None),), ">= 3"),
+        ((((1, 1), (4, 0)), ((4, 1), None)), ">= 1.1 and < 4.0, or >= 4.1"),
+        ((), "any"),
+    ],
+)
+def test_format_version_ranges(ranges, expected):
+    """The upper bound of a range is shown as excluded; no ranges means any."""
+    assert format_version_ranges(ranges) == expected
 
 
 @pytest.mark.parametrize(

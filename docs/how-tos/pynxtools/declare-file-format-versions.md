@@ -60,12 +60,11 @@ Check a file's version with `is_version_supported(version, supported_versions)`:
 
 ## Metadata parsers
 
-If a separate parser only works together with certain versions of a primary parser, `version_ranges_overlap(primary_ranges, required_ranges)` tells you whether two sets of ranges share at least one version. It uses the same comparison rules as above.
+If a separate parser only works together with certain versions of a primary parser, `version_ranges_overlap(primary_ranges, required_ranges)` tells you whether two sets of ranges share at least one version. It uses the same comparison rules as above. This only tells you that the two parsers work together for some files. To check one primary file, compare that file's version with `is_version_supported(version, required_ranges)`, or use `FileParser.accepts_primary(primary, version=version)`, see [Write a file parser for your plugin](write-a-file-parser.md).
 
 ## Telling the user what was decided
 
-`format_version` turns a tuple back into a readable string, e.g. `(2019, "R", 2)` → `"2019.R.2"`. Use it in error and log messages so users see which version their file has and which ranges are supported.
-
+`format_version` turns a tuple back into a readable string, e.g. `(2019, "R", 2)` → `"2019.R.2"`, and `format_version_ranges` does the same for a set of ranges, e.g. `(((1, 0), (2, 0)),)` → `">= 1.0 and < 2.0"`. Use them in error and log messages so users see which version their file has and which ranges are supported. `FileParser.match` already does this in its reasons.
 
 If the parser declares no ranges, every file is accepted without a version check. Log an info message in that case, so that a later failure can be traced back to an untested version:
 

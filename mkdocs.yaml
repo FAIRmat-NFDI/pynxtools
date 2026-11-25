@@ -24,6 +24,7 @@ nav:
     - pynxtools:
       - how-tos/pynxtools/build-a-plugin.md
       - how-tos/pynxtools/use-multi-format-reader.md
+      - how-tos/pynxtools/write-a-file-parser.md
       - how-tos/pynxtools/declare-file-format-versions.md
       - how-tos/pynxtools/restructure-data-inside-hdf5-nexus-files.md
       - how-tos/pynxtools/implement-a-visitor.md
@@ -44,6 +45,7 @@ nav:
       - learn/pynxtools/dataconverter-and-readers.md
       - learn/pynxtools/nexus-validation.md
       - learn/pynxtools/multi-format-reader.md
+      - learn/pynxtools/file-parsers.md
       - learn/pynxtools/dataconverter-append-mode.md
       - learn/pynxtools/compression.md
       - learn/pynxtools/versioning.md
