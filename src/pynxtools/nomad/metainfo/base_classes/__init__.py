@@ -11,7 +11,9 @@
 # lookup would always fail because the classes are spread across sub-modules.
 
 _class_cache: dict[str, type] = {}
-_PKG_NAME = "pynxtools.nomad.metainfo.base_classes"
+# Derived from this module's own __name__/__package__, not hardcoded, so this
+# stays correct if this package is ever moved.
+_PKG_NAME = __name__
 
 
 def __getattr__(name: str) -> type:

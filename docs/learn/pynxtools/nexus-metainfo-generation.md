@@ -18,7 +18,7 @@ and writes one Python file per NXDL class. Each generated file is a normal impor
 - **Importable, type-checkable Python classes**: Each NXDL class becomes a NOMAD `Section` class
   in a `.py` file, with structured annotations connecting every quantity and group back to NXDL.
 - **Clean naming**: Quantities are named after their NXDL concept (`start_time`, not `start_time__field`).
-- **Two entry points**: `nexus_base_classes` (142 base classes) and `nexus_applications` (85 application definitions).
+- **One entry point per technique**: There is one `SchemaPackageEntryPoint` for the NeXus base classes (`nexus_base_classes`) plus one schema package entry point per scientific technique (`apm`, `xas`, `em`, ...), so a deployment can enable only the techniques it needs. `nexus_applications` still loads every technique at once.
 - **Application definitions are Entry subclasses**: `Xps(Entry)` instead of a wrapper where `Xps` contains `XpsEntry` (see below).
 - **Backward compatibility**: The old `nexus_schema` entry point is untouched; both systems coexist until we are sure the new schema works.
 
@@ -43,8 +43,8 @@ nxdl_to_metainfo.py             ← generator
     ▼
 metainfo/<folder>/<stem>.py ← generated Python files (one per NeXus definition) 
     ▼
-metainfo/_package.py            ← assembles NOMAD Package
-    │  build_package()
+metainfo/__init__.py            ← assembles NOMAD Packages, one per technique
+    │  _build_package(technique, stems, module_prefix)
     ▼
 NOMAD Package (section_definitions[])
 ```
@@ -282,8 +282,7 @@ src/pynxtools/nomad/
         templates/
             nexus.py.j2    # Jinja2 template
     metainfo/
-        __init__.py             # public API: build_base_classes_package(), build_applications_package()
-        _package.py             # assembles NOMAD Packages
+        __init__.py             # public API: entry points + _build_package(), load_all_packages()
         base_classes/           # generated base class files
             __init__.py
             entry.py            # Entry(Object, basesections.Measurement)
@@ -699,28 +698,18 @@ pynx nomad generate-metainfo --all --output-dir ../nomad-measurements/nexus/meta
 
 ## Package assembly
 
-`metainfo/_package.py` imports all generated modules and assembles NOMAD `Package` objects:
-
-### Base classes package
+`metainfo/__init__.py`'s `_build_package()` imports the generated modules for one technique and assembles them into one NOMAD `Package`. `packages` (in the same file) maps each technique to its module stems; it is a routing table only and says nothing about file/folder layout.
 
 ```python
-from pynxtools.nomad.metainfo import build_base_classes_package
+from pynxtools.nomad.metainfo import apm
 
-pkg_base = build_base_classes_package()
-print(len(pkg_base.section_definitions), "base sections")
+pkg_apm = apm.load()
+print(len(pkg_apm.section_definitions), "APM sections")
 ```
 
-### Applications package
+`load_all_packages()` builds every technique's package at once (used by the `nexus_applications` entry point and by standalone scripts/tests that haven't gone through NOMAD's own plugin loading).
 
-```python
-from pynxtools.nomad.metainfo import build_applications_package
-
-pkg_apps = build_applications_package()
-print(len(pkg_apps.section_definitions), "application sections")
-```
-
-During package assembly, `__init_metainfo__()` resolves all `SubSection.section_def`
-string fully qualified names (FQNs) into live class references.
+During package assembly, `__init_metainfo__()` resolves all `SubSection.section_def` string fully qualified names (FQNs) into live class references.
 ---
 
 ## Inheritance chain
