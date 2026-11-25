@@ -135,9 +135,9 @@ def _xml_path_in_nxdl(elem: ET._Element) -> str:
 
 def _select_best_namefit(
     name: str,
-    nodes: list["NexusNode"],  # TODO: list[NexusNode] when py3.10 support is deprecated
+    nodes: "list[NexusNode]",
     hint: str | None = None,
-) -> Optional["NexusNode"]:  # TODO: NexusNode | None when py3.10 support is deprecated
+) -> "NexusNode | None":  # TODO: NexusNode | None when py3.10 support is deprecated
     """Select the best-fitting variadic NexusNode for an HDF5 node named *name*.
 
     Scores each node in *nodes* with :func:`get_nx_namefit` and returns the
