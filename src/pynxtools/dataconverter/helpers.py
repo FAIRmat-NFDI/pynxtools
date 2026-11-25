@@ -1055,6 +1055,23 @@ def get_custom_attr_path(path: str) -> str:
     return f"{path}/@custom"
 
 
+def _matches_enum(value: Any, nxdl_enum: list) -> bool:
+    """Check whether a value matches an NXDL enumeration.
+
+    An array matches a list-valued item as a whole. If all items are scalar, every
+    element of the array must match an item. An empty array never matches.
+    """
+    if not isinstance(value, np.ndarray) or value.ndim == 0:
+        return value in nxdl_enum
+
+    if any(isinstance(item, list) for item in nxdl_enum):
+        return value.tolist() in nxdl_enum
+
+    return value.size > 0 and all(
+        element in nxdl_enum for element in value.ravel().tolist()
+    )
+
+
 def is_valid_enum(
     value: Any,
     nxdl_enum: list,
@@ -1081,16 +1098,7 @@ def is_valid_enum(
         value = value["compress"]
 
     if nxdl_enum is not None:
-        if (
-            isinstance(value, np.ndarray)
-            and isinstance(nxdl_enum, list)
-            and isinstance(nxdl_enum[0], list)
-        ):
-            enum_value = list(value)
-        else:
-            enum_value = value
-
-        if enum_value not in nxdl_enum:
+        if not _matches_enum(value, nxdl_enum):
             if nxdl_enum_open:
                 custom_path = get_custom_attr_path(path)
 
@@ -1163,16 +1171,7 @@ def is_valid_enum_hdf(
 
     if nxdl_enum is not None:
         value = decode_if_bytes(hdf_node[()])
-        if (
-            isinstance(value, np.ndarray)
-            and isinstance(nxdl_enum, list)
-            and isinstance(nxdl_enum[0], list)
-        ):
-            enum_value = list(value)
-        else:
-            enum_value = value
-
-        if enum_value not in nxdl_enum:
+        if not _matches_enum(value, nxdl_enum):
             if nxdl_enum_open:
                 custom_path = get_custom_attr_path(path)
 
