@@ -78,14 +78,13 @@ A *primary* parser creates entries on its own. A parser for a file that only add
 A reader puts its parsers into a `ParserRegistry` and asks it which parser reads each file:
 
 ```python
-from pynxtools.dataconverter.readers.parsers.probe import FileProbe
 from pynxtools.dataconverter.readers.parsers.registry import ParserRegistry
 
 registry = ParserRegistry([SpectrumTextParser, SpectrumResultsParser])
-parser = registry.identify(FileProbe.from_path("spectrum.txt"))  # SpectrumTextParser
+parser = registry.identify("spectrum.txt")  # SpectrumTextParser
 ```
 
-`identify` runs `match` of every parser on the file:
+`identify` takes the path of the file, or its `FileProbe` if you already have one, and runs `match` of every parser on it:
 
 - if exactly one parser accepts it, that parser is returned;
 - if several accept it, the one with the longest matching extension wins, so a parser for `.mtex.h5` is chosen over a parser for any `.h5` file;

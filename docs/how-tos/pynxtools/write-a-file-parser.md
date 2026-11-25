@@ -172,13 +172,11 @@ A parser with `role = "primary"` can set `compatible_primary` as well, if its fi
 Put your parsers into a `ParserRegistry`. For each input file, `identify` returns the one parser that reads it:
 
 ```python
-from pynxtools.dataconverter.readers.parsers.probe import FileProbe
 from pynxtools.dataconverter.readers.parsers.registry import ParserRegistry
 
 REGISTRY = ParserRegistry([SpectrumTextParser, SpectrumResultsParser])
 
-probe = FileProbe.from_path("spectrum.txt")
-parser = REGISTRY.identify(probe)  # SpectrumTextParser
+parser = REGISTRY.identify("spectrum.txt")  # SpectrumTextParser
 ```
 
 If no parser accepts the file, `identify` raises an `UnsupportedFileError` that lists every parser's reason, so the user sees why their file was rejected. If two parsers accept it, it raises an `AmbiguousFormatError`; see [Learn > pynxtools > File parsers](../../learn/pynxtools/file-parsers.md#choosing-a-parser-parserregistry) for how the registry decides.
@@ -189,6 +187,7 @@ In a reader based on the `MultiFormatReader`, call the registry from a handler f
 from typing import Any
 
 from pynxtools.dataconverter.readers.multi.reader import MultiFormatReader
+from pynxtools.dataconverter.readers.parsers.probe import FileProbe
 
 
 class SpectrumReader(MultiFormatReader):
@@ -205,7 +204,7 @@ class SpectrumReader(MultiFormatReader):
         }
 
     def handle_parser_file(self, file_path: str) -> dict[str, Any]:
-        probe = FileProbe.from_path(file_path)
+        probe = FileProbe.from_path(file_path)  # probe once, for identify and parse
         parser = REGISTRY.identify(probe)()
         parser.parse(probe)
         self.parsed[parser.role] = parser.data["entry"]

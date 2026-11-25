@@ -57,16 +57,16 @@ Check a file's version with `is_version_supported(version, supported_versions)`:
 - **no ranges declared** → every file is accepted, also files without a version;
 - **ranges declared** → a file without a version (`None`) is rejected, because it cannot fall into any range.
 
-  ```python
-  from pynxtools.dataconverter.readers.parsers.versioning import is_version_supported
+```python
+from pynxtools.dataconverter.readers.parsers.versioning import is_version_supported
 
-  supported_versions = (((1, 1), (4, 0)),)
+supported_versions = (((1, 1), (4, 0)),)
 
-  is_version_supported((2, 5), supported_versions)  # True
-  is_version_supported((4, 0), supported_versions)  # False: the upper bound is excluded
-  is_version_supported(None, supported_versions)  # False: the file has no version
-  is_version_supported(None, ())  # True: no ranges declared
-  ```
+is_version_supported((2, 5), supported_versions)  # True
+is_version_supported((4, 0), supported_versions)  # False: the upper bound is excluded
+is_version_supported(None, supported_versions)  # False: the file has no version
+is_version_supported(None, ())  # True: no ranges declared
+```
 
 ## How versions are compared
 
