@@ -133,4 +133,10 @@ If several keys end with `path`, a warning names them all; write the full key in
 
 ## File parsers and the `MultiFormatReader`
 
-The [`MultiFormatReader`](multi-format-reader.md) calls a handler for each input file, chosen by its extension, and fills the template from the config file through callbacks such as `get_data` and `get_attr`. File parsers fit into this as follows: the handler asks the `ParserRegistry` which parser reads the file and calls its `parse`, and the callbacks return values from the resulting `ParsedData`. The [how-to](../../how-tos/pynxtools/write-a-file-parser.md#3-call-the-parsers-from-your-reader) shows such a reader. Currently, the `MultiFormatReader` chooses a handler by file extension only and does not know about file parsers, so your reader calls them from its handler, as in the how-to.
+The `MultiFormatReader` calls a handler for each input file, chosen by its extension, and fills the template from the config file through callbacks such as `get_data` and `get_attr`. File parsers fit into this as follows: the handler asks the `ParserRegistry` which parser reads the file and calls its `parse`, and the callbacks return values from the resulting `ParsedData`. [How-tos > pynxtools > Write a file parser for your plugin > Call the parsers from your reader](../../how-tos/pynxtools/write-a-file-parser.md#3-call-the-parsers-from-your-reader) shows such a reader. Currently, the `MultiFormatReader` chooses a handler by file extension only and does not know about file parsers, so your reader calls them from its handler, as in the how-to.
+
+## Related pages
+
+- [How-tos > pynxtools > Write a file parser for your plugin](../../how-tos/pynxtools/write-a-file-parser.md)
+- [How-tos > pynxtools > Declare which file-format versions a parser supports](../../how-tos/pynxtools/declare-file-format-versions.md)
+- [Learn > pynxtools > The MultiFormatReader as a reader superclass](multi-format-reader.md)

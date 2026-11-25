@@ -3,7 +3,7 @@
 !!! info
     This guide shows the steps to write a parser for one file format and to call it from your reader. How file parsers work, what a `FileProbe` offers and how `ParsedData` looks up metadata is explained in [Learn > pynxtools > File parsers](../../learn/pynxtools/file-parsers.md).
 
-    You need a reader plugin to start from, see [Build your own `pynxtools` plugin](build-a-plugin.md). Step 3 uses a reader based on the `MultiFormatReader`, see [Use the `MultiFormatReader`](use-multi-format-reader.md).
+    You need a reader plugin to start from, see [How-tos > pynxtools > Build your own pynxtools plugin]. Step 3 uses a reader based on the `MultiFormatReader`, see [How-tos > pynxtools > Use the MultiFormatReader]
 
 The example parser reads text files that start with a line like `SPECTRUM 1.2`, followed by one number per line.
 
@@ -52,7 +52,9 @@ class SpectrumTextParser(FileParser):
     supported_vendor = "My Instruments"
 ```
 
-`supported_file_extensions` must be a tuple of non-empty strings. Upper and lower case are treated alike. If your format has no version, leave `supported_versions` empty. How to choose the ranges is described in [Declare which file-format versions a parser supports](declare-file-format-versions.md).
+`supported_file_extensions` must be a tuple of non-empty strings. Upper and lower case are treated alike. If your format has no version, leave `supported_versions` empty. 
+
+**Related pages:** [Declare which file-format versions a parser supports](declare-file-format-versions.md). 
 
 ### Recognize the file
 
@@ -246,3 +248,8 @@ REGISTRY.metadata_parsers_for(SpectrumTextParser, version="1.2")  # []
 - For each example file, check that `REGISTRY.identify` returns its own parser.
 - Check the reasons for typical wrong files, for example an unsupported version.
 - Check `parse` against the values you expect in `data` and `metadata`.
+
+## Related pages
+
+- [Learn > pynxtools > File parsers](../../learn/pynxtools/file-parsers.md)
+- [Learn > pynxtools > The MultiFormatReader as a reader superclass](../../learn/pynxtools/multi-format-reader.md)

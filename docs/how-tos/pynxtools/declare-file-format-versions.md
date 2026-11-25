@@ -1,5 +1,8 @@
 # Declare which file-format versions a parser supports
 
+!!! info
+    You need a file parser to start from, see [How-tos > pynxtools > Write a file parser for your plugin](write-a-file-parser.md).
+
 Many instrument file formats carry a version string in their header, for example `4.75`, `2019R2` or `v3_1`. A parser can declare which of these versions it has been tested with, so that files it cannot read are rejected with a clear message instead of being parsed wrongly.
 
 The helpers for this live in `pynxtools.dataconverter.readers.parsers.versioning`.
@@ -8,7 +11,7 @@ The helpers for this live in `pynxtools.dataconverter.readers.parsers.versioning
 
 Declaring supported versions is recommended: it makes clear which files a parser supports. Only declare ranges if you know how the format's versioning scheme works and which versions you have actually seen. If you are unsure, leave the ranges empty. Then every file is accepted, including files without a version.
 
-Keep in mind that this can lead to unexpected failures: a file in a version the parser was never tested with is parsed anyway and may fail later or give wrong results. Log an info message in that case, see [below](#telling-the-user-what-was-decided).
+Keep in mind that this can lead to unexpected failures: a file in a version the parser was never tested with is parsed anyway and may fail later or give wrong results. Log an info message in that case, as shown in [Telling the user what was decided](#telling-the-user-what-was-decided)
 
 ## From version string to version tuple
 
@@ -101,7 +104,9 @@ is_version_supported((1, 7), required_versions)  # True
 - `version_ranges_overlap` answers "can the two parsers work together for some files?". Here they can, for the primary files of version 1.5 up to 2.0.
 - `is_version_supported` answers "does this one primary file work?". A file of version 1.2 doesn't, a file of version 1.7 does.
 
-`FileParser.accepts_primary(primary, version=version)` picks the right check for you: with the version of a primary file it checks that file, without one it checks the overlap. See [Write a file parser for your plugin](write-a-file-parser.md#2-add-a-parser-for-metadata-files-optional).
+`FileParser.accepts_primary(primary, version=version)` picks the right check for you: with the version of a primary file it checks that file, without one it checks the overlap. 
+
+**Related pages:** [Write a file parser for your plugin > Add a parser for metadata files](write-a-file-parser.md#2-add-a-parser-for-metadata-files-optional).
 
 ## Telling the user what was decided
 
@@ -120,3 +125,8 @@ if not supported_versions:
 ```
 
 Comparisons that rely on the numbers-before-letters fallback are logged by `is_version_supported` and `version_ranges_overlap` themselves.
+
+## Related pages
+
+- [How-tos > pynxtools > Write a file parser for your plugin](write-a-file-parser.md)
+- [Learn > pynxtools > File parsers](../../learn/pynxtools/file-parsers.md)
