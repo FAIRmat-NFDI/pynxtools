@@ -356,3 +356,43 @@ def test_get_pynxtools_version():
         """,
         re.VERBOSE,
     ).match(version)
+
+
+@pytest.mark.parametrize(
+    "nxdl_type, is_valid",
+    [
+        pytest.param("NX_CHAR", True, id="char"),
+        pytest.param("NX_DATE_TIME", True, id="date-time"),
+        pytest.param("NX_CHAR_OR_NUMBER", True, id="char-or-number"),
+        pytest.param("NX_FLOAT", False, id="float"),
+        pytest.param("NX_INT", False, id="int"),
+        pytest.param("NX_BOOLEAN", False, id="boolean"),
+    ],
+)
+@pytest.mark.parametrize(
+    "dataset_kwargs",
+    [
+        pytest.param({"data": np.bytes_("abc")}, id="scalar"),
+        pytest.param(
+            {"data": "abc", "dtype": h5py.string_dtype("utf-8", 3)}, id="scalar-utf8"
+        ),
+        pytest.param(
+            {
+                "data": np.array([b"abc", b"de"]),
+                "chunks": (2,),
+                "compression": "gzip",
+            },
+            id="compressed-array",
+        ),
+    ],
+)
+def test_is_valid_data_type_hdf_fixed_length_string(
+    tmp_path, dataset_kwargs, nxdl_type, is_valid
+):
+    """Fixed-length strings are valid for text types only."""
+    with h5py.File(tmp_path / "fixed_length_string.h5", "w") as h5file:
+        dataset = h5file.create_dataset("value", **dataset_kwargs)
+        assert dataset.dtype.kind == "S"
+
+        accepted_types = helpers.NEXUS_TO_PYTHON_DATA_TYPES[nxdl_type]
+        assert helpers.is_valid_data_type_hdf(dataset, accepted_types) is is_valid
