@@ -247,6 +247,7 @@ nexpy
 nexusapp
 nexusappv
 nexusformat
+nfilters
 njit
 nodemixin
 nonvariadic

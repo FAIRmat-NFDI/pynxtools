@@ -10,6 +10,7 @@ import logging
 import os
 
 import h5py
+import hdf5plugin
 import numpy as np
 import pytest
 
@@ -181,3 +182,98 @@ def test_overwrite(writer_overwrite, caplog):
         assert sorted(observed_infos) == sorted(expected_infos)  # order does not matter
 
     os.remove(writer_overwrite.output_path)
+
+
+ARRAY = np.arange(10_000, dtype=np.int32).reshape(100, 100)
+
+
+def get_filter_and_strength(dataset: h5py.Dataset) -> tuple[str, int] | None:
+    """Return filter and strength as stored in the file, None if uncompressed."""
+    plist = dataset.id.get_create_plist()
+    if plist.get_nfilters() == 0:
+        return None
+    filter_id, _, options, _ = plist.get_filter(0)
+    if filter_id == hdf5plugin.Blosc2.filter_id:
+        # Blosc2 stores the compression level as its fifth option.
+        return "blosc", options[4]
+    assert filter_id == h5py.h5z.FILTER_DEFLATE
+    return "gzip", options[0]
+
+
+@pytest.mark.parametrize(
+    "entries, expected",
+    [
+        pytest.param([], [], id="no-entries"),
+        pytest.param([{"compress": ARRAY}], [("gzip", 9)], id="default"),
+        pytest.param(
+            [{"compress": ARRAY, "filter": "gzip", "strength": 1}],
+            [("gzip", 1)],
+            id="gzip-strength",
+        ),
+        pytest.param(
+            [{"compress": ARRAY, "strength": np.int64(2)}],
+            [("gzip", 2)],
+            id="gzip-numpy-strength",
+        ),
+        pytest.param(
+            [{"compress": ARRAY, "strength": 10}],
+            [("gzip", 9)],
+            id="gzip-invalid-strength",
+        ),
+        pytest.param(
+            [{"compress": ARRAY, "filter": "blosc"}],
+            [("blosc", 9)],
+            id="blosc-default-strength",
+        ),
+        pytest.param(
+            [{"compress": ARRAY, "filter": "blosc", "strength": 1}],
+            [("blosc", 1)],
+            id="blosc-strength",
+        ),
+        pytest.param(
+            [{"compress": ARRAY, "filter": "zstd", "strength": 1}],
+            [("gzip", 1)],
+            id="invalid-filter",
+        ),
+        pytest.param([{"compress": "text", "filter": "blosc"}], [None], id="text-only"),
+        pytest.param(
+            [
+                {"compress": ARRAY, "strength": 1},
+                {"compress": ARRAY, "filter": "blosc", "strength": 2},
+            ],
+            [("gzip", 1), ("blosc", 2)],
+            id="gzip-before-blosc",
+        ),
+        pytest.param(
+            [
+                {"compress": ARRAY, "filter": "blosc", "strength": 2},
+                {"compress": ARRAY, "strength": 1},
+            ],
+            [("blosc", 2), ("gzip", 1)],
+            id="blosc-before-gzip",
+        ),
+    ],
+)
+def test_write_compression(writer, caplog, entries, expected):
+    """Each dataset gets its own compression settings and all filters are reported."""
+    # The writer sorts entries by path, the index preserves the order of the list.
+    for index, entry in enumerate(entries):
+        writer.data[f"/ENTRY[my_entry]/data_{index}"] = entry
+    expected_filters = {setting[0] for setting in expected if setting is not None}
+
+    assert writer.get_compression_filters() == expected_filters
+
+    with caplog.at_level(logging.INFO):
+        writer.write()
+
+    with h5py.File(writer.output_path, "r") as test_nxs:
+        datasets = [
+            test_nxs[f"/my_entry/data_{index}"] for index in range(len(entries))
+        ]
+        assert [get_filter_and_strength(dataset) for dataset in datasets] == expected
+
+    filter_message = f"Compression filters used: {sorted(expected_filters)}"
+    assert (filter_message in caplog.messages) is bool(expected_filters)
+    assert any(message.startswith("blosc2 ") for message in caplog.messages) is (
+        "blosc" in expected_filters
+    )

@@ -22,7 +22,11 @@ import numpy as np
 from ase.data import chemical_symbols
 
 from pynxtools import get_nexus_version, get_nexus_version_hash
-from pynxtools.dataconverter.chunk import COMPRESSION_FILTERS
+from pynxtools.dataconverter.chunk import (
+    COMPRESSION_FILTERS,
+    is_valid_compression_filter,
+    is_valid_compression_strength,
+)
 
 # TODO: nxdl_utils is legacy XML-walking infrastructure. These imports should be
 # removed as helpers.py XML-walking functions are replaced by NexusNode-based equivalents.
@@ -302,7 +306,7 @@ class Collector:
         elif log_type == ValidationProblem.InvalidCompressionStrength:
             value = cast(dict, value)
             logger.warning(
-                f"Compression strength for {path} = {value} should be between 0 and 9."
+                f"Compression strength for {path} = {value} should be an integer between 0 and 9."
             )
         elif log_type == ValidationProblem.MissingNXclass:
             logger.info(
@@ -981,20 +985,19 @@ def is_valid_data_field(value: Any, nxdl_type: str, path: str) -> Any:
     if isinstance(value, dict) and "compress" in value:
         compressed_value = value["compress"]
         if "filter" in value:
-            if value["filter"] not in COMPRESSION_FILTERS:
+            if not is_valid_compression_filter(value["filter"]):
                 collector.collect_and_log(
                     path, ValidationProblem.InvalidCompressionFilter, value
                 )
         if "strength" in value:
-            if not (1 <= value["strength"] <= 9):
-                if value["strength"] == 0:
-                    collector.collect_and_log(
-                        path, ValidationProblem.CompressionStrengthZero, value
-                    )
-                else:
-                    collector.collect_and_log(
-                        path, ValidationProblem.InvalidCompressionStrength, value
-                    )
+            if not is_valid_compression_strength(value["strength"]):
+                collector.collect_and_log(
+                    path, ValidationProblem.InvalidCompressionStrength, value
+                )
+            elif value["strength"] == 0:
+                collector.collect_and_log(
+                    path, ValidationProblem.CompressionStrengthZero, value
+                )
 
         # Apply standard validation to compressed value
         value["compress"] = validate_data_value(compressed_value, nxdl_type, path)

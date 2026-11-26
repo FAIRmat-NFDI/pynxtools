@@ -7,8 +7,10 @@
 """Configuration and utilities for customized chunking and compression."""
 
 import logging
-import os
+from typing import Any
 
+import blosc2
+import hdf5plugin  # noqa: F401  # registers the blosc2 filter in HDF5
 import numpy as np
 
 logger = logging.getLogger("pynxtools")  # pylint: disable=C0103
@@ -30,30 +32,22 @@ PERFORMANT_COMPRESSION_FILTER = "blosc"
 # integer value 9 means aggressive compression
 # i.e. both compression strengths are strong for both compression algorithms
 
-try:
-    import blosc2
-    import hdf5plugin  # noqa: F401
+COMPRESSION_FILTERS: list[str] = [
+    DEFAULT_COMPRESSION_FILTER,
+    PERFORMANT_COMPRESSION_FILTER,
+]
 
-    BLOSC_NTHREADS = blosc2.set_nthreads(1)
-    # BLOSC_NTHREADS = blosc2.set_nthreads(
-    #     min(max(int(os.cpu_count() / 2), 1), int(os.cpu_count()))
-    # )
-    # TODO: make this a configuration option for the NOMAD plugin, e.g. via the
-    # NOMAD config file (as a plugin option) or environment variable
-    # do not oversubscribe, cpu_count counts Intel hyperthreading cores as real cores
-    # although these share specific resources, going with at most half the available
-    # is also reasonable when inside a NOMAD deployment
-    # to get maximum performance users should for now deploy from custom branches
-    # until there is a mechanism in NOMAD whereby such configurations can be passed
-    # to the NOMAD plugins directly
-
-    COMPRESSION_FILTERS: list[str] = [
-        DEFAULT_COMPRESSION_FILTER,
-        PERFORMANT_COMPRESSION_FILTER,
-    ]
-except ImportError:
-    BLOSC_NTHREADS = 0
-    COMPRESSION_FILTERS = [DEFAULT_COMPRESSION_FILTER]
+# Number of threads that blosc2 uses.
+# When increasing this number, do not oversubscribe: os.cpu_count() counts Intel
+# hyperthreading cores as real cores although these share specific resources. Using at
+# most half the available cores, max(os.cpu_count() // 2, 1), is a reasonable choice,
+# also inside a NOMAD deployment.
+# To get maximum performance, users should for now deploy from custom branches until
+# there is a mechanism in NOMAD to pass such a configuration to the NOMAD plugins.
+# TODO: make this a configuration option for the NOMAD plugin, e.g. via the
+# NOMAD config file (as a plugin option) or environment variable
+BLOSC_NTHREADS: int = 1
+blosc2.set_nthreads(BLOSC_NTHREADS)
 
 
 # compressed payload is served as a dict with at least one keyword "compress",
@@ -248,6 +242,36 @@ def prioritized_axes_heuristic(
         return tuple(int(extent) for extent in chunk_shape)
     logger.debug(f"chunk strategy h5py auto used")
     return True
+
+
+def is_valid_compression_filter(compression_filter: Any) -> bool:
+    """Check whether the value is a supported compression filter."""
+    return compression_filter in COMPRESSION_FILTERS
+
+
+def is_valid_compression_strength(strength: Any) -> bool:
+    """Check whether the value is an integer from 0 to 9."""
+    return isinstance(strength, (int, np.integer)) and 0 <= int(strength) <= 9
+
+
+def compression_settings(data: dict) -> tuple[str, int] | None:
+    """Return filter and strength for a "compress" entry.
+
+    Missing or invalid settings are replaced by the defaults. Scalars, including single
+    strings, are not compressed, None is returned for them.
+    """
+    if np.isscalar(data["compress"]):
+        return None
+
+    compression_filter = data.get("filter")
+    if not is_valid_compression_filter(compression_filter):
+        compression_filter = DEFAULT_COMPRESSION_FILTER
+
+    strength = data.get("strength")
+    if not is_valid_compression_strength(strength):
+        strength = DEFAULT_COMPRESSION_STRENGTH
+
+    return compression_filter, int(strength)
 
 
 def chunking_strategy(data) -> bool | tuple[int, ...]:
