@@ -2,7 +2,7 @@
 
 ## Approach
 
-Data compression covers methods to effectively reduce the size of a dataset or portions of it. Lossless and lossy methods are distinguished. Given that `pynxtools` writes its content to HDF5 files, we have decided to use compression filters that the HDF5 library provides. Using compression or not in `pynxtools` is optional. The user can decide at the individual dataset level. To preserve the original data, we decided to only support lossless compression algorithms. We also decided to not compress strings and scalar datasets.
+Data compression covers methods to effectively reduce the size of a dataset or portions of it. Lossless and lossy methods are distinguished. Given that `pynxtools` writes its content to HDF5 files, we have decided to use compression filters that the HDF5 library provides. Using compression or not in `pynxtools` is optional. The user can decide at the individual dataset level. To preserve the original data, we decided to only support lossless compression algorithms. By default, we also do not compress scalar datasets, including single strings. Arrays of strings are compressed.
 
 Specifically, we use the built-in [`deflate` compression filter](https://support.hdfgroup.org/documentation/hdf5-docs/hdf5_topics/UsingCompressionInHDF5.html) due to its wide support across the most frequently used programming languages. Users should be aware that using `deflate` instead of more modern algorithms has the trade-off that there is as of now no efficient multi-threaded implementation of this compression filter within the HDF5 library. Therefore, compression can take a substantial amount of the total execution time within the `dataconverter` HDF5 file writing part.
 
@@ -35,12 +35,13 @@ template["/ENTRY[entry1]/array"] = {
 Wrapping the `array` here into a dictionary instructs the `dataconverter` to store a lossless compressed version of the same dataset.
 The dictionary has one mandatory keyword, `compress`, and these optional keywords:
 
-| Keyword    | Values                                        | Default  |
-| ---------- | --------------------------------------------- | -------- |
-| `filter`   | `"gzip"` or `"blosc"`                         | `"gzip"` |
-| `strength` | Integer from 0 (no compression) to 9 (strong) | 9        |
+| Keyword    | Values                                           | Default  |
+| ---------- | ------------------------------------------------ | -------- |
+| `filter`   | `"gzip"` or `"blosc"`                            | `"gzip"` |
+| `strength` | Integer from 0 (no compression) to 9 (strongest) | 9        |
 
 Use `strength` to trade off processing time against file size. It applies to both filters.
+The default of 9 gives the smallest files, which reduces long-term storage in research data management systems such as NOMAD, but needs more CPU time. For `blosc`, a `strength` of 5 or 6 is a good compromise.
 
 These settings apply to each dataset individually. You can use different filters and strengths in the same file:
 

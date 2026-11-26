@@ -257,8 +257,8 @@ def is_valid_compression_strength(strength: Any) -> bool:
 def compression_settings(data: dict) -> tuple[str, int] | None:
     """Return filter and strength for a "compress" entry.
 
-    Missing or invalid settings are replaced by the defaults. Scalars and strings are
-    not compressed, None is returned for them.
+    Missing or invalid settings are replaced by the defaults. Scalars, including single
+    strings, are not compressed, None is returned for them.
     """
     if np.isscalar(data["compress"]):
         return None
