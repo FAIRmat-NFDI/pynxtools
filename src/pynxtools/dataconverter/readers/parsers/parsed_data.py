@@ -4,7 +4,7 @@
 #
 # SPDX-License-Identifier: Apache-2.0
 
-"""A common container for what a parser read for one NeXus entry.
+"""A common container for what a parser read from an input file.
 
 A parser fills one ``ParsedData`` per entry: arrays in ``data``, flat
 ``/``-separated metadata in ``metadata``. A reader then looks values up for
@@ -34,6 +34,9 @@ class HDF5Reference:
     """
     A dataset that stays in a source HDF5 file instead of being loaded.
 
+    The file can be any HDF5 input file, not only a NeXus file, for example
+    an instrument file that is written in HDF5.
+
     Input files are not kept open between reading, validation and writing, so
     a live ``h5py.Dataset`` can't be passed on. A reference names the file and
     the dataset path instead; whoever needs the data opens the file briefly.
@@ -55,7 +58,10 @@ DataValue: TypeAlias = np.ndarray | xr.DataArray | HDF5Reference
 @dataclass
 class ParsedData:
     """
-    What a parser read for one NeXus entry.
+    What a parser read from an input file for one entry.
+
+    The input file can be in any format. A parser returns one ``ParsedData``
+    per entry, keyed by a name it chooses.
 
     Attributes:
         data: Arrays addressed by ``@data:<path>``: a numpy array (also

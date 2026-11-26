@@ -3,10 +3,11 @@
 !!! info
     Here, we explain how file parsers recognize and read input files. For the steps to write a parser and to call it from your reader, see [How-tos > pynxtools > Write a file parser for your plugin](../../how-tos/pynxtools/write-a-file-parser.md).
 
-A reader plugin often supports several file formats, or several versions of one format. Instead of each plugin writing its own detection and parsing logic, pynxtools offers three building blocks in `pynxtools.dataconverter.readers.parsers`:
+A reader plugin often supports several file formats, or several versions of one format. Instead of each plugin writing its own detection and parsing logic, pynxtools offers four building blocks in `pynxtools.dataconverter.readers.parsers`:
 
 - `FileProbe` (`probe.py`): a cheap, read-only view of one input file, shared by all parsers;
 - `FileParser` (`file_parser.py`): the base class for a parser of one file format;
+- `ParserRegistry` (`registry.py`): the parsers of a reader, and the choice of parser for each file;
 - `ParsedData` (`parsed_data.py`): a container for what a parser read, which the config file addresses with `@data:` and `@attrs:`.
 
 ## Recognizing a file: `FileProbe`
@@ -24,6 +25,19 @@ A reader creates one `FileProbe` per input file, with `FileProbe.from_path(path)
 | `is_tiff`, `tiff_tags` | TIFF detection, and the tags of the first page (no image is read) |
 
 None of these checks raises for an unreadable or corrupt file: a broken HDF5 file gives no keys, a broken TIFF no tags. `text_head` covers only the head, so a parser that needs content further into the file reads `path` itself.
+
+`head` and `text_head` work for every format. Most formats can be recognized from them: a text format by its first line, a binary format by the bytes it starts with. For example, every SQLite file starts with the same 16 bytes:
+
+```python
+class SLEParser(FileParser):
+    supported_file_extensions = (".sle",)
+
+    @classmethod
+    def matches_file(cls, probe):
+        return probe.head.startswith(b"SQLite format 3\x00")
+```
+
+HDF5, zip and TIFF files get extra helpers because they are containers: their first bytes only tell which container it is, and what is inside can only be read with a library.
 
 The table in [Tutorial > Bring your own data > Identify your format](../../tutorial/bring-your-own-data.md#identify-your-format) lists how common formats can be recognized; `FileProbe` already checks the HDF5, zip and TIFF signatures.
 
@@ -49,13 +63,44 @@ File 'scan.txt' has version 2.1, which SpectrumTextParser does not support. Supp
 
 ## Primary and metadata parsers
 
-A *primary* parser creates entries on its own. Some files only add metadata to the entries of another file, for example a quantification export next to the spectra. A parser for such a file names the parsers whose entries it adds to in `compatible_primary`, and sets `role = "metadata"` if it can do nothing else. A primary parser can set `compatible_primary` too, if its files can also add to another parser's entries.
+Some measurements come as more than one file. In pynxtools-xps, for example, a VAMAS file (`.vms`) holds the spectra. After peak fitting, CasaXPS can export the quantification results of the same spectra as a `.csv` file, which holds no spectra of its own. The VAMAS parser is the *primary* parser: it reads the spectra and creates the entries. The CSV parser is a *metadata* parser: it adds the fit results to the entries of the VAMAS file and creates none.
+
+A *primary* parser creates entries on its own. A parser for a file that only adds metadata to the entries of another file names the parsers whose entries it adds to in `compatible_primary`, and sets `role = "metadata"` if it can do nothing else. A primary parser can set `compatible_primary` too, if its files can also add to another parser's entries.
 
 `accepts_primary(primary, version=None)` says whether a parser can add to the entries of `primary`:
 
 - `primary` must be one of `compatible_primary`, or a subclass of one;
 - if `supported_primary_versions` is set and `version` is given (the version of the primary file that was read), that version must lie in `supported_primary_versions`;
 - without `version`, `supported_primary_versions` must only overlap with the `supported_versions` of `primary`. That says the two parsers work together for some files, not for a given file, so pass `version` whenever a primary file is known.
+
+## Choosing a parser: `ParserRegistry`
+
+A reader puts its parsers into a `ParserRegistry` and asks it which parser reads each file:
+
+```python
+from pynxtools.dataconverter.readers.parsers.registry import ParserRegistry
+
+registry = ParserRegistry([SpectrumTextParser, SpectrumResultsParser])
+parser = registry.identify("spectrum.txt")  # SpectrumTextParser
+```
+
+`identify` takes the path of the file, or its `FileProbe` if you already have one, and runs `match` of every parser on it:
+
+- if exactly one parser accepts it, that parser is returned;
+- if several accept it, the one with the longest matching extension wins, so a parser for `.mtex.h5` is chosen over a parser for any `.h5` file;
+- if several accept it with equally long extensions, `identify` raises an `AmbiguousFormatError` that names them. Their `matches_file` checks must then be made stricter;
+- if none accepts it, `identify` raises an `UnsupportedFileError` with the reason of every parser, for example:
+
+```text
+No parser supports file 'scan.txt':
+  - SpectrumTextParser: File 'scan.txt' has version 2.1, which SpectrumTextParser does not support. Supported versions: >= 1.0 and < 2.0.
+  - SpectrumResultsParser: File 'scan.txt' does not have an extension that SpectrumResultsParser supports. Supported extensions: .csv.
+```
+
+Two more methods help with metadata parsers and tests:
+
+- `metadata_parsers_for(primary, version=None)` lists the registered parsers that can add metadata to the entries of `primary`, using `accepts_primary` for each parser;
+- `ambiguities(paths)` returns every file in `paths` that `identify` would reject as ambiguous. A plugin test passes its example files and checks that the result is empty.
 
 ## Reading parsed values: `ParsedData`
 
@@ -88,4 +133,10 @@ If several keys end with `path`, a warning names them all; write the full key in
 
 ## File parsers and the `MultiFormatReader`
 
-The [`MultiFormatReader`](multi-format-reader.md) calls a handler for each input file, chosen by its extension, and fills the template from the config file through callbacks such as `get_data` and `get_attr`. File parsers fit into this as follows: the handler finds the parser whose `match` accepts the file and calls `parse`, and the callbacks return values from the resulting `ParsedData`. The [how-to](../../how-tos/pynxtools/write-a-file-parser.md#4-call-the-parsers-from-your-reader) shows such a reader. Currently, the MultiFormatReader chooses a handler by file extension only and does not know about file parsers, so your reader calls them from its handler, as in the how-to. 
+The `MultiFormatReader` calls a handler for each input file, chosen by its extension, and fills the template from the config file through callbacks such as `get_data` and `get_attr`. File parsers fit into this as follows: the handler asks the `ParserRegistry` which parser reads the file and calls its `parse`, and the callbacks return values from the resulting `ParsedData`. [How-tos > pynxtools > Write a file parser for your plugin > Call the parsers from your reader](../../how-tos/pynxtools/write-a-file-parser.md#3-call-the-parsers-from-your-reader) shows such a reader. Currently, the `MultiFormatReader` chooses a handler by file extension only and does not know about file parsers, so your reader calls them from its handler, as in the how-to.
+
+## Related pages
+
+- [How-tos > pynxtools > Write a file parser for your plugin](../../how-tos/pynxtools/write-a-file-parser.md)
+- [How-tos > pynxtools > Declare which file-format versions a parser supports](../../how-tos/pynxtools/declare-file-format-versions.md)
+- [Learn > pynxtools > The MultiFormatReader as a reader superclass](multi-format-reader.md)
