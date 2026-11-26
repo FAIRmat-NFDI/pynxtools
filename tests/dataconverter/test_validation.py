@@ -6,7 +6,7 @@
 
 import logging
 import os
-from collections.abc import Callable, Mapping
+from collections.abc import Mapping
 
 import h5py
 import numpy as np
@@ -4505,87 +4505,48 @@ def test_validate_no_definition_entry(tmp_path, caplog):
 # Type narrowing via a base class's own `extends` chain
 # ---------------------------------------------------------------------------
 
-# NXcg_polygon (extends NXcg_primitive) narrows the inherited `shape` field
-# from NX_NUMBER to NX_INT. NXmicrostructure (a base class, not an appdef)
-# declares NXcg_polygon as a direct, legal child. The validator should find
-# this specialization and check against it. NXinstrument does not declare
-# NXcg_polygon as a legal child anywhere, so the validator should throw a
-# warning.
 
+@pytest.mark.parametrize(
+    "shape_value, expect_type_problem",
+    [
+        pytest.param(np.array([1], dtype=np.int64), False, id="int-accepted"),
+        pytest.param(np.array([1.5], dtype=np.float64), True, id="float-rejected"),
+    ],
+)
+def test_validate_narrowed_type_in_appdef(
+    tmp_path, caplog, shape_value, expect_type_problem
+):
+    """Check NXcg_polygon/shape against its narrowed type in an appdef.
 
-def _entry_with_polygon_under_parent(
-    parent_nx_class: str, shape_value
-) -> Callable[[h5py.File], None]:
-    """Return a writer creating an NXcg_polygon in a specified parent class.
-
-    The resulting hierarchy is::
-
-        /entry (NXentry)
-            /parent (<parent_nx_class>)
-                /polygon (NXcg_polygon)
-                    /shape
-
-    Args:
-        parent_nx_class: NX_class of the group containing the NXcg_polygon.
-        shape_value: Value to store in the polygon's ``shape`` dataset.
+    NXcg_polygon extends NXcg_primitive and narrows ``shape`` from
+    ``NX_NUMBER`` to ``NX_INT``. NXmicrostructure_kanapy_results reaches
+    NXcg_polygon through NXmicrostructure. A float satisfies the ancestor type
+    but not the narrowed one, so only the float is reported. The appdef has
+    other required concepts, so the test checks the type problem for
+    ``shape``, not the overall result.
     """
-
-    def _write(h5w: h5py.File) -> None:
+    fpath = tmp_path / "polygon_shape.nxs"
+    with h5py.File(fpath, "w") as h5w:
         entry = h5w.create_group("entry")
         entry.attrs["NX_class"] = "NXentry"
-        parent = entry.create_group("parent")
-        parent.attrs["NX_class"] = parent_nx_class
-        polygon = parent.create_group("polygon")
+        entry.create_dataset("definition", data="NXmicrostructure_kanapy_results")
+        microstructure = entry.create_group("microstructure1")
+        microstructure.attrs["NX_class"] = "NXmicrostructure"
+        polygon = microstructure.create_group("polygon")
         polygon.attrs["NX_class"] = "NXcg_polygon"
         polygon.create_dataset("shape", data=shape_value)
 
-    return _write
-
-
-def test_validate_narrowed_type_valid_in_legal_position(tmp_path):
-    """Validate NXcg_polygon.shape using the type defined by NXcg_polygon.
-
-    In this legal hierarchy, ``shape`` is defined as ``NX_INT`` by
-    NXcg_polygon, while its ancestor NXcg_primitive permits the broader
-    ``NX_NUMBER`` type. The validator must therefore apply the narrowed
-    NXcg_polygon definition rather than the inherited ancestor type.
-    """
-    fpath = tmp_path / "polygon_legal.nxs"
-    with h5py.File(fpath, "w") as h5w:
-        _entry_with_polygon_under_parent(
-            "NXmicrostructure", np.array([1], dtype=np.int64)
-        )(h5w)
-
-    with h5py.File(fpath, "r") as h5f:
-        is_valid = validate_hdf_group_against(
-            "NXroot", h5f["/entry"], str(fpath), ignore_undocumented=True
-        )
-
-    assert is_valid
-
-
-def test_validate_narrowed_type_rejects_ancestor_type_in_legal_position(
-    tmp_path, caplog
-):
-    """Reject a shape value valid only under the ancestor's broader type.
-
-    The hierarchy is otherwise legal, but ``shape`` contains a floating-point
-    value. This value satisfies the ancestor NXcg_primitive definition
-    (``NX_NUMBER``) but violates the narrower NXcg_polygon definition
-    (``NX_INT``). The test verifies that the validator enforces the
-    NXcg_polygon-specific type.
-    """
-    fpath = tmp_path / "polygon_legal_wrong_type.nxs"
-    with h5py.File(fpath, "w") as h5w:
-        _entry_with_polygon_under_parent(
-            "NXmicrostructure", np.array([1.5], dtype=np.float64)
-        )(h5w)
-
     with caplog.at_level(logging.WARNING):
         with h5py.File(fpath, "r") as h5f:
-            is_valid = validate_hdf_group_against(
-                "NXroot", h5f["/entry"], str(fpath), ignore_undocumented=True
+            validate_hdf_group_against(
+                "NXmicrostructure_kanapy_results",
+                h5f["/entry"],
+                str(fpath),
+                ignore_undocumented=True,
             )
 
-    assert not is_valid
-    assert any("NX_INT" in r.message for r in caplog.records)
+    has_type_problem = any(
+        "/entry/microstructure1/polygon/shape" in r.message and "NX_INT" in r.message
+        for r in caplog.records
+    )
+    assert has_type_problem is expect_type_problem
