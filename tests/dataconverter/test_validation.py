@@ -4460,7 +4460,8 @@ def _entry_with_freely_composed_instrument(h5w: h5py.File) -> None:
     source.create_dataset("name", data="Beam line")
     source.create_dataset("type", data="Synchrotron X-ray Source")
     source.create_dataset("probe", data="x-ray")
-    source.create_dataset("distance", data=40.0)
+    distance = source.create_dataset("distance", data=40.0)
+    distance.attrs["units"] = "m"
 
     aperture = instrument.create_group("aperture")
     aperture.attrs["NX_class"] = "NXaperture"
