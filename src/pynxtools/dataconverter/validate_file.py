@@ -27,8 +27,8 @@ def _get_def_map(file: str) -> dict[str, str]:
     """
     Extract the governing NeXus tree root for each NXentry in a NeXus HDF5 file.
 
-    For an NXentry without a ``definition`` field, the generic subtree of NXentry
-    is used.
+    For an NXentry without a ``definition`` field, the subtree of NXentry
+    is used (that is, all concepts defined in NXentry and its sub-groups.)
 
     Args:
         file (str): Path to the NeXus HDF5 file.
