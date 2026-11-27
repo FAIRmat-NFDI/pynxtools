@@ -4431,3 +4431,122 @@ def test_validate_valid_external_link(tmp_path, caplog):
 
     broken_msgs = [r.message for r in caplog.records if "Broken link" in r.message]
     assert broken_msgs == []
+
+
+# ---------------------------------------------------------------------------
+# Entries with no governing application definition (base classes composed
+# freely, only restricted by what each base class itself declares)
+# ---------------------------------------------------------------------------
+
+
+def _entry_with_freely_composed_instrument(h5w: h5py.File) -> None:
+    """Prepare a file composed of freely chosen base classes.
+
+    Write an NXentry with no ``definition`` field, holding an NXinstrument
+    composed of NXsource + NXaperture — both legal children of NXinstrument's own
+    NXDL, with no application definition governing the file.
+
+    Includes real subfields on each group (not just bare NX_class groups) and a
+    deeper subtree (aperture/notes, a legal NXnote child of NXaperture) to
+    exercise more than a two-level, field-free tree.
+    """
+    entry = h5w.create_group("entry")
+    entry.attrs["NX_class"] = "NXentry"
+    instrument = entry.create_group("instrument")
+    instrument.attrs["NX_class"] = "NXinstrument"
+
+    source = instrument.create_group("source")
+    source.attrs["NX_class"] = "NXsource"
+    source.create_dataset("name", data="Beam line")
+    source.create_dataset("type", data="Synchrotron X-ray Source")
+    source.create_dataset("probe", data="x-ray")
+    distance = source.create_dataset("distance", data=40.0)
+    distance.attrs["units"] = "m"
+
+    aperture = instrument.create_group("aperture")
+    aperture.attrs["NX_class"] = "NXaperture"
+    aperture.create_dataset("material", data="Tantalum")
+    aperture.create_dataset("description", data="Beam-defining slit")
+
+    notes = aperture.create_group("notes")
+    notes.attrs["NX_class"] = "NXnote"
+    notes.create_dataset("description", data="Aligned during beam time setup")
+
+
+def test_validate_hdf_group_against_nxroot_fallback(tmp_path):
+    """Test that ``validate_hdf_group_against("NXroot", ...)`` validates a
+    definition-less entry without an application definition, resolving nested
+    groups (and their subfields, several levels deep) by their own base class."""
+    fpath = tmp_path / "no_definition.nxs"
+    with h5py.File(fpath, "w") as h5w:
+        _entry_with_freely_composed_instrument(h5w)
+
+    with h5py.File(fpath, "r") as h5f:
+        is_valid = validate_hdf_group_against("NXroot", h5f["/entry"], str(fpath))
+
+    assert is_valid
+
+
+def test_validate_no_definition_entry(tmp_path, caplog):
+    """Test that ``validate()`` (the file-level validator) validates an
+    NXentry with no ``definition`` field against the base class tree."""
+    fpath = tmp_path / "no_definition.nxs"
+    with h5py.File(fpath, "w") as h5w:
+        _entry_with_freely_composed_instrument(h5w)
+
+    with caplog.at_level(logging.INFO):
+        validate(str(fpath))
+
+    assert "Could not find any valid entry" not in caplog.text
+    assert "is valid according to no application definition" in caplog.text
+
+
+# ---------------------------------------------------------------------------
+# Type narrowing via a base class's own `extends` chain
+# ---------------------------------------------------------------------------
+
+
+@pytest.mark.parametrize(
+    "shape_value, expect_type_problem",
+    [
+        pytest.param(np.array([1], dtype=np.int64), False, id="int-accepted"),
+        pytest.param(np.array([1.5], dtype=np.float64), True, id="float-rejected"),
+    ],
+)
+def test_validate_narrowed_type_in_appdef(
+    tmp_path, caplog, shape_value, expect_type_problem
+):
+    """Check NXcg_polygon/shape against its narrowed type in an appdef.
+
+    NXcg_polygon extends NXcg_primitive and narrows ``shape`` from
+    ``NX_NUMBER`` to ``NX_INT``. NXmicrostructure_kanapy_results reaches
+    NXcg_polygon through NXmicrostructure. A float satisfies the ancestor type
+    but not the narrowed one, so only the float is reported. The appdef has
+    other required concepts, so the test checks the type problem for
+    ``shape``, not the overall result.
+    """
+    fpath = tmp_path / "polygon_shape.nxs"
+    with h5py.File(fpath, "w") as h5w:
+        entry = h5w.create_group("entry")
+        entry.attrs["NX_class"] = "NXentry"
+        entry.create_dataset("definition", data="NXmicrostructure_kanapy_results")
+        microstructure = entry.create_group("microstructure1")
+        microstructure.attrs["NX_class"] = "NXmicrostructure"
+        polygon = microstructure.create_group("polygon")
+        polygon.attrs["NX_class"] = "NXcg_polygon"
+        polygon.create_dataset("shape", data=shape_value)
+
+    with caplog.at_level(logging.WARNING):
+        with h5py.File(fpath, "r") as h5f:
+            validate_hdf_group_against(
+                "NXmicrostructure_kanapy_results",
+                h5f["/entry"],
+                str(fpath),
+                ignore_undocumented=True,
+            )
+
+    has_type_problem = any(
+        "/entry/microstructure1/polygon/shape" in r.message and "NX_INT" in r.message
+        for r in caplog.records
+    )
+    assert has_type_problem is expect_type_problem
