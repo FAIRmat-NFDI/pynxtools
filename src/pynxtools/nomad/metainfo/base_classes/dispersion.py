@@ -32,17 +32,10 @@ from nomad.datamodel.metainfo.annotations import (
     ELNComponentEnum,
     SchemaAnnotation,
 )
-from nomad.metainfo import MEnum, Quantity, Section, SubSection
+from nomad.metainfo import Quantity, Section, SubSection
 from nomad.metainfo.data_type import Bytes, Datetime
 
-from pynxtools.nomad.annotations import (
-    NeXusAttribute,
-    NeXusChoice,
-    NeXusDefinition,
-    NeXusField,
-    NeXusGroup,
-    NeXusLink,
-)
+from pynxtools.nomad.annotations import NeXusDefinition, NeXusField, NeXusGroup
 from pynxtools.nomad.metainfo.base_classes.object import Object
 
 if TYPE_CHECKING:
@@ -69,7 +62,7 @@ class Dispersion(Object):
         ),
     )
 
-    dispersion_table = SubSection(
+    dispersion_tables = SubSection(
         section_def="pynxtools.nomad.metainfo.base_classes.dispersion_table.DispersionTable",
         repeats=True,
         variable=True,
@@ -80,7 +73,7 @@ class Dispersion(Object):
             optionality="optional",
         ),
     )
-    dispersion_function = SubSection(
+    dispersion_functions = SubSection(
         section_def="pynxtools.nomad.metainfo.base_classes.dispersion_function.DispersionFunction",
         repeats=True,
         variable=True,

@@ -356,9 +356,19 @@ def is_number(expr: str) -> bool:
     )
 
 
+BOOLEAN_STRINGS = {
+    "true": True,
+    "false": False,
+    "on": True,
+    "off": False,
+    "yes": True,
+    "no": False,
+}
+
+
 def is_boolean(expr: str) -> bool:
-    """Checks whether an expression is a boolean,
-    i.e. is equal to True or False (upper or lower case).
+    """Checks whether the whole expression is a boolean word,
+    i.e. true/false, on/off or yes/no (case-insensitive).
 
     Args:
         expr (str): The expression to check.
@@ -366,7 +376,7 @@ def is_boolean(expr: str) -> bool:
     Returns:
         bool: Returns true if the expr is a boolean
     """
-    return bool(re.search(r"True|False|true|false|On|Off|Yes|No", expr))
+    return expr.strip().lower() in BOOLEAN_STRINGS
 
 
 def to_bool(expr: str) -> bool:
@@ -378,15 +388,4 @@ def to_bool(expr: str) -> bool:
     Returns:
         bool: The boolean value.
     """
-    replacements = {
-        "On": True,
-        "Off": False,
-        "Yes": True,
-        "No": False,
-        "True": True,
-        "False": False,
-        "true": True,
-        "false": False,
-    }
-
-    return replacements.get(expr)
+    return BOOLEAN_STRINGS[expr.strip().lower()]

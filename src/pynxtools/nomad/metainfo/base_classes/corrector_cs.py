@@ -32,14 +32,7 @@ from nomad.datamodel.metainfo.annotations import (
 from nomad.metainfo import MEnum, Quantity, Section, SubSection
 from nomad.metainfo.data_type import Bytes, Datetime
 
-from pynxtools.nomad.annotations import (
-    NeXusAttribute,
-    NeXusChoice,
-    NeXusDefinition,
-    NeXusField,
-    NeXusGroup,
-    NeXusLink,
-)
+from pynxtools.nomad.annotations import NeXusDefinition, NeXusField, NeXusGroup
 from pynxtools.nomad.metainfo.base_classes.component import Component
 from pynxtools.nomad.metainfo.base_classes.process import Process
 
@@ -98,7 +91,7 @@ class CorrectorCs(Component):
         repeats=True,
         variable=True,
     )
-    electromagnetic_lens = SubSection(
+    electromagnetic_lenses = SubSection(
         section_def="pynxtools.nomad.metainfo.base_classes.electromagnetic_lens.ElectromagneticLens",
         repeats=True,
         variable=True,
@@ -109,7 +102,7 @@ class CorrectorCs(Component):
             optionality="optional",
         ),
     )
-    optical_lens = SubSection(
+    optical_lenses = SubSection(
         section_def="pynxtools.nomad.metainfo.base_classes.optical_lens.OpticalLens",
         repeats=True,
         variable=True,
@@ -120,7 +113,7 @@ class CorrectorCs(Component):
             optionality="optional",
         ),
     )
-    aperture = SubSection(
+    apertures = SubSection(
         section_def="pynxtools.nomad.metainfo.base_classes.aperture.Aperture",
         repeats=True,
         variable=True,
@@ -131,7 +124,7 @@ class CorrectorCs(Component):
             optionality="optional",
         ),
     )
-    deflector = SubSection(
+    deflectors = SubSection(
         section_def="pynxtools.nomad.metainfo.base_classes.deflector.Deflector",
         repeats=True,
         variable=True,

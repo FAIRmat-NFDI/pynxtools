@@ -38,11 +38,9 @@ from nomad.metainfo.data_type import Bytes, Datetime
 
 from pynxtools.nomad.annotations import (
     NeXusAttribute,
-    NeXusChoice,
     NeXusDefinition,
     NeXusField,
     NeXusGroup,
-    NeXusLink,
 )
 from pynxtools.nomad.metainfo._category import ExperimentCategory
 from pynxtools.nomad.metainfo.applications.monopd import (
@@ -76,7 +74,7 @@ class Xrd(Monopd):
         ),
     )
 
-    instrument = SubSection(
+    instruments = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.xrd.XrdInstrument",
         repeats=True,
         variable=True,
@@ -86,7 +84,7 @@ class Xrd(Monopd):
         repeats=True,
         variable=True,
     )
-    process = SubSection(
+    processes = SubSection(
         section_def="pynxtools.nomad.metainfo.base_classes.process.Process",
         repeats=True,
         variable=True,
@@ -151,12 +149,12 @@ class XrdInstrument(MonopdInstrument):
         ),
     )
 
-    beam = SubSection(
+    beams = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.xrd.XrdInstrumentBeam",
         repeats=True,
         variable=True,
     )
-    detector = SubSection(
+    detectors = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.xrd.XrdInstrumentDetector",
         repeats=True,
         variable=True,

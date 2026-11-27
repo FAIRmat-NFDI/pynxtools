@@ -34,11 +34,9 @@ from nomad.metainfo.data_type import Bytes, Datetime
 
 from pynxtools.nomad.annotations import (
     NeXusAttribute,
-    NeXusChoice,
     NeXusDefinition,
     NeXusField,
     NeXusGroup,
-    NeXusLink,
 )
 from pynxtools.nomad.metainfo.base_classes.instrument import Instrument
 from pynxtools.nomad.metainfo.base_classes.manipulator import Manipulator
@@ -76,7 +74,7 @@ class EmInstrument(Instrument):
         ),
     )
 
-    fabrication = SubSection(
+    fabrications = SubSection(
         section_def="pynxtools.nomad.metainfo.base_classes.fabrication.Fabrication",
         repeats=True,
         variable=True,
@@ -87,7 +85,7 @@ class EmInstrument(Instrument):
             optionality="optional",
         ),
     )
-    ebeam_column = SubSection(
+    ebeam_columns = SubSection(
         section_def="pynxtools.nomad.metainfo.base_classes.ebeam_column.EbeamColumn",
         repeats=True,
         variable=True,
@@ -98,7 +96,7 @@ class EmInstrument(Instrument):
             optionality="optional",
         ),
     )
-    ibeam_column = SubSection(
+    ibeam_columns = SubSection(
         section_def="pynxtools.nomad.metainfo.base_classes.ibeam_column.IbeamColumn",
         repeats=True,
         variable=True,
@@ -109,7 +107,7 @@ class EmInstrument(Instrument):
             optionality="optional",
         ),
     )
-    em_optical_system = SubSection(
+    em_optical_systems = SubSection(
         section_def="pynxtools.nomad.metainfo.base_classes.em_optical_system.EmOpticalSystem",
         repeats=True,
         variable=True,
@@ -120,7 +118,7 @@ class EmInstrument(Instrument):
             optionality="optional",
         ),
     )
-    detector = SubSection(
+    detectors = SubSection(
         section_def="pynxtools.nomad.metainfo.base_classes.detector.Detector",
         repeats=True,
         variable=True,
@@ -176,7 +174,7 @@ class EmInstrument(Instrument):
             optionality="optional",
         ),
     )
-    pump = SubSection(
+    pumps = SubSection(
         section_def="pynxtools.nomad.metainfo.base_classes.pump.Pump",
         repeats=True,
         variable=True,
@@ -187,7 +185,7 @@ class EmInstrument(Instrument):
             optionality="optional",
         ),
     )
-    sensor = SubSection(
+    sensors = SubSection(
         section_def="pynxtools.nomad.metainfo.base_classes.sensor.Sensor",
         repeats=True,
         variable=True,
@@ -198,7 +196,7 @@ class EmInstrument(Instrument):
             optionality="optional",
         ),
     )
-    actuator = SubSection(
+    actuators = SubSection(
         section_def="pynxtools.nomad.metainfo.base_classes.actuator.Actuator",
         repeats=True,
         variable=True,

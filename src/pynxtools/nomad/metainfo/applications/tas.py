@@ -33,8 +33,6 @@ from nomad.metainfo import MEnum, Quantity, Section, SubSection
 from nomad.metainfo.data_type import Bytes, Datetime
 
 from pynxtools.nomad.annotations import (
-    NeXusAttribute,
-    NeXusChoice,
     NeXusDefinition,
     NeXusField,
     NeXusGroup,
@@ -77,17 +75,17 @@ class Tas(Entry):
         ),
     )
 
-    instrument = SubSection(
+    instruments = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.tas.TasInstrument",
         repeats=True,
         variable=True,
     )
-    sample = SubSection(
+    samples = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.tas.TasSample",
         repeats=True,
         variable=True,
     )
-    monitor = SubSection(
+    monitors = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.tas.TasMonitor",
         repeats=True,
         variable=True,
@@ -174,7 +172,7 @@ class TasInstrument(Instrument):
         ),
     )
 
-    source = SubSection(
+    sources = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.tas.TasInstrumentSource",
         repeats=True,
         variable=True,
@@ -187,7 +185,7 @@ class TasInstrument(Instrument):
         section_def="pynxtools.nomad.metainfo.applications.tas.TasInstrumentAnalyser",
         repeats=False,
     )
-    detector = SubSection(
+    detectors = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.tas.TasInstrumentDetector",
         repeats=True,
         variable=True,

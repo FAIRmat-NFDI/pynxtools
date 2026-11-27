@@ -15,7 +15,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        python-version: ["3.10", "3.11", "3.12", "3.13", "3.14"]
+        python-version: ["3.11", "3.12", "3.13", "3.14"]
 
     steps:
       - uses: actions/checkout@v4
@@ -26,15 +26,15 @@ jobs:
         uses: astral-sh/setup-uv@v5
         with:
           python-version: ${{ matrix.python-version }}
-      - name: Install dependencies
+      - name: Install testdependencies
         run: |
           uv pip install coverage coveralls
-      - name: Install nomad
+      - name: Install pynx and dependencies
+        run: uv sync --extra dev --extra nomad
+      - name: Override NOMAD with latest develop
         run: |
-          uv pip install nomad-lab[infrastructure]@git+https://gitlab.mpcdf.mpg.de/nomad-lab/nomad-FAIR.git
-      - name: Install pynx
-        run: |
-          uv pip install -e ".[dev]"
+          uv pip install --refresh-package nomad-lab \
+            "nomad-lab[infrastructure] @ git+https://gitlab.mpcdf.mpg.de/nomad-lab/nomad-FAIR.git@develop"
       - name: Test with pytest
         run: |
           pytest --cov --cov-report xml:cobertura.xml --full-trace --show-capture=no -sv -n auto --dist loadgroup tests/

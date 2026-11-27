@@ -21,34 +21,34 @@ jobs:
       matrix:
         include:
           - plugin: pynxtools-apm
-            branch: main
+            branch: develop
             tests_to_run: tests/.
           - plugin: pynxtools-ellips
-            branch: main
+            branch: develop
             tests_to_run: tests/.
           - plugin: pynxtools-em
-            branch: main
+            branch: develop
             tests_to_run: tests/.
           - plugin: pynxtools-igor
-            branch: main
+            branch: develop
             tests_to_run: tests/.
           - plugin: pynxtools-mpes
-            branch: main
+            branch: develop
             tests_to_run: tests/.
           - plugin: pynxtools-raman
-            branch: main
+            branch: develop
             tests_to_run: tests/.
           - plugin: pynxtools-spm
-            branch: main
+            branch: develop
             tests_to_run: tests/.
           - plugin: pynxtools-xas
-            branch: main
+            branch: develop
             tests_to_run: tests/.
           - plugin: pynxtools-xps
-            branch: main
+            branch: develop
             tests_to_run: tests/.
           - plugin: pynxtools-xrd
-            branch: main
+            branch: develop
             tests_to_run: tests/.
 
     steps:

@@ -1,0 +1,148 @@
+{
+  "@context": "https://raw.githubusercontent.com/codemeta/codemeta/master/codemeta.jsonld",
+  "@type": "Code",
+  "author": [
+    {
+      "@id": "http://orcid.org/0009-0008-6635-4465",
+      "@type": "Person",
+      "givenName": "Sherjeel",
+      "familyName": "Shabih"
+    },
+    {
+      "@id": "http://orcid.org/0000-0001-9361-8333",
+      "@type": "Person",
+      "givenName": "Lukas",
+      "familyName": "Pielsticker"
+    },
+    {
+      "@id": "http://orcid.org/0000-0003-1987-6224",
+      "@type": "Person",
+      "givenName": "Florian",
+      "familyName": "Dobener"
+    },
+    {
+      "@id": "http://orcid.org/0000-0001-9280-7431",
+      "@type": "Person",
+      "givenName": "Andrea",
+      "familyName": "Albino"
+    },
+    {
+      "@id": "http://orcid.org/0000-0002-4911-0230",
+      "@type": "Person",
+      "givenName": "Theodore",
+      "familyName": "Chang"
+    },
+    {
+      "@id": "http://orcid.org/0000-0003-4793-1809",
+      "@type": "Person",
+      "givenName": "Carola",
+      "familyName": "Emminger"
+    },
+    {
+      "@id": "http://orcid.org/0000-0001-8929-1040",
+      "@type": "Person",
+      "givenName": "Lev",
+      "familyName": "Ginzburg"
+    },
+    {
+      "@id": "http://orcid.org/0000-0001-6932-604X",
+      "@type": "Person",
+      "givenName": "Ron",
+      "familyName": "Hildebrandt"
+    },
+    {
+      "@id": "http://orcid.org/0000-0002-7117-5196",
+      "@type": "Person",
+      "givenName": "Markus",
+      "familyName": "K\u00fchbach"
+    },
+    {
+      "@id": "http://orcid.org/0009-0007-5926-6646",
+      "@type": "Person",
+      "givenName": "Rubel",
+      "familyName": "Mozumder"
+    },
+    {
+      "@id": "http://orcid.org/0000-0003-2692-2540",
+      "@type": "Person",
+      "givenName": "Tommaso",
+      "familyName": "Pincelli"
+    },
+    {
+      "@id": "http://orcid.org/0000-0003-3413-5029",
+      "@type": "Person",
+      "givenName": "Martin",
+      "familyName": "Aeschlimann"
+    },
+    {
+      "@id": "http://orcid.org/0000-0001-7554-182X",
+      "@type": "Person",
+      "givenName": "Marius",
+      "familyName": "Grundmann"
+    },
+    {
+      "@id": "http://orcid.org/0000-0003-4728-0786",
+      "@type": "Person",
+      "givenName": "Walid",
+      "familyName": "Hetaba"
+    },
+    {
+      "@id": "http://orcid.org/0000-0001-5576-8496",
+      "@type": "Person",
+      "givenName": "Carlos-Andres",
+      "familyName": "Palma"
+    },
+    {
+      "@id": "http://orcid.org/0000-0002-0725-6696",
+      "@type": "Person",
+      "givenName": "Laurenz",
+      "familyName": "Rettig"
+    },
+    {
+      "@id": "http://orcid.org/0000-0002-8038-2277",
+      "@type": "Person",
+      "givenName": "Markus",
+      "familyName": "Scheidgen"
+    },
+    {
+      "@id": "http://orcid.org/0000-0002-8173-2566",
+      "@type": "Person",
+      "givenName": "Jos\u00e9 Antonio",
+      "familyName": "M\u00e1rquez Prieto"
+    },
+    {
+      "@id": "http://orcid.org/0000-0003-3523-6657",
+      "@type": "Person",
+      "givenName": "Claudia",
+      "familyName": "Draxl"
+    },
+    {
+      "@id": "http://orcid.org/0000-0002-9700-4803",
+      "@type": "Person",
+      "givenName": "Sandor",
+      "familyName": "Brockhauser"
+    },
+    {
+      "@id": "http://orcid.org/0000-0002-3984-1523",
+      "@type": "Person",
+      "givenName": "Christoph",
+      "familyName": "Koch"
+    },
+    {
+      "@id": "http://orcid.org/0000-0002-6403-9022",
+      "@type": "Person",
+      "givenName": "Heiko B.",
+      "familyName": "Weber"
+    }
+  ],
+  "identifier": "https://doi.org/10.5281/zenodo.15341365",
+  "codeRepository": "https://github.com/FAIRmat-NFDI/pynxtools",
+  "datePublished": "2025-09-29",
+  "dateModified": "2025-09-29",
+  "dateCreated": "2025-09-29",
+  "description": "pynxtools is an open-source Python package designed for making your experimental data FAIR. pynxtools is a parser for combining various instrument output formats and electronic lab notebook (ELN) formats into an HDF5 file according to NeXus application definitions. Additionally, the software can be used as a plugin in the research data management system NOMAD for making experimental data searchable and publishable. NOMAD is developed by the FAIRmat consortium which is a consortium of the German National Research Data Infrastructure (NFDI).",
+  "keywords": "FAIR, HDF5, NeXus, RDM, metadata, provenance, workflows, instrumentation, experiments, research, acquisition, laboratory, Python, serialization, pipelines, conversion, validation, standards, repositories, lifecycle, interoperability, sharing, findable, accessible, reusable, compliance, stewardship, community, open-science, open-data, frameworks",
+  "license": "Apache 2.0",
+  "title": "pynxtools",
+  "version": "0.11.1"
+}

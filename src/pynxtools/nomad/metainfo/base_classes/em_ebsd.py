@@ -34,11 +34,9 @@ from nomad.metainfo.data_type import Bytes, Datetime
 
 from pynxtools.nomad.annotations import (
     NeXusAttribute,
-    NeXusChoice,
     NeXusDefinition,
     NeXusField,
     NeXusGroup,
-    NeXusLink,
 )
 from pynxtools.nomad.metainfo.base_classes.coordinate_system import CoordinateSystem
 from pynxtools.nomad.metainfo.base_classes.data import Data
@@ -814,7 +812,7 @@ class EmEbsdIndexing(Process):
             optionality="optional",
         ),
     )
-    microstructure = SubSection(
+    microstructures = SubSection(
         section_def="pynxtools.nomad.metainfo.base_classes.microstructure.Microstructure",
         repeats=True,
         variable=True,

@@ -38,11 +38,9 @@ from nomad.metainfo.data_type import Bytes, Datetime
 
 from pynxtools.nomad.annotations import (
     NeXusAttribute,
-    NeXusChoice,
     NeXusDefinition,
     NeXusField,
     NeXusGroup,
-    NeXusLink,
 )
 from pynxtools.nomad.metainfo._category import ExperimentCategory
 from pynxtools.nomad.metainfo.base_classes.atom import Atom
@@ -351,7 +349,7 @@ class ApmCompositionspaceResultsEnvironment(Collection):
         ),
     )
 
-    program = SubSection(
+    programs = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.apm_compositionspace_results.ApmCompositionspaceResultsEnvironmentProgram",
         repeats=True,
         variable=True,

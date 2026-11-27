@@ -11,6 +11,10 @@ Naming utilities for converting NXDL names to Python / NOMAD conventions.
 
 from __future__ import annotations
 
+import inflect
+
+_inflect = inflect.engine()
+
 # NOMAD BaseSection quantity names that every generated class inherits via
 # Object(basesections.BaseSection). Used by both naming functions below, for
 # two different reasons:
@@ -31,6 +35,67 @@ from __future__ import annotations
 _BASESECTION_RESERVED_NAMES: frozenset[str] = frozenset(
     {"name", "datetime", "lab_id", "description"}
 )
+
+# Words inflect gets wrong for this corpus — checked before deferring to
+# inflect, so an entry here always wins. Found by scanning every NXDL
+# class-stem name that inflect's ``plural_noun`` would otherwise touch.
+#
+# "data" is load-bearing, not just tidy: `basesections.Measurement.data`
+# (ADR-009 decision (b)) requires pynxtools's own repeating NXdata SubSection
+# to keep the exact name "data" for `Entry`/`Subentry` to satisfy that
+# override, and inflect's own plural/singular judgment for "data" is not
+# reliable enough to trust here.
+#
+# "parameters"/"transformations" are already plural NeXus class stems
+# (NXparameters, NXtransformations); inflect's ``plural_noun`` has no way to
+# recognize an already-plural word and blindly appends another "s".
+# "cs" (from NXcorrector_cs) is an abbreviation, not an English noun.
+# "xraylens" (from NXxraylens) is a single concatenated compound with no
+# underscore to split on, so inflect sees one unrecognized word instead of
+# "lens" (which it does pluralize correctly on its own).
+_SUBSECTION_PLURAL_OVERRIDES: dict[str, str] = {
+    "data": "data",
+    "parameters": "parameters",
+    "transformations": "transformations",
+    "cs": "cs",
+    "xraylens": "xraylenses",
+}
+
+
+def _pluralize_subsection_word(word: str) -> str:
+    """Pluralize a single lowercase word.
+
+    ``_SUBSECTION_PLURAL_OVERRIDES`` wins first — inflect's ``singular_noun``
+    is not a reliable way to detect an already-plural word in this corpus
+    (it false-positives on singular words like "process"/"analysis"/"axis"),
+    so already-plural NeXus class stems are listed explicitly instead.
+    Everything else goes through inflect's general English pluralization,
+    including irregular forms such as "analysis" -> "analyses".
+    """
+    if word in _SUBSECTION_PLURAL_OVERRIDES:
+        return _SUBSECTION_PLURAL_OVERRIDES[word]
+    return _inflect.plural_noun(word) or word
+
+
+def _pluralize_subsection_name(nxdl_name: str) -> str:
+    """Pluralize the last underscore-separated word of a subsection name.
+
+    Compound names pluralize only their last component: "sample_component"
+    becomes "sample_components", not "samples_component".
+
+    Examples
+    --------
+    >>> _pluralize_subsection_name("sample")
+    'samples'
+    >>> _pluralize_subsection_name("subentry")
+    'subentries'
+    >>> _pluralize_subsection_name("sample_component")
+    'sample_components'
+    >>> _pluralize_subsection_name("data")
+    'data'
+    """
+    *prefix, last = nxdl_name.split("_")
+    return "_".join([*prefix, _pluralize_subsection_word(last)])
 
 
 def nxdl_to_class_name(nx_name: str) -> str:
@@ -105,24 +170,34 @@ def field_conflicts_with_group(python_name: str) -> str:
     return f"{python_name}_quantity"
 
 
-def nxdl_to_subsection_name(nxdl_name: str) -> str:
+def nxdl_to_subsection_name(nxdl_name: str, repeats: bool = False) -> str:
     """Convert an NXDL group name to a safe Python subsection name.
 
     Variadic groups (nameType=any/partial) use the lowercase NXDL class name
     without the NX prefix as the subsection name. Groups named like a NOMAD
     BaseSection quantity get a ``_group`` suffix — see
-    _BASESECTION_RESERVED_NAMES.
+    _BASESECTION_RESERVED_NAMES. ``repeats=True`` pluralizes the name first,
+    before the reserved-name check runs — matching the convention already
+    adopted for `basesections.Measurement.samples`/`.instruments` (ADR-009
+    decision (b)). Callers should only pass ``repeats=True`` for a plain
+    class-stem name (nameType="any"): it's a real English noun, so
+    pluralizing it is well-defined. A "partial"/"specified" literal NXDL
+    name is an author-chosen compound identifier, not a noun — callers
+    should leave ``repeats`` at its default for those.
 
     Examples
     --------
     >>> nxdl_to_subsection_name("instrument")
     'instrument'
+    >>> nxdl_to_subsection_name("instrument", repeats=True)
+    'instruments'
     >>> nxdl_to_subsection_name("name")
     'name_group'
     """
-    if nxdl_name in _BASESECTION_RESERVED_NAMES:
-        return f"{nxdl_name}_group"
-    return nxdl_name
+    name = _pluralize_subsection_name(nxdl_name) if repeats else nxdl_name
+    if name in _BASESECTION_RESERVED_NAMES:
+        return f"{name}_group"
+    return name
 
 
 # ---------------------------------------------------------------------------

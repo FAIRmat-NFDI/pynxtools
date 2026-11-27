@@ -17,6 +17,7 @@ from h5py import File, is_hdf5
 
 from pynxtools.dataconverter import helpers
 from pynxtools.dataconverter.validation import validate_hdf_group_against
+from pynxtools.nexus.schema_resolver import NexusSchemaResolver
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
@@ -24,29 +25,27 @@ logger.setLevel(logging.INFO)
 
 def _get_def_map(file: str) -> dict[str, str]:
     """
-    Extract the application definitions used by each NXentry in a NeXus HDF5 file.
+    Extract the governing NeXus tree root for each NXentry in a NeXus HDF5 file.
+
+    For an NXentry without a ``definition`` field, the subtree of NXentry
+    is used (that is, all concepts defined in NXentry and its sub-groups.)
 
     Args:
         file (str): Path to the NeXus HDF5 file.
 
     Returns:
-        dict[str, str]: A mapping from NXentry names to their corresponding
-                        NXDL (NeXus Definition Language) application definitions.
+        dict[str, str]: A mapping from NXentry names to the NXDL name
+                        (application definition, or ``"NXroot"``) to validate
+                        them against.
     """
     def_map: dict[str, str] = {}
     with File(file, "r") as h5file:
-        for entry_name, dataset in h5file.items():
-            if (
-                helpers.decode_if_bytes(dataset.attrs.get("NX_class")) == "NXentry"
-                and f"/{entry_name}/definition" in h5file
-            ):
-                def_map.update(
-                    {
-                        entry_name: helpers.decode_if_bytes(
-                            h5file[f"/{entry_name}/definition"][()]
-                        )
-                    }
-                )
+        for entry_name, group in h5file.items():
+            if helpers.decode_if_bytes(group.attrs.get("NX_class")) != "NXentry":
+                continue
+            appdef = NexusSchemaResolver.appdef_for(group)
+            if appdef is not None:
+                def_map[entry_name] = appdef
 
     return def_map
 
@@ -84,14 +83,20 @@ def validate(file: str, ignore_undocumented: bool = False):
                 file,
                 ignore_undocumented,
             )
+            governed_by = (
+                "no application definition — validated structurally against the "
+                "base classes it uses"
+                if nxdl == "NXroot"
+                else f"the `{nxdl}` application definition"
+            )
 
             if is_valid:
                 logger.info(
                     f"The entry `{entry}` in file `{file}` is valid"
-                    f" according to the `{nxdl}` application definition.",
+                    f" according to {governed_by}.",
                 )
             else:
                 logger.warning(
                     f"Invalid: The entry `{entry}` in file `{file}` is NOT valid"
-                    f" according to the `{nxdl}` application definition.",
+                    f" according to {governed_by}.",
                 )

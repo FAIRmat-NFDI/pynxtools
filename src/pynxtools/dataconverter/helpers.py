@@ -11,7 +11,7 @@ import logging
 import os
 import re
 from collections.abc import Mapping, MutableMapping, Sequence
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from enum import Enum, auto
 from functools import cache
 from typing import Any, Literal, Optional, Union, cast
@@ -22,7 +22,11 @@ import numpy as np
 from ase.data import chemical_symbols
 
 from pynxtools import get_nexus_version, get_nexus_version_hash
-from pynxtools.dataconverter.chunk import COMPRESSION_FILTERS
+from pynxtools.dataconverter.chunk import (
+    COMPRESSION_FILTERS,
+    is_valid_compression_filter,
+    is_valid_compression_strength,
+)
 
 # TODO: nxdl_utils is legacy XML-walking infrastructure. These imports should be
 # removed as helpers.py XML-walking functions are replaced by NexusNode-based equivalents.
@@ -103,6 +107,7 @@ class ValidationProblem(Enum):
     UnitWithoutField = auto()
     AttributeForNonExistingConcept = auto()
     BrokenLink = auto()
+    InvalidLinkShape = auto()
     MissingTargetAttribute = auto()
     TargetAttributeMismatch = auto()
     FailedNamefitting = auto()
@@ -222,6 +227,11 @@ class Collector:
             )
         elif log_type == ValidationProblem.BrokenLink:
             logger.warning(f"Broken link at {path} to {value}.")
+        elif log_type == ValidationProblem.InvalidLinkShape:
+            logger.warning(
+                f"The shape {value} of the link at {path} does not fit the linked "
+                f"field {args[0]}."
+            )
         elif log_type == ValidationProblem.MissingTargetAttribute:
             log_text = (
                 f"A link was used for {path}, but no '@target' attribute was found."
@@ -296,7 +306,7 @@ class Collector:
         elif log_type == ValidationProblem.InvalidCompressionStrength:
             value = cast(dict, value)
             logger.warning(
-                f"Compression strength for {path} = {value} should be between 0 and 9."
+                f"Compression strength for {path} = {value} should be an integer between 0 and 9."
             )
         elif log_type == ValidationProblem.MissingNXclass:
             logger.info(
@@ -975,20 +985,19 @@ def is_valid_data_field(value: Any, nxdl_type: str, path: str) -> Any:
     if isinstance(value, dict) and "compress" in value:
         compressed_value = value["compress"]
         if "filter" in value:
-            if value["filter"] not in COMPRESSION_FILTERS:
+            if not is_valid_compression_filter(value["filter"]):
                 collector.collect_and_log(
                     path, ValidationProblem.InvalidCompressionFilter, value
                 )
         if "strength" in value:
-            if not (1 <= value["strength"] <= 9):
-                if value["strength"] == 0:
-                    collector.collect_and_log(
-                        path, ValidationProblem.CompressionStrengthZero, value
-                    )
-                else:
-                    collector.collect_and_log(
-                        path, ValidationProblem.InvalidCompressionStrength, value
-                    )
+            if not is_valid_compression_strength(value["strength"]):
+                collector.collect_and_log(
+                    path, ValidationProblem.InvalidCompressionStrength, value
+                )
+            elif value["strength"] == 0:
+                collector.collect_and_log(
+                    path, ValidationProblem.CompressionStrengthZero, value
+                )
 
         # Apply standard validation to compressed value
         value["compress"] = validate_data_value(compressed_value, nxdl_type, path)
@@ -1049,6 +1058,23 @@ def get_custom_attr_path(path: str) -> str:
     return f"{path}/@custom"
 
 
+def _matches_enum(value: Any, nxdl_enum: list) -> bool:
+    """Check whether a value matches an NXDL enumeration.
+
+    An array matches a list-valued item as a whole. If all items are scalar, every
+    element of the array must match an item. An empty array never matches.
+    """
+    if not isinstance(value, np.ndarray) or value.ndim == 0:
+        return value in nxdl_enum
+
+    if any(isinstance(item, list) for item in nxdl_enum):
+        return value.tolist() in nxdl_enum
+
+    return value.size > 0 and all(
+        element in nxdl_enum for element in value.ravel().tolist()
+    )
+
+
 def is_valid_enum(
     value: Any,
     nxdl_enum: list,
@@ -1075,16 +1101,7 @@ def is_valid_enum(
         value = value["compress"]
 
     if nxdl_enum is not None:
-        if (
-            isinstance(value, np.ndarray)
-            and isinstance(nxdl_enum, list)
-            and isinstance(nxdl_enum[0], list)
-        ):
-            enum_value = list(value)
-        else:
-            enum_value = value
-
-        if enum_value not in nxdl_enum:
+        if not _matches_enum(value, nxdl_enum):
             if nxdl_enum_open:
                 custom_path = get_custom_attr_path(path)
 
@@ -1157,16 +1174,7 @@ def is_valid_enum_hdf(
 
     if nxdl_enum is not None:
         value = decode_if_bytes(hdf_node[()])
-        if (
-            isinstance(value, np.ndarray)
-            and isinstance(nxdl_enum, list)
-            and isinstance(nxdl_enum[0], list)
-        ):
-            enum_value = list(value)
-        else:
-            enum_value = value
-
-        if enum_value not in nxdl_enum:
+        if not _matches_enum(value, nxdl_enum):
             if nxdl_enum_open:
                 custom_path = get_custom_attr_path(path)
 
@@ -1526,7 +1534,7 @@ def add_default_root_attributes(data, filename, append: bool = False):
 
     update_and_warn("/@NX_class", "NXroot")
     update_and_warn("/@file_name", filename)
-    update_and_warn("/@file_time", str(datetime.now(timezone.utc).astimezone()))
+    update_and_warn("/@file_time", str(datetime.now(UTC).astimezone()))
     update_and_warn("/@file_update_time", data["/@file_time"])
     update_and_warn(
         "/@NeXus_repository",

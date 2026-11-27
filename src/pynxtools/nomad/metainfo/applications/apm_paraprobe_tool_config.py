@@ -38,11 +38,9 @@ from nomad.metainfo.data_type import Bytes, Datetime
 
 from pynxtools.nomad.annotations import (
     NeXusAttribute,
-    NeXusChoice,
     NeXusDefinition,
     NeXusField,
     NeXusGroup,
-    NeXusLink,
 )
 from pynxtools.nomad.metainfo._category import ExperimentCategory
 from pynxtools.nomad.metainfo.base_classes.apm_paraprobe_tool_common import (
@@ -107,7 +105,7 @@ class ApmParaprobeToolConfig(Entry):
         ),
     )
 
-    taskconfig = SubSection(
+    taskconfigs = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.apm_paraprobe_tool_config.ApmParaprobeToolConfigTaskconfig",
         repeats=True,
         variable=True,

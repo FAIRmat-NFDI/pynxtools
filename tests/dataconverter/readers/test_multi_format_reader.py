@@ -15,7 +15,12 @@ from typing import Any
 import pytest
 import yaml
 
-from pynxtools.dataconverter.readers.multi.reader import MultiFormatReader
+from pynxtools.dataconverter.readers.multi.reader import (
+    MultiFormatReader,
+    ParseJsonCallbacks,
+    fill_from_config,
+    resolve_special_keys,
+)
 from pynxtools.dataconverter.template import Template
 
 # ---------------------------------------------------------------------------
@@ -342,3 +347,155 @@ def test_extensions_are_instance_isolated():
     reader_a.extensions[".extra"] = lambda p: {}
 
     assert ".extra" not in reader_b.extensions
+
+
+@pytest.mark.parametrize(
+    "literal, expected",
+    [
+        ("November sample", "November sample"),
+        ("Offset corrected", "Offset corrected"),
+        ("Notes", "Notes"),
+        ("Yesterday", "Yesterday"),
+        ("eV", "eV"),
+        ("True", True),
+        ("false", False),
+        ("TRUE", True),
+        ("Yes", True),
+        ("no", False),
+        ("On", True),
+        ("off", False),
+        ("  true ", True),
+        ("yes!", "yes!"),
+        ("No.", "No."),
+        ("N/A", "N/A"),
+        ("ON/OFF", "ON/OFF"),
+        ("tru e", "tru e"),
+        ("nö", "nö"),
+        ("ＴＲＵＥ", "ＴＲＵＥ"),  # full-width letters, cspell:disable-line
+        ("🦕", "🦕"),
+    ],
+)
+def test_literal_fallback_is_kept(literal, expected):
+    """A literal fallback in a config list is written as is, or as a bool if it is one."""
+    callbacks = ParseJsonCallbacks(eln_callback=lambda key, path: None)
+    new_entry_dict: dict[str, Any] = {}
+
+    resolve_special_keys(
+        new_entry_dict,
+        "/ENTRY[entry]/value",
+        f'["@eln", "{literal}"]',
+        [],
+        callbacks,
+    )
+
+    assert new_entry_dict == {"/ENTRY[entry]/value": expected}
+
+
+@pytest.mark.parametrize(
+    "file_names, processing_order, expected",
+    [
+        pytest.param(
+            ["data.DAT", "eln.YAML"],
+            [".yaml", ".dat"],
+            ["eln.YAML", "data.DAT"],
+            id="upper-case-files",
+        ),
+        pytest.param(
+            ["data.dat", "eln.yaml"],
+            [".YAML", ".DAT"],
+            ["eln.yaml", "data.dat"],
+            id="upper-case-order",
+        ),
+        pytest.param(
+            ["eln.yaml", "data.dat"],
+            None,
+            ["data.dat", "eln.yaml"],
+            id="no-order-sorted-by-extension",
+        ),
+        pytest.param(
+            ["eln.yaml", "data.dat"],
+            [],
+            ["data.dat", "eln.yaml"],
+            id="empty-order-sorted-by-extension",
+        ),
+        pytest.param(
+            ["notes.txt", "data.dat", "eln.yaml"],
+            [".yaml", ".dat"],
+            ["eln.yaml", "data.dat", "notes.txt"],
+            id="unlisted-files-last",
+        ),
+        pytest.param(
+            ["b.DAT", "a.dat", "eln.yaml"],
+            [".yaml", ".dat"],
+            ["eln.yaml", "b.DAT", "a.dat"],
+            id="same-extension-different-case",
+        ),
+    ],
+)
+def test_processing_order_ignores_extension_case(
+    tmp_path, file_names, processing_order, expected
+):
+    """processing_order is followed no matter if the extensions are upper or lower case."""
+    tracker = _OrderTracker()
+    reader = _TrackedReader(tracker)
+    reader.extensions = {
+        ".yaml": reader._handle_txt,
+        ".dat": reader._handle_txt,
+        ".txt": reader._handle_txt,
+    }
+    reader.processing_order = processing_order
+
+    file_paths = []
+    for name in file_names:
+        (tmp_path / name).write_text("")
+        file_paths.append(str(tmp_path / name))
+
+    reader.read(template=Template(), file_paths=tuple(file_paths))
+
+    file_events = [e for e in tracker.events if e.startswith("file:")]
+    assert file_events == [f"file:{name}" for name in expected]
+
+
+def test_upper_case_extension_keys_are_dispatched(tmp_path):
+    """A handler registered as ".DAT" is used for data.dat and data.DAT."""
+    tracker = _OrderTracker()
+    reader = _TrackedReader(tracker)
+    reader.extensions = {".DAT": reader._handle_txt}
+
+    file_paths = []
+    for name in ["data.dat", "other.DAT"]:
+        (tmp_path / name).write_text("")
+        file_paths.append(str(tmp_path / name))
+
+    reader.read(template=Template(), file_paths=tuple(file_paths))
+
+    file_events = [e for e in tracker.events if e.startswith("file:")]
+    assert file_events == ["file:data.dat", "file:other.DAT"]
+
+
+def test_removing_optional_group_keeps_groups_with_same_prefix():
+    """If a required child is missing, only that group is removed,
+    not other groups whose names start the same way."""
+    config = {
+        "/ENTRY/sample/name": "!@eln:sample/name",
+        "/ENTRY/sample/temperature": "@eln:sample/temperature",
+        "/ENTRY/sample_stage/name": "@eln:stage/name",
+        "/ENTRY/sample_stage/position": 3,
+    }
+    eln_data = {"sample": {"temperature": 300}, "stage": {"name": "goniometer"}}
+
+    def eln_callback(key, path):
+        value = eln_data
+        for part in path.split("/"):
+            if not isinstance(value, dict) or part not in value:
+                return None
+            value = value[part]
+        return value
+
+    result = fill_from_config(
+        config, ["entry"], ParseJsonCallbacks(eln_callback=eln_callback)
+    )
+
+    assert "/ENTRY[entry]/sample/temperature" not in result
+    assert result["/ENTRY[entry]/sample_stage/name"] == "goniometer"
+    assert result["/ENTRY[entry]/sample_stage/position"] == 3

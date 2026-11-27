@@ -39,9 +39,8 @@ description = "Extend NeXus for experiments and characterization in Materials Sc
 readme = "README.md"
 license = "Apache-2.0 AND LGPL-3.0-or-later AND MIT"
 license-files = ["LICENSES/*.txt"]
-requires-python = ">=3.10"
+requires-python = ">=3.11"
 classifiers = [
-    "Programming Language :: Python :: 3.10",
     "Programming Language :: Python :: 3.11",
     "Programming Language :: Python :: 3.12",
     "Programming Language :: Python :: 3.13",
@@ -68,6 +67,7 @@ dependencies = [
     "cachetools",
     "structlog",
     "Jinja2",
+    "pillow>=9", # TIFF tags in FileProbe; also comes in through ase -> matplotlib
 ]
 
 [project.urls]
@@ -75,7 +75,7 @@ dependencies = [
 "Bug Tracker" = "https://github.com/FAIRmat-NFDI/pynxtools/issues"
 
 [project.optional-dependencies]
-nomad = ["nomad-lab >= 1.4.0", "ruff>=0.15.0"]
+nomad = ["nomad-lab >= 1.4.0", "ruff>=0.15.0", "inflect"]
 docs = [
     "mkdocs",
     "markdown-exec[ansi]",
@@ -88,7 +88,9 @@ docs = [
 dev = [
     "mypy",
     "ruff>=0.15.0",
-    "pytest",
+    # pytest 9.2 breaks xdist_group with --dist loadgroup (pytest-xdist 3.8.0),
+    # so tests that share files run in parallel and fail randomly.
+    "pytest<9.2",
     "pytest-timeout",
     "pytest-cov",
     "pytest-xdist",
@@ -146,7 +148,7 @@ nexus_app_v2 = "pynxtools.nomad.apps.app_v2:nexus_app_v2"
 
 [project.scripts]
 pynx           = "pynxtools.cli:pynx"
-read_nexus     = "pynxtools.nexus.cli:read"
+read_nexus     = "pynxtools.annotator.cli:read"
 dataconverter  = "pynxtools.dataconverter.cli:convert"
 generate_eln   = "pynxtools.eln_mapper.cli:generate_eln"
 validate_nexus = "pynxtools.dataconverter.cli:validate"
@@ -227,4 +229,7 @@ exclude = ["src/pynxtools/definitions/*"]
 [tool.uv]
 extra-index-url = [
 "https://gitlab.mpcdf.mpg.de/api/v4/projects/2187/packages/pypi/simple",
+]
+constraint-dependencies = [
+    "fonttools<4.69.0",  # 4.69.0 has only cp311 wheels, see #902
 ]

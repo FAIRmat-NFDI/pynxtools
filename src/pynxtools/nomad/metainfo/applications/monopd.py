@@ -33,8 +33,6 @@ from nomad.metainfo import MEnum, Quantity, Section, SubSection
 from nomad.metainfo.data_type import Bytes, Datetime
 
 from pynxtools.nomad.annotations import (
-    NeXusAttribute,
-    NeXusChoice,
     NeXusDefinition,
     NeXusField,
     NeXusGroup,
@@ -82,17 +80,17 @@ class Monopd(Entry):
         ),
     )
 
-    instrument = SubSection(
+    instruments = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.monopd.MonopdInstrument",
         repeats=True,
         variable=True,
     )
-    sample = SubSection(
+    samples = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.monopd.MonopdSample",
         repeats=True,
         variable=True,
     )
-    monitor = SubSection(
+    monitors = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.monopd.MonopdMonitor",
         repeats=True,
         variable=True,
@@ -179,17 +177,17 @@ class MonopdInstrument(Instrument):
         ),
     )
 
-    source = SubSection(
+    sources = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.monopd.MonopdInstrumentSource",
         repeats=True,
         variable=True,
     )
-    crystal = SubSection(
+    crystals = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.monopd.MonopdInstrumentCrystal",
         repeats=True,
         variable=True,
     )
-    detector = SubSection(
+    detectors = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.monopd.MonopdInstrumentDetector",
         repeats=True,
         variable=True,

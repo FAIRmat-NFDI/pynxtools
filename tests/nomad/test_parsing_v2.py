@@ -114,15 +114,15 @@ def test_arpes_example(arpes_archive):
     assert getattr(arpes_entry, "start_time", None) is not None
 
     # Instrument
-    assert hasattr(arpes_entry, "instrument")
-    assert len(arpes_entry.instrument) >= 1
-    instrument = arpes_entry.instrument[0]
+    assert hasattr(arpes_entry, "instruments")
+    assert len(arpes_entry.instruments) >= 1
+    instrument = arpes_entry.instruments[0]
     assert instrument.nx_name == "instrument"
 
     # Source
-    assert hasattr(instrument, "source")
-    assert len(instrument.source) >= 1
-    source = instrument.source[0]
+    assert hasattr(instrument, "sources")
+    assert len(instrument.sources) >= 1
+    source = instrument.sources[0]
     assert source.nx_name == "source"
     # good ENUM - x-ray
     assert source.probe == "x-ray"
@@ -221,7 +221,7 @@ def test_parse_valid_files(file_path, reason):
         file_part, _, path_part = lauetof_obj.name_group.time_of_flight.partition("#")
         assert path_part == "/entry/name/time_of_flight"
         assert file_part.endswith("NXlauetof.hdf5")
-        assert lauetof_obj.sample.name == "SAMPLE-CHAR-DATA"
+        assert lauetof_obj.samples.name == "SAMPLE-CHAR-DATA"
 
 
 @pytest.mark.parametrize(
@@ -231,7 +231,7 @@ def test_parse_valid_files(file_path, reason):
         pytest.param(
             {"/ENTRY[entry]/SAMPLE[sample]/chemical_formula": "BrBaHCoCIH"},
             {
-                "data.sample[0].chemical_formula": "BrBaHCoCIH",
+                "data.samples[0].chemical_formula": "BrBaHCoCIH",
                 "results.material.chemical_formula_anonymous": "A2BCDEF",
                 "results.material.chemical_formula_descriptive": "BrBaHCoCIH",
                 "results.material.chemical_formula_hill": "CH2BaBrCoI",
@@ -257,7 +257,7 @@ def test_parse_valid_files(file_path, reason):
                 "/ENTRY[entry]/SAMPLE[sample]/SAMPLE_COMPONENT[component]/chemical_formula": "H2O",
             },
             {
-                "data.sample[0].chemical_formula": "NaCl",
+                "data.samples[0].chemical_formula": "NaCl",
                 "results.material.elements": ["Cl", "H", "Na", "O"],
             },
             id="multiple-formulas-merge-elements",
@@ -339,7 +339,7 @@ def test_nexus_string_decode_to_utf8(tmp_path):
     extend_nexus_file(data_to_add, modified_file)
     NexusParserV2().parse(str(modified_file), archive, get_logger(__name__))
     obj = archive.data
-    assert obj.user[0].name == "['Any name', 'name González (HU)', 'straße']"
+    assert obj.users[0].name == "['Any name', 'name González (HU)', 'straße']"
 
 
 # ---------------------------------------------------------------------------
@@ -482,12 +482,12 @@ def test_nexus_v2_entry_fallback_no_definition(tmp_path):
 
     assert type(archive.data) is Entry
 
-    instruments = archive.data.instrument
+    instruments = archive.data.instruments
     assert len(instruments) == 1
     assert isinstance(instruments[0], Instrument)
 
-    assert len(instruments[0].source) == 1
-    assert isinstance(instruments[0].source[0], Source)
+    assert len(instruments[0].sources) == 1
+    assert isinstance(instruments[0].sources[0], Source)
 
-    assert len(instruments[0].aperture) == 1
-    assert isinstance(instruments[0].aperture[0], Aperture)
+    assert len(instruments[0].apertures) == 1
+    assert isinstance(instruments[0].apertures[0], Aperture)

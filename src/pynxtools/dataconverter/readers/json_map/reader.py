@@ -25,7 +25,6 @@ will emit a ``DeprecationWarning`` and will be removed in a future release.
 
 import json
 import logging
-import pickle
 import warnings
 from typing import Any
 
@@ -183,7 +182,6 @@ class JsonMapReader(MultiFormatReader):
         self.partials: list = []
         self.extensions = {
             ".json": self._handle_json_file,
-            ".pickle": self._handle_pickle_file,
             ".yaml": self._handle_yaml_file,
             ".hdf5": self._handle_hdf5_file,
             ".h5": self._handle_hdf5_file,
@@ -254,11 +252,6 @@ class JsonMapReader(MultiFormatReader):
             self.config_dict = mapping_to_config(content)
         else:
             self.data = content
-        return {}
-
-    def _handle_pickle_file(self, file_path: str) -> dict[str, Any]:
-        with open(file_path, "rb") as f:  # type: ignore[assignment]
-            self.data = pickle.load(f)  # type: ignore[arg-type]
         return {}
 
     def _handle_yaml_file(self, file_path: str) -> dict[str, Any]:

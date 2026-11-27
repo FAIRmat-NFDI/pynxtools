@@ -28,16 +28,14 @@ from nomad.datamodel.metainfo.annotations import (
     ELNComponentEnum,
     SchemaAnnotation,
 )
-from nomad.metainfo import MEnum, Quantity, Section, SubSection
+from nomad.metainfo import Quantity, Section, SubSection
 from nomad.metainfo.data_type import Bytes, Datetime
 
 from pynxtools.nomad.annotations import (
     NeXusAttribute,
-    NeXusChoice,
     NeXusDefinition,
     NeXusField,
     NeXusGroup,
-    NeXusLink,
 )
 from pynxtools.nomad.metainfo.base_classes.object import Object
 
@@ -70,7 +68,7 @@ class Instrument(Object):
         ),
     )
 
-    actuator = SubSection(
+    actuators = SubSection(
         section_def="pynxtools.nomad.metainfo.base_classes.actuator.Actuator",
         repeats=True,
         variable=True,
@@ -81,7 +79,7 @@ class Instrument(Object):
             optionality="optional",
         ),
     )
-    aperture = SubSection(
+    apertures = SubSection(
         section_def="pynxtools.nomad.metainfo.base_classes.aperture.Aperture",
         repeats=True,
         variable=True,
@@ -92,7 +90,7 @@ class Instrument(Object):
             optionality="optional",
         ),
     )
-    attenuator = SubSection(
+    attenuators = SubSection(
         section_def="pynxtools.nomad.metainfo.base_classes.attenuator.Attenuator",
         repeats=True,
         variable=True,
@@ -103,7 +101,7 @@ class Instrument(Object):
             optionality="optional",
         ),
     )
-    beam = SubSection(
+    beams = SubSection(
         section_def="pynxtools.nomad.metainfo.base_classes.beam.Beam",
         repeats=True,
         variable=True,
@@ -114,7 +112,7 @@ class Instrument(Object):
             optionality="optional",
         ),
     )
-    beam_stop = SubSection(
+    beam_stops = SubSection(
         section_def="pynxtools.nomad.metainfo.base_classes.beam_stop.BeamStop",
         repeats=True,
         variable=True,
@@ -125,7 +123,7 @@ class Instrument(Object):
             optionality="optional",
         ),
     )
-    bending_magnet = SubSection(
+    bending_magnets = SubSection(
         section_def="pynxtools.nomad.metainfo.base_classes.bending_magnet.BendingMagnet",
         repeats=True,
         variable=True,
@@ -136,7 +134,7 @@ class Instrument(Object):
             optionality="optional",
         ),
     )
-    collimator = SubSection(
+    collimators = SubSection(
         section_def="pynxtools.nomad.metainfo.base_classes.collimator.Collimator",
         repeats=True,
         variable=True,
@@ -147,7 +145,7 @@ class Instrument(Object):
             optionality="optional",
         ),
     )
-    collection = SubSection(
+    collections = SubSection(
         section_def="pynxtools.nomad.metainfo.base_classes.collection.Collection",
         repeats=True,
         variable=True,
@@ -158,7 +156,7 @@ class Instrument(Object):
             optionality="optional",
         ),
     )
-    capillary = SubSection(
+    capillaries = SubSection(
         section_def="pynxtools.nomad.metainfo.base_classes.capillary.Capillary",
         repeats=True,
         variable=True,
@@ -169,7 +167,7 @@ class Instrument(Object):
             optionality="optional",
         ),
     )
-    crystal = SubSection(
+    crystals = SubSection(
         section_def="pynxtools.nomad.metainfo.base_classes.crystal.Crystal",
         repeats=True,
         variable=True,
@@ -180,7 +178,7 @@ class Instrument(Object):
             optionality="optional",
         ),
     )
-    detector = SubSection(
+    detectors = SubSection(
         section_def="pynxtools.nomad.metainfo.base_classes.detector.Detector",
         repeats=True,
         variable=True,
@@ -191,7 +189,7 @@ class Instrument(Object):
             optionality="optional",
         ),
     )
-    detector_group = SubSection(
+    detector_groups = SubSection(
         section_def="pynxtools.nomad.metainfo.base_classes.detector_group.DetectorGroup",
         repeats=True,
         variable=True,
@@ -202,7 +200,7 @@ class Instrument(Object):
             optionality="optional",
         ),
     )
-    disk_chopper = SubSection(
+    disk_choppers = SubSection(
         section_def="pynxtools.nomad.metainfo.base_classes.disk_chopper.DiskChopper",
         repeats=True,
         variable=True,
@@ -224,7 +222,7 @@ class Instrument(Object):
             optionality="optional",
         ),
     )
-    fabrication = SubSection(
+    fabrications = SubSection(
         section_def="pynxtools.nomad.metainfo.base_classes.fabrication.Fabrication",
         repeats=True,
         variable=True,
@@ -235,7 +233,7 @@ class Instrument(Object):
             optionality="optional",
         ),
     )
-    fermi_chopper = SubSection(
+    fermi_choppers = SubSection(
         section_def="pynxtools.nomad.metainfo.base_classes.fermi_chopper.FermiChopper",
         repeats=True,
         variable=True,
@@ -246,7 +244,7 @@ class Instrument(Object):
             optionality="optional",
         ),
     )
-    filter = SubSection(
+    filters = SubSection(
         section_def="pynxtools.nomad.metainfo.base_classes.filter.Filter",
         repeats=True,
         variable=True,
@@ -257,7 +255,7 @@ class Instrument(Object):
             optionality="optional",
         ),
     )
-    flipper = SubSection(
+    flippers = SubSection(
         section_def="pynxtools.nomad.metainfo.base_classes.flipper.Flipper",
         repeats=True,
         variable=True,
@@ -268,7 +266,7 @@ class Instrument(Object):
             optionality="optional",
         ),
     )
-    guide = SubSection(
+    guides = SubSection(
         section_def="pynxtools.nomad.metainfo.base_classes.guide.Guide",
         repeats=True,
         variable=True,
@@ -279,7 +277,7 @@ class Instrument(Object):
             optionality="optional",
         ),
     )
-    history = SubSection(
+    histories = SubSection(
         section_def="pynxtools.nomad.metainfo.base_classes.history.History",
         repeats=True,
         variable=True,
@@ -290,7 +288,7 @@ class Instrument(Object):
             optionality="optional",
         ),
     )
-    insertion_device = SubSection(
+    insertion_devices = SubSection(
         section_def="pynxtools.nomad.metainfo.base_classes.insertion_device.InsertionDevice",
         repeats=True,
         variable=True,
@@ -301,7 +299,7 @@ class Instrument(Object):
             optionality="optional",
         ),
     )
-    mirror = SubSection(
+    mirrors = SubSection(
         section_def="pynxtools.nomad.metainfo.base_classes.mirror.Mirror",
         repeats=True,
         variable=True,
@@ -312,7 +310,7 @@ class Instrument(Object):
             optionality="optional",
         ),
     )
-    moderator = SubSection(
+    moderators = SubSection(
         section_def="pynxtools.nomad.metainfo.base_classes.moderator.Moderator",
         repeats=True,
         variable=True,
@@ -323,7 +321,7 @@ class Instrument(Object):
             optionality="optional",
         ),
     )
-    monochromator = SubSection(
+    monochromators = SubSection(
         section_def="pynxtools.nomad.metainfo.base_classes.monochromator.Monochromator",
         repeats=True,
         variable=True,
@@ -334,7 +332,7 @@ class Instrument(Object):
             optionality="optional",
         ),
     )
-    polarizer = SubSection(
+    polarizers = SubSection(
         section_def="pynxtools.nomad.metainfo.base_classes.polarizer.Polarizer",
         repeats=True,
         variable=True,
@@ -345,7 +343,7 @@ class Instrument(Object):
             optionality="optional",
         ),
     )
-    positioner = SubSection(
+    positioners = SubSection(
         section_def="pynxtools.nomad.metainfo.base_classes.positioner.Positioner",
         repeats=True,
         variable=True,
@@ -356,7 +354,7 @@ class Instrument(Object):
             optionality="optional",
         ),
     )
-    sensor = SubSection(
+    sensors = SubSection(
         section_def="pynxtools.nomad.metainfo.base_classes.sensor.Sensor",
         repeats=True,
         variable=True,
@@ -367,7 +365,7 @@ class Instrument(Object):
             optionality="optional",
         ),
     )
-    source = SubSection(
+    sources = SubSection(
         section_def="pynxtools.nomad.metainfo.base_classes.source.Source",
         repeats=True,
         variable=True,
@@ -388,7 +386,7 @@ class Instrument(Object):
             optionality="optional",
         ),
     )
-    velocity_selector = SubSection(
+    velocity_selectors = SubSection(
         section_def="pynxtools.nomad.metainfo.base_classes.velocity_selector.VelocitySelector",
         repeats=True,
         variable=True,
@@ -399,7 +397,7 @@ class Instrument(Object):
             optionality="optional",
         ),
     )
-    xraylens = SubSection(
+    xraylenses = SubSection(
         section_def="pynxtools.nomad.metainfo.base_classes.xraylens.Xraylens",
         repeats=True,
         variable=True,

@@ -36,14 +36,7 @@ from nomad.datamodel.metainfo.annotations import (
 from nomad.metainfo import MEnum, Quantity, Section, SubSection
 from nomad.metainfo.data_type import Bytes, Datetime
 
-from pynxtools.nomad.annotations import (
-    NeXusAttribute,
-    NeXusChoice,
-    NeXusDefinition,
-    NeXusField,
-    NeXusGroup,
-    NeXusLink,
-)
+from pynxtools.nomad.annotations import NeXusDefinition, NeXusField, NeXusGroup
 from pynxtools.nomad.metainfo._category import ExperimentCategory
 from pynxtools.nomad.metainfo.applications.xas import Xas
 from pynxtools.nomad.metainfo.base_classes.crystal import Crystal
@@ -91,7 +84,7 @@ class XasTrans(Xas):
         ),
     )
 
-    instrument = SubSection(
+    instruments = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.xas_trans.XasTransInstrument",
         repeats=True,
         variable=True,
@@ -100,7 +93,7 @@ class XasTrans(Xas):
         section_def="pynxtools.nomad.metainfo.applications.xas_trans.XasTransReference",
         repeats=False,
     )
-    collection = SubSection(
+    collections = SubSection(
         section_def="pynxtools.nomad.metainfo.base_classes.collection.Collection",
         repeats=True,
         variable=True,
@@ -115,7 +108,7 @@ class XasTrans(Xas):
             optionality="optional",
         ),
     )
-    process = SubSection(
+    processes = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.xas_trans.XasTransProcess",
         repeats=True,
         variable=True,
@@ -192,7 +185,7 @@ class XasTransInstrument(Instrument):
         ),
     )
 
-    source = SubSection(
+    sources = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.xas_trans.XasTransInstrumentSource",
         repeats=True,
         variable=True,
@@ -614,7 +607,7 @@ class XasTransProcess(Process):
             optionality="optional",
         ),
     )
-    note = SubSection(
+    notes = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.xas_trans.XasTransProcessNote",
         repeats=False,
     )

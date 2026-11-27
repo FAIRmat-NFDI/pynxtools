@@ -7,9 +7,6 @@ that maps paths in your data to NeXus paths. The following input formats are sup
 
 * HDF5 (any extension: `.h5`, `.hdf5`, `.nxs`, etc.)
 * JSON
-* Python Dict Objects pickled with [pickle](https://docs.python.org/3/library/pickle.html),
-  which may contain [xarray.DataArray](https://docs.xarray.dev/en/stable/generated/xarray.DataArray.html)
-  objects as well as regular Python and NumPy types.
 
 It accepts any NXDL file as long as your configuration file supplies all required fields.
 

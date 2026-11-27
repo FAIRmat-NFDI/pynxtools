@@ -34,11 +34,9 @@ from nomad.metainfo.data_type import Bytes, Datetime
 
 from pynxtools.nomad.annotations import (
     NeXusAttribute,
-    NeXusChoice,
     NeXusDefinition,
     NeXusField,
     NeXusGroup,
-    NeXusLink,
 )
 from pynxtools.nomad.metainfo._category import ExperimentCategory
 from pynxtools.nomad.metainfo.applications.mpes import (
@@ -87,7 +85,7 @@ class Xps(Mpes):
         section_def="pynxtools.nomad.metainfo.applications.xps.XpsCoordinateSystem",
         repeats=False,
     )
-    instrument = SubSection(
+    instruments = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.xps.XpsInstrument",
         repeats=True,
         variable=True,
@@ -112,12 +110,12 @@ class Xps(Mpes):
             optionality="recommended",
         ),
     )
-    fit = SubSection(
+    fits = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.xps.XpsFit",
         repeats=True,
         variable=True,
     )
-    sample = SubSection(
+    samples = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.xps.XpsSample",
         repeats=True,
         variable=True,
@@ -408,7 +406,7 @@ class XpsInstrument(MpesInstrument):
         section_def="pynxtools.nomad.metainfo.applications.xps.XpsInstrumentBeamProbe",
         repeats=False,
     )
-    electronanalyzer = SubSection(
+    electronanalyzers = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.xps.XpsInstrumentElectronanalyzer",
         repeats=True,
         variable=True,
@@ -740,12 +738,12 @@ class XpsInstrumentElectronanalyzer(MpesInstrumentElectronanalyzer):
             optionality="recommended",
         ),
     )
-    collectioncolumn = SubSection(
+    collectioncolumns = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.xps.XpsInstrumentElectronanalyzerCollectioncolumn",
         repeats=True,
         variable=True,
     )
-    energydispersion = SubSection(
+    energydispersions = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.xps.XpsInstrumentElectronanalyzerEnergydispersion",
         repeats=True,
         variable=True,

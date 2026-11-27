@@ -286,3 +286,39 @@ class TestAttrNodeFor:
         resolver = NexusSchemaResolver()
         node = resolver.attr_node_for("ENTRY/ghost", "version", nxtest_h5["ENTRY"])
         assert node is None
+
+
+# ---------------------------------------------------------------------------
+# Type narrowing via a base class's own `extends` chain
+# ---------------------------------------------------------------------------
+
+
+class TestNarrowedTypeInBaseClassTree:
+    """Resolve a field narrowed by an inheriting base class from a base-class root.
+
+    NXcg_polygon extends NXcg_primitive and narrows ``shape`` from
+    ``NX_NUMBER`` to ``NX_INT``. Validation without an appdef resolves each
+    group by its own base class, so a base-class tree must give the narrowed
+    type. The group is resolved before the field, in the same order as the
+    validator visits them.
+    """
+
+    def test_ancestor_declares_broader_type(self):
+        resolver = NexusSchemaResolver()
+        tree = resolver.tree_for("NXcg_primitive")
+        node = resolver.node_for_path(tree, "shape", node_type="field")
+        assert node is not None
+        assert node.dtype == "NX_NUMBER"
+
+    def test_child_group_resolves_narrowed_type(self):
+        resolver = NexusSchemaResolver()
+        tree = resolver.tree_for("NXmicrostructure")
+        group = resolver.node_for_path(
+            tree, "polygon", node_type="group", nx_class="NXcg_polygon"
+        )
+        assert group is not None
+        assert group.nx_class == "NXcg_polygon"
+
+        node = resolver.node_for_path(tree, "polygon/shape", node_type="field")
+        assert node is not None
+        assert node.dtype == "NX_INT"

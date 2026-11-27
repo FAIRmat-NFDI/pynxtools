@@ -34,11 +34,9 @@ from nomad.metainfo.data_type import Bytes, Datetime
 
 from pynxtools.nomad.annotations import (
     NeXusAttribute,
-    NeXusChoice,
     NeXusDefinition,
     NeXusField,
     NeXusGroup,
-    NeXusLink,
 )
 from pynxtools.nomad.metainfo._category import ExperimentCategory
 from pynxtools.nomad.metainfo.base_classes.aperture import Aperture
@@ -144,27 +142,27 @@ class Cansas(Entry):
         repeats=True,
         variable=True,
     )
-    instrument = SubSection(
+    instruments = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.cansas.CansasInstrument",
         repeats=True,
         variable=True,
     )
-    sample = SubSection(
+    samples = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.cansas.CansasSample",
         repeats=True,
         variable=True,
     )
-    process = SubSection(
+    processes = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.cansas.CansasProcess",
         repeats=True,
         variable=True,
     )
-    collection = SubSection(
+    collections = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.cansas.CansasCollection",
         repeats=True,
         variable=True,
     )
-    transmission_spectrum = SubSection(
+    transmission_spectrums = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.cansas.CansasTransmissionSpectrum",
         repeats=True,
         variable=True,
@@ -1235,22 +1233,22 @@ class CansasInstrument(Instrument):
         ),
     )
 
-    aperture = SubSection(
+    apertures = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.cansas.CansasInstrumentAperture",
         repeats=True,
         variable=True,
     )
-    collimator = SubSection(
+    collimators = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.cansas.CansasInstrumentCollimator",
         repeats=True,
         variable=True,
     )
-    detector = SubSection(
+    detectors = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.cansas.CansasInstrumentDetector",
         repeats=True,
         variable=True,
     )
-    source = SubSection(
+    sources = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.cansas.CansasInstrumentSource",
         repeats=True,
         variable=True,
@@ -2301,7 +2299,7 @@ class CansasProcess(Process):
         ),
     )
 
-    note = SubSection(
+    notes = SubSection(
         section_def="pynxtools.nomad.metainfo.base_classes.note.Note",
         repeats=True,
         variable=True,
@@ -2319,7 +2317,7 @@ class CansasProcess(Process):
             min_occurs=0,
         ),
     )
-    collection = SubSection(
+    collections = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.cansas.CansasProcessCollection",
         repeats=True,
         variable=True,

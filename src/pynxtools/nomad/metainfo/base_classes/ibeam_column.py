@@ -31,14 +31,7 @@ from nomad.datamodel.metainfo.annotations import (
 from nomad.metainfo import MEnum, Quantity, Section, SubSection
 from nomad.metainfo.data_type import Bytes, Datetime
 
-from pynxtools.nomad.annotations import (
-    NeXusAttribute,
-    NeXusChoice,
-    NeXusDefinition,
-    NeXusField,
-    NeXusGroup,
-    NeXusLink,
-)
+from pynxtools.nomad.annotations import NeXusDefinition, NeXusField, NeXusGroup
 from pynxtools.nomad.metainfo.base_classes.component import Component
 from pynxtools.nomad.metainfo.base_classes.source import Source
 
@@ -94,7 +87,7 @@ class IbeamColumn(Component):
         section_def="pynxtools.nomad.metainfo.base_classes.ibeam_column.IbeamColumnIonSource",
         repeats=False,
     )
-    electromagnetic_lens = SubSection(
+    electromagnetic_lenses = SubSection(
         section_def="pynxtools.nomad.metainfo.base_classes.electromagnetic_lens.ElectromagneticLens",
         repeats=True,
         variable=True,
@@ -105,7 +98,7 @@ class IbeamColumn(Component):
             optionality="optional",
         ),
     )
-    aperture = SubSection(
+    apertures = SubSection(
         section_def="pynxtools.nomad.metainfo.base_classes.aperture.Aperture",
         repeats=True,
         variable=True,
@@ -116,7 +109,7 @@ class IbeamColumn(Component):
             optionality="optional",
         ),
     )
-    deflector = SubSection(
+    deflectors = SubSection(
         section_def="pynxtools.nomad.metainfo.base_classes.deflector.Deflector",
         repeats=True,
         variable=True,
@@ -141,7 +134,7 @@ class IbeamColumn(Component):
             optionality="optional",
         ),
     )
-    monochromator = SubSection(
+    monochromators = SubSection(
         section_def="pynxtools.nomad.metainfo.base_classes.monochromator.Monochromator",
         repeats=True,
         variable=True,
@@ -152,7 +145,7 @@ class IbeamColumn(Component):
             optionality="optional",
         ),
     )
-    sensor = SubSection(
+    sensors = SubSection(
         section_def="pynxtools.nomad.metainfo.base_classes.sensor.Sensor",
         repeats=True,
         variable=True,
@@ -163,7 +156,7 @@ class IbeamColumn(Component):
             optionality="optional",
         ),
     )
-    actuator = SubSection(
+    actuators = SubSection(
         section_def="pynxtools.nomad.metainfo.base_classes.actuator.Actuator",
         repeats=True,
         variable=True,
@@ -174,7 +167,7 @@ class IbeamColumn(Component):
             optionality="optional",
         ),
     )
-    beam = SubSection(
+    beams = SubSection(
         section_def="pynxtools.nomad.metainfo.base_classes.beam.Beam",
         repeats=True,
         variable=True,
@@ -191,7 +184,7 @@ class IbeamColumn(Component):
             optionality="optional",
         ),
     )
-    component = SubSection(
+    components = SubSection(
         section_def="pynxtools.nomad.metainfo.base_classes.component.Component",
         repeats=True,
         variable=True,

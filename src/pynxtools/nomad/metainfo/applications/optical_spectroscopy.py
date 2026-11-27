@@ -34,11 +34,9 @@ from nomad.metainfo.data_type import Bytes, Datetime
 
 from pynxtools.nomad.annotations import (
     NeXusAttribute,
-    NeXusChoice,
     NeXusDefinition,
     NeXusField,
     NeXusGroup,
-    NeXusLink,
 )
 from pynxtools.nomad.metainfo._category import ExperimentCategory
 from pynxtools.nomad.metainfo.base_classes.actuator import Actuator
@@ -117,7 +115,7 @@ class OpticalSpectroscopy(Entry):
         section_def="pynxtools.nomad.metainfo.applications.optical_spectroscopy.OpticalSpectroscopySampleNormalRefFrame",
         repeats=False,
     )
-    user = SubSection(
+    users = SubSection(
         section_def="pynxtools.nomad.metainfo.base_classes.user.User",
         repeats=True,
         variable=True,
@@ -139,12 +137,12 @@ class OpticalSpectroscopy(Entry):
             min_occurs=0,
         ),
     )
-    instrument = SubSection(
+    instruments = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.optical_spectroscopy.OpticalSpectroscopyInstrument",
         repeats=True,
         variable=True,
     )
-    sample = SubSection(
+    samples = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.optical_spectroscopy.OpticalSpectroscopySample",
         repeats=True,
         variable=True,
@@ -597,7 +595,7 @@ class OpticalSpectroscopyInstrument(Instrument):
         repeats=True,
         variable=True,
     )
-    monochromator = SubSection(
+    monochromators = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.optical_spectroscopy.OpticalSpectroscopyInstrumentMonochromator",
         repeats=True,
         variable=True,
@@ -607,7 +605,7 @@ class OpticalSpectroscopyInstrument(Instrument):
         repeats=True,
         variable=True,
     )
-    component = SubSection(
+    components = SubSection(
         section_def="pynxtools.nomad.metainfo.base_classes.component.Component",
         repeats=True,
         variable=True,
@@ -624,12 +622,12 @@ class OpticalSpectroscopyInstrument(Instrument):
             min_occurs=0,
         ),
     )
-    optical_lens = SubSection(
+    optical_lenses = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.optical_spectroscopy.OpticalSpectroscopyInstrumentOpticalLens",
         repeats=True,
         variable=True,
     )
-    waveplate = SubSection(
+    waveplates = SubSection(
         section_def="pynxtools.nomad.metainfo.base_classes.waveplate.Waveplate",
         repeats=True,
         variable=True,
@@ -640,7 +638,7 @@ class OpticalSpectroscopyInstrument(Instrument):
             optionality="optional",
         ),
     )
-    optical_window = SubSection(
+    optical_windows = SubSection(
         section_def="pynxtools.nomad.metainfo.base_classes.optical_window.OpticalWindow",
         repeats=True,
         variable=True,
@@ -661,7 +659,7 @@ class OpticalSpectroscopyInstrument(Instrument):
         repeats=True,
         variable=True,
     )
-    beam_transfer_matrix_table = SubSection(
+    beam_transfer_matrix_tables = SubSection(
         section_def="pynxtools.nomad.metainfo.base_classes.beam_transfer_matrix_table.BeamTransferMatrixTable",
         repeats=True,
         variable=True,
@@ -2132,7 +2130,7 @@ class OpticalSpectroscopyInstrumentTempControlTYPE(Actuator):
         ),
     )
 
-    pid_controller = SubSection(
+    pid_controllers = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.optical_spectroscopy.OpticalSpectroscopyInstrumentTempControlTYPEPidController",
         repeats=True,
         variable=True,
@@ -2669,7 +2667,7 @@ class OpticalSpectroscopySample(Sample):
         section_def="pynxtools.nomad.metainfo.applications.optical_spectroscopy.OpticalSpectroscopySampleTemperatureEnv",
         repeats=False,
     )
-    environment = SubSection(
+    environments = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.optical_spectroscopy.OpticalSpectroscopySampleEnvironment",
         repeats=True,
         variable=True,

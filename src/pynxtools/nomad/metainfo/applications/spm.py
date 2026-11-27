@@ -38,11 +38,9 @@ from nomad.metainfo.data_type import Bytes, Datetime
 
 from pynxtools.nomad.annotations import (
     NeXusAttribute,
-    NeXusChoice,
     NeXusDefinition,
     NeXusField,
     NeXusGroup,
-    NeXusLink,
 )
 from pynxtools.nomad.metainfo._category import ExperimentCategory
 from pynxtools.nomad.metainfo.applications.sensor_scan import (
@@ -99,7 +97,7 @@ class Spm(SensorScan):
         ),
     )
 
-    process = SubSection(
+    processes = SubSection(
         section_def="pynxtools.nomad.metainfo.base_classes.process.Process",
         repeats=True,
         variable=True,
@@ -114,12 +112,12 @@ class Spm(SensorScan):
             optionality="optional",
         ),
     )
-    instrument = SubSection(
+    instruments = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.spm.SpmInstrument",
         repeats=True,
         variable=True,
     )
-    sample = SubSection(
+    samples = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.spm.SpmSample",
         repeats=True,
         variable=True,
@@ -322,7 +320,7 @@ class SpmInstrument(SensorScanInstrument):
         section_def="pynxtools.nomad.metainfo.applications.spm.SpmInstrumentLockinAmplifier",
         repeats=False,
     )
-    scan_environment = SubSection(
+    scan_environments = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.spm.SpmInstrumentScanEnvironment",
         repeats=True,
         variable=True,
@@ -730,7 +728,7 @@ class SpmInstrumentScanEnvironment(SensorScanInstrumentEnvironment):
             optionality="optional",
         ),
     )
-    spm_scan_control = SubSection(
+    spm_scan_controls = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.spm.SpmInstrumentScanEnvironmentSpmScanControl",
         repeats=True,
         variable=True,
@@ -1232,7 +1230,7 @@ class SpmInstrumentCurrentSensorTAG(Sensor):
         section_def="pynxtools.nomad.metainfo.applications.spm.SpmInstrumentCurrentSensorTAGCalibration",
         repeats=False,
     )
-    amplifier = SubSection(
+    amplifiers = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.spm.SpmInstrumentCurrentSensorTAGAmplifier",
         repeats=True,
         variable=True,
@@ -1440,7 +1438,7 @@ class SpmInstrumentVoltageSensorTAG(Sensor):
         section_def="pynxtools.nomad.metainfo.applications.spm.SpmInstrumentVoltageSensorTAGCalibration",
         repeats=False,
     )
-    amplifier = SubSection(
+    amplifiers = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.spm.SpmInstrumentVoltageSensorTAGAmplifier",
         repeats=True,
         variable=True,
@@ -1722,7 +1720,7 @@ class SpmInstrumentBiasSpectroscopyEnvironment(SensorScanInstrumentEnvironment):
         ),
     )
 
-    spm_bias_spectroscopy = SubSection(
+    spm_bias_spectroscopies = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.spm.SpmInstrumentBiasSpectroscopyEnvironmentSpmBiasSpectroscopy",
         repeats=True,
         variable=True,
@@ -1751,12 +1749,12 @@ class SpmInstrumentBiasSpectroscopyEnvironmentSpmBiasSpectroscopy(SpmBiasSpectro
         ),
     )
 
-    spm_positioner = SubSection(
+    spm_positioners = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.spm.SpmInstrumentBiasSpectroscopyEnvironmentSpmBiasSpectroscopySpmPositioner",
         repeats=True,
         variable=True,
     )
-    bias_sweep = SubSection(
+    bias_sweeps = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.spm.SpmInstrumentBiasSpectroscopyEnvironmentSpmBiasSpectroscopyBiasSweep",
         repeats=True,
         variable=True,
@@ -2367,7 +2365,7 @@ class SpmReproducibilityIndicators(Collection):
         ),
     )
 
-    link_to_group = SubSection(
+    link_to_groups = SubSection(
         section_def="pynxtools.nomad.metainfo.base_classes.collection.Collection",
         repeats=True,
         variable=True,
@@ -2423,7 +2421,7 @@ class SpmResolutionIndicators(Collection):
         ),
     )
 
-    link_to_group = SubSection(
+    link_to_groups = SubSection(
         section_def="pynxtools.nomad.metainfo.base_classes.collection.Collection",
         repeats=True,
         variable=True,

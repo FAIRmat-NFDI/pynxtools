@@ -34,11 +34,9 @@ from nomad.metainfo.data_type import Bytes, Datetime
 
 from pynxtools.nomad.annotations import (
     NeXusAttribute,
-    NeXusChoice,
     NeXusDefinition,
     NeXusField,
     NeXusGroup,
-    NeXusLink,
 )
 from pynxtools.nomad.metainfo._category import ExperimentCategory
 from pynxtools.nomad.metainfo.base_classes.entry import Entry
@@ -77,15 +75,15 @@ class Archive(Entry):
         ),
     )
 
-    user = SubSection(
+    users = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.archive.ArchiveUser",
         repeats=False,
     )
-    instrument = SubSection(
+    instruments = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.archive.ArchiveInstrument",
         repeats=False,
     )
-    sample = SubSection(
+    samples = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.archive.ArchiveSample",
         repeats=False,
     )
@@ -467,7 +465,7 @@ class ArchiveInstrument(Instrument):
         ),
     )
 
-    source = SubSection(
+    sources = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.archive.ArchiveInstrumentSource",
         repeats=True,
         variable=True,

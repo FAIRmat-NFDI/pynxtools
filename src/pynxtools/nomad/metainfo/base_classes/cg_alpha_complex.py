@@ -31,14 +31,7 @@ from nomad.datamodel.metainfo.annotations import (
 from nomad.metainfo import MEnum, Quantity, Section, SubSection
 from nomad.metainfo.data_type import Bytes, Datetime
 
-from pynxtools.nomad.annotations import (
-    NeXusAttribute,
-    NeXusChoice,
-    NeXusDefinition,
-    NeXusField,
-    NeXusGroup,
-    NeXusLink,
-)
+from pynxtools.nomad.annotations import NeXusDefinition, NeXusField, NeXusGroup
 from pynxtools.nomad.metainfo.base_classes.cg_primitive import CgPrimitive
 
 if TYPE_CHECKING:
@@ -84,7 +77,7 @@ class CgAlphaComplex(CgPrimitive):
         ),
     )
 
-    cg_point = SubSection(
+    cg_points = SubSection(
         section_def="pynxtools.nomad.metainfo.base_classes.cg_point.CgPoint",
         repeats=True,
         variable=True,
@@ -98,7 +91,7 @@ class CgAlphaComplex(CgPrimitive):
             optionality="optional",
         ),
     )
-    triangle_soup = SubSection(
+    triangle_soups = SubSection(
         section_def="pynxtools.nomad.metainfo.base_classes.cg_triangle.CgTriangle",
         repeats=True,
         variable=True,
@@ -112,7 +105,7 @@ class CgAlphaComplex(CgPrimitive):
             optionality="optional",
         ),
     )
-    alpha_complex = SubSection(
+    alpha_complexes = SubSection(
         section_def="pynxtools.nomad.metainfo.base_classes.cg_triangle.CgTriangle",
         repeats=True,
         variable=True,
@@ -127,7 +120,7 @@ class CgAlphaComplex(CgPrimitive):
             optionality="optional",
         ),
     )
-    tetrahedralization = SubSection(
+    tetrahedralizations = SubSection(
         section_def="pynxtools.nomad.metainfo.base_classes.cg_tetrahedron.CgTetrahedron",
         repeats=True,
         variable=True,

@@ -34,11 +34,9 @@ from nomad.metainfo.data_type import Bytes, Datetime
 
 from pynxtools.nomad.annotations import (
     NeXusAttribute,
-    NeXusChoice,
     NeXusDefinition,
     NeXusField,
     NeXusGroup,
-    NeXusLink,
 )
 from pynxtools.nomad.metainfo.base_classes.component import Component
 from pynxtools.nomad.metainfo.base_classes.data import Data
@@ -92,7 +90,7 @@ class Guide(Component):
         ),
     )
 
-    geometry = SubSection(
+    geometries = SubSection(
         section_def="pynxtools.nomad.metainfo.base_classes.geometry.Geometry",
         repeats=True,
         variable=True,
@@ -111,7 +109,7 @@ class Guide(Component):
         section_def="pynxtools.nomad.metainfo.base_classes.guide.GuideReflectivity",
         repeats=False,
     )
-    off_geometry = SubSection(
+    off_geometries = SubSection(
         section_def="pynxtools.nomad.metainfo.base_classes.off_geometry.OffGeometry",
         repeats=True,
         variable=True,

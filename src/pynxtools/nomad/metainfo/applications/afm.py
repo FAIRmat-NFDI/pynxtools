@@ -37,11 +37,9 @@ from nomad.metainfo.data_type import Bytes, Datetime
 
 from pynxtools.nomad.annotations import (
     NeXusAttribute,
-    NeXusChoice,
     NeXusDefinition,
     NeXusField,
     NeXusGroup,
-    NeXusLink,
 )
 from pynxtools.nomad.metainfo._category import ExperimentCategory
 from pynxtools.nomad.metainfo.applications.spm import (
@@ -107,7 +105,7 @@ class Afm(Spm):
         ),
     )
 
-    instrument = SubSection(
+    instruments = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.afm.AfmInstrument",
         repeats=True,
         variable=True,
@@ -246,7 +244,7 @@ class AfmInstrument(SpmInstrument):
         section_def="pynxtools.nomad.metainfo.applications.afm.AfmInstrumentPhotoDetector",
         repeats=False,
     )
-    spm_cantilever = SubSection(
+    spm_cantilevers = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.afm.AfmInstrumentSpmCantilever",
         repeats=True,
         variable=True,
@@ -262,7 +260,7 @@ class AfmInstrument(SpmInstrument):
             optionality="recommended",
         ),
     )
-    scan_environment = SubSection(
+    scan_environments = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.afm.AfmInstrumentScanEnvironment",
         repeats=True,
         variable=True,
@@ -303,7 +301,7 @@ class AfmInstrumentPhotoDetector(Detector):
         ),
     )
 
-    sensor = SubSection(
+    sensors = SubSection(
         section_def="pynxtools.nomad.metainfo.base_classes.sensor.Sensor",
         repeats=True,
         variable=True,
@@ -473,7 +471,7 @@ class AfmInstrumentScanEnvironment(SpmInstrumentScanEnvironment):
         ),
     )
 
-    spm_scan_control = SubSection(
+    spm_scan_controls = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.afm.AfmInstrumentScanEnvironmentSpmScanControl",
         repeats=True,
         variable=True,

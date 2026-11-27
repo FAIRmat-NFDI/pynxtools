@@ -35,8 +35,14 @@ class BaseReader(ABC):
         template: dict = None,
         file_paths: tuple[str] = None,
         objects: tuple[Any] = None,
+        **kwargs,
     ) -> dict:
-        """Reads data from given file and returns a filled template dictionary"""
+        """
+        Reads data from given file and returns a filled template dictionary.
+
+        The converter passes extra keyword arguments to read(), for example
+        config_file when `-c` is used, so subclasses should accept **kwargs too.
+        """
         return template
 
 

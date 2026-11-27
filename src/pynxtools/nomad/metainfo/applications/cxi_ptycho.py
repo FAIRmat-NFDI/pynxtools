@@ -38,7 +38,6 @@ from nomad.metainfo.data_type import Bytes, Datetime
 
 from pynxtools.nomad.annotations import (
     NeXusAttribute,
-    NeXusChoice,
     NeXusDefinition,
     NeXusField,
     NeXusGroup,
@@ -206,7 +205,7 @@ class CxiPtychoInstrument1(Instrument):
         section_def="pynxtools.nomad.metainfo.applications.cxi_ptycho.CxiPtychoInstrument1Detector1",
         repeats=False,
     )
-    monitor = SubSection(
+    monitors = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.cxi_ptycho.CxiPtychoInstrument1Monitor",
         repeats=False,
         variable=True,

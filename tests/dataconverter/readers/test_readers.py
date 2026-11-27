@@ -7,6 +7,7 @@
 """Test cases for readers used for the DataConverter"""
 
 import glob
+import inspect
 import json
 import logging
 import os
@@ -78,6 +79,20 @@ def test_if_readers_are_children_of_base_reader(reader):
         assert isinstance(reader(), BaseReader) or isinstance(
             reader(), MultiFormatReader
         )
+
+
+@pytest.mark.parametrize(
+    "reader_name",
+    sorted(
+        os.path.basename(os.path.dirname(path))
+        for path in glob.glob("src/pynxtools/dataconverter/readers/*/reader.py")
+    ),
+)
+def test_read_accepts_converter_kwargs(reader_name):
+    """read() must accept extra keyword arguments such as config_file (-c)."""
+    reader = get_reader(reader_name)
+    parameters = inspect.signature(reader.read).parameters.values()
+    assert any(p.kind is inspect.Parameter.VAR_KEYWORD for p in parameters)
 
 
 @pytest.mark.parametrize("reader", get_all_readers())
@@ -300,3 +315,38 @@ def test_json_map_reader_hdf5_file_loads_attributes(tmp_path):
     assert reader.data["entry"]["collection_time@units"] == "s"
     assert reader.data["entry"]["sample@name"] == "my sample"
     assert reader.data["entry"]["sample@NX_class"] == "NXsample"
+
+
+class _WritesMarkerWhenUnpickled:
+    """Unpickling this object creates a marker file, like code hidden in a pickle would."""
+
+    def __init__(self, marker_path):
+        self.marker_path = str(marker_path)
+
+    def __reduce__(self):
+        return (open, (self.marker_path, "w"))
+
+
+def test_json_map_reader_does_not_load_pickle_files(tmp_path, caplog):
+    """JsonMapReader must not unpickle .pickle input files."""
+    import pickle
+
+    from pynxtools.dataconverter.readers.json_map.reader import JsonMapReader
+
+    marker = tmp_path / "code_was_run"
+    pickle_file = tmp_path / "data.pickle"
+    pickle_file.write_bytes(pickle.dumps(_WritesMarkerWhenUnpickled(marker)))
+
+    reader = JsonMapReader()
+    reader.set_config_file(os.path.join(_JSON_MAP_DIR, "data.config.json"))
+    with caplog.at_level(logging.WARNING):
+        reader.read(
+            template=Template(_make_nxdl_template("NXtest")),
+            file_paths=(
+                os.path.join(_JSON_MAP_DIR, "data.json"),
+                str(pickle_file),
+            ),
+        )
+
+    assert not marker.exists()
+    assert "unsupported extension" in caplog.text

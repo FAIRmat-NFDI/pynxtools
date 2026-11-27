@@ -43,7 +43,7 @@ from typing import Literal
 
 try:
     from nomad.metainfo.annotation import AnnotationModel
-    from nomad.metainfo.metainfo import Definition  # noqa: F401 — needed for model_rebuild
+    from nomad.metainfo.metainfo import Definition  # noqa: F401
 except ImportError as exc:
     raise ImportError(
         "Could not import nomad package. Please install 'nomad-lab'."

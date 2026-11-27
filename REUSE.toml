@@ -29,7 +29,12 @@ SPDX-License-Identifier = "Apache-2.0"
 # Non-code project files (docs, CI, tooling config) that can't practically
 # carry an inline header.
 [[annotations]]
-path = ["docs/**"]
+path = [
+  "docs/**",
+  "codemeta.json",
+  "paper/paper.bib",
+  "paper/paper.md",
+]
 SPDX-FileCopyrightText = "The pynxtools Authors"
 SPDX-License-Identifier = "Apache-2.0"
 

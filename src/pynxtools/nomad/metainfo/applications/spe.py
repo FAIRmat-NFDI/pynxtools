@@ -34,11 +34,9 @@ from nomad.metainfo.data_type import Bytes, Datetime
 
 from pynxtools.nomad.annotations import (
     NeXusAttribute,
-    NeXusChoice,
     NeXusDefinition,
     NeXusField,
     NeXusGroup,
-    NeXusLink,
 )
 from pynxtools.nomad.metainfo._category import ExperimentCategory
 from pynxtools.nomad.metainfo.base_classes.collection import Collection
@@ -79,12 +77,12 @@ class Spe(Entry):
         section_def="pynxtools.nomad.metainfo.applications.spe.SpeData",
         repeats=False,
     )
-    instrument = SubSection(
+    instruments = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.spe.SpeInstrument",
         repeats=True,
         variable=True,
     )
-    sample = SubSection(
+    samples = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.spe.SpeSample",
         repeats=True,
         variable=True,
@@ -501,7 +499,7 @@ class SpeInstrument(Instrument):
         ),
     )
 
-    fermi_chopper = SubSection(
+    fermi_choppers = SubSection(
         section_def="pynxtools.nomad.metainfo.applications.spe.SpeInstrumentFermiChopper",
         repeats=True,
         variable=True,

@@ -17,7 +17,6 @@ This reader is designed to allow users of `pynxtools` to convert their existing 
 * HDF5
 * JSON
 * YAML
-* Python Dict Objects pickled with [pickle](https://docs.python.org/3/library/pickle.html). These can contain [xarray.DataArray](https://docs.xarray.dev/en/stable/generated/xarray.DataArray.html) objects as well as regular Python types and Numpy types. Note that while it is supported, we strongly recommend not to use pickle due to its known [security concerns](https://huggingface.co/docs/hub/security-pickle).
 
 It accepts any NXDL application definition as long as your config file contains all the required fields.
 

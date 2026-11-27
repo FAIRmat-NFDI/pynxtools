@@ -38,7 +38,6 @@ from pynxtools.nomad.annotations import (
     NeXusDefinition,
     NeXusField,
     NeXusGroup,
-    NeXusLink,
 )
 from pynxtools.nomad.metainfo.base_classes.component import Component
 from pynxtools.nomad.metainfo.base_classes.data import Data
@@ -72,7 +71,7 @@ class Detector(Component):
         ),
     )
 
-    geometry = SubSection(
+    geometries = SubSection(
         section_def="pynxtools.nomad.metainfo.base_classes.geometry.Geometry",
         repeats=True,
         variable=True,
@@ -133,7 +132,7 @@ class Detector(Component):
             optionality="optional",
         ),
     )
-    collection = SubSection(
+    collections = SubSection(
         section_def="pynxtools.nomad.metainfo.base_classes.collection.Collection",
         repeats=True,
         variable=True,
@@ -147,7 +146,7 @@ class Detector(Component):
             optionality="optional",
         ),
     )
-    detector_module = SubSection(
+    detector_modules = SubSection(
         section_def="pynxtools.nomad.metainfo.base_classes.detector_module.DetectorModule",
         repeats=True,
         variable=True,
