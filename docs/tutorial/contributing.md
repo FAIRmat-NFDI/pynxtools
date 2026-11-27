@@ -31,7 +31,7 @@ You will know
 |---|---|
 | `develop` | Default branch. All regular development PRs target this branch. |
 | `main` | Released versions only. Only `release/*` branches are merged here, so its history is the release history. |
-| `release/vX.Y.Z` | Temporary release branch, created from `develop` and merged into `main`. The version may carry a pre-release suffix, e.g. `release/vX.Y.Z-beta` or `release/vX.Y.Z-rc1`. |
+| `release/vX.Y.Z` | Temporary release branch, created from `main`. It receives either all of `develop` or selected changes from it, and is then merged into `main` and back into `develop`. The version may carry a pre-release suffix, e.g. `release/vX.Y.Z-beta` or `release/vX.Y.Z-rc1`. |
 
 | Activity | Branch |
 |---|---|
@@ -40,7 +40,21 @@ You will know
 | Selecting changes for a release | `release/vX.Y.Z` |
 | Release-specific bug fixes | `release/vX.Y.Z` |
 | Published release history | `main` |
-| Porting release fixes back to ongoing development | Merge `release/vX.Y.Z` back into `develop` |
+| Bringing the release back into ongoing development | Merge `release/vX.Y.Z` into `develop` after every release |
+
+Each pair of branches uses one merge method:
+
+| From | Into | Merge method |
+|---|---|---|
+| Feature or fix branch | `develop` | Squash |
+| Fix branch | `release/vX.Y.Z` | Squash |
+| `develop` | `release/vX.Y.Z` | Merge commit (only when the release takes all of `develop`) |
+| `release/vX.Y.Z` | `main` | Merge commit |
+| `release/vX.Y.Z` | `develop` | Merge commit |
+
+Squash merges give one commit per PR on `develop`, so a release can pick a change as a single commit.
+Merge commits into `main` and back into `develop` keep `main` an ancestor of `develop`.
+Because of this, the next release branch can take all of `develop` without conflicts.
 
 The `Check if source is release/*` workflow
 ([`.github/workflows/check-source-is-release.yml`](https://github.com/FAIRmat-NFDI/pynxtools/blob/develop/.github/workflows/check-source-is-release.yml))
@@ -305,24 +319,66 @@ AI tools may be used as a supplementary aid during code review, but final review
 
 ## Release workflow
 
-1. Create the release branch from `develop`:
+The same workflow applies to major, minor, and patch releases.
+Each release takes either all of `develop` or a selected subset of its changes.
+
+1. Create the release branch from `main`:
 
     ```console
-    git switch develop && git pull
-    git switch -c release/vX.Y.Z
+    git fetch origin
+    git switch -c release/vX.Y.Z origin/main
+    ```
+
+2. Bring the changes for this release onto the branch. Use one of the two options:
+
+    === "All of develop"
+
+        Merge `develop` into the release branch:
+
+        ```console
+        git merge origin/develop
+        ```
+
+    === "Selected changes"
+
+        Add the label `release/vX.Y.Z` to each merged PR on `develop` that goes into the release.
+        Then cherry-pick all labelled PRs in the order in which they were merged:
+
+        ```console
+        gh pr list --base develop --state merged --label "release/vX.Y.Z" \
+            --json mergeCommit,mergedAt \
+            --jq 'sort_by(.mergedAt)[].mergeCommit.oid' \
+          | xargs git cherry-pick -x
+        ```
+
+        Each PR into `develop` is squash-merged, so each PR is one commit.
+        `-x` adds the SHA of the original commit to each commit message.
+        If a commit does not apply, `git cherry-pick` stops. Resolve the conflict, then run `git cherry-pick --continue`.
+        A selected change can depend on a change that you did not select. CI on the release branch shows most of these cases.
+
+    !!! warning "Do not exclude changes with `git revert`"
+        Do not merge all of `develop` and then revert the changes that you want to leave out.
+        The merge back into `develop` (step 9) carries the revert with it and removes the change from `develop` too.
+        If a change is not ready for release, keep it on its feature branch until it is ready.
+
+3. Push the release branch:
+
+    ```console
     git push -u origin release/vX.Y.Z
     ```
 
-2. Commit only release-specific changes on this branch (version bumps, changelog, last-minute bug fixes).
+4. Commit only release-specific changes on this branch (version bumps, changelog, last-minute bug fixes).
    New features keep going into `develop`.
-3. Bump `version` in `CITATION.cff` to `X.Y.Z`, including any pre-release suffix (e.g. `0.1.2-rc1` for the tag `v0.1.2-rc1`).
+5. Bump `version` in `CITATION.cff` to `X.Y.Z`, including any pre-release suffix (e.g. `0.1.2-rc1` for the tag `v0.1.2-rc1`).
    The publish workflow fails if it differs from the tag.
-4. Open a PR from `release/vX.Y.Z` into `main`. Do not merge yet!
-5. Create a GitHub release with the tag `vX.Y.Z` and select `release/vX.Y.Z` as its target branch. The publish workflow refuses to upload to PyPI if the release does not target `release/vX.Y.Z`
+6. Open a PR from `release/vX.Y.Z` into `main`. List the PRs that the release contains in its description. Do not merge yet!
+7. Create a GitHub release with the tag `vX.Y.Z` and select `release/vX.Y.Z` as its target branch. The publish workflow refuses to upload to PyPI if the release does not target `release/vX.Y.Z`
    or if the tagged commit is not on that branch.
-6. Once CI passes and the release is published to PyPI, merge the PR.
-7. If you fixed anything directly on the release branch, open a PR from `release/vX.Y.Z` into `develop` so the fixes are not lost in ongoing development.
-8. Delete the `release/vX.Y.Z` branch.
+8. Once CI passes and the release is published to PyPI, merge the PR with a merge commit.
+9. Open a PR from `release/vX.Y.Z` into `develop` and merge it with a merge commit.
+   Do this after every release, also if the release branch has no fixes of its own.
+   It brings the version bump and any fixes into `develop` and keeps `main` an ancestor of `develop`.
+10. Delete the `release/vX.Y.Z` branch.
 
 ## Troubleshooting
 
