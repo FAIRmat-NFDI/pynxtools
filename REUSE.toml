@@ -31,6 +31,7 @@ SPDX-License-Identifier = "Apache-2.0"
 [[annotations]]
 path = [
   "docs/**",
+  "recipe/**",
   "codemeta.json",
   "paper/paper.bib",
   "paper/paper.md",
