@@ -237,11 +237,10 @@ class _SectionIndex:
 # Any NOMAD package loaded via entry points that contains nexus_definition
 # sections is included.
 #
-# In NOMAD context the nexus_base_classes / nexus_applications entry points
-# (configured in nomad.yaml) populate Package.registry before the parser runs.
-# Outside that context (e.g. standalone tests), build_base_classes_package()/
-# build_applications_package() are called explicitly below — both are memorized,
-# so this is a no-op once the entry points have already loaded them.
+# The parser respects the the entry points configured in
+# nomad.yaml: only those applications that are enabled are populated, whereas
+# for disabled technique it falls back to the generic Entry class,
+#
 _APP_INDEX: dict[str, type] | None = None
 _BASE_CLS_BY_NX: dict[str, type | None] | None = None
 
@@ -253,13 +252,23 @@ def _build_nx_class_index() -> tuple[dict[str, type], dict[str, type | None]]:
         app_index: nx_class → Python class for application/contributed sections
         base_index: nx_class → Python class for ALL sections with nexus_definition
     """
-    from pynxtools.nomad.metainfo import (
-        build_applications_package,
-        build_base_classes_package,
-    )
+    from nomad.config import config
 
-    build_base_classes_package()
-    build_applications_package()
+    from pynxtools.nomad import metainfo as nxs_metainfo
+
+    if not nxs_metainfo.any_entry_point_loaded():
+        config.load_plugins()
+        prefix = f"{nxs_metainfo.__name__}:"
+        configured = [
+            ep
+            for ep in config.plugins.entry_points.filtered_values()
+            if ep.id.startswith(prefix)
+        ]
+        if configured:
+            for ep in configured:
+                ep.load()
+        else:
+            nxs_metainfo.load_all_packages()
 
     app_index: dict[str, type] = {}
     base_index: dict[str, type | None] = {}

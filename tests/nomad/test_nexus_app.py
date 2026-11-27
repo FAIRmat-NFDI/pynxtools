@@ -139,3 +139,70 @@ def test_nexus_app_v2_dashboard_widgets():
     periodic_table = next(w for w in dashboard.widgets if w.type == "periodic_table")
     assert periodic_table.search_quantity == "results.material.elements"
     assert periodic_table.layout
+
+
+def test_nexus_app_v2_search_quantities_resolve():
+    """Every column/menu-item/dashboard-widget path qualified with our own
+    schema must resolve to a real quantity or subsection on Entry."""
+    from pynxtools.nomad.metainfo.base_classes.entry import Entry
+
+    suffix = f"#{schema}"
+
+    def resolves(path: str) -> bool:
+        """Walk a "data.xyz[*].abc" search_quantity path against the Entry's own
+        metainfo definition, following subsections and stripping `[*]`."""
+        # `path` is relative to the archive ("data.xyz").
+        segments = path.split(".")
+        assert segments[0] == "data"
+        cls = Entry
+        for segment in segments[1:]:
+            if cls is None:
+                return False
+            name = segment[:-3] if segment.endswith("[*]") else segment
+            m_def = cls.m_def
+            if name in m_def.all_sub_sections:
+                cls = m_def.all_sub_sections[name].sub_section.section_cls
+            elif name in m_def.all_quantities:
+                cls = None
+            else:
+                return False
+        return True
+
+    def as_quantity_str(value) -> str | None:
+        """MenuItemTerms.search_quantity is a plain str; MenuItemHistogram.x is
+        an Axis wrapping one in its own `.search_quantity` field."""
+        if isinstance(value, str):
+            return value
+        return getattr(value, "search_quantity", None)
+
+    def menu_paths(items) -> list[str]:
+        """Collect search_quantity paths from a Menu's items,
+        recursing into nested Menus."""
+        found = []
+        for item in items:
+            search_quantity = as_quantity_str(
+                getattr(item, "search_quantity", None)
+            ) or as_quantity_str(getattr(item, "x", None))
+            if search_quantity and search_quantity.endswith(suffix):
+                found.append(search_quantity[: -len(suffix)])
+            nested = getattr(item, "items", None)
+            if nested:
+                found.extend(menu_paths(nested))
+        return found
+
+    app = nexus_app_v2.app
+    paths = [
+        col.search_quantity[: -len(suffix)]
+        for col in app.columns
+        if col.search_quantity and col.search_quantity.endswith(suffix)
+    ]
+    paths.extend(menu_paths(app.menu.items))
+    paths.extend(
+        w.search_quantity[: -len(suffix)]
+        for w in app.dashboard.widgets
+        if w.search_quantity and w.search_quantity.endswith(suffix)
+    )
+
+    assert paths, "expected at least one schema-qualified search_quantity"
+    unresolved = [p for p in paths if not resolves(p)]
+    assert not unresolved, f"unresolved search_quantity paths: {unresolved}"

@@ -852,7 +852,13 @@ class Entry(Object, basesections.Measurement, EntryData):
     )
 
     def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
-        super().normalize(archive, logger)
+        # Skips Object/Measurement's super().normalize(): basesections v1
+        # Measurement.normalize() assumes `samples` holds CompositeSystemReference
+        # entries with a `.reference` quantity, but `samples` above embeds NeXus
+        # sample data directly and has no such quantity. Goes straight to
+        # Activity.normalize(), which Measurement.normalize() would call next.
+        # TODO: revisit once the schema moves to basesections v2.
+        basesections.Activity.normalize(self, archive, logger)
 
 
 # =============================================================================

@@ -6,9 +6,16 @@
 
 # Module-level __getattr__ so that NOMAD can resolve application section classes
 # by flat qualified name (e.g. "pynxtools.nomad.metainfo.applications.Arpes").
+#
+# Application classes are split across one SchemaPackage per technique, not one
+# "applications" package, so this  scans every technique package instead of a
+# single fixed package name.
 
 _class_cache: dict[str, type] = {}
-_PKG_NAME = "pynxtools.nomad.metainfo.applications"
+# Derived from this module's own __name__/__package__, not hardcoded, so this
+# stays correct if this package is ever moved.
+_PKG_NAME = __name__
+_METAINFO_ROOT = __package__.rsplit(".", 1)[0]  # strip trailing ".applications"
 
 
 def __getattr__(name: str) -> type:
@@ -17,8 +24,15 @@ def __getattr__(name: str) -> type:
     try:
         from nomad.metainfo.metainfo import Package
 
-        pkg = Package.registry.get(_PKG_NAME)
-        if pkg is not None:
+        from pynxtools.nomad.metainfo import packages
+
+        candidate_names = [_PKG_NAME] + [
+            f"{_METAINFO_ROOT}.{technique}" for technique in packages
+        ]
+        for pkg_name in candidate_names:
+            pkg = Package.registry.get(pkg_name)
+            if pkg is None:
+                continue
             for sec_def in pkg.section_definitions:
                 if sec_def.name == name and sec_def.section_cls is not None:
                     _class_cache[name] = sec_def.section_cls
