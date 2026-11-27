@@ -24,12 +24,12 @@ from typing import TYPE_CHECKING
 
 import numpy as np
 from nomad.datamodel.data import EntryData
-from nomad.datamodel.metainfo import basesections
 from nomad.datamodel.metainfo.annotations import (
     ELNAnnotation,
     ELNComponentEnum,
     SchemaAnnotation,
 )
+from nomad.datamodel.metainfo.basesections import v2 as basesections
 from nomad.metainfo import MEnum, Quantity, Section, SubSection
 from nomad.metainfo.data_type import Bytes, Datetime
 
@@ -50,7 +50,7 @@ if TYPE_CHECKING:
 __all__ = ["Entry"]
 
 
-class Entry(Object, basesections.Measurement, EntryData):
+class Entry(Object, basesections.Activity, EntryData):
     """
     (**required**) :ref:`NXentry` describes the measurement.
 
@@ -853,6 +853,18 @@ class Entry(Object, basesections.Measurement, EntryData):
 
     def normalize(self, archive: EntryArchive, logger: BoundLogger) -> None:
         super().normalize(archive, logger)
+
+        # Bridge NeXus's direct-containment subentry list onto
+        # Activity.sub_activities' reference/wrapper-based (SubActivity) shape,
+        # so generic NOMAD tooling built against sub_activities also sees
+        # NXsubentry's "activity nested inside an activity" case — same pattern
+        # as Sample.normalize() bridging component into sub_systems.
+        # basesections.Activity.sub_activities is declared via SectionProxy (a
+        # forward reference to 'SubActivity'), which mypy cannot resolve.
+        if self.subentry and not self.sub_activities:  # type: ignore[has-type]
+            self.sub_activities = [
+                basesections.SubActivity(nested_activity=sub) for sub in self.subentry
+            ]
 
 
 # =============================================================================
